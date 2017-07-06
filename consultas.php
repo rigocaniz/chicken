@@ -25,6 +25,70 @@ $datos = array();
 switch ( $data->opcion )
 {
 	/////////////////////////
+	//***** CONSULTA DATOS
+	////////////////////////
+	case 'cargarMedida':			// DATOS MEDIDA
+		$medida = new Medida();
+		echo json_encode( $medida->cargarMedida( $data->idMedida ) );
+		break;
+
+	case 'cargarTipoProducto':		// DATOS TIPO PRODUCTO
+		$producto = new Producto();
+		echo json_encode( $producto->cargarTipoProducto( $data->idTipoProducto ) );
+		break;
+
+	case 'cargarProducto':			// DATOS PRODUCTO
+		$producto = new Producto();
+		echo json_encode( $producto->cargarProducto( $data->idProducto ) );
+		break;
+
+	case 'cargarMenu':				// DATOS MENU
+		$menu = new Menu();
+		echo json_encode( $menu->cargarMenu( $data->idMenu ) );
+		break;
+
+	case 'cargarMenuPrecio':		// DATOS MENU PRECIO
+		$menu = new Menu();
+		echo json_encode( $menu->cargarMenuPrecio( $data->idMenu ) );
+		break;		
+
+	case 'cargarReceta':			// DATOS RECETA
+		$receta = new Receta();
+		echo json_encode( $receta->cargarReceta( $data->idMenu, $data->idProducto ) );
+		break;
+
+	case 'cargarCombo':				// DATOS COMBO
+		$combo = new Combo();
+		echo json_encode( $combo->cargarCombo( $data->idCombo ) );
+		break;
+
+	case 'cargarComboDetalle':		// DATOS COMBO DETALLE
+		$combo = new Combo();
+		echo json_encode( $combo->cargarComboDetalle( $data->idCombo, $data->idMenu ) );
+		break;
+
+	case 'cargarComboPrecio':		// DATOS COMBO DETALLE
+		$combo = new Combo();
+		echo json_encode( $combo->cargarComboPrecio( $data->idCombo, $data->idTipoServicio ) );
+		break;
+
+	case 'cargarSuperCombo':		// DATOS SUPER COMBO
+		$combo = new Combo();
+		echo json_encode( $combo->cargarSuperCombo( $data->idSuperCombo ) );
+		break;
+
+	case 'cargarSuperComboDetalle':	// DATOS SUPER COMBO DETALLE
+		$combo = new Combo();
+		echo json_encode( $combo->cargarSuperComboDetalle( $data->idCombo, $data->idSuperCombo ) );
+		break;
+
+	case 'cargarSuperComboPrecio':	// DATOS SUPER COMBO PRECIO
+		$combo = new Combo();
+		echo json_encode( $combo->cargarSuperComboPrecio( $data->idSuperCombo, $data->idTipoServicio ) );
+		break;
+
+
+	/////////////////////////
 	//***** CONSULTA LISTAS
 	////////////////////////
 	case 'lstCombo':				// CARGAR LISTA DE COMBOS
@@ -115,7 +179,6 @@ switch ( $data->opcion )
 		$consulta = new Consulta();		
 		echo json_encode( $consulta->catEstadoCaja() );
 		break;
-
 
 	/////////////////////////
 	//***** CLIENTE
