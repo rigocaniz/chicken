@@ -12,9 +12,6 @@
 				<button class="btn btn-default" ng-click="inventarioMenu=3;catMedidas();"> 
 					<span class="glyphicon glyphicon-star-empty"></span> Medidas
 				</button>
-				<button class="btn btn-default" ng-click="inventarioMenu=4;"> 
-					<span class="glyphicon glyphicon-check"></span> Ingresos
-				</button>
 			</div>
 		</div>
 		<!--  tabla de porductos existentes -->
@@ -29,7 +26,7 @@
 						<input type="text" class="form-control" ng-model="filtro" placeholder="buscar">
 					</div>
 					<div class="col-sm-7"></div>
-						<a type="button" class="btn btn-primary" ng-href="#/nuevoEdita/insert">
+						<a type="button" class="btn btn-primary" ng-href="#/nuevoEdita/producto">
 							<span class="glyphicon glyphicon-plus"></span> Ingresar Nuevo
 						</a>
 					
@@ -52,7 +49,10 @@
 								<td>{{inv.esPerecedero}}</td>
 								<td>{{inv.disponibilidad}}</td>
 								<td>
-									<a ng-href="#/nuevoEdita/update/{{inv.idProducto}}" type="button" class="btn btn-primary btn-sm">
+									<a ng-click="ingresar(inv.idProducto,inv.producto)" type="button" class="btn btn-success btn-sm">
+										<span class="glyphicon glyphicon-plus"></span>
+									</a>
+									<a ng-href="#/nuevoEdita/producto/{{inv.idProducto}}" type="button" class="btn btn-primary btn-sm">
 										<span class="glyphicon glyphicon-edit"></span>
 									</a>
 									<span class="label label-warning" ng-show="inv.disponibilidad==inv.cantidadMninima">Pronto a agotarse</span>
@@ -150,4 +150,34 @@
 		</div>
 	</div>
 </div>
-<!-- dialogo de edición de producto -->
+<!-- dialogo ingreso a existencias -->
+<script type="text/ng-template" id="dial.ingreso.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content panel-primary">
+                <div class="modal-header panel-heading">
+                	<button type="button" class="close" ng-click="$hide()">&times;</button>
+                    Ingresar existencia de {{nombreProducto}}
+                </div>
+                <div class="modal-body">
+                	<div class="form-group">
+	                    <label class="col-sm-2">Cantidad</label>
+	                    <div class="col-sm-3">
+	                    	<input type="number" class="form-control" ng-model="$parent.cantidad">
+	                    </div>
+                   </div>
+                   <br>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" ng-click="guardaIngreso(idProducto,$parent.cantidad)">
+                        <span class="glyphicon glyphicon-ok"></span> Guardar
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="$hide()">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        <b>Salir</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script> 

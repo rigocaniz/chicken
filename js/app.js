@@ -81,9 +81,13 @@ app.config(function($routeProvider) {
 		templateUrl:'view/inventario.php',
 		controller:'inventarioCtrl'
 	})
-  .when('/nuevoEdita/:accion/:idProducto?',{
+  .when('/nuevoEdita/:evento/:id?',{
     templateUrl:'view/nuevoEdita.php',
     controller:'nuevoEditaCtrl'
+  })
+  .when('/admin',{
+    templateUrl:'view/admin.php',
+    controller:'crtlAdmin'
   })
 	.otherwise({
         redirectTo:'/'
