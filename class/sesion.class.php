@@ -9,13 +9,23 @@ class Sesion
 
 	function __construct()
 	{
+		/*
 		if( is_null( $this->sesion ) )
 			$this->iniciarSesion();
+			*/
 	}
 
 	private function iniciarSesion()
 	{
 		session_start();
+	}
+
+
+	function destruirSesion()
+	{
+		session_start();
+		session_destroy();
+		header("Location: login.php");
 	}
 
 	

@@ -4,30 +4,66 @@
 */
 class Usuario
 {
-	
-	function __construct(argument)
+	private $con       = NULL;
+	private $respuesta = 'info';
+ 	private $mensaje   = '';
+ 	private $tiempo    = 6;
+
+	function __construct()
 	{
-		
+		GLOBAL $conexion;
+ 		$this->con  = $conexion;
 	}
 
 	function login( $usuario, $clave )
 	{
+		$validar = new Validar();
 
+		$usuario = strlen( $usuario ) 	? $usuario 	: NULL;
+		$clave   = strlen( $clave )  	? $clave 	: NULL;
 
-		$sql = "CALL login( '{$usuario}', '{$clave}' )";
-		
-		if( $rs = $this->con->query( $sql ) ){
-			while( $row = $rs->fetch_object() ){
-				$this->respuesta = $row->respuesta;
-				$this->mensaje   = $row->mensaje;
-				$this->data      = $row;
+		$usuario = $validar->validarTexto( $usuario, NULL, TRUE, 8, 16, "USUARIO" );
+		$clave   = $validar->validarTexto( $clave, NULL, TRUE, 8, 16, "CONTRASEÑA" );
+
+		if( $validar->getIsError() ):
+ 			$this->respuesta = 'danger';
+ 			$this->mensaje   = $validar->getMsj();
+ 		else:
+			$sql = "CALL login( '{$usuario}', '{$clave}' )";
+			
+			if( $rs = $this->con->query( $sql ) ){
+				@$this->con->next_result();
+				if( $row = $rs->fetch_object() ){
+					$this->respuesta = $row->respuesta;
+					$this->mensaje   = $row->mensaje;
+					if( $this->respuesta == 'success' ){
+						// 	CREAR SESION
+						$sesion = new Sesion();
+						$sesion->setVariable( 'nombre', $row->nombre );
+						$sesion->setVariable( 'idNivel', (int)$row->idNivel );
+						$sesion->setVariable( 'idPerfil', (int)$row->idPerfil );
+					}
+				}
 			}
-		}
-		else{
-			$this->respuesta = 'danger';
-			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
-		}
-		
+			else{
+				$this->respuesta = 'danger';
+				$this->mensaje   = 'Error al ejecutar la operacion (SP)';
+			}
+ 		endif;
+
+ 		return $this->getRespuesta();
+
 	}
+
+
+	function getRespuesta()
+ 	{
+ 		return $respuesta = array( 
+ 				'respuesta' => $this->respuesta,
+ 				'mensaje'   => $this->mensaje,
+ 				'tiempo'    => $this->tiempo
+ 			);
+ 	}
+
 }
 ?>

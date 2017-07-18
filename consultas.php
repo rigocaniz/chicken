@@ -12,6 +12,7 @@ include 'class/orden.class.php';
 include 'class/producto.class.php';
 include 'class/receta.class.php';
 include 'class/sesion.class.php';
+include 'class/usuario.class.php';
 include 'class/validar.class.php';
 include 'class/funciones.php';
 
@@ -24,6 +25,11 @@ $datos = array();
 
 switch ( $data->opcion )
 {
+
+	case 'login':
+		$usuario = new Usuario();
+		echo json_encode( $usuario->login( $data->usuario, $data->clave ) );
+		break;
 	/////////////////////////
 	//***** CONSULTA DATOS
 	////////////////////////
