@@ -36,22 +36,22 @@ class Cliente
  		$cliente->idTipoCliente = strlen( $cliente->idTipoCliente ) > 0 ? (int)$cliente->idTipoCliente 	: NULL;
 
  		// VALIDAR
-		$nit           = $validar->validarNit( $cliente->nit, NULL, TRUE );
-		$nombre        = $validar->validarNombre( $this->nombre, NULL, TRUE );
+		$nit           = $validar->validarNit( $cliente->nit, NULL, validarNulo( $cliente->cui ) );
+		$nombre        = $validar->validarNombre( $cliente->nombre, NULL, validarNulo( $cliente->cui ) );
 		$cui           = $validar->validarCui( $cliente->cui, NULL, validarNulo( $cliente->cui ) );
 		$correo        = $validar->validarCorreo( $cliente->correo, NULL, validarNulo( $cliente->correo ) );
 		$telefono      = $validar->validarTelefono( $cliente->telefono, NULL, validarNulo( $cliente->telefono ) );
 		$direccion     = $validar->validarDireccion( $cliente->direccion, NULL, validarNulo( $cliente->direccion ) );
 		$idTipoCliente = $validar->validarEntero( $cliente->idTipoCliente, NULL, TRUE );
 
- 		if( $validar->getError() ):
+ 		if( $validar->getIsError() ):
  			
  			$this->respuesta = 'warning';
  			$this->mensaje   = $validar->getMsj();
  			$this->tiempo    = $validar->getTiempo();
 
  		else:
- 			$sql = "CALL clienteNuevo( {$nit}, '{$nombre}', {$cui}, {$correo}, {$telefono}, '{$direccion}', {$idTipoCliente}, '{$this->sess->getUser()}' );";
+ 			$sql = "CALL clienteNuevo( {$nit}, '{$nombre}', {$cui}, {$correo}, {$telefono}, '{$direccion}', {$idTipoCliente} );";
  			
  			if( $rs = $this->con->query( $sql ) ):
  				$row = $rs->fetch_object();
@@ -65,6 +65,8 @@ class Cliente
  			endif;
 
  		endif;
+
+ 		return $this->getRespuesta();
  	}
 
 
