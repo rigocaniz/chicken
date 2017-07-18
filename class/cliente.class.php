@@ -83,10 +83,10 @@ class Cliente
  		elseif( $tipo== 'cui' ):
  			$cui = $valor;
  		elseif( $tipo == 'nombre' ):
-			$nombre = $valor;
+			$nombre = "'" . $valor . "'";
  		endif;
 
-	 	$sql = "CALL consultarCliente( {$nit}, '{$nombre}', {$cui} );";
+	 	$sql = "CALL consultarCliente( {$nit}, {$nombre}, {$cui} );";
 	 	
 	 	if( $rs = $this->con->query( $sql ) ){
 	 		if( $rs->num_rows > 0 ){
@@ -94,7 +94,7 @@ class Cliente
 	 			$this->mensaje   = 'Encontrado';
 
 		 		while( $row = $rs->fetch_object() )
-		 			$this->data[] = $row;
+		 			$dataCliente[] = $row;
 	 		}else{
 	 			$this->respuesta = 'warning';
 	 			$this->mensaje   = 'No Encontrado';
@@ -104,6 +104,8 @@ class Cliente
 	 		$this->respuesta = 'danger';
 	 		$this->mensaje   = 'Error al ejecutar la operacion (SP)';
 	 	}
+
+	 	return $dataCliente;
  	
  	}
 

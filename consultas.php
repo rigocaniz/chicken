@@ -196,8 +196,7 @@ switch ( $data->opcion )
 
 	case 'consultarCliente':			// CONSULTAR CLIENTE
 		$cliente = new Cliente();
-		$cliente->consultarCliente( $data->tipo, $data->cliente ) ;
-		echo json_encode( $cliente->getRespuesta() );
+		echo json_encode( $cliente->consultarCliente( $data->tipo, $data->cliente ) );
 		break;
 
 	/////////////////////////
