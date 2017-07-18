@@ -22,13 +22,14 @@ class Usuario
 		$usuario = strlen( $usuario ) 	? $usuario 	: NULL;
 		$clave   = strlen( $clave )  	? $clave 	: NULL;
 
-		$usuario = $validar->validarTexto( $usuario, NULL, TRUE, 8, 16, "USUARIO" );
-		$clave   = $validar->validarTexto( $clave, NULL, TRUE, 8, 16, "CONTRASEÑA" );
+		$usuario = $this->con->real_escape_string( $validar->validarTexto( $usuario, NULL, TRUE, 8, 16, "USUARIO" ) );
+		$clave   = $this->con->real_escape_string( $validar->validarTexto( $clave, NULL, TRUE, 8, 16, "CONTRASEÑA" ) );
 
 		if( $validar->getIsError() ):
  			$this->respuesta = 'danger';
  			$this->mensaje   = $validar->getMsj();
  		else:
+
 			$sql = "CALL login( '{$usuario}', '{$clave}' )";
 			
 			if( $rs = $this->con->query( $sql ) ){
