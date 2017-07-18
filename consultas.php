@@ -183,20 +183,14 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** CLIENTE
 	/////////////////////////
-	case 'guardarCliente':				// GUARDAR CLIENTE
+	case 'consultaCliente':			// CONSULTA CLIENTE
 		$cliente = new Cliente();
-		echo json_encode( $cliente->guardarCliente( $data->cliente ) );
+		echo json_encode( $cliente->consultaCliente( $data->accion, $data->cliente ) );
 		break;
 
-	case 'actualizarCliente':			// ACTUALIZAR CLIENTE
+	case 'cargarCliente':			// CARGAR CLIENTE
 		$cliente = new Cliente();
-		$cliente->actualizarCliente( $data->cliente ) ;
-		echo json_encode( $cliente->getRespuesta() );
-		break;
-
-	case 'consultarCliente':			// CONSULTAR CLIENTE
-		$cliente = new Cliente();
-		echo json_encode( $cliente->consultarCliente( $data->tipo, $data->cliente ) );
+		echo json_encode( $cliente->cargarCliente( $data->tipo, $data->cliente ) );
 		break;
 
 	/////////////////////////

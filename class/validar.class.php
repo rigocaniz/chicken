@@ -5,15 +5,16 @@
 class Validar
 {
 	private $error   = FALSE;
-	private $warning = FALSE;
 	private $mensaje = '';
 	private $tiempo  = 6;
 
-	
+	// VALIDAR NOMBRE
 	function validarNombre( $valor = '', $default = NULL, $required = TRUE )
 	{
 		if( $this->error )
 			return;
+
+		$warning = FALSE;
 
 		if( !(strlen( $valor ) >= 3) ):
 			$warning = TRUE;
@@ -27,10 +28,13 @@ class Validar
 	}
 
 
+	// VALIDAR DIRECCION
 	function validarDireccion( $valor = '', $default = NULL, $required = TRUE )
 	{
 		if( $this->error )
 			return;
+
+		$warning = FALSE;
 
 		if( !(strlen( $valor ) >= 10) ):
 			$warning = TRUE;
@@ -43,11 +47,14 @@ class Validar
 		endif;
 	}
 
-
+	
+	// VALIDAR CUI
 	function validarCui( $valor = 0, $default = NULL, $required = TRUE )
 	{
 		if( $this->error )
 			return;
+
+		$warning = FALSE;
 
 		if( !(strlen( (int)$valor ) == 13) ):
 			$warning = TRUE;
@@ -61,12 +68,15 @@ class Validar
 	}
 
 
+	// VALIDAR NIT
 	function validarNit( $valor = '', $default = NULL, $required = TRUE )
 	{
 		if( $this->error )
 			return;
 
-		if( !(strlen( (int)$valor ) == 13) ):
+		$warning = FALSE;
+
+		if( !(strlen( (int)$valor ) >= 8) ):
 			$warning = TRUE;
 			$this->mensaje = 'No. de NIT inválido, verifique.';
 			$this->tiempo  = 4;
@@ -78,7 +88,6 @@ class Validar
 		endif;
 	}
 
-	
 
 	// VALIDAR NUMERO
 	function validarNumero( $valor = '', $default = NULL, $required = TRUE, $min = 0, $max = 0 )
@@ -93,6 +102,10 @@ class Validar
 			$warning = TRUE;
     		$this->mensaje = 'El número ingresado es inválido, verifique.';
     		$this->tiempo  = 4;
+    	elseif( $valor < $min ):
+    		$warning = TRUE;
+    		$this->mensaje = "El número ingresado debe ser mayor a {$min}, verifique.";
+    		$this->tiempo  = 5;
 		endif;
 
 		if( $warning AND $required ):
@@ -103,6 +116,7 @@ class Validar
 		return $valor;
 	}
 
+	
 	// VALIDAR TELEFONO
 	function validarTelefono( $valor = '', $default = NULL, $required = TRUE )
 	{
@@ -124,6 +138,7 @@ class Validar
 		return $valor;
 	}
 
+	
 	// VALIDAR CORREO
 	function validarCorreo( $valor = '', $default = NULL, $required = TRUE )
 	{
@@ -146,6 +161,7 @@ class Validar
 		return $valor;
 	}
 
+	
 	// VALIDAR ENTERO
 	function validarCantidad( $valor = 0, $default = NULL, $required = TRUE, $minimo = 0, $maximo = 50000,  $msj = '' )
 	{
@@ -174,6 +190,7 @@ class Validar
 		return $valor;
 	}
 
+	
 	// VALIDAR ENTERO
 	function validarEntero( $valor = 0, $default = NULL, $required = TRUE, $msj = '' )
 	{
@@ -196,6 +213,7 @@ class Validar
 		return $valor;
 	}
 
+	
 	// VALIDAR TEXTO
 	function validarTexto( $valor = 0, $default = NULL, $required = TRUE, $minimo = 1, $maximo = 350, $msj = '' )
 	{

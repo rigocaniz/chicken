@@ -20,16 +20,21 @@ class Cliente
  		$this->sess = $sesion;
  	}
 
-
-
- 	function guardarCliente( $cliente )
+ 	function consultaCliente( $accion, $cliente )
  	{
  		$validar = new Validar();
+ 		
+ 		$idCliente = "NULL";
+
+ 		if( $accion == 'update' ):
+ 			$cliente->idCliente = strlen( (int)$cliente->idCliente ) > 0 ? (int)$cliente->nit : NULL;
+ 			$idCliente = $validar->validarNumero( $cliente->idCliente, NULL, TRUE, 1  );
+ 		endif;
 
  		// SET
- 		$cliente->nit           = strlen( $cliente->nit ) > 0 			? (string)$cliente->nit 		: NULL;
+ 		$cliente->nit           = strlen( (int)$cliente->nit ) > 0 		? (string)$cliente->nit 		: NULL;
  		$cliente->nombre        = strlen( $cliente->nombre ) > 0 		? (string)$cliente->nombre 		: NULL;
- 		$cliente->cui           = strlen( $cliente->cui ) > 0 			? (int)$cliente->cui 			: NULL;
+ 		$cliente->cui           = strlen( (int)$cliente->cui ) > 0 		? (int)$cliente->cui 			: NULL;
  		$cliente->correo        = strlen( $cliente->correo ) > 0 		? (string)$cliente->correo 		: NULL;
  		$cliente->telefono      = strlen( $cliente->telefono ) > 0 		? (int)$cliente->telefono 		: NULL;
  		$cliente->direccion     = strlen( $cliente->direccion ) > 0 	? (string)$cliente->direccion 	: NULL;
@@ -51,18 +56,21 @@ class Cliente
  			$this->tiempo    = $validar->getTiempo();
 
  		else:
- 			$sql = "CALL clienteNuevo( {$nit}, '{$nombre}', {$cui}, {$correo}, {$telefono}, '{$direccion}', {$idTipoCliente} );";
+ 			$sql = "CALL consultaCliente( {$nit}, '{$nombre}', {$cui}, {$correo}, {$telefono}, '{$direccion}', {$idTipoCliente} );";
  			
- 			if( $rs = $this->con->query( $sql ) ):
- 				$row = $rs->fetch_object();
+ 			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+ 				@$this->con->next_result();
 
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;
- 				$this->data      = $row->id;
- 			else:
+ 				if( $this->respuesta == 'success' )
+ 					$this->data = (int)$row->id;
+
+ 			}
+ 			else{
  				$this->respuesta = 'danger';
  				$this->mensaje   = 'Error al ejecutar la operacion';
- 			endif;
+ 			}
 
  		endif;
 
