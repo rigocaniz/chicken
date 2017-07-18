@@ -71,6 +71,7 @@
     <script src="js/crtlCliente.js"></script>
     <script src="js/crtlInventario.js"></script>
     <script src="js/crtlNuevoEdita.js"></script>
+    <script src="js/crtlAdmin.js"></script>
     <script src="js/alertify.js"></script>
      <script>
     // Closes the sidebar menu
