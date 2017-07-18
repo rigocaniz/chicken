@@ -20,6 +20,58 @@ class Producto
 	}
 
 
+	// GUARDAR // ACTUALIZAR => INGRESO
+	function consultaIngreso( $accion, $data )
+	{
+
+		$validar = new Validar();
+
+		// INICIALIZACIÓN VAR
+ 		$idIngreso  = 'NULL';
+ 		$cantidad   = 'NULL';
+ 		$idProducto = 'NULL';
+
+		// SETEO VARIABLES GENERALES
+ 		$data->idProducto = (int)$data->idProducto > 0 AND !esNulo( $data->idProducto ) ? (int)$data->idProducto 	: NULL;
+ 		$data->cantidad   = (double)$data->cantidad AND !esNulo( $data->cantidad )		? (double)$data->cantidad 	: NULL;
+
+ 		// VALIDACIONES
+ 		if( $accion == 'delete' ):
+ 			$data->idIngreso  = (int)$data->idIngreso > 0 AND !esNulo( $data->idIngreso ) ? (int)$data->idIngreso : NULL;
+			$idIngreso = $validar->validarEntero( $data->idIngreso, NULL, TRUE, 'El ID de Ingreso no es válido, verifique.' );
+ 		endif;
+
+		$idProducto = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido, verifique.' );
+		$cantidad   = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 5000, 'la cantidad' );
+
+		// OBTENER RESULTADO DE VALIDACIONES
+ 		if( $validar->getIsError() ):
+	 		$this->respuesta = 'danger';
+	 		$this->mensaje   = $validar->getMsj();
+
+ 		else:
+			$sql = "CALL consultaIngreso( '{$accion}', {$idIngreso}, {$cantidad}, {$idProducto} );";
+
+	 		if( $rs = $this->con->query( $sql ) ){
+	 			@$this->con->next_result();
+	 			if( $row = $rs->fetch_object() ){
+	 				$this->respuesta = $row->respuesta;
+	 				$this->mensaje   = $row->mensaje;
+	 				if( $accion == 'insert' AND $this->respuesta == 'success' )
+	 					$this->data = (int)$row->id;
+	 			}
+	 		}
+	 		else{
+	 			$this->respuesta = 'danger';
+	 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+	 		}			
+	 		
+ 		endif;
+
+ 		return $this->getRespuesta();
+	}
+	
+
 	// GUARDAR // ACTUALIZAR => TIPOPRODUCTO
 	function consultaTipoProducto( $accion, $data )
 	{

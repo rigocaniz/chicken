@@ -211,6 +211,11 @@ switch ( $data->opcion )
 		echo json_encode( $producto->consultaTipoProducto( $data->accion, $data->datos ) );
 		break;
 
+	case 'consultaIngreso':		//	ACCION INGRESO: INSERT / DELETE
+		$producto = new Producto();
+		echo json_encode( $producto->consultaIngreso( $data->accion, $data->datos ) );
+		break;
+
 	/////////////////////////
 	//***** MEDIDA
 	/////////////////////////
