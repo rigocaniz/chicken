@@ -5,14 +5,56 @@
 class Validar
 {
 	private $error   = FALSE;
-	private $warning = FALSE;
-	private $mensaje     = '';
+	private $mensaje = '';
+	private $tiempo  = 6;
+
+	// VALIDAR NOMBRE
+	function validarNombre( $valor = '', $default = NULL, $required = TRUE )
+	{
+		if( $this->error )
+			return;
+
+		$warning = FALSE;
+
+		if( !(strlen( $valor ) >= 3) ):
+			$warning = TRUE;
+			$this->mensaje = 'Nombre inválido, verifique un minímo de 3 caracteres.';
+		endif;
+
+		if( $warning AND $required ):
+			$valor = $default;
+			$this->error = TRUE;
+		endif;
+	}
+
+
+	// VALIDAR DIRECCION
+	function validarDireccion( $valor = '', $default = NULL, $required = TRUE )
+	{
+		if( $this->error )
+			return;
+
+		$warning = FALSE;
+
+		if( !(strlen( $valor ) >= 10) ):
+			$warning = TRUE;
+			$this->mensaje = 'Dirección inválida, verifique que tenga un mínimo de 10 caracteres.';
+		endif;
+
+		if( $warning AND $required ):
+			$valor = $default;
+			$this->error = TRUE;
+		endif;
+	}
 
 	
+	// VALIDAR CUI
 	function validarCui( $valor = 0, $default = NULL, $required = TRUE )
 	{
 		if( $this->error )
 			return;
+
+		$warning = FALSE;
 
 		if( !(strlen( (int)$valor ) == 13) ):
 			$warning = TRUE;
@@ -24,6 +66,28 @@ class Validar
 			$this->error = TRUE;
 		endif;
 	}
+
+
+	// VALIDAR NIT
+	function validarNit( $valor = '', $default = NULL, $required = TRUE )
+	{
+		if( $this->error )
+			return;
+
+		$warning = FALSE;
+
+		if( !(strlen( (int)$valor ) >= 8) ):
+			$warning = TRUE;
+			$this->mensaje = 'No. de NIT inválido, verifique.';
+			$this->tiempo  = 4;
+		endif;
+
+		if( $warning AND $required ):
+			$valor = $default;
+			$this->error = TRUE;
+		endif;
+	}
+
 
 	// VALIDAR NUMERO
 	function validarNumero( $valor = '', $default = NULL, $required = TRUE, $min = 0, $max = 0 )
@@ -37,6 +101,11 @@ class Validar
 		if ( !filter_var( $valor, FILTER_VALIDATE_INT ) AND $required ):
 			$warning = TRUE;
     		$this->mensaje = 'El número ingresado es inválido, verifique.';
+    		$this->tiempo  = 4;
+    	elseif( $valor < $min ):
+    		$warning = TRUE;
+    		$this->mensaje = "El número ingresado debe ser mayor a {$min}, verifique.";
+    		$this->tiempo  = 5;
 		endif;
 
 		if( $warning AND $required ):
@@ -47,6 +116,7 @@ class Validar
 		return $valor;
 	}
 
+	
 	// VALIDAR TELEFONO
 	function validarTelefono( $valor = '', $default = NULL, $required = TRUE )
 	{
@@ -68,6 +138,7 @@ class Validar
 		return $valor;
 	}
 
+	
 	// VALIDAR CORREO
 	function validarCorreo( $valor = '', $default = NULL, $required = TRUE )
 	{
@@ -79,6 +150,7 @@ class Validar
 		if ( !filter_var( $valor, FILTER_VALIDATE_EMAIL ) AND $required ):
     		$warning = TRUE;
     		$this->mensaje = 'Correo electronico invalido, verifique.';
+    		$this->tiempo  = 4;
 		endif;
 
 		if( $warning AND $required ):
@@ -89,6 +161,7 @@ class Validar
 		return $valor;
 	}
 
+	
 	// VALIDAR ENTERO
 	function validarCantidad( $valor = 0, $default = NULL, $required = TRUE, $minimo = 0, $maximo = 50000,  $msj = '' )
 	{
@@ -117,6 +190,7 @@ class Validar
 		return $valor;
 	}
 
+	
 	// VALIDAR ENTERO
 	function validarEntero( $valor = 0, $default = NULL, $required = TRUE, $msj = '' )
 	{
@@ -139,6 +213,7 @@ class Validar
 		return $valor;
 	}
 
+	
 	// VALIDAR TEXTO
 	function validarTexto( $valor = 0, $default = NULL, $required = TRUE, $minimo = 1, $maximo = 350, $msj = '' )
 	{
@@ -151,6 +226,7 @@ class Validar
 		if( !strlen( $valor ) AND $required ):
 			$warning = TRUE;
 			$this->mensaje = "No ha ingresado ningún texto en {$msj}, verifique.";
+			$this->tiempo  = 5;
 		elseif( strlen( $valor ) < $minimo ):
 			$warning = TRUE;
 			$this->mensaje = "El contenido ingresado en {$msj} no puede ser menor a {$minimo} caracteres, verifique.";
@@ -172,6 +248,11 @@ class Validar
 	function getIsError()
 	{
 		return $this->error;
+	}
+
+	function getTiempo()
+	{
+		return $this->tiempo;
 	}
 
 	// OBTENER MENSAJE

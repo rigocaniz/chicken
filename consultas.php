@@ -13,7 +13,7 @@ include 'class/producto.class.php';
 include 'class/receta.class.php';
 include 'class/sesion.class.php';
 include 'class/validar.class.php';
-include 'funciones/funciones.php';
+include 'class/funciones.php';
 
 
 $sesion->setVariable( 'usuario', 'TEST' );
@@ -183,22 +183,14 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** CLIENTE
 	/////////////////////////
-	case 'guardarCliente':				// GUARDAR CLIENTE
+	case 'consultaCliente':			// CONSULTA CLIENTE
 		$cliente = new Cliente();
-		$cliente->guardarCliente( $data->cliente ) ;
-		echo json_encode( $cliente->getRespuesta() );
+		echo json_encode( $cliente->consultaCliente( $data->accion, $data->cliente ) );
 		break;
 
-	case 'actualizarCliente':			// ACTUALIZAR CLIENTE
+	case 'cargarCliente':			// CARGAR CLIENTE
 		$cliente = new Cliente();
-		$cliente->actualizarCliente( $data->cliente ) ;
-		echo json_encode( $cliente->getRespuesta() );
-		break;
-
-	case 'consultarCliente':			// CONSULTAR CLIENTE
-		$cliente = new Cliente();
-		$cliente->consultarCliente( $data->tipo, $data->cliente ) ;
-		echo json_encode( $cliente->getRespuesta() );
+		echo json_encode( $cliente->cargarCliente( $data->tipo, $data->cliente ) );
 		break;
 
 	/////////////////////////
