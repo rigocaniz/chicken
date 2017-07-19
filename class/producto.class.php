@@ -221,6 +221,9 @@ class Producto
 		
 		if( $rs = $this->con->query( $sql ) ){
 			if( $row = $rs->fetch_object() )
+				$row->cantidadMinima = (float) $row->cantidadMinima;
+				$row->cantidadMaxima = (float) $row->cantidadMaxima;
+				$row->disponibilidad = (float) $row->disponibilidad;
 				$producto = $row;
 		}
 

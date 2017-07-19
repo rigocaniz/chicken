@@ -78,4 +78,32 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		}
 	}
 
+	$scope.dialIngreso = $modal({scope: $scope,template:'dial.ingreso.html', show: false});
+
+	$scope.ingresar = function(idProducto, nombreProducto){
+		$scope.dialIngreso.show();
+		$scope.idProducto     = idProducto;
+		$scope.nombreProducto = nombreProducto;
+	}
+
+	$scope.guardaIngreso = function(idProducto,cantidad){
+		if (!(cantidad>0) ) {
+			alertify.set('notifier','position', 'top-right');
+ 			alertify.notify('Ingrese la cantidad', 'warning', 3);
+		}else{
+			$http.post('consultas.php',{
+				opcion:"consultaIngreso",
+				accion:'insert',
+				datos: {idProducto:idProducto,cantidad:cantidad}
+			}).success(function(data){
+				alertify.set('notifier','position', 'top-right');
+ 				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
+				if ( data.respuesta == 'success' ) {
+					$scope.cantidad = '';
+					$scope.dialIngreso.hide();
+					$scope.inventario();
+				}
+			})
+		}
+	}
 });

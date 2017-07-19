@@ -26,33 +26,27 @@
 						<a type="button" class="btn btn-primary" ng-href="#/nuevoEdita/menu">
 							<span class="glyphicon glyphicon-plus"></span> Ingresar Nuevo
 						</a>
-					
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Imagen</th>
-								<th>Nombre Menu</th>
-								<th>Descripción</th>
-								<th>Estado</th>
-								<th>Menu para</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr ng-repeat="m in lstMenus |filter:filtro">
-								<td>{{m.imagen}}</td>
-								<td>{{m.menu}}</td>
-								<td>{{m.descripcion}}</td>
-								<td>{{m.estadoMenu}}</td>
-								<td>{{m.destinoMenu}}</td>
-								<td>
-									<a ng-href="#/nuevoEdita/menu/{{m.idMenu}}" type="button" class="btn btn-primary btn-sm">
-										<span class="glyphicon glyphicon-edit"></span>
-									</a>
-								</td>
-							</tr>
-						</tbody>
-					</table>
+					<div class="row">
+						<br>
+					  <div class="col-sm-3" ng-repeat="m in lstMenus |filter:filtro">
+					    <div class="thumbnail">
+					    	<span class="label label-info">{{m.destinoMenu}}</span>
+					      <img src="upload/Logo.png" alt="...">
+					      <div class="caption">
+					        <p>
+					        	<strong>{{m.menu}}</strong> 
+					        	<span class="label label-success">{{m.estadoMenu}}</span>
+					        </p> 
+					        <p>{{m.descripcion}}</p>
+					        <p>
+					        	<a ng-href="#/nuevoEdita/menu/{{m.idMenu}}" type="button" class="btn btn-primary btn-sm">
+									<span class="glyphicon glyphicon-edit"></span>
+								</a>
+							</p>
+					      </div>
+					    </div>
+					  </div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -71,31 +65,26 @@
 						<a type="button" class="btn btn-primary" ng-href="#/nuevoEdita/combo">
 							<span class="glyphicon glyphicon-plus"></span> Ingresar Nuevo
 						</a>
-					
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Imagen</th>
-								<th>Combo</th>
-								<th>Descripción</th>
-								<th>Estado</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr ng-repeat="c in lstCombos |filter:filtro">
-								<td>{{c.imagen}}</td>
-								<td>{{c.combo}}</td>
-								<td>{{c.descripcion}}</td>
-								<td>{{c.estadoMenu}}</td>
-								<td>
-									<a ng-href="#/nuevoEdita/combo/{{c.idCombo}}" type="button" class="btn btn-primary btn-sm">
-										<span class="glyphicon glyphicon-edit"></span>
-									</a>
-								</td>
-							</tr>
-						</tbody>
-					</table>
+					<div class="row">
+						<br>
+					  <div class="col-sm-3" ng-repeat="c in lstCombos |filter:filtro">
+					    <div class="thumbnail">
+					      <img src="upload/Logo.png" alt="...">
+					      <div class="caption">
+					        <p>
+					        	<strong>{{c.combo}}</strong> 
+					        	<span class="label label-success">{{c.estadoMenu}}</span>
+					        </p> 
+					        <p>{{c.descripcion}}</p>
+					        <p>
+					        	<a ng-href="#/nuevoEdita/combo/{{c.idCombo}}" type="button" class="btn btn-primary btn-sm">
+									<span class="glyphicon glyphicon-edit"></span>
+								</a>
+							</p>
+					      </div>
+					    </div>
+					  </div>
+					</div>
 				</div>
 			</div>
 		</div>
