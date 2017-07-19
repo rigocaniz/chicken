@@ -12,7 +12,7 @@ class Validar
 	function validarNombre( $valor = '', $default = NULL, $required = TRUE )
 	{
 		if( $this->error )
-			return;
+			return $valor;
 
 		$warning = FALSE;
 
@@ -32,7 +32,7 @@ class Validar
 	function validarDireccion( $valor = '', $default = NULL, $required = TRUE )
 	{
 		if( $this->error )
-			return;
+			return $valor;
 
 		$warning = FALSE;
 
@@ -52,7 +52,7 @@ class Validar
 	function validarCui( $valor = 0, $default = NULL, $required = TRUE )
 	{
 		if( $this->error )
-			return;
+			return $valor;
 
 		$warning = FALSE;
 
@@ -72,7 +72,7 @@ class Validar
 	function validarNit( $valor = '', $default = NULL, $required = TRUE )
 	{
 		if( $this->error )
-			return;
+			return $valor;
 
 		$warning = FALSE;
 
@@ -93,7 +93,7 @@ class Validar
 	function validarNumero( $valor = '', $default = NULL, $required = TRUE, $min = 0, $max = 0 )
 	{
 		if( $this->error )
-			return;
+			return $valor;
 		
 		$warning = FALSE;
 		$valor   = (int)$valor;
@@ -121,7 +121,7 @@ class Validar
 	function validarTelefono( $valor = '', $default = NULL, $required = TRUE )
 	{
 		if( $this->error )
-			return;
+			return $valor;
 
 		$valor = (int)$valor;
 
@@ -143,7 +143,7 @@ class Validar
 	function validarCorreo( $valor = '', $default = NULL, $required = TRUE )
 	{
 		if( $this->error )
-			return;
+			return $valor;
 
 		$warning = FALSE;
 
@@ -166,7 +166,7 @@ class Validar
 	function validarCantidad( $valor = 0, $default = NULL, $required = TRUE, $minimo = 0, $maximo = 50000,  $msj = '' )
 	{
 		if( $this->error )
-			return;
+			return $valor;
 		
 		$warning = FALSE;
 		$valor   = (double)$valor;
@@ -195,7 +195,7 @@ class Validar
 	function validarEntero( $valor = 0, $default = NULL, $required = TRUE, $msj = '' )
 	{
 		if( $this->error )
-			return;
+			return $valor;
 		
 		$warning = FALSE;
 		$valor   = (int)$valor;
@@ -218,7 +218,7 @@ class Validar
 	function validarTexto( $valor = 0, $default = NULL, $required = TRUE, $minimo = 1, $maximo = 350, $msj = '' )
 	{
 		if( $this->error )
-			return;
+			return $valor;
 
 		$warning = FALSE;
 		$valor   = (string)$valor;
