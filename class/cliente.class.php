@@ -41,12 +41,12 @@ class Cliente
  		$cliente->idTipoCliente = strlen( $cliente->idTipoCliente ) > 0 ? (int)$cliente->idTipoCliente 	: NULL;
 
  		// VALIDAR
-		$nit           = $validar->validarNit( $cliente->nit, NULL, validarNulo( $cliente->cui ) );
-		$nombre        = $validar->validarNombre( $cliente->nombre, NULL, validarNulo( $cliente->cui ) );
-		$cui           = $validar->validarCui( $cliente->cui, NULL, validarNulo( $cliente->cui ) );
-		$correo        = $validar->validarCorreo( $cliente->correo, NULL, validarNulo( $cliente->correo ) );
-		$telefono      = $validar->validarTelefono( $cliente->telefono, NULL, validarNulo( $cliente->telefono ) );
-		$direccion     = $validar->validarDireccion( $cliente->direccion, NULL, validarNulo( $cliente->direccion ) );
+		$nit           = $validar->validarNit( $cliente->nit, NULL, !esNulo( $cliente->cui ) );
+		$nombre        = $validar->validarNombre( $cliente->nombre, NULL, !esNulo( $cliente->cui ) );
+		$cui           = $validar->validarCui( $cliente->cui, NULL, !esNulo( $cliente->cui ) );
+		$correo        = $validar->validarCorreo( $cliente->correo, NULL, !esNulo( $cliente->correo ) );
+		$telefono      = $validar->validarTelefono( $cliente->telefono, NULL, !esNulo( $cliente->telefono ) );
+		$direccion     = $validar->validarDireccion( $cliente->direccion, NULL, !esNulo( $cliente->direccion ) );
 		$idTipoCliente = $validar->validarEntero( $cliente->idTipoCliente, NULL, TRUE );
 
  		if( $validar->getIsError() ):
