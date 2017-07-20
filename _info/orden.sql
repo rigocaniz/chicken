@@ -18,17 +18,17 @@ BEGIN
 		INSERT INTO detalleOrdenMenu (idOrdenCliente, idMenu, cantidad, idEstadoDetalleOrden, idTipoServicio, usuario, usuarioResponsable)
 		VALUES (_idOrdenCliente, _idMenu, _cantidad, 1, _idTipoServicio, @usuario, _usuarioResponsable );
 
-		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
+		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
 
 	ELSEIF _action = 'estado' THEN
-		IF ( ( _idEstadoDetalleOrden > _estadoActualDetalle ) OR @isAdmin )
+		IF ( ( _idEstadoDetalleOrden > _estadoActualDetalle ) OR @isAdmin ) THEN
 			UPDATE detalleOrdenMenu SET
 				idEstadoDetalleOrden = _idEstadoDetalleOrden
 			WHERE idDetalleOrdenMenu = _idDetalleOrdenMenu;
 
-			SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
+			SELECT 'success' AS 'respuesta', 'Cambio de estado guardado correctamente' AS 'mensaje';
 		ELSE
-			SELECT 'danger' AS 'respuesta', 'No se puede regresar a un estado anterior a menos que sea Administrador' AS 'mensaje';
+			SELECT 'danger' AS 'respuesta', 'No se puede retornar a un estado anterior' AS 'mensaje';
 		END IF;
 
 	ELSEIF _action = 'responsable' THEN
@@ -36,18 +36,22 @@ BEGIN
 			usuarioResponsable = _usuarioResponsable
 		WHERE idDetalleOrdenMenu = _idDetalleOrdenMenu;
 
-		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
+		SELECT 'success' AS 'respuesta', 'Cambio de responsable exitoso' AS 'mensaje';
 
 	ELSEIF _action = 'factura' THEN
-		UPDATE detalleOrdenMenu SET
-			idFactura = _idFactura,
-			idEstadoDetalleOrden = IF( !ISNULL( _idFactura ), 5, idDetalleOrdenMenu )
-		WHERE idDetalleOrdenMenu = _idDetalleOrdenMenu;
+		IF ( ( _estadoActualDetalle <= 5  ) OR @isAdmin ) THEN
+			UPDATE detalleOrdenMenu SET
+				idFactura            = _idFactura,
+				idEstadoDetalleOrden = IF( !ISNULL( _idFactura ), 5, 4 )
+			WHERE idDetalleOrdenMenu = _idDetalleOrdenMenu;
 
-		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
+			SELECT 'success' AS 'respuesta', 'Cambio de factura exitoso' AS 'mensaje';
+		ELSE
+			SELECT 'danger' AS 'respuesta', 'Estado actual no permite modificación de factura' AS 'mensaje';
+		END IF;
 
 	ELSEIF _action = 'tipoServicio' THEN
-		IF ( ( _estadoActualDetalle != 5 AND _estadoActualDetalle != 10 ) OR @isAdmin ) THEN
+		IF ( ( _estadoActualDetalle != 6 AND _estadoActualDetalle != 10 ) OR @isAdmin ) THEN
 			UPDATE detalleOrdenMenu SET
 				idTipoServicio = _idTipoServicio
 			WHERE idDetalleOrdenMenu = _idDetalleOrdenMenu;
@@ -64,31 +68,30 @@ BEGIN
 				cantidad = _cantidad
 			WHERE idDetalleOrdenMenu = _idDetalleOrdenMenu;
 
-			SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
+			SELECT 'success' AS 'respuesta', 'Actualizado correctamente' AS 'mensaje';
 		ELSE
 			SELECT 'danger' AS 'respuesta', 'El estado actual no permite modificación' AS 'mensaje';
 		END IF;
 
 	ELSEIF _action = 'asignarOtroCliente' THEN
 
-
-		IF ( ISNULL( _estadoActualOrden ) OR ISNULL( _estadoActualDetalle ) ) THEN
+		IF ISNULL( _estadoActualDetalle ) THEN
 			SELECT 'danger' AS 'respuesta', 'Existe información faltante' AS 'mensaje';
 
 		# SI EL OrdenCliente ESTA EN ESTADO: Finalizado (3), Cancelado (10)
 		ELSEIF ( ( _estadoActualOrden = 3 OR _estadoActualOrden = 10 ) AND !@isAdmin ) THEN
 			SELECT 'danger' AS 'respuesta', 'No es posible realizar asignación, por estado actual de la Orden del Cliente' AS 'mensaje';
 
-		# SI EL DETALLE ESTA EN ESTADO: Realizado (4), Cancelado (10)
-		ELSEIF ( ( _estadoActualDetalle = 5 OR _estadoActualDetalle = 10 ) AND !@isAdmin ) THEN
-			SELECT 'danger' AS 'respuesta', 'No es posible realizar la asignación, por estado actual de Menú' AS 'mensaje';
+		# SI EL DETALLE ESTA EN ESTADO: Realizado (6), Cancelado (10)
+		ELSEIF ( _estadoActualDetalle = 5 OR _estadoActualDetalle = 6 OR _estadoActualDetalle = 10 ) THEN
+			SELECT 'danger' AS 'respuesta', 'No es posible realizar la asignación, por estado actual de pedido' AS 'mensaje';
 			
 		ELSE
 			UPDATE detalleOrdenMenu SET 
 				idOrdenCliente = _idOrdenCliente
 			WHERE idDetalleOrdenMenu = _idDetalleOrdenMenu;
 
-			SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
+			SELECT 'success' AS 'respuesta', 'Realizado correctamente' AS 'mensaje';
 		END IF;
 	ELSE
 		SELECT 'danger' AS 'respuesta', 'Acción no válida' AS 'mensaje';
