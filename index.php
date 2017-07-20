@@ -10,6 +10,7 @@
 	<link href="css/stylish-portfolio.css" rel="stylesheet">
     <link rel="stylesheet" href="css/alertify.css">
     <link rel="stylesheet" href="css/themes/semantic.css">
+    <link rel="stylesheet" href="css/fileinput.min.css">
 </head>
 <body>
 	<!-- Navegacion-->
@@ -67,11 +68,13 @@
 	<script src="js/libs/angular-route.min.js"></script>
     <script src="js/libs/ngstrap.js"></script>
     <script src="js/libs/dirPagination.js"></script>
+    <script src="js/libs/fileinput.min.js"></script>
     <script src="js/app.js"></script>
     <script src="js/crtlCliente.js"></script>
     <script src="js/crtlInventario.js"></script>
     <script src="js/crtlNuevoEdita.js"></script>
     <script src="js/crtlAdmin.js"></script>
+    <script src="js/crtlOrden.js"></script>
     <script src="js/alertify.js"></script>
      <script>
     // Closes the sidebar menu

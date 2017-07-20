@@ -9,6 +9,9 @@
 				<button class="btn btn-default" ng-click="btnMenu=2;listaCombo()">
 					<span class="glyphicon glyphicon-share-alt"></span> Combos
 				</button>
+				<button class="btn btn-default" ng-click="btnMenu=3">
+					<span class="glyphicon glyphicon-list"></span> Recetas
+				</button>
 			</div>
 		</div>
 		<!--  menus -->
@@ -40,7 +43,10 @@
 					        <p>{{m.descripcion}}</p>
 					        <p>
 					        	<a ng-href="#/nuevoEdita/menu/{{m.idMenu}}" type="button" class="btn btn-primary btn-sm">
-									<span class="glyphicon glyphicon-edit"></span>
+									<span class="glyphicon glyphicon-edit"></span> Editar
+								</a>
+								<a href="#" type="button" class="btn btn-info btn-sm">
+									<span class="glyphicon glyphicon-list"></span> Receta
 								</a>
 							</p>
 					      </div>
@@ -78,7 +84,7 @@
 					        <p>{{c.descripcion}}</p>
 					        <p>
 					        	<a ng-href="#/nuevoEdita/combo/{{c.idCombo}}" type="button" class="btn btn-primary btn-sm">
-									<span class="glyphicon glyphicon-edit"></span>
+									<span class="glyphicon glyphicon-edit"></span> Editar
 								</a>
 							</p>
 					      </div>

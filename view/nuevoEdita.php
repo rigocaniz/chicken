@@ -89,10 +89,6 @@
 							</div>
 						</div>
 						<div class="form-group has-success">
-							<label class="col-sm-2">Imagen</label>
-							<div class="col-sm-4">
-								<input type="file" class="form-control" ng-model='menu.imagen'>
-							</div>
 							<label class="col-sm-2" ng-show="id>0">Estado Menu</label>
 							<div class="col-sm-2" ng-show="id>0">
 								<select class="form-control" ng-model="menu.idEstadoMenu" >
@@ -102,8 +98,45 @@
 						</div>
 						<div class="form-group has-success">
 							<label class="col-sm-2">Descripcion</label>
-							<div class="col-sm-6">
-								<textarea rows="3" class="form-control" ng-model='menu.descripcion' required></textarea>
+							<div class="col-sm-8">
+								<textarea rows="2" class="form-control" ng-model='menu.descripcion' required></textarea>
+							</div>
+						</div>
+						<div class="form-group has-success">
+							<label class="col-sm-2">Tipo Servicio</label>
+							<div class="col-sm-3">
+								<select class="form-control" ng-model="tipoServicio">
+									<option  ng-repeat="ts in lstTipoServicio" value="{{ts.idTipoServicio}}">{{ts.tipoServicio}}</option>
+								</select>
+							</div>
+							<label class="col-sm-1">Precio</label>
+							<div class="col-sm-2">
+								<input type="number" class="form-control" ng-model="precioMenu">
+							</div>
+							<button type="button" class="btn btn-primary" ng-click="agregaPrecio(tipoServicio,precioMenu)">Agregar</button>
+							<div class="col-sm-12">
+								<br>
+								<div class="col-sm-2"></div>
+								<div class="col-sm-7">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>Tipo Servicio</th>
+												<th>Q. Precio</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="lp in menu.lstPrecios">
+												<td>{{lp.tipoServicio}}</td>
+												<td>{{lp.precio}}</td>
+												<td>
+													<button type="button" class="btn btn-danger btn-xs" ng-click="removerPrecio($index)">X</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
 							</div>
 						</div>
 						<div class="text-center">
@@ -111,6 +144,14 @@
 							<button type="button" class="btn btn-danger" ng-click="menu={}">Cancelar</button>
 						</div>
 					</form>
+				</div>
+				<b>Imagen del menu</b>
+				<div class="panel-body">
+					<div class="form-group">
+						<div class="col-sm-8">
+							<input type="file" class="form-control" id="imagenMenu">
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -132,7 +173,7 @@
 						<div class="form-group has-success">
 							<label class="col-sm-2">Imagen</label>
 							<div class="col-sm-4">
-								<input type="file" class="form-control" ng-model='combo.imagen'>
+								<input type="file" class="form-control" id="comboImagen">
 							</div>
 							<label class="col-sm-2" ng-show="id>0">Estado Menu</label>
 							<div class="col-sm-2" ng-show="id>0">

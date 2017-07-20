@@ -81,7 +81,8 @@ app.controller('nuevoEditaCtrl', function( $scope , $http, $modal, $routeParams 
 			'imagen'        : '',
 			'descripcion'   : '',
 			'idEstadoMenu'  : 1,
-			'idDestinoMenu' : null
+			'idDestinoMenu' : null,
+			'lstPrecios'    :[]
 		}
 
 		$scope.catDestinoMenu = function(){
@@ -100,8 +101,17 @@ app.controller('nuevoEditaCtrl', function( $scope , $http, $modal, $routeParams 
 			})
 		}
 
+		$scope.catTipoServicio = function(){
+			$http.post('consultas.php',{
+				opcion:'catTiposServicio'
+			}).success(function(data){
+				$scope.lstTipoServicio = data;
+			})
+		}
+
 		$scope.catEstadoMenu();
 		$scope.catDestinoMenu();
+		$scope.catTipoServicio();
 
 		if ($scope.id >0 ) {
 			$http.post('consultas.php',{
@@ -112,6 +122,29 @@ app.controller('nuevoEditaCtrl', function( $scope , $http, $modal, $routeParams 
 				$scope.menu = data;
 			})
 		}
+		//Agregar precios según tipo servicio
+		$scope.lstPrecios = [];
+		$scope.agregaPrecio = function(idTipoServicio,precio){
+			if ( !(idTipoServicio>0 ) || !(precio > 0 ) ) {
+				alertify.set('notifier','position', 'top-right');
+	 			alertify.notify('Ingrese el tipo de servicio y precio', 'warning', 3);
+			}else{
+				$scope.menu.lstPrecios.push(
+					{
+						idTipoServicio : idTipoServicio,
+						tipoServicio   : 'nombre',
+						precio         : precio
+					}
+				);
+
+				$scope.precioMenu = ''; 
+			}
+		}
+
+		$scope.removerPrecio = function(index){
+			$scope.menu.lstPrecios.splice(index,1);
+		}
+
 		//registrar menu
 		$scope.registraMenu = function(){
 			console.log($scope.menu);
@@ -132,6 +165,28 @@ app.controller('nuevoEditaCtrl', function( $scope , $http, $modal, $routeParams 
 				})
 			}
 		}
+		//subir imagen
+		$("#imagenMenu").fileinput({
+	        language              : "es",
+	        uploadUrl             : "upload.php",
+	        uploadAsync           : false,
+	        minFileCount          : 1,
+	        maxFileCount          : 1,
+	        autoReplace           : true,
+	        showUpload            : true,
+	        showRemove            : false,
+	        maxFileSize           : 35000,
+	        showUploadedThumbs    : false,
+	        mainClass             : "input-group-lg",
+	        allowedFileExtensions : ["jpg", "png", "tiff", "jpeg", "doc", "docs", "docx", "pdf", "xlsx", "xls"],
+	        elErrorContainer      : "#errorBlock",
+			uploadExtraData:function (previewId, index) {
+		        var obj = {
+		        	idArchivo     : $scope.itemIdArchivo,
+		        };
+		        return obj;
+		    },
+		})
 	}
 	
 	if ( $scope.evento == 'combo' ) {
@@ -181,5 +236,26 @@ app.controller('nuevoEditaCtrl', function( $scope , $http, $modal, $routeParams 
 			}
 		}
 	}
-
+	//subir imagen
+		$("#comboImagen").fileinput({
+	        language              : "es",
+	        uploadUrl             : "upload.php",
+	        uploadAsync           : false,
+	        minFileCount          : 1,
+	        maxFileCount          : 1,
+	        autoReplace           : true,
+	        showUpload            : true,
+	        showRemove            : false,
+	        maxFileSize           : 35000,
+	        showUploadedThumbs    : false,
+	        mainClass             : "input-group-lg",
+	        allowedFileExtensions : ["jpg", "png", "tiff", "jpeg", "doc", "docs", "docx", "pdf", "xlsx", "xls"],
+	        elErrorContainer      : "#errorBlock",
+			uploadExtraData:function (previewId, index) {
+		        var obj = {
+		        	idArchivo     : $scope.itemIdArchivo,
+		        };
+		        return obj;
+		    },
+		})
 });
