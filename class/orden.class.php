@@ -4,7 +4,7 @@
 */
 class Orden
 {
-	
+
  	private $respuesta = 'info';
  	private $mensaje   = '';
  	private $tiempo    = 6;
@@ -31,7 +31,6 @@ class Orden
  			$this->respuesta = 'danger';
  			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
  		}
- 		
  	}
 
 
