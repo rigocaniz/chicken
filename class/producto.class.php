@@ -221,10 +221,12 @@ class Producto
 		
 		if( $rs = $this->con->query( $sql ) ){
 			if( $row = $rs->fetch_object() )
-				$row->cantidadMinima = (float) $row->cantidadMinima;
-				$row->cantidadMaxima = (float) $row->cantidadMaxima;
-				$row->disponibilidad = (float) $row->disponibilidad;
-				$producto = $row;
+				$row->cantidadMinima = (double)$row->cantidadMinima;
+				$row->cantidadMaxima = (double)$row->cantidadMaxima;
+				$row->disponibilidad = (double)$row->disponibilidad;
+				$row->perecedero     = (int)$row->perecedero ? TRUE : FALSE;
+				$row->importante     = (int)$row->importante ? TRUE : FALSE;
+				$producto            = $row;
 		}
 
 		return $producto;
