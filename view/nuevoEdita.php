@@ -1,6 +1,5 @@
 <div class="container">
 	<div class="row">
-
 		<!-- formulario de registro nuevo producto -->
 		<div class="col-sm-12" ng-show="evento=='producto'">
 			<br>
@@ -11,14 +10,19 @@
 				<div class="panel-body">
 					<legend class="text-right">
 						<label class="label" ng-class="{'label-success': accion == 'insert', 'label-info': accion == 'update'}">
-							{{ accion == 'insert' ? INSERTAR : 'ACTUALIZAR' }}
+							<span class="glyphicon" ng-class="{'glyphicon-plus': accion == 'insert', 'glyphicon glyphicon-pencil': accion == 'update'}"></span>
+							{{ accion == 'insert' ? 'INSERTAR' : 'ACTUALIZAR' }}
 						</label>
 					</legend>
 					<form class="form-horizontal" role="form" name="formProducto">
 						<div class="form-group">
 							<label class="control-label col-sm-2">Nombre Producto</label>
-							<div class="col-sm-4">
+							<div class="col-sm-5">
 								<input type="text" class="form-control" ng-model="producto.producto" maxlength="45" required>
+							</div>
+							<label class="control-label col-sm-2" ng-show="accion!='insert'">No. Producto</label>
+							<div class="col-sm-2" ng-show="accion!='insert'">
+								<input type="text" class="form-control" ng-model="producto.idProducto" readonly>
 							</div>
 						</div>
 						<div class="form-group">
