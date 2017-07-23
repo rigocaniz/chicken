@@ -25,7 +25,9 @@
 							<label class="control-label col-sm-2">Tipo Producto</label>
 							<div class="col-sm-2">
 								<select class="form-control" ng-model="producto.idTipoProducto" required>
-									<option ng-repeat="tp in lstTipoProducto" value="{{ tp.idTipoProducto }}">{{tp.tipoProducto}}</option>
+									<option ng-repeat="tp in lstTipoProducto" value="{{ tp.idTipoProducto }}">
+										{{ tp.tipoProducto }}
+									</option>
 								</select>
 							</div>
 							<label class="control-label col-sm-2">Tipo Medida</label>
@@ -55,7 +57,7 @@
 						<div class="form-group">
 							<label class="control-label col-sm-2">Disponibilidad</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control" ng-model="producto.disponibilidad" required>
+								<input type="number" class="form-control" ng-model="producto.disponibilidad" ng-disabled="accion!='insert'">
 							</div>
 							<label class="control-label col-sm-2">Producto Importante</label>
 							<div class="col-sm-1">

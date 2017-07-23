@@ -143,8 +143,9 @@ class Producto
  		// VALIDACIONES
  		$idProducto = 'NULL';
  		if( $accion == 'update' ):
+ 			$disponibilidad   = "NULL";
  			$data->idProducto = (int)$data->idProducto > 0 ? (int)$data->idProducto : NULL;
- 			$idProducto = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido, verifique.' );
+ 			$idProducto       = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido, verifique.' );
  		endif;
 
 		$producto       = $validar->validarTexto( $data->producto, NULL, TRUE, 3, 45, 'el nombre del producto' );
@@ -152,7 +153,9 @@ class Producto
 		$idMedida       = $validar->validarEntero( $data->idMedida, NULL, TRUE, 'El ID del tipo de medida no es válido, verifique.' );
 		$cantidadMinima = $validar->validarCantidad( $data->cantidadMinima, NULL, TRUE, 1, 2500, 'la cantidad Minima' );
 		$cantidadMaxima = $validar->validarCantidad( $data->cantidadMaxima, NULL, TRUE, 1, 2500, 'la cantidad Maxima' );
-		$disponibilidad = $validar->validarCantidad( $data->disponibilidad, NULL, TRUE, 1, 2500, 'la disponibilidad' );
+		
+		if( $accion == 'insert' )
+			$disponibilidad = $validar->validarCantidad( $data->disponibilidad, NULL, TRUE, 1, 2500, 'la disponibilidad' );
 
 		// OBTENER RESULTADO DE VALIDACIONES
  		if( $validar->getIsError() ):
