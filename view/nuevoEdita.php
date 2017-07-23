@@ -66,17 +66,17 @@
 							<div class="form-group">
 								<label class="control-label col-sm-2">Cantidad minima</label>
 								<div class="col-sm-2">
-									<input type="number" class="form-control" ng-model="producto.cantidadMinima" required>
+									<input type="number" min="0" class="form-control" ng-model="producto.cantidadMinima" required>
 								</div>
 								<label class="control-label col-sm-2">Cantidad maxima</label>
 								<div class="col-sm-2">
-									<input type="number" class="form-control" ng-model="producto.cantidadMaxima">
+									<input type="number" min="0" class="form-control" ng-model="producto.cantidadMaxima">
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="control-label col-sm-2">Disponibilidad</label>
 								<div class="col-sm-2">
-									<input type="number" class="form-control" ng-model="producto.disponibilidad" ng-disabled="accion!='insert'">
+									<input type="number" min="0" class="form-control" ng-model="producto.disponibilidad" ng-disabled="accion!='insert'">
 								</div>
 								<label class="control-label col-sm-2">Producto Importante</label>
 								<div class="col-sm-1">
@@ -131,7 +131,7 @@
 								</div>
 								<label class="col-sm-1">Precio</label>
 								<div class="col-sm-2">
-									<input type="number" class="form-control" ng-model="precioMenu">
+									<input type="number" min="0" class="form-control" ng-model="precioMenu">
 								</div>
 								<button type="button" class="btn btn-primary" ng-click="agregaPrecio(tipoServicio,precioMenu)">Agregar</button>
 								<div class="col-sm-12">
