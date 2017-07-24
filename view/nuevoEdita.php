@@ -126,7 +126,9 @@
 								<label class="control-label col-sm-2">Tipo Servicio</label>
 								<div class="col-sm-3">
 									<select class="form-control" ng-model="tipoServicio">
-										<option  ng-repeat="ts in lstTipoServicio" value="{{ts.idTipoServicio}}">{{ts.tipoServicio}}</option>
+										<option ng-repeat="ts in lstTipoServicio" value="{{ ts.idTipoServicio }}">
+											{{ ts.tipoServicio }}
+										</option>
 									</select>
 								</div>
 								<label class="col-sm-1">Precio</label>
