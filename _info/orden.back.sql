@@ -3,23 +3,35 @@
 # ANTES DE EJECURAR ALGUNA CONSULTA DEBE LLAMARSE EL PROCEDIMIENTO
 
 
+/* ########## +++++++++++++ consultaOrdenCliente +++++++++++++########*/
+# >>> ACTION <<<
+insert
+	CALL consultaOrdenCliente( 'insert', NULL, _numeroTicket INT, _usuarioResponsable VARCHAR(15), NULL );
+
+update
+	CALL consultaOrdenCliente( 'update', _idOrdenCliente INT, _numeroTicket INT, _usuarioResponsable VARCHAR(15), NULL );
+
+status
+	CALL consultaOrdenCliente( 'status', _idOrdenCliente INT, NULL, NULL, _idEstadoOrden INT );
+
+cancel
+	CALL consultaOrdenCliente( 'cancel', _idOrdenCliente INT, NULL, NULL, NULL );
+
+
+
 /* ########## +++++++++++++ consultaDetalleOrdenMenu +++++++++++++########*/
 # >>> ACTION <<<
 insert
 	CALL consultaDetalleOrdenMenu( 'insert', NULL, _idOrdenCliente INT, _idMenu INT, _cantidad DOUBLE(10,2), NULL, _idTipoServicio INT, NULL, _usuarioResponsable VARCHAR(15) );
-menu-cantidad
-	CALL consultaDetalleOrdenMenu( 'menu-cantidad', _idDetalleOrdenMenu INT, NULL, _idMenu INT, _cantidad DOUBLE(10,2), NULL, NULL, NULL, NULL );
-	RETORNA: SELECT 'success' AS 'respuesta', 'Actualizado correctamente' AS 'mensaje';
+
+menu
+	CALL consultaDetalleOrdenMenu( 'menu', _idDetalleOrdenMenu INT, NULL, _idMenu INT, NULL, NULL, NULL, NULL, NULL );
 
 estado
 	CALL consultaDetalleOrdenMenu( 'estado', _idDetalleOrdenMenu INT, NULL, NULL, NULL, _idEstadoDetalleOrden INT, NULL, NULL, NULL )
-	RETORNA: SELECT 'success' AS 'respuesta', 'Cambio de estado guardado correctamente' AS 'mensaje';
 
 responsable
 	CALL consultaDetalleOrdenMenu( 'responsable', _idDetalleOrdenMenu INT, NULL, NULL, NULL, NULL, NULL, NULL, _usuarioResponsable VARCHAR(15) );
-
-factura
-	CALL consultaDetalleOrdenMenu( 'factura', _idDetalleOrdenMenu INT, NULL, NULL, NULL, NULL, NULL, _idFactura INT, NULL );
 
 tipoServicio
 	CALL consultaDetalleOrdenMenu( 'tipoServicio', _idDetalleOrdenMenu INT, NULL, NULL, NULL, NULL, _idTipoServicio INT, NULL, NULL );
@@ -28,32 +40,53 @@ asignarOtroCliente
 	CALL consultaDetalleOrdenMenu( 'asignarOtroCliente', _idDetalleOrdenMenu INT, _idOrdenCliente INT, NULL, NULL, NULL, NULL, NULL, NULL );
 
 
-ERRORES:
-	DUPLICADO:
-		SELECT 'danger' AS 'respuesta', 'Error, producto duplicado' AS 'mensaje';
-	
-	ERROR NO CONTROLADO:
-		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
-	
-	SESION NO VALIDA:
-		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
-	
-	ACCION NO VALIDA:
-		SELECT 'danger' AS 'respuesta', 'Acción no válida' AS 'mensaje';
 
-	ERROR: MODIFICACION MENU-CANTIDAD:
-		SELECT 'danger' AS 'respuesta', 'El estado actual no permite modificación' AS 'mensaje';
+/* ########## +++++++++++++ consultaDetalleOrdenCombo +++++++++++++########*/
+# >>> ACTION <<<
+insert
+	CALL consultaDetalleOrdenCombo( 'insert', NULL, _idOrdenCliente INT, _idCombo INT, _cantidad DOUBLE(10,2), NULL, _idTipoServicio INT, NULL, _usuarioResponsable VARCHAR(15) );
 
-	ERROR: MODIFICACION estado:
-		SELECT 'danger' AS 'respuesta', 'No se puede retornar a un estado anterior' AS 'mensaje';
+estado
+	CALL consultaDetalleOrdenCombo( 'estado', _idDetalleOrdenMenu INT, NULL, NULL, NULL, _idEstadoDetalleOrden INT, NULL, NULL, NULL )
 
-	ERROR: factura:
-		SELECT 'danger' AS 'respuesta', 'Estado actual no permite modificación de factura' AS 'mensaje';
+responsable
+	CALL consultaDetalleOrdenCombo( 'responsable', _idDetalleOrdenMenu INT, NULL, NULL, NULL, NULL, NULL, NULL, _usuarioResponsable VARCHAR(15) );
 
-	ERROR: tipoServicio:
-		SELECT 'danger' AS 'respuesta', 'El estado actual no permite modificación' AS 'mensaje';
+tipoServicio
+	CALL consultaDetalleOrdenCombo( 'tipoServicio', _idDetalleOrdenMenu INT, NULL, NULL, NULL, NULL, _idTipoServicio INT, NULL, NULL );
 
-	ERROR: asignarOtroCliente:
-			SELECT 'danger' AS 'respuesta', 'Existe información faltante' AS 'mensaje';
-			SELECT 'danger' AS 'respuesta', 'No es posible realizar asignación, por estado actual de la Orden del Cliente' AS 'mensaje';
-			SELECT 'danger' AS 'respuesta', 'No es posible realizar la asignación, por estado actual de pedido' AS 'mensaje';
+asignarOtroCliente
+	CALL consultaDetalleOrdenCombo( 'asignarOtroCliente', _idDetalleOrdenMenu INT, _idOrdenCliente INT, NULL, NULL, NULL, NULL, NULL, NULL );
+
+
+
+/* ############################################################
+ 				+++++++++++++ VISTAS +++++++++++++
+ ############################################################*/
+
+/* ########## +++++++++++++ vOrdenes +++++++++++++########*/
+SELECT 
+	idDetalleOrdenMenu,
+	idOrdenCliente,
+	numeroTicket,
+	cantidad,
+	idMenu,
+	menu,
+	perteneceCombo,
+	descripcion,
+	imagen,
+	precio,
+	combo,
+	precioCombo,
+	idEstadoDetalleOrden,
+	estadoDetalleOrden,
+	idTipoServicio,
+	tipoServicio,
+	usuarioResponsable,
+	nombres,
+	codigo,
+	idDetalleOrdenCombo,
+	fechaRegistro,
+	usuarioRegistro
+FROM vOrdenes ;
+
