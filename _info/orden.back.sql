@@ -82,6 +82,8 @@ SELECT
 	estadoDetalleOrden,
 	idTipoServicio,
 	tipoServicio,
+	idDestinoMenu,
+	destinoMenu,
 	usuarioResponsable,
 	nombres,
 	codigo,

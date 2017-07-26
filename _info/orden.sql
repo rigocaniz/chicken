@@ -336,6 +336,8 @@ SELECT
 	edo.estadoDetalleOrden,
 	ts.idTipoServicio,
 	ts.tipoServicio,
+	dm.idDestinoMenu,
+	dm.destinoMenu,
 	dom.usuarioResponsable,
 	u.nombres,
 	u.codigo,
@@ -353,6 +355,8 @@ FROM detalleOrdenMenu AS dom
 		ON dom.usuarioResponsable = u.usuario
 	JOIN bitacoraOrdenMenu AS bom
 		ON dom.idDetalleOrdenMenu = bom.idDetalleOrdenMenu AND dom.idEstadoDetalleOrden = bom.idEstadoDetalleOrden
+	JOIN destinoMenu AS dm
+		ON dm.idDestinoMenu = m.idDestinoMenu
 	LEFT JOIN menuPrecio AS mp
 		ON m.idMenu = mp.idMenu AND dom.idTipoServicio = mp.idTipoServicio AND !dom.perteneceCombo
 	LEFT JOIN ordenCliente AS oc
