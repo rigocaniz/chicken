@@ -298,7 +298,7 @@ CREATE VIEW lstMenu AS
 SELECT
 	m.idMenu,
 	m.menu,
-	m.imagen,
+	IFNULL( m.imagen, '' )AS 'imagen',
 	m.descripcion,
 	em.idEstadoMenu,
 	em.estadoMenu,
@@ -325,7 +325,7 @@ CREATE VIEW lstCombo AS
 SELECT
 	c.idCombo,
 	c.combo,
-	c.imagen,
+	IFNULL( c.imagen, '' )AS 'imagen',
 	c.descripcion,
 	em.idEstadoMenu,
 	em.estadoMenu
@@ -362,7 +362,7 @@ CREATE VIEW lstSuperCombo AS
 SELECT
 	sc.idSuperCombo,
 	sc.superCombo,
-	sc.imagen,
+	IFNULL( sc.imagen, '' )AS 'imagen',
 	sc.descripcion,
 	em.idEstadoMenu,
 	em.estadoMenu
