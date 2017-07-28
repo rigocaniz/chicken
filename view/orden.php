@@ -1,72 +1,62 @@
-<div class="container">
+<div style="margin:5px;">
 	<div class="row">
-		<br>
-		<div class="panel panel-primary">
-			<div class="panel-body">
-				<div class="col-sm-12">
-					<label class="col-sm-2">Tipo Orden</label>
-					<div class="col-sm-2">
-						<select class="form-control">
-							<option value="1">Restaurante</option>
-							<option value="2">LLevar</option>
-						</select>
-					</div>
-					<label class="col-sm-1">Producto</label>
-					<div class="col-sm-5">
-						<input type="text" class="form-control" placeholder="codigo / Producto">
-					</div>
-					<button type="button" class="btn btn-primary">Buscar</button>
-				</div>
+		<div class="col-sm-12" style="margin-bottom:4px">
+			<button type="button" class="btn btn-success">
+				<span class="glyphicon glyphicon-plus"></span>
+				Nueva Orden
+			</button>
+			<button type="button" class="btn btn-info">
+				<span class="glyphicon glyphicon-search"></span>
+				Buscar Orden
+			</button>
+		</div>
+		<hr class="col-sm-12" style="margin:9px 40px">
+		<div class="col-sm-12">
+			<div class="btn-orden" ng-init="tab=1">
+				<button class="bt-info" ng-class="{'active':tab==1}" ng-click="tab=1">
+					<span class="glyphicon glyphicon-time"></span>
+					<span class="hidden-xs">Pendientes</span>
+				</button>
+				<button class="bt-success" ng-class="{'active':tab==2}" ng-click="tab=2">
+					<span class="glyphicon glyphicon-play"></span>
+					<span class="hidden-xs">En Progreso</span>
+				</button>
+				<button class="bt-primary" ng-class="{'active':tab==3}" ng-click="tab=3">
+					<span class="glyphicon glyphicon-flag"></span>
+					<span class="hidden-xs">Finalizadas</span>
+				</button>
+				<button class="bt-danger" ng-class="{'active':tab==4}" ng-click="tab=4">
+					<span class="glyphicon glyphicon-remove"></span>
+					<span class="hidden-xs">Cancelados</span>
+				</button>
 			</div>
 		</div>
+	</div>
+	<div class="row">
 		<div class="col-sm-12">
-			<div class="col-sm-6">
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						<h3 class="panel-title">Menus mas pedidos</h3>
-					</div>
-					<div class="panel-body">
-						
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-6">
-				<div class="panel panel-info">
-					<div class="panel-heading">
-						<h3 class="panel-title">Orden</h3>
-					</div>
-					<div class="panel-body">
-						<div class="row">
-							<div class="form-group">
-								<label class="col-sm-2"># ticket</label>
-								<div class="col-sm-3">
-									<input type="number" class="form-control">
-								</div>
-							</div>
-							<table class="table table-hover">
-								<thead>
-									<tr>
-										<th>Codigo</th>
-										<th>Producto</th>
-										<th >Cantidad</th>
-										<th></th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>001</td>
-										<td>Menu1</td>
-										<td>
-											<input type="number" class="form-control" style="width: 7em;">
-										</td>
-										<td>
-											<button type="button" class="btn btn-danger btn-xs">X</button>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
+			<div class="panel panel-info" style="margin-top: 4px">
+				<div class="panel-body">
+					<table class="table table-condensed table-hover">
+						<thead>
+							<tr>
+								<th># Orden</th>
+								<th>Menú ({{tab}})</th>
+								<th>Lapso</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>321</td>
+								<td>Pollo Frito</td>
+								<td>Hace 5 minutos</td>
+							</tr>
+							<tr>
+								<td>123</td>
+								<td>Papas fritas</td>
+								<td>Hace 4 minutos</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>
