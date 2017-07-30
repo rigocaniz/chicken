@@ -23,7 +23,7 @@
 				</button>
 				<button class="bt-primary" ng-class="{'active':tab==3}" ng-click="tab=3">
 					<span class="glyphicon glyphicon-flag"></span>
-					<span class="hidden-xs">Finalizadas</span>
+					<span class="hidden-xs">Finalizados</span>
 				</button>
 				<button class="bt-danger" ng-class="{'active':tab==4}" ng-click="tab=4">
 					<span class="glyphicon glyphicon-remove"></span>

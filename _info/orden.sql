@@ -79,6 +79,8 @@ BEGIN
 		INSERT INTO detalleOrdenMenu (idOrdenCliente, idMenu, cantidad, idEstadoDetalleOrden, idTipoServicio, usuario, usuarioResponsable, perteneceCombo )
 		VALUES (_idOrdenCliente, _idMenu, _cantidad, 1, _idTipoServicio, @usuario, _usuarioResponsable, 0 );
 
+		UPDATE menu SET top = top + 1 WHERE idMenu = _idMenu;
+
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
 
 	ELSEIF _action = 'estado' THEN
@@ -234,6 +236,8 @@ BEGIN
 	ELSEIF _action = 'insert' THEN
 		INSERT INTO detalleOrdenCombo (idOrdenCliente, idCombo, cantidad, idEstadoDetalleOrden, idTipoServicio, usuario, usuarioResponsable)
 		VALUES (_idOrdenCliente, _idCombo, _cantidad, 1, _idTipoServicio, @usuario, _usuarioResponsable );
+
+		UPDATE combo SET top = top + 1 WHERE idCombo = _idCombo;
 
 		SET @idDetalleOrdenCombo = LAST_INSERT_ID();
 
