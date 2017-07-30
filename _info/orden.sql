@@ -1,5 +1,7 @@
 CREATE PROCEDURE consultaOrdenCliente( _action VARCHAR(20), _idOrdenCliente INT, _numeroTicket INT, _usuarioResponsable VARCHAR(15), _idEstadoOrden INT )
 BEGIN
+	DECLARE _tktPendiente BOOLEAN DEFAULT FALSE;
+	DECLARE _estadoActualOrden INT DEFAULT 0;
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
 
@@ -8,17 +10,38 @@ BEGIN
 		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
 
 	ELSEIF _action = 'insert' THEN
-		INSERT INTO ordenCliente ( numeroTicket, usuarioPropietario, usuarioResponsable, idEstadoOrden, fechaRegistro ) 
-			VALUES ( _numeroTicket, @usuario, IFNULL( _usuarioResponsable, @usuario ), 1, NOW() );
+		
+		IF !ISNULL( _numeroTicket ) THEN
+			SELECT TRUE INTO _tktPendiente FROM ordenCliente 
+				WHERE numeroTicket = _numeroTicket AND ( idEstadoOrden = 1 OR idEstadoOrden = 2 )
+			LIMIT 1;
+		END IF;
+        
+        IF _tktPendiente THEN
+			SELECT 'danger' AS 'respuesta', 'Error, EXISTE una orden pendiente con este # de Ticket' AS 'mensaje';
+        
+        ELSE
+			INSERT INTO ordenCliente ( numeroTicket, usuarioPropietario, usuarioResponsable, idEstadoOrden, fechaRegistro ) 
+				VALUES ( _numeroTicket, @usuario, IFNULL( _usuarioResponsable, @usuario ), 1, NOW() );
 
-		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID()AS 'id';
+			SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID()AS 'id';
+        END IF;
 
 	ELSEIF _action = 'update' THEN
-		UPDATE ordenCliente SET 
-			numeroTicket       = _numeroTicket,
-			usuarioResponsable = _usuarioResponsable
-		WHERE idOrdenCliente = _idOrdenCliente;
-		SELECT 'success' AS 'respuesta', 'Actualizado correctamente' AS 'mensaje';
+		SELECT idEstadoOrden INTO _estadoActualOrden FROM ordenCliente 
+			WHERE idOrdenCliente = _idOrdenCliente;
+
+		IF _estadoActualOrden = 1 OR _estadoActualOrden = 2 THEN
+			UPDATE ordenCliente SET 
+				numeroTicket       = _numeroTicket,
+				usuarioResponsable = _usuarioResponsable
+			WHERE idOrdenCliente = _idOrdenCliente;
+			SELECT 'success' AS 'respuesta', 'Actualizado correctamente' AS 'mensaje';
+
+		ELSE
+
+			SELECT 'danger' AS 'respuesta', 'Estado actual no permite modificación' AS 'mensaje';
+		END IF;
 
 	ELSEIF _action = 'status' THEN
 		UPDATE ordenCliente SET idEstadoOrden = _idEstadoOrden
