@@ -14,7 +14,7 @@ body {
 
 body {
     font-family: "Source Sans Pro","Helvetica Neue",Helvetica,Arial,sans-serif;
-    background-image: url("/chicken/chicken/img/ejemplo.jpg");
+    /*background-image: url("/chicken/img/ejemplo.jpg");*/
     background-repeat: no-repeat;
     background-size: 100% 100%;
     background-attachment:  fixed;       

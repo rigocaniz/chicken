@@ -117,4 +117,13 @@ button,a{
     -webkit-border-radius: 6px;
 }
 
+.input-focus{
+    border: solid 1px #2a5bca;
+    color: #0a379a;
+    font-weight: bold;
+}
+
+
+
+
 

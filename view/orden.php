@@ -1,7 +1,7 @@
 <div style="margin:5px;">
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom:4px">
-			<button type="button" class="btn btn-success">
+			<button type="button" class="btn btn-success" ng-click="nuevaOrden()">
 				<span class="glyphicon glyphicon-plus"></span>
 				Nueva Orden
 			</button>
@@ -63,14 +63,144 @@
 	</div>
 </div>
 
-<!-- Administrar Orden -->
-<script type="text/ng-template" id="dial.orden.html">
+<!-- NUEVA ORDEN -->
+<script type="text/ng-template" id="dial.orden.nueva.html">
     <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content panel-primary">
                 <div class="modal-header panel-heading">
                 	<button type="button" class="close" ng-click="$hide()">&times;</button>
-                    Seleccione Menú
+                	<span class="glyphicon glyphicon-plus"></span>
+                    Nueva Orden
+                </div>
+                <div class="modal-body">
+                	<div class="row">
+                		<div class="col-xs-7">
+                			<h4>Número Ticket</h4>
+                		</div>
+                		<div class="col-xs-5">
+                			<input type="text" class="form-control input-lg input-focus" ng-model="$parent.noTicket" id="noTicket">
+                		</div>
+                		<div class="col-xs-12" style="margin-top:4px">
+                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'0'">0</button>
+                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'1'">1</button>
+                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'2'">2</button>
+                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'3'">3</button>
+                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'4'">4</button>
+                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'5'">5</button>
+                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'6'">6</button>
+                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'7'">7</button>
+                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'8'">8</button>
+                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'9'">9</button>
+                			<button class="btn btn-lg btn-primary" ng-click="$parent.noTicket=''">
+                				<span class="glyphicon glyphicon-remove"></span>
+                			</button>
+                		</div>
+                   </div>
+                </div>
+                <div class="modal-footer">
+                	<button type="button" class="btn btn-success" ng-click="agregarOrden()">
+                        <span class="glyphicon glyphicon-plus-sign"></span>
+                        <b>Agregar Ticket</b>
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="$hide()">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        <b>Salir</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script> 
+
+<!-- ADMINISTRAR ORDEN -->
+<script type="text/ng-template" id="dial.orden.cliente.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-default">
+                <div class="modal-header panel-heading">
+                	<button type="button" class="close" ng-click="$hide()">&times;</button>
+                    <h4>
+                		<span class="glyphicon glyphicon-plus"></span>
+                    	Orden - Ticket # {{ordenActual.noTicket}}
+                    </h4>
+                </div>
+                <div class="modal-body">
+                	<div class="row">
+                		<div class="col-xs-7">
+                			<button class="btn btn-primary" ng-click="dialOrdenMenu.show();dialOrdenCliente.hide()">
+                				<span class="glyphicon glyphicon-plus"></span>
+                				<b>Menú</b>
+                			</button>
+                		</div>
+                   </div>
+                   <div class="row">
+                		<div class="col-xs-12">
+                			<table class="table table-condensed table-hover">
+                				<thead>
+                					<tr>
+                						<th>Precio</th>
+                						<th>Menú</th>
+                						<th>Cantidad</th>
+                						<th width="35px"></th>
+                					</tr>
+                				</thead>
+                				<tbody>
+                					<tr ng-repeat="item in ordenActual.lstAgregar">
+                						<td>
+                							{{11.5 | number}}
+                						</td>
+                						<td>{{item.menu}} » {{item.tipoServicio}}</td>
+                						<td>
+                							<button type="button" class="btn btn-xs btn-default" ng-click="item.cantidad = (item.cantidad>1 ? item.cantidad-1 : item.cantidad)">
+                								<span class="glyphicon glyphicon-minus"></span>
+                							</button>
+                							<b>{{item.cantidad}}</b>
+                							<button type="button" class="btn btn-xs btn-primary" ng-click="item.cantidad=item.cantidad+1">
+                								<span class="glyphicon glyphicon-plus"></span>
+                							</button>
+                						</td>
+                						<td>
+                							<button type="button" class="btn btn-xs btn-danger" ng-click="ordenActual.lstAgregar.splice( $index, 1 )">
+                								<span class="glyphicon glyphicon-remove"></span>
+                							</button>
+                						</td>
+                					</tr>
+                				</tbody>
+                			</table>
+                		</div>
+                		<div class="col-xs-12">
+                			<div class="col-xs-5">
+	                			<h5><b>TOTAL: </b>Q. 24.00</h5>
+                			</div>
+                			<div class="col-xs-7 text-right">
+	                			<button type="button" class="btn btn-success">
+	                				<span class="glyphicon glyphicon-ok"></span>
+	                				<b>Confirmar Orden</b>
+	                			</button>
+                			</div>
+                		</div>
+                   </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" ng-click="$hide()">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        <b>Salir</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script> 
+
+<!-- LISTADO DE MENUS -->
+<script type="text/ng-template" id="dial.orden-menu.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-primary">
+                <div class="modal-header panel-heading">
+                	<button type="button" class="close" ng-click="$hide()">&times;</button>
+                    Seleccione Menú - Ticket # {{ordenActual.noTicket}}
                 </div>
                 <div class="modal-body">
                 	<div class="row">
@@ -93,14 +223,14 @@
     </div>
 </script> 
 
-<!-- Menú Seleccionado-Cantidad -->
+<!-- Cantidad - Tipo Servicio - Menú -->
 <script type="text/ng-template" id="dial.menu-cantidad.html">
     <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content panel-info">
                 <div class="modal-header panel-heading">
                 	<button type="button" class="close" ng-click="$hide()">&times;</button>
-                    <b>Ingrese Cantidad Menú</b>
+                    <b>Ingrese Cantidad Menú</b> - Ticket # {{ordenActual.noTicket}}
                 </div>
                 <div class="modal-body">
                 	<div class="row">
@@ -111,17 +241,24 @@
                 		<div class="col-xs-6">
                 			<div class="col-xs-12">
 	                			<label>Cantidad</label>
-	                			<input type="number" class="form-control input-lg" ng-model="menuActual.cantidad" min="1" style="font-weight:bold;">
+	                			<input type="number" class="form-control input-lg input-focus" ng-model="menuActual.cantidad" min="1">
                 			</div>
                 			<div class="col-xs-12" style="margin-top:5px">
-                				<button type="button" class="btn btn-sm btn-default" ng-click="menuActual.cantidad=menuActual.cantidad-1" ng-disabled="!(menuActual.cantidad>1)">
+                				<button type="button" class="btn btn-default" ng-click="menuActual.cantidad=( menuActual.cantidad>1 ? menuActual.cantidad-1 : menuActual.cantidad)">
                 					<span class="glyphicon glyphicon-minus"></span>
                 				</button>
-                				<button type="button" class="btn btn-sm btn-primary" ng-click="menuActual.cantidad=menuActual.cantidad+1">
+                				<button type="button" class="btn btn-primary" ng-click="menuActual.cantidad=menuActual.cantidad+1">
                 					<span class="glyphicon glyphicon-plus"></span>
                 				</button>
                 			</div>
                 		</div>
+            			<div class="col-xs-12">
+            				<button type="button" class="btn" ng-class="{'btn-default':menuActual.idTipoServicio!=item.idTipoServicio, 'btn-info':menuActual.idTipoServicio==item.idTipoServicio}" 
+            					ng-repeat="item in lstTipoServicio" ng-click="menuActual.idTipoServicio=item.idTipoServicio" style="margin-right:4px;margin-top:5px">
+            					{{item.tipoServicio}}
+            					<span class="glyphicon glyphicon-ok" ng-show="menuActual.idTipoServicio==item.idTipoServicio"></span>
+            				</button>
+            			</div>
                    </div>
                 </div>
                 <div class="modal-footer">
@@ -137,4 +274,5 @@
             </div>
         </div>
     </div>
-</script> 
+</script>
+
