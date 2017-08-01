@@ -12,43 +12,6 @@
 		</div>
 		<hr class="col-sm-12" style="margin:9px 40px">
 		<div class="col-sm-12">
-<<<<<<< HEAD
-			<div class="col-sm-6">
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						<h3 class="panel-title">
-							<button class="btn btn-default btn-sm">Menus</button>
-							<button class="btn btn-info btn-sm">Combos</button>
-							<button class="btn btn-warning btn-sm">Productos</button>
-						</h3>
-					</div>
-					<div class="panel-body">
-						<div class="row">
-						<br>
-					  <div class="col-sm-5">
-					    <div class="thumbnail">
-					      <img src="upload/Logo.png" alt="...">
-					      <div class="caption">
-					        <p>
-					        	<strong>Menu1</strong> 
-					        	<span class="label label-success">Disponible</span>
-					        </p> 
-					        <p>test</p>
-					        <div class="row">
-								<div class="col-sm-8">
-						        	<input type="number" class="form-control">
-								</div>
-					        	<button class="btn btn-primary btn-sm">
-					        		<span class="glyphicon glyphicon-ok"></span>
-					        	</button>
-					        </div>
-					      </div>
-					    </div>
-					  </div>
-					</div>
-					</div>
-				</div>
-=======
 			<div class="btn-orden" ng-init="tab=1">
 				<button class="bt-info" ng-class="{'active':tab==1}" ng-click="tab=1">
 					<span class="glyphicon glyphicon-time"></span>
@@ -66,7 +29,6 @@
 					<span class="glyphicon glyphicon-remove"></span>
 					<span class="hidden-xs">Cancelados</span>
 				</button>
->>>>>>> 88753b2527893bb061e053155ac393cf9681d5c8
 			</div>
 		</div>
 	</div>
@@ -157,6 +119,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-default">
                 <div class="modal-header panel-heading">
+                	<button type="button" class="close" ng-click="$hide()">&times;</button>
                     <h4>
                     	Orden - Ticket # {{ordenActual.noTicket}}
                     </h4>
@@ -235,6 +198,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-primary">
                 <div class="modal-header panel-heading">
+                	<button type="button" class="close" ng-click="$hide()">&times;</button>
                     Seleccione Menú - Ticket # {{ordenActual.noTicket}}
                 </div>
                 <div class="modal-body">
@@ -248,9 +212,9 @@
                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" ng-click="$hide();dialOrdenCliente.show()">
-                        <span class="glyphicon glyphicon-chevron-left"></span>
-                        <b>Regrear a Orden</b>
+                    <button type="button" class="btn btn-default" ng-click="$hide()">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        <b>Salir</b>
                     </button>
                 </div>
             </div>
@@ -264,6 +228,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-info">
                 <div class="modal-header panel-heading">
+                	<button type="button" class="close" ng-click="$hide()">&times;</button>
                     <b>Ingrese Cantidad Menú</b> - Ticket # {{ordenActual.noTicket}}
                 </div>
                 <div class="modal-body">
@@ -271,7 +236,7 @@
                 		<div class="col-xs-6 text-center">
                 			<img ng-src="img-menu/{{menuActual.img}}">
                 			<h4>{{menuActual.menu}}</h4>
-                			<b>Q. {{$parent.menuActual.precio | number:2}}</b>
+                			<b>Q. {{menuActual.precio | number:2}}</b>
                 		</div>
                 		<div class="col-xs-6">
                 			<div class="col-xs-12">
@@ -288,10 +253,10 @@
                 			</div>
                 		</div>
             			<div class="col-xs-12">
-            				<button type="button" class="btn" ng-class="{'btn-default':$parent.idTipoServicio!=item.idTipoServicio, 'btn-info':$parent.idTipoServicio==item.idTipoServicio}" 
+            				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=item.idTipoServicio, 'btn-info':idTipoServicio==item.idTipoServicio}" 
             					ng-repeat="item in lstTipoServicio" ng-click="$parent.$parent.idTipoServicio=item.idTipoServicio" style="margin-right:4px;margin-top:5px">
             					{{item.tipoServicio}}
-            					<span class="glyphicon glyphicon-ok" ng-show="$parent.idTipoServicio==item.idTipoServicio"></span>
+            					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==item.idTipoServicio"></span>
             				</button>
             			</div>
                    </div>
@@ -301,9 +266,9 @@
                         <span class="glyphicon glyphicon-plus-sign"></span>
                         <b>Agregar a Orden</b>
                     </button>
-                    <button type="button" class="btn btn-default" ng-click="$hide();dialOrdenMenu.show()">
-                        <span class="glyphicon glyphicon-chevron-left"></span>
-                        <b>Regresar a Menú</b>
+                    <button type="button" class="btn btn-default" ng-click="$hide()">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        <b>Cancelar</b>
                     </button>
                 </div>
             </div>
