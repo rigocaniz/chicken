@@ -63,8 +63,12 @@ class Menu
 				    idMenu = {$idMenu};";
 		
 		if( $rs = $this->con->query( $sql ) ){
-			if( $row = $rs->fetch_object() )
-				$menuPrecio = $row;
+			while( $rs AND $row = $rs->fetch_object() )
+				$menuPrecio[] = (object)array(
+					'idMenu'         => (int)$row->idMenu,
+					'idTipoServicio' => (int)$row->idTipoServicio,
+					'precio'         => (double)$row->precio,
+				);
 		}
 
 		return $menuPrecio;
