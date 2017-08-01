@@ -12,6 +12,43 @@
 		</div>
 		<hr class="col-sm-12" style="margin:9px 40px">
 		<div class="col-sm-12">
+<<<<<<< HEAD
+			<div class="col-sm-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<button class="btn btn-default btn-sm">Menus</button>
+							<button class="btn btn-info btn-sm">Combos</button>
+							<button class="btn btn-warning btn-sm">Productos</button>
+						</h3>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+						<br>
+					  <div class="col-sm-5">
+					    <div class="thumbnail">
+					      <img src="upload/Logo.png" alt="...">
+					      <div class="caption">
+					        <p>
+					        	<strong>Menu1</strong> 
+					        	<span class="label label-success">Disponible</span>
+					        </p> 
+					        <p>test</p>
+					        <div class="row">
+								<div class="col-sm-8">
+						        	<input type="number" class="form-control">
+								</div>
+					        	<button class="btn btn-primary btn-sm">
+					        		<span class="glyphicon glyphicon-ok"></span>
+					        	</button>
+					        </div>
+					      </div>
+					    </div>
+					  </div>
+					</div>
+					</div>
+				</div>
+=======
 			<div class="btn-orden" ng-init="tab=1">
 				<button class="bt-info" ng-class="{'active':tab==1}" ng-click="tab=1">
 					<span class="glyphicon glyphicon-time"></span>
@@ -29,6 +66,7 @@
 					<span class="glyphicon glyphicon-remove"></span>
 					<span class="hidden-xs">Cancelados</span>
 				</button>
+>>>>>>> 88753b2527893bb061e053155ac393cf9681d5c8
 			</div>
 		</div>
 	</div>
