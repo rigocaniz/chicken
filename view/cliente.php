@@ -11,7 +11,7 @@
 			</div>
 		</div>
 		<div class="col-sm-8 col-sm-offset-2" ng-show="menu==1">
-			<!-- agregar nuevo colaborador -->
+			<!-- agregar nuevo cliente -->
 			<br>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
@@ -71,6 +71,9 @@
 					</form>
 				</div>
 			</div>
+		</div>
+		<div class="col-sm-12" ng-show="menu==2">
+			
 		</div>
 	</div>
 </div>

@@ -29,7 +29,7 @@ app.controller('clienteCtrl', function( $scope, $http ){
  			alertify.notify('Ingrese nombre y tipo de cliente para guardar', 'warning', 3);
 		}else{
 			$http.post('consultas.php',{
-				opcion:"cosultaCliente",
+				opcion:"consultaCliente",
 				accion:'insert',
 				cliente: $scope.cliente
 			}).success(function(data){
@@ -39,7 +39,10 @@ app.controller('clienteCtrl', function( $scope, $http ){
 				if ( data.respuesta == "success" ) {
 					$scope.cancelarCliente();
 				}
-			})
+			}).error(function (error, status){
+		        $scope.data.error = { message: error, status: status};
+		        console.log($scope.data.error.status); 
+  			}); 
 		}
 	}
 });
