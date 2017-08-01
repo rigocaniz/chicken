@@ -137,6 +137,21 @@ class Consulta
  		return $catEstadoCaja;
  	}
 
+ 	// LST CATALOGO TIPOS MENU
+ 	function catTipoMenu()
+ 	{
+ 		$lst = array();
+
+ 		$sql = "SELECT idTipoMenu, tipoMenu FROM tipoMenu ";
+ 		
+ 		if( $rs = $this->con->query( $sql ) ){
+ 			while( $row = $rs->fetch_object() )
+ 				$lst[] = $row;
+ 		}
+
+ 		return $lst;
+ 	}
+
 }
 
 ?>

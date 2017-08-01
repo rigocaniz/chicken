@@ -187,6 +187,11 @@ switch ( $data->opcion )
 		echo json_encode( $consulta->catEstadoCaja() );
 		break;
 
+	case 'catTipoMenu':				// CARGAR CATALOGO TIPOS DE MENU
+		$consulta = new Consulta();
+		echo json_encode( $consulta->catTipoMenu() );
+		break;
+
 	/////////////////////////
 	//***** CLIENTE
 	/////////////////////////
