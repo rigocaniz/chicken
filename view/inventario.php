@@ -64,7 +64,7 @@
 										<span class="glyphicon glyphicon-plus"></span>
 									</a>
 
-									<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( inv.idProducto, 'update', 'producto')">
+									<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( inv.idProducto, 'update' )">
 										<span class="glyphicon glyphicon-pencil"></span>
 									</button>
 									<a ng-href="#/nuevoEdita/producto/{{inv.idProducto}}" type="button" class="btn btn-primary btn-sm">
@@ -212,7 +212,7 @@
 	<!-- MODAL AGREGAR / EDITAR PRODUCTO -->
 	<script type="text/ng-template" id="dialAdmin.producto.html">
 		<div class="modal" tabindex="-1" role="dialog">
-			<div class="modal-dialog modal-lg">
+			<div class="modal-dialog">
 				<div class="modal-content panel-primary" ng-class="{'panel-success': accion == 'insert', 'panel-info': accion == 'update'}">
 					<div class="modal-header panel-heading">
 						<button type="button" class="close" ng-click="$hide()">&times;</button>
@@ -225,36 +225,35 @@
 						</h3>
 					</div>
 					<div class="modal-body">
-						<div class="panel-body">
 							<!-- FORMULARIO PRODUCTO -->
 							<form class="form-horizontal" role="form" name="formProducto">
 								<div class="form-group">
-									<label class="control-label col-sm-2">Nombre Producto</label>
-									<div class="col-sm-5">
+									<div class="col-sm-7">
+										<label class="control-label">Nombre Producto</label>
 										<input type="text" class="form-control" ng-model="producto.producto" maxlength="45" required>
 									</div>
-									<label class="control-label col-sm-2" ng-show="accion!='insert'">No. Producto</label>
-									<div class="col-sm-2" ng-show="accion!='insert'">
+									<div class="col-sm-3" ng-show="accion!='insert'">
+										<label class="control-label">No. Producto</label>
 										<input type="text" class="form-control" ng-model="producto.idProducto" readonly>
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="control-label col-sm-2">Tipo Producto</label>
-									<div class="col-sm-2">
+									<div class="col-sm-5">
+										<label class="control-label">Tipo Producto</label>
 										<select class="form-control" ng-model="producto.idTipoProducto" required>
 											<option ng-repeat="tp in lstTipoProducto" value="{{ tp.idTipoProducto }}">
 												{{ tp.tipoProducto }}
 											</option>
 										</select>
 									</div>
-									<label class="control-label col-sm-2">Tipo Medida</label>
-									<div class="col-sm-2">
+									<div class="col-sm-4">
+										<label class="control-label">Tipo Medida</label>
 										<select class="form-control" ng-model="producto.idMedida" required>
 											<option ng-repeat="m in lstMedidas" value="{{m.idMedida}}">{{m.medida}}</option>
 										</select>
 									</div>
-									<label class="control-label col-sm-2">Pedecedero</label>
 									<div class="col-sm-1">
+										<label class="control-label">Pedecedero</label>
 										<button type="button" class="btn btn-sm" ng-class="{'btn-success': producto.perecedero, 'btn-warning':!producto.perecedero}" ng-click="producto.perecedero=!producto.perecedero">
 											<span class="glyphicon" ng-class="{'glyphicon-unchecked' : !producto.perecedero, 'glyphicon-check' : producto.perecedero}"></span>
 											{{ producto.perecedero ? 'SI' : 'NO' }}
@@ -263,11 +262,11 @@
 								</div>
 								<div class="form-group">
 									<label class="control-label col-sm-2">Cantidad minima</label>
-									<div class="col-sm-2">
+									<div class="col-sm-3">
 										<input type="number" min="0" class="form-control" ng-model="producto.cantidadMinima" required>
 									</div>
 									<label class="control-label col-sm-2">Cantidad maxima</label>
-									<div class="col-sm-2">
+									<div class="col-sm-3">
 										<input type="number" min="0" class="form-control" ng-model="producto.cantidadMaxima">
 									</div>
 								</div>
@@ -284,18 +283,13 @@
 										</button>
 									</div>
 								</div>
-								<div class="text-center">
-									<button type="button" class="btn btn-success" ng-click="registraNuevoProducto()">Guardar</button>
-									<button type="button" class="btn btn-danger" ng-click="cancelaNuevoProducto()">Cancelar</button>
-								</div>
 							</form>
-						</div>
 					</div>
 					<div class="modal-footer">
-						<button class="btn btn-success" ng-click="guardaIngreso(idProducto,$parent.cantidad)">
+						<button class="btn btn-success" ng-click="registraNuevoProducto()">
 							<span class="glyphicon glyphicon-ok"></span> Guardar
 						</button>
-						<button type="button" class="btn btn-default" ng-click="$hide()">
+						<button type="button" class="btn btn-default" ng-click="resetValues( 1 ); $hide()">
 							<span class="glyphicon glyphicon-log-out"></span>
 							<b>Salir</b>
 						</button>

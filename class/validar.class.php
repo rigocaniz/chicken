@@ -49,7 +49,7 @@ class Validar
 
 	
 	// VALIDAR CUI
-	function validarCui( $valor = 0, $default = NULL, $required = TRUE )
+	function validarCui( $valor = 0, $default = NULL, $required = FALSE )
 	{
 		if( $this->error )
 			return $valor;
@@ -127,7 +127,8 @@ class Validar
 		if( $this->error )
 			return $valor;
 
-		$valor = (int)$valor;
+		$warning = FALSE;
+		$valor   = (int)$valor;
 
 		if( !(strlen( $valor ) == 8) AND $required ):
 			$warning = TRUE;
