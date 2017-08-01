@@ -121,7 +121,6 @@
                 <div class="modal-header panel-heading">
                 	<button type="button" class="close" ng-click="$hide()">&times;</button>
                     <h4>
-                		<span class="glyphicon glyphicon-plus"></span>
                     	Orden - Ticket # {{ordenActual.noTicket}}
                     </h4>
                 </div>
@@ -206,7 +205,7 @@
                 	<div class="row">
                 		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstMenu">
                 			<button type="button" class="menu-btn" ng-click="seleccionarMenu( item )">
-	                			<img ng-src="img/{{item.img}}">
+	                			<img ng-src="img-menu/{{item.img}}">
 	                			<span>{{item.menu}}</span>
                 			</button>
                 		</div>
@@ -235,7 +234,7 @@
                 <div class="modal-body">
                 	<div class="row">
                 		<div class="col-xs-6 text-center">
-                			<img ng-src="img/{{menuActual.img}}">
+                			<img ng-src="img-menu/{{menuActual.img}}">
                 			<h4>{{menuActual.menu}}</h4>
                 		</div>
                 		<div class="col-xs-6">

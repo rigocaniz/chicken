@@ -29,10 +29,10 @@ ERRORES:
 /* ########## +++++++++++++ consultaMenu +++++++++++++########*/
 # >>> ACTION <<<
 insert
-	CALL consultaMenu( 'insert', NULL, _menu VARCHAR(45), _imagen VARCHAR(125), _descripcion TEXT, _idEstadoMenu INT, _idDestinoMenu INT );
+	CALL consultaMenu( 'insert', NULL, _menu VARCHAR(45), _imagen VARCHAR(125), _descripcion TEXT, _idEstadoMenu INT, _idDestinoMenu INT, _idTipoMenu INT );
 	RETORNA: SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
 update
-	CALL consultaMenu( 'update', _idMenu INT, _menu VARCHAR(45), _imagen VARCHAR(125), _descripcion TEXT, _idEstadoMenu INT, _idDestinoMenu INT );
+	CALL consultaMenu( 'update', _idMenu INT, _menu VARCHAR(45), _imagen VARCHAR(125), _descripcion TEXT, _idEstadoMenu INT, _idDestinoMenu INT, _idTipoMenu INT );
 	RETORNA: SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
 
 ERRORES:

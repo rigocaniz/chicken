@@ -28,7 +28,7 @@ BEGIN
 	END IF;
 END$$
 
-CREATE PROCEDURE consultaMenu( _action VARCHAR(20), _idMenu INT, _menu VARCHAR(45), _imagen VARCHAR(125), _descripcion TEXT, _idEstadoMenu INT, _idDestinoMenu INT )
+CREATE PROCEDURE consultaMenu( _action VARCHAR(20), _idMenu INT, _menu VARCHAR(45), _imagen VARCHAR(125), _descripcion TEXT, _idEstadoMenu INT, _idDestinoMenu INT, _idTipoMenu INT )
 BEGIN
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
@@ -38,8 +38,8 @@ BEGIN
 		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
 
 	ELSEIF _action = 'insert' THEN
-		INSERT INTO menu ( menu, imagen, descripcion, idEstadoMenu, idDestinoMenu, top ) 
-			VALUES ( _menu, _imagen, _descripcion, _idEstadoMenu, _idDestinoMenu, 0 );
+		INSERT INTO menu ( menu, imagen, descripcion, idEstadoMenu, idDestinoMenu, top, idTipoMenu ) 
+			VALUES ( _menu, _imagen, _descripcion, _idEstadoMenu, _idDestinoMenu, 0, _idTipoMenu );
 
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
 
@@ -49,7 +49,8 @@ BEGIN
 			imagen        = _imagen, 
 			descripcion   = _descripcion, 
 			idEstadoMenu  = _idEstadoMenu, 
-			idDestinoMenu = _idDestinoMenu
+			idDestinoMenu = _idDestinoMenu,
+			idTipoMenu    = _idTipoMenu
 		WHERE idMenu = _idMenu;
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
 
@@ -303,12 +304,16 @@ SELECT
 	em.idEstadoMenu,
 	em.estadoMenu,
 	dm.idDestinoMenu,
-	dm.destinoMenu
+	dm.destinoMenu,
+	tm.idTipoMenu,
+	tm.tipoMenu
 FROM menu AS m
 	JOIN estadoMenu AS em
 		ON em.idEstadoMenu = m.idEstadoMenu
 	JOIN destinoMenu AS dm
 		ON dm.idDestinoMenu = m.idDestinoMenu
+	JOIN tipoMenu AS tm
+		ON m.idTipoMenu = tm.idTipoMenu
 ORDER BY m.top DESC;
 
 CREATE VIEW lstMenuPrecio AS
