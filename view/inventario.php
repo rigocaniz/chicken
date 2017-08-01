@@ -1,4 +1,3 @@
-<div class="container">
 	<div class="row">
 		<!-- Definir botones de inventario menu -->
 		<div class="col-sm-12 text-center">
@@ -14,9 +13,9 @@
 				</button>
 			</div>
 		</div>
+
 		<!--  tabla de porductos existentes -->
-		<div class="col-sm-12" ng-show="inventarioMenu==0 || inventarioMenu==1">
-			<br>
+		<div class="col-sm-12" ng-show="inventarioMenu==1">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">Inventario de productos</h3>
@@ -25,33 +24,49 @@
 					<div class="col-sm-3">
 						<input type="text" class="form-control" ng-model="filtro" placeholder="buscar">
 					</div>
-					<div class="col-sm-7"></div>
+					<div class="col-sm-7">
 						<a type="button" class="btn btn-primary" ng-href="#/nuevoEdita/producto">
 							<span class="glyphicon glyphicon-plus"></span> Ingresar Nuevo
 						</a>
-					
+						
+					</div>
 					<table class="table table-hover">
 						<thead>
 							<tr>
-								<th>Producto</th>
-								<th>Tipo Producto</th>
-								<th>Medida</th>
-								<th>Perecedero</th>
-								<th>Disponibilidad</th>
-								<th></th>
+								<th class="col-sm-1 text-center">No.</th>
+								<th class="col-sm-3 text-center">Producto</th>
+								<th class="col-sm-3 text-center">Tipo Producto</th>
+								<th class="col-sm-1 text-center">Medida</th>
+								<th class="col-sm-1 text-center">Perecedero</th>
+								<th class="col-sm-2 text-center">Disponibilidad</th>
+								<th class="col-sm-2 text-center"></th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="inv in lstInventario |filter:filtro">
-								<td>{{inv.producto}}</td>
-								<td>{{inv.tipoProducto}}</td>
-								<td>{{inv.medida}}</td>
-								<td>{{inv.esPerecedero}}</td>
-								<td>{{inv.disponibilidad}}</td>
+							<tr ng-repeat="inv in lstInventario" ng-class="{'danger': !inv.disponibilidad, 'warning':  inv.disponibilidad < (inv.cantidadMinima + 5) }">
 								<td>
+									{{ inv.idProducto }}
+								</td>
+								<td>
+									{{ inv.tipoProducto }}
+								</td>
+								<td class="text-center">
+									{{ inv.medida }}
+								</td>
+								<td class="text-center">
+									{{ inv.esPerecedero }}
+								</td>
+								<td class="text-center">
+									{{ inv.disponibilidad }}
+								</td>
+								<td class="text-center">	
 									<a ng-click="ingresar(inv.idProducto,inv.producto)" type="button" class="btn btn-success btn-sm">
 										<span class="glyphicon glyphicon-plus"></span>
 									</a>
+
+									<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( inv.idProducto, 'update', 'producto')">
+										<span class="glyphicon glyphicon-pencil"></span>
+									</button>
 									<a ng-href="#/nuevoEdita/producto/{{inv.idProducto}}" type="button" class="btn btn-primary btn-sm">
 										<span class="glyphicon glyphicon-edit"></span>
 									</a>
@@ -60,9 +75,20 @@
 							</tr>
 						</tbody>
 					</table>
+					<nav>
+						<ul class="pagination">
+							<li ng-repeat="(ixPagina, pagina) in lstPaginacion" ng-class="{'active': filter.pagina == pagina.noPagina}">
+								<a href="" ng-click="cargarPaginacion( pagina.noPagina );">
+									{{ pagina.noPagina }}
+								</a>
+							</li>
+						</ul>
+					</nav>
+
 				</div>
 			</div>
 		</div>
+
 		<!-- tipo de producto -->
 		<div class="col-sm-6 col-sm-offset-3" ng-show="inventarioMenu==2">
 			<br>
@@ -149,35 +175,134 @@
 			</div>
 		</div>
 	</div>
-</div>
-<!-- dialogo ingreso a existencias -->
-<script type="text/ng-template" id="dial.ingreso.html">
-    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content panel-primary">
-                <div class="modal-header panel-heading">
-                	<button type="button" class="close" ng-click="$hide()">&times;</button>
-                    Ingresar existencia de {{nombreProducto}}
-                </div>
-                <div class="modal-body">
-                	<div class="form-group">
-	                    <label class="col-sm-2">Cantidad</label>
-	                    <div class="col-sm-3">
-	                    	<input type="number" class="form-control" ng-model="$parent.cantidad">
-	                    </div>
-                   </div>
-                   <br>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-success" ng-click="guardaIngreso(idProducto,$parent.cantidad)">
-                        <span class="glyphicon glyphicon-ok"></span> Guardar
-                    </button>
-                    <button type="button" class="btn btn-default" ng-click="$hide()">
-                        <span class="glyphicon glyphicon-log-out"></span>
-                        <b>Salir</b>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</script> 
+
+	<!-- dialogo ingreso a existencias -->
+	<script type="text/ng-template" id="dial.ingreso.html">
+		<div class="modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content panel-primary">
+					<div class="modal-header panel-heading">
+						<button type="button" class="close" ng-click="$hide()">&times;</button>
+						Ingresar existencia de {{nombreProducto}}
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="col-sm-2">Cantidad</label>
+							<div class="col-sm-3">
+								<input type="number" class="form-control" ng-model="$parent.cantidad">
+							</div>
+						</div>
+						<br>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-success" ng-click="guardaIngreso( idProducto, $parent.cantidad)">
+							<span class="glyphicon glyphicon-ok"></span> Guardar
+						</button>
+						<button type="button" class="btn btn-default" ng-click="$hide()">
+							<span class="glyphicon glyphicon-log-out"></span>
+							<b>Salir</b>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</script>
+
+
+	<!-- MODAL AGREGAR / EDITAR PRODUCTO -->
+	<script type="text/ng-template" id="dialAdmin.producto.html">
+		<div class="modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content panel-primary" ng-class="{'panel-success': accion == 'insert', 'panel-info': accion == 'update'}">
+					<div class="modal-header panel-heading">
+						<button type="button" class="close" ng-click="$hide()">&times;</button>
+						<h3 class="panel-title">
+							<span class="glyphicon" ng-class="{'glyphicon-plus': accion == 'insert', 'glyphicon glyphicon-pencil': accion == 'update'}"></span>
+							{{ accion == 'insert' ? 'INGRESAR NUEVO' : 'ACTUALIZAR' }}
+							<span ng-show="evento=='producto'">PRODUCTO</span>
+							<span ng-show="evento=='menu'">MENU</span>
+							<span ng-show="evento=='combo'">COMBO</span>
+						</h3>
+					</div>
+					<div class="modal-body">
+						<div class="panel-body">
+							<!-- FORMULARIO PRODUCTO -->
+							<form class="form-horizontal" role="form" name="formProducto">
+								<div class="form-group">
+									<label class="control-label col-sm-2">Nombre Producto</label>
+									<div class="col-sm-5">
+										<input type="text" class="form-control" ng-model="producto.producto" maxlength="45" required>
+									</div>
+									<label class="control-label col-sm-2" ng-show="accion!='insert'">No. Producto</label>
+									<div class="col-sm-2" ng-show="accion!='insert'">
+										<input type="text" class="form-control" ng-model="producto.idProducto" readonly>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-sm-2">Tipo Producto</label>
+									<div class="col-sm-2">
+										<select class="form-control" ng-model="producto.idTipoProducto" required>
+											<option ng-repeat="tp in lstTipoProducto" value="{{ tp.idTipoProducto }}">
+												{{ tp.tipoProducto }}
+											</option>
+										</select>
+									</div>
+									<label class="control-label col-sm-2">Tipo Medida</label>
+									<div class="col-sm-2">
+										<select class="form-control" ng-model="producto.idMedida" required>
+											<option ng-repeat="m in lstMedidas" value="{{m.idMedida}}">{{m.medida}}</option>
+										</select>
+									</div>
+									<label class="control-label col-sm-2">Pedecedero</label>
+									<div class="col-sm-1">
+										<button type="button" class="btn btn-sm" ng-class="{'btn-success': producto.perecedero, 'btn-warning':!producto.perecedero}" ng-click="producto.perecedero=!producto.perecedero">
+											<span class="glyphicon" ng-class="{'glyphicon-unchecked' : !producto.perecedero, 'glyphicon-check' : producto.perecedero}"></span>
+											{{ producto.perecedero ? 'SI' : 'NO' }}
+										</button>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-sm-2">Cantidad minima</label>
+									<div class="col-sm-2">
+										<input type="number" min="0" class="form-control" ng-model="producto.cantidadMinima" required>
+									</div>
+									<label class="control-label col-sm-2">Cantidad maxima</label>
+									<div class="col-sm-2">
+										<input type="number" min="0" class="form-control" ng-model="producto.cantidadMaxima">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-sm-2">Disponibilidad</label>
+									<div class="col-sm-2">
+										<input type="number" min="0" class="form-control" ng-model="producto.disponibilidad" ng-disabled="accion!='insert'">
+									</div>
+									<label class="control-label col-sm-2">Producto Importante</label>
+									<div class="col-sm-1">
+										<button type="button" class="btn btn-sm" ng-class="{'btn-success': producto.importante, 'btn-warning':!producto.importante}" ng-click="producto.importante=!producto.importante">
+											<span class="glyphicon" ng-class="{'glyphicon-unchecked' : !producto.importante, 'glyphicon-check' : producto.importante}"></span>
+											{{ producto.importante ? 'SI' : 'NO' }}
+										</button>
+									</div>
+								</div>
+								<div class="text-center">
+									<button type="button" class="btn btn-success" ng-click="registraNuevoProducto()">Guardar</button>
+									<button type="button" class="btn btn-danger" ng-click="cancelaNuevoProducto()">Cancelar</button>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-success" ng-click="guardaIngreso(idProducto,$parent.cantidad)">
+							<span class="glyphicon glyphicon-ok"></span> Guardar
+						</button>
+						<button type="button" class="btn btn-default" ng-click="$hide()">
+							<span class="glyphicon glyphicon-log-out"></span>
+							<b>Salir</b>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</script>
+
+

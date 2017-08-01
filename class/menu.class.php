@@ -63,8 +63,12 @@ class Menu
 				    idMenu = {$idMenu};";
 		
 		if( $rs = $this->con->query( $sql ) ){
-			if( $row = $rs->fetch_object() )
-				$menuPrecio = $row;
+			while( $rs AND $row = $rs->fetch_object() )
+				$menuPrecio[] = (object)array(
+					'idMenu'         => (int)$row->idMenu,
+					'idTipoServicio' => (int)$row->idTipoServicio,
+					'precio'         => (double)$row->precio,
+				);
 		}
 
 		return $menuPrecio;
@@ -72,15 +76,21 @@ class Menu
 
 
  	// CONSULTAR LISTA DE MENUS
- 	function lstMenu()
+ 	function lstMenu( $idTipoMenu = 0 )
  	{
  		$lstMenu = array();
 
- 		$sql = "SELECT idMenu, menu, imagen, descripcion, idEstadoMenu, estadoMenu, idDestinoMenu, destinoMenu FROM lstMenu ORDER BY idMenu DESC;";
+ 		$where = "";
+
+ 		if ( $idTipoMenu > 0 )
+	 		$where = " idTipoMenu = $idTipoMenu ";
+
+ 		$sql = "SELECT idMenu, menu, imagen, descripcion, idEstadoMenu, estadoMenu, idDestinoMenu, destinoMenu FROM lstMenu $where";
  		
  		if( $rs = $this->con->query( $sql ) ){
  			while( $row = $rs->fetch_object() ){
- 				$lstMenu[] = $row;
+				$row->imagen = $row->imagen == '' ? 'notFound.png' : $row->imagen;
+				$lstMenu[]   = $row;
  			}
  		}
 
@@ -103,7 +113,6 @@ class Menu
 
  		return $lstMenuPrecio;
  	}
- 	
 
 
  	// GUARDAR // ACTUALIZAR => MENU
@@ -120,10 +129,11 @@ class Menu
 		$idDestinoMenu = NULL;
 
 		// SETEO VARIABLES GENERALES
- 		$data->menu          = strlen( $data->menu ) > 0 ? (string)$data->menu : NULL;
+ 		$data->menu          = strlen( $data->menu ) > 0 		? (string)$data->menu : NULL;
  		$data->descripcion   = strlen( $data->descripcion ) > 0 ? (string)$data->descripcion : NULL;
- 		$data->idEstadoMenu  = (int)$data->idEstadoMenu > 0 AND !esNulo( $data->idEstadoMenu ) ? (int)$data->idEstadoMenu : NULL;
- 		$data->idDestinoMenu = (int)$data->idDestinoMenu > 0 AND !esNulo( $data->idDestinoMenu ) ? (int)$data->idDestinoMenu : NULL;
+ 		$data->idEstadoMenu  = (int)$data->idEstadoMenu > 0  	? (int)$data->idEstadoMenu : NULL;
+ 		$data->idDestinoMenu = (int)$data->idDestinoMenu > 0  	? (int)$data->idDestinoMenu : NULL;
+ 		$data->idTipoMenu    = (int)$data->idTipoMenu > 0 		? (int)$data->idTipoMenu : NULL;
 
  
  		// VALIDACIONES
@@ -136,6 +146,7 @@ class Menu
 		$descripcion   = $validar->validarTexto( $data->descripcion, NULL, TRUE, 3, 45, 'el nombre del descripcion' );
 		$idEstadoMenu  = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado Menú no es válido, verifique.' );
 		$idDestinoMenu = $validar->validarEntero( $data->idDestinoMenu, NULL, TRUE, 'El ID del tipo de medida no es válido, verifique.' );
+		$idTipoMenu    = $validar->validarEntero( $data->idTipoMenu, NULL, TRUE, 'El ID del tipo de menú no es válido, verifique.' );
 
 
 		// OBTENER RESULTADO DE VALIDACIONES
@@ -144,7 +155,7 @@ class Menu
 	 		$this->mensaje   = $validar->getMsj();
 
  		else:
-	 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu} );";
+	 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu}, {$idTipoMenu} );";
 
 	 		if( $rs = $this->con->query( $sql ) ){
 	 			@$this->con->next_result();
@@ -260,7 +271,9 @@ class Menu
 						'idEstadoMenu'  => (int)$row->idEstadoMenu,
 						'estadoMenu'    => $row->estadoMenu,
 						'idDestinoMenu' => (int)$row->idDestinoMenu,
-						'destinoMenu'   => $row->destinoMenu
+						'destinoMenu'   => $row->destinoMenu,
+						'idTipoMenu'    => (int)$row->idTipoMenu,
+						'tipoMenu'      => $row->tipoMenu
 					);
 
 				$lstMenus[] = $producto;
