@@ -130,7 +130,7 @@ switch ( $data->opcion )
 
 	case 'lstMenu':					// CARGAR LISTA DE MENU
 		$menu = new Menu();
-		echo json_encode( $menu->lstMenu() );
+		echo json_encode( $menu->lstMenu( $data->idTipoMenu ) );
 		break;
 
 	case 'lstMenuPrecio':			// CARGAR LISTA PRECIOS MENU
