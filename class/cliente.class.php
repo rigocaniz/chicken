@@ -35,7 +35,7 @@ class Cliente
  		// SET
  		$cliente->nit           = strlen( (int)$cliente->nit ) > 0 		? (string)$cliente->nit 		: NULL;
  		$cliente->nombre        = strlen( $cliente->nombre ) > 0 		? (string)$cliente->nombre 		: NULL;
- 		$cliente->cui           = strlen( (int)$cliente->cui ) > 0 		? (int)$cliente->cui 			: NULL;
+ 		$cliente->cui           = strlen( $cliente->cui ) > 0 		? $cliente->cui 			: NULL;
  		$cliente->correo        = strlen( $cliente->correo ) > 0 		? (string)$cliente->correo 		: NULL;
  		$cliente->telefono      = strlen( $cliente->telefono ) > 0 		? (int)$cliente->telefono 		: NULL;
  		$cliente->direccion     = strlen( $cliente->direccion ) > 0 	? (string)$cliente->direccion 	: NULL;
