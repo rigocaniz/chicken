@@ -271,11 +271,11 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="control-label col-sm-3">Disponibilidad</label>
-									<div class="col-sm-2">
+									<label class="control-label col-sm-2">Disponibilidad</label>
+									<div class="col-sm-3">
 										<input type="number" min="0" class="form-control" ng-model="producto.disponibilidad" ng-disabled="accion!='insert'">
 									</div>
-									<label class="control-label col-sm-3">Producto Importante</label>
+									<label class="control-label col-sm-2">Producto Importante</label>
 									<div class="col-sm-1">
 										<button type="button" class="btn btn-sm" ng-class="{'btn-success': producto.importante, 'btn-warning':!producto.importante}" ng-click="producto.importante=!producto.importante">
 											<span class="glyphicon" ng-class="{'glyphicon-unchecked' : !producto.importante, 'glyphicon-check' : producto.importante}"></span>
