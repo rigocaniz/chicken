@@ -6,6 +6,22 @@ button,a{
     margin: 0 15px;
 }
 
+.fieldset{
+    border: 1px solid #dddddd;
+    margin: 0 2px;
+    border-radius: 5px;
+    padding: 10px 15px;
+}
+
+.legend{
+    width: auto;
+    border-bottom: 0;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    padding: 0 6px;
+}
+
 .item-menu{
     width: 100%;
     display: inline-block;

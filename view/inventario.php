@@ -28,6 +28,10 @@
 						<a type="button" class="btn btn-primary" ng-href="#/nuevoEdita/producto">
 							<span class="glyphicon glyphicon-plus"></span> Ingresar Nuevo
 						</a>
+
+						<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( null, 'insert' )">
+							<span class="glyphicon glyphicon-pencil"></span>
+						</button>
 						
 					</div>
 					<table class="table table-hover">
@@ -225,6 +229,8 @@
 						</h3>
 					</div>
 					<div class="modal-body">
+						<fieldset class="fieldset">
+				    		<legend class="legend">DATOS</legend>
 							<!-- FORMULARIO PRODUCTO -->
 							<form class="form-horizontal" role="form" name="$parent.formProducto">
 								<div class="form-group">
@@ -284,10 +290,12 @@
 									</div>
 								</div>
 							</form>
+				  		</fieldset>
+
 					</div>
 					<div class="modal-footer">
 						<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaProducto()">
-							<span class="glyphicon glyphicon-ok"></span> Guardar
+							<span class="glyphicon glyphicon-ok"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 						</button>
 						<button type="button" class="btn btn-default" ng-click="resetValues( 1 ); $hide()">
 							<span class="glyphicon glyphicon-log-out"></span>

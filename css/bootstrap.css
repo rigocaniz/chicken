@@ -2494,12 +2494,7 @@ table th[class*="col-"] {
     border-bottom: 0;
   }
 }
-fieldset {
-  padding: 0;
-  margin: 0;
-  border: 0;
-  min-width: 0;
-}
+
 legend {
   display: block;
   width: 100%;
@@ -3235,7 +3230,7 @@ fieldset[disabled] .btn-success.focus {
 }
 .btn-info {
   color: #ffffff;
-  background-color: #5bc0de;
+  background-color: #08b8ce;
   border-color: #46b8da;
 }
 .btn-info:focus,
@@ -5728,9 +5723,9 @@ button.list-group-item-danger.active:focus {
   border-color: #d6e9c6;
 }
 .panel-success > .panel-heading {
-  color: #3c763d;
-  background-color: #dff0d8;
-  border-color: #d6e9c6;
+  color: #ffffff;
+  background-color: #4CAF50;
+  border-color: #37b93c;
 }
 .panel-success > .panel-heading + .panel-collapse > .panel-body {
   border-top-color: #d6e9c6;
@@ -5950,7 +5945,7 @@ button.close {
 }
 .modal-body {
   position: relative;
-  padding: 15px;
+  padding: 15px 10px;;
 }
 .modal-footer {
   padding: 15px;
