@@ -105,6 +105,8 @@ class Menu
  	}
  	
 
+ 	CREATE PROCEDURE consultaMenu( _action VARCHAR(20), _idMenu INT, _menu VARCHAR(45), _imagen VARCHAR(125), _descripcion TEXT, _idEstadoMenu INT, _idDestinoMenu INT, _idTipoMenu INT )
+
 
  	// GUARDAR // ACTUALIZAR => MENU
 	function consultaMenu( $accion, $data )
@@ -120,10 +122,11 @@ class Menu
 		$idDestinoMenu = NULL;
 
 		// SETEO VARIABLES GENERALES
- 		$data->menu          = strlen( $data->menu ) > 0 ? (string)$data->menu : NULL;
+ 		$data->menu          = strlen( $data->menu ) > 0 		? (string)$data->menu : NULL;
  		$data->descripcion   = strlen( $data->descripcion ) > 0 ? (string)$data->descripcion : NULL;
- 		$data->idEstadoMenu  = (int)$data->idEstadoMenu > 0 AND !esNulo( $data->idEstadoMenu ) ? (int)$data->idEstadoMenu : NULL;
- 		$data->idDestinoMenu = (int)$data->idDestinoMenu > 0 AND !esNulo( $data->idDestinoMenu ) ? (int)$data->idDestinoMenu : NULL;
+ 		$data->idEstadoMenu  = (int)$data->idEstadoMenu > 0  	? (int)$data->idEstadoMenu : NULL;
+ 		$data->idDestinoMenu = (int)$data->idDestinoMenu > 0  	? (int)$data->idDestinoMenu : NULL;
+ 		$data->idTipoMenu    = (int)$data->idTipoMenu > 0 		? (int)$data->idTipoMenu : NULL;
 
  
  		// VALIDACIONES
@@ -136,6 +139,7 @@ class Menu
 		$descripcion   = $validar->validarTexto( $data->descripcion, NULL, TRUE, 3, 45, 'el nombre del descripcion' );
 		$idEstadoMenu  = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado Menú no es válido, verifique.' );
 		$idDestinoMenu = $validar->validarEntero( $data->idDestinoMenu, NULL, TRUE, 'El ID del tipo de medida no es válido, verifique.' );
+		$idTipoMenu    = $validar->validarEntero( $data->idTipoMenu, NULL, TRUE, 'El ID del tipo de menú no es válido, verifique.' );
 
 
 		// OBTENER RESULTADO DE VALIDACIONES
@@ -144,7 +148,7 @@ class Menu
 	 		$this->mensaje   = $validar->getMsj();
 
  		else:
-	 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu} );";
+	 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu}, {$idTipoMenu} );";
 
 	 		if( $rs = $this->con->query( $sql ) ){
 	 			@$this->con->next_result();
