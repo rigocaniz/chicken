@@ -83,7 +83,7 @@ class Menu
  		$where = "";
 
  		if ( $idTipoMenu > 0 )
-	 		$where = " idTipoMenu = $idTipoMenu ";
+	 		$where = " WHERE idTipoMenu = $idTipoMenu ";
 
  		$sql = "SELECT idMenu, menu, imagen, descripcion, idEstadoMenu, estadoMenu, idDestinoMenu, destinoMenu FROM lstMenu $where";
  		

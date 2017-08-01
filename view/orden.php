@@ -119,7 +119,6 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-default">
                 <div class="modal-header panel-heading">
-                	<button type="button" class="close" ng-click="$hide()">&times;</button>
                     <h4>
                     	Orden - Ticket # {{ordenActual.noTicket}}
                     </h4>
@@ -127,7 +126,7 @@
                 <div class="modal-body">
                 	<div class="row">
                 		<div class="col-xs-7">
-                			<button class="btn btn-primary" ng-click="dialOrdenMenu.show();dialOrdenCliente.hide()">
+                			<button class="btn btn-primary" ng-click="mostrarMenus()">
                 				<span class="glyphicon glyphicon-plus"></span>
                 				<b>Menú</b>
                 			</button>
@@ -198,23 +197,29 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-primary">
                 <div class="modal-header panel-heading">
-                	<button type="button" class="close" ng-click="$hide()">&times;</button>
                     Seleccione Menú - Ticket # {{ordenActual.noTicket}}
                 </div>
                 <div class="modal-body">
                 	<div class="row">
+                		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstTipoMenu">
+                			<button type="button" class="btn btn-default" ng-click="$parent.$parent.idTipoMenu=item.idTipoMenu">
+	                			<span>{{item.tipoMenu}}</span>
+                			</button>
+                		</div>
+                   </div>
+                	<div class="row">
                 		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstMenu">
                 			<button type="button" class="menu-btn" ng-click="seleccionarMenu( item )">
-	                			<img ng-src="img-menu/{{item.img}}">
+	                			<img ng-src="img-menu/{{item.imagen}}">
 	                			<span>{{item.menu}}</span>
                 			</button>
                 		</div>
                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" ng-click="$hide()">
-                        <span class="glyphicon glyphicon-log-out"></span>
-                        <b>Salir</b>
+                    <button type="button" class="btn btn-default" ng-click="$hide();dialOrdenCliente.show()">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <b>Regresar a Orden Cliente</b>
                     </button>
                 </div>
             </div>
@@ -228,13 +233,12 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-info">
                 <div class="modal-header panel-heading">
-                	<button type="button" class="close" ng-click="$hide()">&times;</button>
-                    <b>Ingrese Cantidad Menú</b> - Ticket # {{ordenActual.noTicket}}
+                    <b>Ingrese Cantidad Menú</b>
                 </div>
                 <div class="modal-body">
                 	<div class="row">
                 		<div class="col-xs-6 text-center">
-                			<img ng-src="img-menu/{{menuActual.img}}">
+                			<img ng-src="img-menu/{{menuActual.imagen}}">
                 			<h4>{{menuActual.menu}}</h4>
                 			<b>Q. {{menuActual.precio | number:2}}</b>
                 		</div>
@@ -266,9 +270,9 @@
                         <span class="glyphicon glyphicon-plus-sign"></span>
                         <b>Agregar a Orden</b>
                     </button>
-                    <button type="button" class="btn btn-default" ng-click="$hide()">
-                        <span class="glyphicon glyphicon-remove"></span>
-                        <b>Cancelar</b>
+                    <button type="button" class="btn btn-default" ng-click="$hide();dialOrdenMenu.show()">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <b>Regresar a Menú</b>
                     </button>
                 </div>
             </div>
