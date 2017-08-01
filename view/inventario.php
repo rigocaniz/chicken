@@ -41,6 +41,7 @@
 			    </li>
 			    -->
 			</ul>
+			</nav>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">Inventario de productos</h3>
@@ -96,6 +97,16 @@
 							</tr>
 						</tbody>
 					</table>
+					<nav>
+					  	<ul class="pagination">
+						    <li ng-repeat="(ixPagina, pagina) in lstPaginacion">
+						    	<a href="" ng-click="cargarPaginacion( pagina.noPagina );">
+						    		{{ pagina.noPagina }}
+						    	</a>
+						    </li>
+						</ul>
+					</nav>
+
 				</div>
 			</div>
 		</div>

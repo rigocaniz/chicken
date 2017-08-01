@@ -103,9 +103,6 @@ class Menu
 
  		return $lstMenuPrecio;
  	}
- 	
-
- 	CREATE PROCEDURE consultaMenu( _action VARCHAR(20), _idMenu INT, _menu VARCHAR(45), _imagen VARCHAR(125), _descripcion TEXT, _idEstadoMenu INT, _idDestinoMenu INT, _idTipoMenu INT )
 
 
  	// GUARDAR // ACTUALIZAR => MENU
