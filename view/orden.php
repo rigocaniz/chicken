@@ -23,10 +23,36 @@
 			<div class="col-sm-6">
 				<div class="panel panel-primary">
 					<div class="panel-heading">
-						<h3 class="panel-title">Menus mas pedidos</h3>
+						<h3 class="panel-title">
+							<button class="btn btn-default btn-sm">Menus</button>
+							<button class="btn btn-info btn-sm">Combos</button>
+							<button class="btn btn-warning btn-sm">Productos</button>
+						</h3>
 					</div>
 					<div class="panel-body">
-						
+						<div class="row">
+						<br>
+					  <div class="col-sm-5">
+					    <div class="thumbnail">
+					      <img src="upload/Logo.png" alt="...">
+					      <div class="caption">
+					        <p>
+					        	<strong>Menu1</strong> 
+					        	<span class="label label-success">Disponible</span>
+					        </p> 
+					        <p>test</p>
+					        <div class="row">
+								<div class="col-sm-8">
+						        	<input type="number" class="form-control">
+								</div>
+					        	<button class="btn btn-primary btn-sm">
+					        		<span class="glyphicon glyphicon-ok"></span>
+					        	</button>
+					        </div>
+					      </div>
+					    </div>
+					  </div>
+					</div>
 					</div>
 				</div>
 			</div>
