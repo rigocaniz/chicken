@@ -2,7 +2,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 
 	$scope.inventarioMenu = 1;
 
-	
+	$scope.$watch('inventarioMenu', function( _old, _new){
+		console.log( _old, _new );
+		if( $scope.inventarioMenu == 1 )
+			$scope.inventario();
+	});
 
 	$scope.catTipoProducto = function(){
 		$http.post('consultas.php',{
@@ -10,13 +14,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		}).success(function(data){
 			$scope.lstTipoProducto = data;
 		})
-	}
+	};
 
-	$scope.$watch('inventarioMenu', function( _old, _new){
-		console.log( _old, _new );
-		if( $scope.inventarioMenu == 1 )
-			$scope.inventario();
-	});
 
 	$scope.catMedidas = function(){
 		$http.post('consultas.php',{
@@ -25,6 +24,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 			$scope.lstMedidas = data;
 		})
 	};
+
+	($scope.cargarInicio = function(){
+		$scope.catMedidas();
+		$scope.catTipoProducto();
+	})();
 
 	//lista el inventario general de todos los productos
 	$scope.lstInventario = [];
@@ -40,6 +44,78 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		limit : 15,
 		page : 1,
 	};*/
+
+
+	$scope.resetValues = function( accion ){
+
+		if( accion == 1 ){
+			$scope.producto = {
+				'producto'       : '',
+				'idTipoProducto' : null,
+				'idMedida'       : null,
+				'perecedero'     : true,
+				'cantidadMinima' : null,
+				'cantidadMaxima' : null,
+				'disponibilidad' : '',
+				'importante'     : '',
+			};			
+		}
+
+	};
+
+	$scope.editarAccion = function( id, accion ){
+
+		$scope.id     = id;
+		$scope.accion = accion;
+
+		if ( $scope.id > 0 ) {
+			$scope.accion = 'update';
+		}
+
+
+		if ($scope.id > 0 ) {
+
+			$http.post('consultas.php',{
+				opcion:'cargarProducto',
+				idProducto: $scope.id
+			}).success(function(data){
+				console.log(data);
+				$scope.producto = data;
+			})
+
+		}
+
+		$scope.dialAdministrarAbrir();
+
+	};
+
+	//cancelar registro de nuevo producto
+	$scope.cancelaNuevoProducto = function(){
+		$scope.producto = {};
+	};
+
+	//registrar nuevo producto
+	$scope.registraNuevoProducto = function(){
+		if ( $scope.formProducto.$invalid == true ) {
+			alertify.set('notifier','position', 'top-right');
+ 			alertify.notify('Ingrese todos los datos requeridos identificados con borde de color verde', 'warning', 3);
+		}else{
+			$http.post('consultas.php',{
+				opcion:"consultaProducto",
+				accion: $scope.accion,
+				datos: $scope.producto
+			}).success(function(data){
+				console.log(data);
+				//mensaje aca
+				alertify.set('notifier','position', 'top-right');
+				alertify.notify(data.mensaje,data.respuesta, data.tiempo);
+				if ( data.respuesta == "success" ) {
+					$scope.cancelaNuevoProducto();
+				}
+			})
+		}
+	};
+
 
 	$scope.lstPaginacion = [];
 
@@ -114,7 +190,16 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		}
 	}
 
-	$scope.dialIngreso = $modal({scope: $scope,template:'dial.ingreso.html', show: false});
+	$scope.dialIngreso     = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
+	$scope.dialAdministrar = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
+
+	$scope.dialAdministrarAbrir = function(){
+		$scope.dialAdministrar.show();
+	};
+
+	$scope.dialAdministrarCerrar = function(){
+		$scope.dialAdministrar.hide();
+	};
 
 	$scope.ingresar = function(idProducto, nombreProducto){
 		$scope.dialIngreso.show();
@@ -141,5 +226,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 				}
 			})
 		}
-	}
+	};
+
 });

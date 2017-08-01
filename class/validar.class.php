@@ -49,22 +49,24 @@ class Validar
 
 	
 	// VALIDAR CUI
-	function validarCui( $valor = 0, $default = NULL, $required = TRUE )
+	function validarCui( $valor = 0, $default = NULL, $required = FALSE )
 	{
 		if( $this->error )
 			return $valor;
 
 		$warning = FALSE;
 
-		if( !(strlen( (int)$valor ) == 13) ):
+		if( !(strlen( $valor ) == 13) ):
 			$warning = TRUE;
-			$this->mensaje = 'No. de CUI inválido, verifique que tenga 13 dígitos.';
+			$this->mensaje = 'No. de CUI inválido, verifique que tenga 13 dígitos.'.$valor;
 		endif;
 
 		if( $warning AND $required ):
 			$valor = $default;
 			$this->error = TRUE;
 		endif;
+
+		return $valor;
 	}
 
 
@@ -86,6 +88,8 @@ class Validar
 			$valor = $default;
 			$this->error = TRUE;
 		endif;
+
+		return $valor;
 	}
 
 
@@ -123,7 +127,8 @@ class Validar
 		if( $this->error )
 			return $valor;
 
-		$valor = (int)$valor;
+		$warning = FALSE;
+		$valor   = (int)$valor;
 
 		if( !(strlen( $valor ) == 8) AND $required ):
 			$warning = TRUE;
