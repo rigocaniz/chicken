@@ -65,20 +65,26 @@
   background: rgba(255, 255, 255, 0.95);
   color: #000;
   text-align: center;
-  border: solid 1px #ddd;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 .alertify-notifier .ajs-message.ajs-success {
   color: #fff;
-  background: rgba(91, 189, 114, 0.95);
+  background: #4caf50;
   text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5);
 }
 .alertify-notifier .ajs-message.ajs-danger {
   color: #fff;
-  background: rgba(217, 92, 92, 0.95);
+  background: #b30000;
   text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5);
 }
 .alertify-notifier .ajs-message.ajs-warning {
-  background: rgba(252, 248, 215, 0.95);
-  border-color: #999;
+  background: #e67704;
+  color: #fff;
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.alertify-notifier .ajs-message.ajs-info {
+  background: #039be5;
+  color: #fff;
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5);
 }

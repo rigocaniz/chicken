@@ -3103,6 +3103,18 @@
             warning: function (message, wait, callback) {
                 return notifier.create('warning', callback).push(message, wait);
             },
+                        /**
+             * Creates a new notification message of type 'warning'.
+             *
+             * @param  {String}     [message=undefined]     Message text
+             * @param  {String}     [wait='']               Time (in seconds) to wait before auto-close
+             * @param  {Function}   [callback=undefined]    A callback function to be invoked when the log is closed.
+             *
+             * @return {Object} Notification object.
+             */
+            info: function (message, wait, callback) {
+                return notifier.create('info', callback).push(message, wait);
+            },
             /**
              * Dismisses all open notifications
              *

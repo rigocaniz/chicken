@@ -21,16 +21,10 @@
 					<h3 class="panel-title">Inventario de productos</h3>
 				</div>
 				<div class="panel-body">
-					<div class="col-sm-3">
-						<input type="text" class="form-control" ng-model="filtro" placeholder="buscar">
-					</div>
 					<div class="col-sm-7">
-						<a type="button" class="btn btn-primary" ng-href="#/nuevoEdita/producto">
-							<span class="glyphicon glyphicon-plus"></span> Ingresar Nuevo
-						</a>
 
-						<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( null, 'insert' )">
-							<span class="glyphicon glyphicon-pencil"></span>
+						<button type="button" class="btn btn-success btn-sm" ng-click="editarAccion( null, 'insert' )">
+							<span class="glyphicon glyphicon-plus"></span> Ingresar Nuevo
 						</button>
 						
 					</div>
@@ -291,7 +285,6 @@
 								</div>
 							</form>
 				  		</fieldset>
-
 					</div>
 					<div class="modal-footer">
 						<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaProducto()">

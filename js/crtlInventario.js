@@ -25,9 +25,27 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		})
 	};
 
+	$scope.resetValues = function( accion ){
+
+		if( accion == 1 ){
+			$scope.producto = {
+				'producto'       : '',
+				'idTipoProducto' : null,
+				'idMedida'       : null,
+				'perecedero'     : true,
+				'cantidadMinima' : null,
+				'cantidadMaxima' : null,
+				'disponibilidad' : '',
+				'importante'     : '',
+			};			
+		}
+
+	};
+
 	($scope.cargarInicio = function(){
 		$scope.catMedidas();
 		$scope.catTipoProducto();
+		$scope.resetValues( 1 );
 	})();
 
 	//lista el inventario general de todos los productos
@@ -46,22 +64,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 	};*/
 
 
-	$scope.resetValues = function( accion ){
-
-		if( accion == 1 ){
-			$scope.producto = {
-				'producto'       : '',
-				'idTipoProducto' : null,
-				'idMedida'       : null,
-				'perecedero'     : true,
-				'cantidadMinima' : null,
-				'cantidadMaxima' : null,
-				'disponibilidad' : '',
-				'importante'     : '',
-			};			
-		}
-
-	};
 
 	$scope.editarAccion = function( id, accion ){
 
@@ -97,6 +99,19 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 
 	//registrar nuevo producto
 	$scope.consultaProducto = function(){
+		var producto = $scope.producto, accion = $scope.accion;
+		console.log( producto );
+
+		if( accion == 'update' && !(producto.idProducto > 0) ){
+			alertify.notify( 'No. de producto no definido', 'danger', 5 );
+		}
+		else if( !(producto.producto && producto.producto.length >= 3) ){
+			alertify.notify( 'El nombre del producto debe ser mayor a 3 caracteres', 'info', 5000 );
+		}
+		else if( !(producto.idTipoProducto && producto.idTipoProducto > 0) ){
+			alertify.notify( 'Seleccione el tipo de producto', 'danger', 5 );	
+		}
+
 		if ( $scope.formProducto.$invalid == true ) {
 			alertify.set('notifier','position', 'top-right');
  			alertify.notify('Ingrese todos los datos requeridos identificados con borde de color verde', 'warning', 3);
