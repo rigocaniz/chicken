@@ -56,9 +56,9 @@ class Validar
 
 		$warning = FALSE;
 
-		if( !(strlen( (int)$valor ) == 13) ):
+		if( !(strlen( $valor ) == 13) ):
 			$warning = TRUE;
-			$this->mensaje = 'No. de CUI inválido, verifique que tenga 13 dígitos.';
+			$this->mensaje = 'No. de CUI inválido, verifique que tenga 13 dígitos.'.$valor;
 		endif;
 
 		if( $warning AND $required ):
