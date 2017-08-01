@@ -264,7 +264,9 @@ class Menu
 						'idEstadoMenu'  => (int)$row->idEstadoMenu,
 						'estadoMenu'    => $row->estadoMenu,
 						'idDestinoMenu' => (int)$row->idDestinoMenu,
-						'destinoMenu'   => $row->destinoMenu
+						'destinoMenu'   => $row->destinoMenu,
+						'idTipoMenu'    => (int)$row->idTipoMenu,
+						'tipoMenu'      => $row->tipoMenu
 					);
 
 				$lstMenus[] = $producto;
