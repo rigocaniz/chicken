@@ -119,7 +119,6 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-default">
                 <div class="modal-header panel-heading">
-                	<button type="button" class="close" ng-click="$hide()">&times;</button>
                     <h4>
                     	Orden - Ticket # {{ordenActual.noTicket}}
                     </h4>
@@ -198,7 +197,6 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-primary">
                 <div class="modal-header panel-heading">
-                	<button type="button" class="close" ng-click="$hide()">&times;</button>
                     Seleccione Menú - Ticket # {{ordenActual.noTicket}}
                 </div>
                 <div class="modal-body">
@@ -219,9 +217,9 @@
                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" ng-click="$hide()">
-                        <span class="glyphicon glyphicon-log-out"></span>
-                        <b>Salir</b>
+                    <button type="button" class="btn btn-default" ng-click="$hide();dialOrdenCliente.show()">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <b>Regresar a Orden Cliente</b>
                     </button>
                 </div>
             </div>
@@ -235,8 +233,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-info">
                 <div class="modal-header panel-heading">
-                	<button type="button" class="close" ng-click="$hide()">&times;</button>
-                    <b>Ingrese Cantidad Menú</b> - Ticket # {{ordenActual.noTicket}}
+                    <b>Ingrese Cantidad Menú</b>
                 </div>
                 <div class="modal-body">
                 	<div class="row">
@@ -273,9 +270,9 @@
                         <span class="glyphicon glyphicon-plus-sign"></span>
                         <b>Agregar a Orden</b>
                     </button>
-                    <button type="button" class="btn btn-default" ng-click="$hide()">
-                        <span class="glyphicon glyphicon-remove"></span>
-                        <b>Cancelar</b>
+                    <button type="button" class="btn btn-default" ng-click="$hide();dialOrdenMenu.show()">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <b>Regresar a Menú</b>
                     </button>
                 </div>
             </div>
