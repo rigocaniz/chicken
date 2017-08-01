@@ -2,6 +2,10 @@ button,a{
     outline: 0 !important;
 }
 
+.contenedor{
+    margin: 0 15px;
+}
+
 .item-menu{
     width: 100%;
     display: inline-block;

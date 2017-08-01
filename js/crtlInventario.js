@@ -44,6 +44,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 	$scope.lstPaginacion = [];
 
 	$scope.generarPaginacion = function( totalPaginas ){
+		$scope.lstPaginacion = [];
 		for (var i = 1; i <= totalPaginas; i++) {
 			$scope.lstPaginacion.push({
 				noPagina : i
@@ -51,11 +52,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		}
 	};
 	$scope.cargarPaginacion = function( pagina ){
-		$scope.filtro.pagina = pagina;
+		$scope.filter.pagina = pagina;
 		$scope.inventario();
 	};
 
-	$scope.filtro = {
+	$scope.filter = {
 		pagina: 1,
 		limite: 25,
 		orden: 'ASC'
@@ -64,7 +65,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 	$scope.inventario = function(){
 		$http.post('consultas.php',{
 			opcion : 'lstProductos',
-			filtro : $scope.filtro
+			filter : $scope.filter
 		}).success(function(data){
 			console.log( "::::", data );
 			$scope.lstInventario = data.lstProductos;

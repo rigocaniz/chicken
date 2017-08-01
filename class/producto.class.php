@@ -249,20 +249,22 @@ class Producto
 		}
 
 		$totalPaginas = ceil( $total / $limite );
+		
 		return $totalPaginas;
-
 	}
 
-/*
-	SELECT * 
-	FROM producto
-		LIMIT 0, 25;
-	*/
 
-	function lstProductos( $pagina = 0, $limite = 25, $orden = 'DESC' )
+	function lstProductos( $filter  )
 	{
 
-		$lstProductos = array();
+		$pagina = $filter->pagina > 0 		? (int)$filter->pagina 	: 1;
+		$limite = $filter->limite > 0 		? (int)$filter->limite 	: 25;
+		$orden  = strlen( $filter->orden ) 	? $filter->orden 		: 'ASC';
+
+		$productos = (object)array(
+				'totalPaginas' => 0,
+				'lstProductos' => array()
+			);
 
 		$inicio = ($pagina - 1) * $limite;
 
@@ -282,9 +284,9 @@ class Producto
 				    DATE_FORMAT( fechaProducto, '%d/%m/%Y %h:%i %p' ) AS fechaProducto
 				FROM
 				    lstProducto
-				ORDER BY idProducto DESC LIMIT $inicio, $limite;";
+				ORDER BY idProducto $orden LIMIT $inicio, $limite;";
 
-//				echo $sql;
+				//echo $sql;
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
@@ -306,15 +308,12 @@ class Producto
 					 	'fechaProducto'   => $row->fechaProducto
 					);
 
-				$lstProductos[] = $producto;
+				$productos->totalPaginas   = $this->getTotalProductos( $limite );
+				$productos->lstProductos[] = $producto;
 			}
 		}
-		else{
-			$this->respuesta = 'danger';
-			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
-		}
 
-		return $lstProductos;
+		return $productos;
 	}
 
 

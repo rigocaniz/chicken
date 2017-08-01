@@ -210,11 +210,7 @@ switch ( $data->opcion )
 
 	case 'lstProductos':				// CONSULTAR LISTA DE PRODUCTOS
 		$producto = new Producto();
-
-		$datos[ 'totalPaginas' ] = $producto->getTotalProductos();
-		$datos[ 'lstProductos' ] = $producto->lstProductos( $data->filtro->pagina, $data->filtro->limite, $data->filtro->orden );
-
-		echo json_encode( $datos );
+		echo json_encode( $producto->lstProductos( $data->filter ) );
 		break;
 
 	case 'consultaTipoProducto':		// ACCION PRODUCTO: INSERT / UPDATE
