@@ -94,23 +94,26 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		$scope.producto = {};
 	};
 
+
 	//registrar nuevo producto
-	$scope.registraNuevoProducto = function(){
+	$scope.consultaProducto = function(){
 		if ( $scope.formProducto.$invalid == true ) {
 			alertify.set('notifier','position', 'top-right');
  			alertify.notify('Ingrese todos los datos requeridos identificados con borde de color verde', 'warning', 3);
 		}else{
 			$http.post('consultas.php',{
-				opcion:"consultaProducto",
-				accion: $scope.accion,
-				datos: $scope.producto
+				opcion : "consultaProducto",
+				accion : $scope.accion,
+				datos  : $scope.producto
 			}).success(function(data){
-				console.log(data);
-				//mensaje aca
+				console.log( data );
 				alertify.set('notifier','position', 'top-right');
-				alertify.notify(data.mensaje,data.respuesta, data.tiempo);
+				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+
 				if ( data.respuesta == "success" ) {
-					$scope.cancelaNuevoProducto();
+					$scope.resetValues( 1 );
+					$scope.inventario();
+					$scope.dialAdministrarCerrar();
 				}
 			})
 		}
@@ -127,6 +130,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 			});
 		}
 	};
+
+
 	$scope.cargarPaginacion = function( pagina ){
 		$scope.filter.pagina = pagina;
 		$scope.inventario();
@@ -149,8 +154,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		})
 	};
 
-	//registrar tipo de producto
-	$scope.registraTipoProdcuto = function(tipoProducto){
+
+	// REGISTRAR TIPO PRODUCTO
+	$scope.registraTipoProdcuto = function( tipoProducto ){
 		if ( tipoProducto== undefined || !tipoProducto.length>3 ) {
 			alertify.set('notifier','position', 'top-right');
  			alertify.notify('Ingrese tipo de producto', 'warning', 3);

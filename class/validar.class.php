@@ -159,8 +159,10 @@ class Validar
 		endif;
 
 		if( $warning AND $required ):
-			$valor = $default;
+			$valor = "NULL";
 			$this->error = TRUE;
+		else:
+			$valor = "'" . $valor . "'";
 		endif;
 
 		return $valor;

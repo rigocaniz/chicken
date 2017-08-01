@@ -33,9 +33,9 @@
 					<table class="table table-hover">
 						<thead>
 							<tr>
-								<th class="col-sm-1 text-center">No.</th>
+								<th class="text-center">No.</th>
 								<th class="col-sm-3 text-center">Producto</th>
-								<th class="col-sm-3 text-center">Tipo Producto</th>
+								<th class="col-sm-2 text-center">Tipo Producto</th>
 								<th class="col-sm-1 text-center">Medida</th>
 								<th class="col-sm-1 text-center">Perecedero</th>
 								<th class="col-sm-2 text-center">Disponibilidad</th>
@@ -48,6 +48,9 @@
 									{{ inv.idProducto }}
 								</td>
 								<td>
+									{{ inv.producto }}
+								</td>
+								<td class="text-center">
 									{{ inv.tipoProducto }}
 								</td>
 								<td class="text-center">
@@ -213,20 +216,17 @@
 	<script type="text/ng-template" id="dialAdmin.producto.html">
 		<div class="modal" tabindex="-1" role="dialog">
 			<div class="modal-dialog">
-				<div class="modal-content panel-primary" ng-class="{'panel-success': accion == 'insert', 'panel-info': accion == 'update'}">
+				<div class="modal-content" ng-class="{'panel-success': accion == 'insert', 'panel-info': accion == 'update'}">
 					<div class="modal-header panel-heading">
 						<button type="button" class="close" ng-click="$hide()">&times;</button>
 						<h3 class="panel-title">
 							<span class="glyphicon" ng-class="{'glyphicon-plus': accion == 'insert', 'glyphicon glyphicon-pencil': accion == 'update'}"></span>
-							{{ accion == 'insert' ? 'INGRESAR NUEVO' : 'ACTUALIZAR' }}
-							<span ng-show="evento=='producto'">PRODUCTO</span>
-							<span ng-show="evento=='menu'">MENU</span>
-							<span ng-show="evento=='combo'">COMBO</span>
+							{{ accion == 'insert' ? 'INGRESAR NUEVO' : 'ACTUALIZAR' }} PRODUCTO
 						</h3>
 					</div>
 					<div class="modal-body">
 							<!-- FORMULARIO PRODUCTO -->
-							<form class="form-horizontal" role="form" name="formProducto">
+							<form class="form-horizontal" role="form" name="$parent.formProducto">
 								<div class="form-group">
 									<div class="col-sm-7">
 										<label class="control-label">Nombre Producto</label>
@@ -271,11 +271,11 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="control-label col-sm-2">Disponibilidad</label>
+									<label class="control-label col-sm-3">Disponibilidad</label>
 									<div class="col-sm-2">
 										<input type="number" min="0" class="form-control" ng-model="producto.disponibilidad" ng-disabled="accion!='insert'">
 									</div>
-									<label class="control-label col-sm-2">Producto Importante</label>
+									<label class="control-label col-sm-3">Producto Importante</label>
 									<div class="col-sm-1">
 										<button type="button" class="btn btn-sm" ng-class="{'btn-success': producto.importante, 'btn-warning':!producto.importante}" ng-click="producto.importante=!producto.importante">
 											<span class="glyphicon" ng-class="{'glyphicon-unchecked' : !producto.importante, 'glyphicon-check' : producto.importante}"></span>
@@ -286,7 +286,7 @@
 							</form>
 					</div>
 					<div class="modal-footer">
-						<button class="btn btn-success" ng-click="registraNuevoProducto()">
+						<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaProducto()">
 							<span class="glyphicon glyphicon-ok"></span> Guardar
 						</button>
 						<button type="button" class="btn btn-default" ng-click="resetValues( 1 ); $hide()">
