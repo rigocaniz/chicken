@@ -73,6 +73,29 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		}
 	};
 
+	// MOSTRAR DIALOGO DE MENUS
+	$scope.mostrarMenus = function () {
+		$scope.dialOrdenMenu.show();
+		$scope.dialOrdenCliente.hide()
+	};
+
+	$scope.consultaMenus = function () {
+		if ( $scope.idTipoMenu > 0 ) {
+			$scope.lstMenu = [];
+			$http.post('consultas.php', { opcion : 'lstMenu', idTipoMenu : $scope.idTipoMenu })
+			.success(function (data) {
+				console.log( data );
+				if ( data.length ) {
+					$scope.lstMenu = data;
+				}
+			});
+		}
+	};
+
+	$scope.$watch('idTipoMenu', function (_new) {
+		$scope.consultaMenus();
+	});
+
 	// #3 => SELECCIONA MENU DE lst
 	$scope.seleccionarMenu = function ( menu ) {
 		$scope.menuActual           = angular.copy( menu );

@@ -127,7 +127,7 @@
                 <div class="modal-body">
                 	<div class="row">
                 		<div class="col-xs-7">
-                			<button class="btn btn-primary" ng-click="dialOrdenMenu.show();dialOrdenCliente.hide()">
+                			<button class="btn btn-primary" ng-click="mostrarMenus()">
                 				<span class="glyphicon glyphicon-plus"></span>
                 				<b>Menú</b>
                 			</button>
@@ -203,9 +203,16 @@
                 </div>
                 <div class="modal-body">
                 	<div class="row">
+                		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstTipoMenu">
+                			<button type="button" class="btn btn-default" ng-click="$parent.$parent.idTipoMenu=item.idTipoMenu">
+	                			<span>{{item.tipoMenu}}</span>
+                			</button>
+                		</div>
+                   </div>
+                	<div class="row">
                 		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstMenu">
                 			<button type="button" class="menu-btn" ng-click="seleccionarMenu( item )">
-	                			<img ng-src="img-menu/{{item.img}}">
+	                			<img ng-src="img-menu/{{item.imagen}}">
 	                			<span>{{item.menu}}</span>
                 			</button>
                 		</div>
@@ -234,7 +241,7 @@
                 <div class="modal-body">
                 	<div class="row">
                 		<div class="col-xs-6 text-center">
-                			<img ng-src="img-menu/{{menuActual.img}}">
+                			<img ng-src="img-menu/{{menuActual.imagen}}">
                 			<h4>{{menuActual.menu}}</h4>
                 			<b>Q. {{menuActual.precio | number:2}}</b>
                 		</div>
