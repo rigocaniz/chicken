@@ -11,48 +11,49 @@
     <link rel="stylesheet" href="css/alertify.css">
     <link rel="stylesheet" href="css/themes/semantic.css">
     <link rel="stylesheet" href="css/fileinput.min.css">
+    <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body>
 	<!-- Navegacion-->
-    <a id="menu-toggle" href="#" class="btn btn-dark btn-lg toggle"><span class="glyphicon glyphicon-list"></span></a>
+    <a id="menu-toggle" href="#" class="btn btn-dark btn-md toggle"><span class="glyphicon glyphicon-list"></span></a>
     <nav id="sidebar-wrapper">
         <ul class="sidebar-nav">
             <a id="menu-close" href="#" class="btn btn-light btn-lg pull-right toggle"><span class="glyphicon glyphicon-list"></span></a>
             <li class="sidebar-brand">
-                <a href="#/" onclick=$("#menu-close").click();>Inicio</a>
+                <a href="#/" onclick='$("#menu-close").click()'>Inicio</a>
             </li>
             <li>
-                <a href="#/orden" onclick=$("#menu-close").click();>Ordenes</a>
+                <a href="#/orden" onclick='$("#menu-close").click()'>Ordenes</a>
             </li>
             <li>
-                <a href="#/adminOrden" onclick=$("#menu-close").click();>AdminOrdenes</a>
+                <a href="#/adminOrden" onclick='$("#menu-close").click()'>AdminOrdenes</a>
             </li>
             <li>
-                <a href="#/factura" onclick=$("#menu-close").click();>Facturación</a>
+                <a href="#/factura" onclick='$("#menu-close").click()'>Facturación</a>
             </li>
             <li>
-                <a href="#/cliente" onclick=$("#menu-close").click();>Clientes</a>
+                <a href="#/cliente" onclick='$("#menu-close").click()'>Clientes</a>
             </li>
             <li>
-                <a href="#/caja" onclick=$("#menu-close").click();>Caja</a>
+                <a href="#/caja" onclick='$("#menu-close").click()'>Caja</a>
             </li>
              <li>
-                <a href="#/inventario" onclick=$("#menu-close").click();>Inventario</a>
+                <a href="#/inventario" onclick='$("#menu-close").click()'>Inventario</a>
             </li>
              <li>
-                <a href="#/promocion" onclick=$("#menu-close").click();>Promociones</a>
+                <a href="#/promocion" onclick='$("#menu-close").click()'>Promociones</a>
             </li>
              <li>
-                <a href="#/admin" onclick=$("#menu-close").click();>Administración</a>
+                <a href="#/admin" onclick='$("#menu-close").click()'>Administración</a>
             </li>
              <li>
-                <a href="#/mantenimiento" onclick=$("#menu-close").click();>Mantenimiento</a>
+                <a href="#/mantenimiento" onclick='$("#menu-close").click()'>Mantenimiento</a>
             </li>
              <li>
-                <a href="#/tendencia" onclick=$("#menu-close").click();>Tendencias</a>
+                <a href="#/tendencia" onclick='$("#menu-close").click()'>Tendencias</a>
             </li>
             <li>
-                <a href="#/reporte" onclick=$("#menu-close").click();>Reportes</a>
+                <a href="#/reporte" onclick='$("#menu-close").click()'>Reportes</a>
             </li>
              <li>
                 <a href="logOut.php">Salir</a>

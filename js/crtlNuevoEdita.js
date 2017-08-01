@@ -3,11 +3,13 @@ app.controller('nuevoEditaCtrl', function( $scope , $http, $modal, $routeParams 
 	$scope.evento = $routeParams.evento;
 	$scope.accion = 'insert';
 	$scope.id     = $routeParams.id;
+
 	if ($scope.id > 0) {
 		$scope.accion = 'update';
 	}
 
 	if( $scope.evento == 'producto' ){
+
 		$scope.producto = {
 			'producto'       : '',
 			'idTipoProducto' : null,
@@ -17,7 +19,7 @@ app.controller('nuevoEditaCtrl', function( $scope , $http, $modal, $routeParams 
 			'cantidadMaxima' : null,
 			'disponibilidad' : '',
 			'importante'     : '',
-		}; 
+		};
 
 		$scope.catTipoProducto = function(){
 			$http.post('consultas.php',{
@@ -43,7 +45,7 @@ app.controller('nuevoEditaCtrl', function( $scope , $http, $modal, $routeParams 
 				opcion:'cargarProducto',
 				idProducto:$scope.id
 			}).success(function(data){
-				//console.log(data);
+				console.log(data);
 				$scope.producto = data;
 			})
 		}

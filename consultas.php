@@ -30,6 +30,7 @@ switch ( $data->opcion )
 		$usuario = new Usuario();
 		echo json_encode( $usuario->login( $data->usuario, $data->clave ) );
 		break;
+
 	/////////////////////////
 	//***** CONSULTA DATOS
 	////////////////////////
@@ -283,6 +284,16 @@ switch ( $data->opcion )
 		break;
 
 	
+	/////////////////////////
+	//***** MENU
+	/////////////////////////
+	case 'consultaDetalleOrdenMenu':	// ACCION MENU: INSERT / MENU-CANTIDAD / ESTADO / RESPONSABLE / ETC
+		$orden = new Orden();
+		echo json_encode( $orden->consultaDetalleOrdenMenu( $data->accion, $data->datos ) );
+		break;
+
+		
+
 	/////////////////////////
 	/////////////////////////
 	case 'guardarOrdenCliente':

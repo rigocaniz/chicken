@@ -1,0 +1,129 @@
+button,a{
+    outline: 0 !important;
+}
+
+.item-menu{
+    width: 100%;
+    display: inline-block;
+    border: solid 1px #e2e2e2;
+    padding: 15px 12px;
+    margin-top: 8px;
+    text-decoration: none;
+    text-align: center;
+    box-shadow: 0px 1px 5px #eaeaea;
+    -moz-box-shadow: 0px 1px 5px #eaeaea;
+    -webkit-box-shadow: 0px 1px 5px #eaeaea;
+    border-radius: 9px;
+    -moz-border-radius: 9px;
+    -webkit-border-radius: 9px;
+}
+
+.item-menu img{
+	width: 65px;
+	height: 65px;
+}
+.item-menu span{
+	width: 100%;
+	display: inline-block;
+	font-size: 1.1em;
+}
+
+.item-menu:hover{
+	text-decoration: none;
+	background-color: #f5fbff;
+	border-color: #6fcaff;
+	box-shadow: 0px 1px 8px #bce6ff;
+	-moz-box-shadow: 0px 1px 8px #bce6ff;
+	-webkit-box-shadow: 0px 1px 8px #bce6ff;
+}
+
+
+.btn-orden button{
+    border: solid 1px #cedbde;
+    background-color: #f3f8f9;
+    padding: 4px 11px;
+    color: #455153;
+    border-radius: 8px;
+}
+
+.btn-orden .bt-info.active, .btn-orden .bt-info:hover{
+    border-color: #099ac6;
+    background: #12a4d0;
+    color: #fff;
+}
+
+.btn-orden .bt-success.active, .btn-orden .bt-success:hover{
+    border-color: #3abe3e;
+    background: #4ccc50;
+    color: #fff;
+}
+
+.btn-orden .bt-primary.active, .btn-orden .bt-primary:hover{
+    border-color: #3543b2;
+    background: #4c5bcc;
+    color: #fff;
+}
+
+.btn-orden .bt-danger.active, .btn-orden .bt-danger:hover{
+    border-color: #c63e3e;
+    background: #cc4c4c;
+    color: #fff;
+}
+
+
+.menu-btn{
+    background-color: #fff;
+    min-width: 100%;
+    margin-bottom: 5px;
+    padding: 5px;
+    border: solid 1px #a9e1fb;
+    box-shadow: 0px 2px 0px #a9e1fb;
+    -moz-box-shadow: 0px 2px 0px #a9e1fb;
+    -webkit-box-shadow: 0px 2px 0px #a9e1fb;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+.menu-btn img{
+    max-height: 64px;
+    max-width: 64px;
+}
+
+.menu-btn span{
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-top: 3px;
+}
+
+.menu-btn .precio{
+    position: absolute;
+    width: auto;
+    top: -5px;
+    right: 8px;
+    z-index: 9;
+    background: #2bad48;
+    border: dotted 2px #23903b;
+    color: #fff;
+    padding: 1px 7px;
+    box-shadow: -1px 2px 5px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: -1px 2px 5px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: -1px 2px 5px rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+}
+
+.input-focus{
+    border: solid 1px #2a5bca;
+    color: #0a379a;
+    font-weight: bold;
+}
+
+
+
+
+

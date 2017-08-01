@@ -20,6 +20,7 @@ class Cliente
  		$this->sess = $sesion;
  	}
 
+ 	
  	function consultaCliente( $accion, $cliente )
  	{
  		$validar = new Validar();

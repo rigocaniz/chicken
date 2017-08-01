@@ -38,8 +38,8 @@ BEGIN
 		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
 
 	ELSEIF _action = 'insert' THEN
-		INSERT INTO menu ( menu, imagen, descripcion, idEstadoMenu, idDestinoMenu ) 
-			VALUES ( _menu, _imagen, _descripcion, _idEstadoMenu, _idDestinoMenu );
+		INSERT INTO menu ( menu, imagen, descripcion, idEstadoMenu, idDestinoMenu, top ) 
+			VALUES ( _menu, _imagen, _descripcion, _idEstadoMenu, _idDestinoMenu, 0 );
 
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
 
@@ -101,8 +101,8 @@ BEGIN
 		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
 
 	ELSEIF _action = 'insert' THEN
-		INSERT INTO combo ( combo, imagen, descripcion, idEstadoMenu ) 
-			VALUES ( _combo, _imagen, _descripcion, _idEstadoMenu );
+		INSERT INTO combo ( combo, imagen, descripcion, idEstadoMenu, top ) 
+			VALUES ( _combo, _imagen, _descripcion, _idEstadoMenu, 0 );
 
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
 
@@ -194,8 +194,8 @@ BEGIN
 		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
 
 	ELSEIF _action = 'insert' THEN
-		INSERT INTO superCombo ( superCombo, imagen, descripcion, idEstadoMenu ) 
-			VALUES ( _superCombo, _imagen, _descripcion, _idEstadoMenu );
+		INSERT INTO superCombo ( superCombo, imagen, descripcion, idEstadoMenu, top ) 
+			VALUES ( _superCombo, _imagen, _descripcion, _idEstadoMenu, 0 );
 
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
 
@@ -298,7 +298,7 @@ CREATE VIEW lstMenu AS
 SELECT
 	m.idMenu,
 	m.menu,
-	m.imagen,
+	IFNULL( m.imagen, '' )AS 'imagen',
 	m.descripcion,
 	em.idEstadoMenu,
 	em.estadoMenu,
@@ -308,7 +308,8 @@ FROM menu AS m
 	JOIN estadoMenu AS em
 		ON em.idEstadoMenu = m.idEstadoMenu
 	JOIN destinoMenu AS dm
-		ON dm.idDestinoMenu = m.idDestinoMenu;
+		ON dm.idDestinoMenu = m.idDestinoMenu
+ORDER BY m.top DESC;
 
 CREATE VIEW lstMenuPrecio AS
 SELECT
@@ -325,13 +326,14 @@ CREATE VIEW lstCombo AS
 SELECT
 	c.idCombo,
 	c.combo,
-	c.imagen,
+	IFNULL( c.imagen, '' )AS 'imagen',
 	c.descripcion,
 	em.idEstadoMenu,
 	em.estadoMenu
 FROM combo AS c
 	JOIN estadoMenu AS em
-		ON c.idEstadoMenu = em.idEstadoMenu;
+		ON c.idEstadoMenu = em.idEstadoMenu
+ORDER BY c.top DESC;
 
 CREATE VIEW lstComboDetalle AS
 SELECT
@@ -362,13 +364,14 @@ CREATE VIEW lstSuperCombo AS
 SELECT
 	sc.idSuperCombo,
 	sc.superCombo,
-	sc.imagen,
+	IFNULL( sc.imagen, '' )AS 'imagen',
 	sc.descripcion,
 	em.idEstadoMenu,
 	em.estadoMenu
 FROM superCombo AS sc
 	JOIN estadoMenu AS em
-		ON sc.idEstadoMenu = em.idEstadoMenu;
+		ON sc.idEstadoMenu = em.idEstadoMenu
+ORDER BY sc.top DESC;
 
 CREATE VIEW lstSuperComboDetalle AS
 SELECT
