@@ -7,7 +7,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		if( $scope.inventarioMenu == 1 )
 			$scope.inventario();
 	});
-	
+
 	$scope.catTipoProducto = function(){
 		$http.post('consultas.php',{
 			opcion:'catTipoProducto'
@@ -45,20 +45,10 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		page : 1,
 	};*/
 
-	$scope.editarAccion = function( id, accion, evento ){
 
-		$scope.evento = evento;
+	$scope.resetValues = function( accion ){
 
-		$scope.evento = evento;
-		$scope.id     = id;
-		$scope.accion = 'accion';
-
-		if ( $scope.id > 0 ) {
-			$scope.accion = 'update';
-		}
-
-		if( $scope.evento == 'producto' ){
-
+		if( accion == 1 ){
 			$scope.producto = {
 				'producto'       : '',
 				'idTipoProducto' : null,
@@ -68,49 +58,64 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 				'cantidadMaxima' : null,
 				'disponibilidad' : '',
 				'importante'     : '',
-			};
+			};			
+		}
 
-			if ($scope.id > 0 ) {
-				$http.post('consultas.php',{
-					opcion:'cargarProducto',
-					idProducto:$scope.id
-				}).success(function(data){
-					console.log(data);
-					$scope.producto = data;
-				})
-			}
+	};
 
-			//registrar nuevo producto
-			$scope.registraNuevoProducto = function(){
-				if ( $scope.formProducto.$invalid == true ) {
-					alertify.set('notifier','position', 'top-right');
-		 			alertify.notify('Ingrese todos los datos requeridos identificados con borde de color verde', 'warning', 3);
-				}else{
-					$http.post('consultas.php',{
-						opcion:"consultaProducto",
-						accion: $scope.accion,
-						datos: $scope.producto
-					}).success(function(data){
-						console.log(data);
-						//mensaje aca
-						alertify.set('notifier','position', 'top-right');
-						alertify.notify(data.mensaje,data.respuesta, data.tiempo);
-						if ( data.respuesta == "success" ) {
-							$scope.cancelaNuevoProducto();
-						}
-					})
-				}
-			};
+	$scope.editarAccion = function( id, accion ){
 
-			//cancelar registro de nuevo producto
-			$scope.cancelaNuevoProducto = function(){
-				$scope.producto = {};
-			};
+		$scope.id     = id;
+		$scope.accion = accion;
+
+		if ( $scope.id > 0 ) {
+			$scope.accion = 'update';
+		}
+
+
+		if ($scope.id > 0 ) {
+
+			$http.post('consultas.php',{
+				opcion:'cargarProducto',
+				idProducto: $scope.id
+			}).success(function(data){
+				console.log(data);
+				$scope.producto = data;
+			})
 
 		}
+
 		$scope.dialAdministrarAbrir();
 
 	};
+
+	//cancelar registro de nuevo producto
+	$scope.cancelaNuevoProducto = function(){
+		$scope.producto = {};
+	};
+
+	//registrar nuevo producto
+	$scope.registraNuevoProducto = function(){
+		if ( $scope.formProducto.$invalid == true ) {
+			alertify.set('notifier','position', 'top-right');
+ 			alertify.notify('Ingrese todos los datos requeridos identificados con borde de color verde', 'warning', 3);
+		}else{
+			$http.post('consultas.php',{
+				opcion:"consultaProducto",
+				accion: $scope.accion,
+				datos: $scope.producto
+			}).success(function(data){
+				console.log(data);
+				//mensaje aca
+				alertify.set('notifier','position', 'top-right');
+				alertify.notify(data.mensaje,data.respuesta, data.tiempo);
+				if ( data.respuesta == "success" ) {
+					$scope.cancelaNuevoProducto();
+				}
+			})
+		}
+	};
+
 
 	$scope.lstPaginacion = [];
 
