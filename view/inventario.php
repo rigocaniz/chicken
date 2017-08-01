@@ -44,7 +44,7 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="inv in lstInventario" ng-class="{'danger': !inv.disponibilidad, 'warning':  inv.disponibilidad < (inv.cantidadMinima + 5) }">
-								<td>
+								<td class="text-right">
 									{{ inv.idProducto }}
 								</td>
 								<td>

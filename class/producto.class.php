@@ -158,6 +158,8 @@ class Producto
 		if( $accion == 'insert' )
 			$disponibilidad = $validar->validarCantidad( $data->disponibilidad, NULL, TRUE, 1, 2500, 'la disponibilidad' );
 
+		$validar->compararValores( $cantidadMinima, $cantidadMaxima, 'la cantidad Mínima', 'la cantidad máxima', 2 );
+
 		// OBTENER RESULTADO DE VALIDACIONES
  		if( $validar->getIsError() ):
 	 		$this->respuesta = 'danger';
