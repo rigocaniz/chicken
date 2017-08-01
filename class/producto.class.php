@@ -236,11 +236,35 @@ class Producto
 		return $producto;
 	}
 
+	
+	// OBTENER TOTAL PRODUCTOS
+	function getTotalProductos( $limite = 25 )
+	{
+		$total = 0;
+		$sql = "SELECT COUNT(*) AS total FROM lstProducto";
+		
+		if( $rs = $this->con->query( $sql ) ){
+			if( $row = $rs->fetch_object() )
+				$total = (int)$row->total;
+		}
 
-	function lstProductos()
+		$totalPaginas = ceil( $total / $limite );
+		return $totalPaginas;
+
+	}
+
+/*
+	SELECT * 
+	FROM producto
+		LIMIT 0, 25;
+	*/
+
+	function lstProductos( $pagina = 0, $limite = 25, $orden = 'DESC' )
 	{
 
 		$lstProductos = array();
+
+		$inicio = ($pagina - 1) * $limite;
 
 		$sql = "SELECT 
 				    idProducto,
@@ -257,7 +281,10 @@ class Producto
 				    usuarioProducto,
 				    DATE_FORMAT( fechaProducto, '%d/%m/%Y %h:%i %p' ) AS fechaProducto
 				FROM
-				    lstProducto;";
+				    lstProducto
+				ORDER BY idProducto DESC LIMIT $inicio, $limite;";
+
+//				echo $sql;
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){

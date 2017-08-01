@@ -1,4 +1,4 @@
-<div class="container">
+{{}}
 	<div class="row">
 		<!-- Definir botones de inventario menu -->
 		<div class="col-sm-12 text-center">
@@ -17,6 +17,30 @@
 		<!--  tabla de porductos existentes -->
 		<div class="col-sm-12" ng-show="inventarioMenu==0 || inventarioMenu==1">
 			<br>
+
+			<nav>
+			  <ul class="pagination">
+			
+			<!--
+			    <li ng-repeat="(ixPagina, pagina) in lstPaginacion">
+			      	<a href="" aria-label="Previous">
+			        	<span aria-hidden="true">&laquo;</span>
+			      	</a>
+			    </li>
+			-->
+			    <li ng-repeat="(ixPagina, pagina) in lstPaginacion">
+			    	<a href="" ng-click="cargarPaginacion( pagina.noPagina );">
+			    		{{ pagina.noPagina }}
+			    	</a>
+			    </li>
+			    <!--
+			    <li>
+			      <a href="" aria-label="Next">
+			        <span aria-hidden="true">&raquo;</span>
+			      </a>
+			    </li>
+			    -->
+			</ul>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">Inventario de productos</h3>
@@ -25,30 +49,42 @@
 					<div class="col-sm-3">
 						<input type="text" class="form-control" ng-model="filtro" placeholder="buscar">
 					</div>
-					<div class="col-sm-7"></div>
+					<div class="col-sm-7">
 						<a type="button" class="btn btn-primary" ng-href="#/nuevoEdita/producto">
 							<span class="glyphicon glyphicon-plus"></span> Ingresar Nuevo
 						</a>
+						
+					</div>
 					
 					<table class="table table-hover">
 						<thead>
 							<tr>
-								<th>Producto</th>
-								<th>Tipo Producto</th>
-								<th>Medida</th>
-								<th>Perecedero</th>
-								<th>Disponibilidad</th>
-								<th></th>
+								<th class="col-sm-3 text-center">Producto</th>
+								<th class="col-sm-3 text-center">Tipo Producto</th>
+								<th class="col-sm-1 text-center">Medida</th>
+								<th class="col-sm-1 text-center">Perecedero</th>
+								<th class="col-sm-2 text-center">Disponibilidad</th>
+								<th class="col-sm-2 text-center"></th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="inv in lstInventario |filter:filtro">
-								<td>{{inv.producto}}</td>
-								<td>{{inv.tipoProducto}}</td>
-								<td>{{inv.medida}}</td>
-								<td>{{inv.esPerecedero}}</td>
-								<td>{{inv.disponibilidad}}</td>
+							<tr ng-repeat="inv in lstInventario" ng-class="{'danger': !inv.disponibilidad, 'warning': (inv.cantidadMinima + 5) == inv.disponibilidad}">
 								<td>
+									{{ inv.idProducto }}
+								</td>
+								<td class="text-center">
+									{{ inv.tipoProducto }}
+								</td>
+								<td class="text-center">
+									{{ inv.medida }}
+								</td>
+								<td class="text-center">
+									{{ inv.esPerecedero }}
+								</td>
+								<td class="text-center">
+									{{ inv.disponibilidad }}
+								</td>
+								<td class="text-center">								
 									<a ng-click="ingresar(inv.idProducto,inv.producto)" type="button" class="btn btn-success btn-sm">
 										<span class="glyphicon glyphicon-plus"></span>
 									</a>
@@ -149,7 +185,7 @@
 			</div>
 		</div>
 	</div>
-</div>
+
 <!-- dialogo ingreso a existencias -->
 <script type="text/ng-template" id="dial.ingreso.html">
     <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">

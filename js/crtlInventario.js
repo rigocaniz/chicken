@@ -1,11 +1,22 @@
 app.controller('inventarioCtrl', function( $scope , $http, $modal ){
+
+	$scope.inventarioMenu = 1;
+
+	
+
 	$scope.catTipoProducto = function(){
 		$http.post('consultas.php',{
 			opcion:'catTipoProducto'
 		}).success(function(data){
 			$scope.lstTipoProducto = data;
 		})
-	}   
+	}
+
+	$scope.$watch('inventarioMenu', function( _old, _new){
+		console.log( _old, _new );
+		if( $scope.inventarioMenu == 1 )
+			$scope.inventario();
+	});
 
 	$scope.catMedidas = function(){
 		$http.post('consultas.php',{
@@ -13,7 +24,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		}).success(function(data){
 			$scope.lstMedidas = data;
 		})
-	}
+	};
 
 	//lista el inventario general de todos los productos
 	$scope.lstInventario = [];
@@ -30,13 +41,37 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		page : 1,
 	};*/
 
+	$scope.lstPaginacion = [];
+
+	$scope.generarPaginacion = function( totalPaginas ){
+		for (var i = 1; i <= totalPaginas; i++) {
+			$scope.lstPaginacion.push({
+				noPagina : i
+			});
+		}
+	};
+	$scope.cargarPaginacion = function( pagina ){
+		$scope.filtro.pagina = pagina;
+		$scope.inventario();
+	};
+
+	$scope.filtro = {
+		pagina: 1,
+		limite: 25,
+		orden: 'ASC'
+	};
+
 	$scope.inventario = function(){
 		$http.post('consultas.php',{
-			opcion:'lstProductos'
+			opcion : 'lstProductos',
+			filtro : $scope.filtro
 		}).success(function(data){
-			$scope.lstInventario = data;
+			console.log( "::::", data );
+			$scope.lstInventario = data.lstProductos;
+			$scope.generarPaginacion( data.totalPaginas );
 		})
-	}
+	};
+
 	//registrar tipo de producto
 	$scope.registraTipoProdcuto = function(tipoProducto){
 		if ( tipoProducto== undefined || !tipoProducto.length>3 ) {
