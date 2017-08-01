@@ -1,4 +1,3 @@
-{{}}
 	<div class="row">
 		<!-- Definir botones de inventario menu -->
 		<div class="col-sm-12 text-center">
@@ -16,32 +15,6 @@
 		</div>
 		<!--  tabla de porductos existentes -->
 		<div class="col-sm-12" ng-show="inventarioMenu==0 || inventarioMenu==1">
-			<br>
-
-			<nav>
-			  <ul class="pagination">
-			
-			<!--
-			    <li ng-repeat="(ixPagina, pagina) in lstPaginacion">
-			      	<a href="" aria-label="Previous">
-			        	<span aria-hidden="true">&laquo;</span>
-			      	</a>
-			    </li>
-			-->
-			    <li ng-repeat="(ixPagina, pagina) in lstPaginacion">
-			    	<a href="" ng-click="cargarPaginacion( pagina.noPagina );">
-			    		{{ pagina.noPagina }}
-			    	</a>
-			    </li>
-			    <!--
-			    <li>
-			      <a href="" aria-label="Next">
-			        <span aria-hidden="true">&raquo;</span>
-			      </a>
-			    </li>
-			    -->
-			</ul>
-			</nav>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">Inventario de productos</h3>
@@ -56,10 +29,10 @@
 						</a>
 						
 					</div>
-					
 					<table class="table table-hover">
 						<thead>
 							<tr>
+								<th class="col-sm-1 text-center">No.</th>
 								<th class="col-sm-3 text-center">Producto</th>
 								<th class="col-sm-3 text-center">Tipo Producto</th>
 								<th class="col-sm-1 text-center">Medida</th>
@@ -69,11 +42,11 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="inv in lstInventario" ng-class="{'danger': !inv.disponibilidad, 'warning': (inv.cantidadMinima + 5) == inv.disponibilidad}">
+							<tr ng-repeat="inv in lstInventario" ng-class="{'danger': !inv.disponibilidad, 'warning':  inv.disponibilidad < (inv.cantidadMinima + 5) }">
 								<td>
 									{{ inv.idProducto }}
 								</td>
-								<td class="text-center">
+								<td>
 									{{ inv.tipoProducto }}
 								</td>
 								<td class="text-center">
@@ -99,7 +72,7 @@
 					</table>
 					<nav>
 					  	<ul class="pagination">
-						    <li ng-repeat="(ixPagina, pagina) in lstPaginacion">
+						    <li ng-repeat="(ixPagina, pagina) in lstPaginacion" ng-class="{'active': filter.pagina == pagina.noPagina}">
 						    	<a href="" ng-click="cargarPaginacion( pagina.noPagina );">
 						    		{{ pagina.noPagina }}
 						    	</a>

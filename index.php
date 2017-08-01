@@ -60,7 +60,9 @@
             </li>
         </ul>
     </nav>
-	<div ng-view></div>
+    <div class="contenedor">
+	   <div ng-view></div>
+    </div>
 
 	<!-- jQuery -->
     <script src="js/libs/jquery-3.2.1.min.js"></script>
