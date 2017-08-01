@@ -3292,7 +3292,7 @@ fieldset[disabled] .btn-info.focus {
 }
 .btn-warning {
   color: #ffffff;
-  background-color: #f0ad4e;
+  background-color: #ff9800;
   border-color: #eea236;
 }
 .btn-warning:focus,
@@ -5711,7 +5711,7 @@ button.list-group-item-danger.active:focus {
 }
 .panel-primary > .panel-heading {
   color: #ffffff;
-  background-color: #337ab7;
+  background-color: #005ca5;
   border-color: #337ab7;
 }
 .panel-primary > .panel-heading + .panel-collapse > .panel-body {
@@ -5957,6 +5957,7 @@ button.close {
   padding: 15px;
   text-align: right;
   border-top: 1px solid #e5e5e5;
+  background-color: #eceff1;
 }
 .modal-footer .btn + .btn {
   margin-left: 5px;

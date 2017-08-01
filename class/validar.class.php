@@ -143,6 +143,29 @@ class Validar
 		return $valor;
 	}
 
+	function compararValores( $valor1, $valor2, $campo1, $campo2, $accion )
+	{
+
+		if( $accion == 1 ){
+			if( $valor1 == $valor2 ){
+				$this->error   = TRUE;
+				$this->mensaje = "El valor de " . $campo1 . " no debe ser igual " . $campo2;
+			}
+		}
+		elseif( $accion == 2 ){
+			if( $valor1 > $valor2 ){
+				$this->error   = TRUE;
+				$this->mensaje = "El valor de " . $campo2 . " no puede ser menor " . $campo1;
+			}
+		}
+		elseif( $accion == 3 ){
+			if( $valor1 < $valor2 ){
+				$this->error   = TRUE;
+				$this->mensaje = "El valor de " . $campo1 . " no debe ser igual " . $campo2;
+			}
+		}
+	}
+
 	
 	// VALIDAR CORREO
 	function validarCorreo( $valor = '', $default = NULL, $required = TRUE )
