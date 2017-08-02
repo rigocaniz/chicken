@@ -1,4 +1,4 @@
-<div style="margin:5px;" ng-keyup="presionarTecla( $event.keyCode )">
+<div style="margin:5px;">
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom:4px">
 			<button type="button" class="btn btn-success" ng-click="nuevaOrden()">
@@ -65,7 +65,7 @@
 
 <!-- NUEVA ORDEN -->
 <script type="text/ng-template" id="dial.orden.nueva.html">
-    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_nueva">
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-primary">
                 <div class="modal-header panel-heading">
@@ -88,14 +88,14 @@
 								</span>
 							</div>
                 		</div>
-                		<div class="col-xs-12" style="margin-top:4px">
+                		<div class="col-xs-12 text-center" style="margin-top:4px">
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'0'">0</button>
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'1'">1</button>
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'2'">2</button>
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'3'">3</button>
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'4'">4</button>
                 		</div>
-                		<div class="col-xs-12" style="margin-top:4px">
+                		<div class="col-xs-12 text-center" style="margin-top:4px">
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'5'">5</button>
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'6'">6</button>
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'7'">7</button>
@@ -121,7 +121,7 @@
 
 <!-- ADMINISTRAR ORDEN -->
 <script type="text/ng-template" id="dial.orden.cliente.html">
-    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" ng-keyup="presionarTecla( $event.keyCode )">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_cliente">
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-default">
                 <div class="modal-header panel-heading">
@@ -199,7 +199,7 @@
 
 <!-- LISTADO DE MENUS -->
 <script type="text/ng-template" id="dial.orden-menu.html">
-    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_menu">
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-primary">
                 <div class="modal-header panel-heading">
@@ -237,7 +237,7 @@
 
 <!-- Cantidad - Tipo Servicio - Menú -->
 <script type="text/ng-template" id="dial.menu-cantidad.html">
-    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_menu_cantidad">
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-info">
                 <div class="modal-header panel-heading">
@@ -276,7 +276,7 @@
                 <div class="modal-footer">
                 	<button type="button" class="btn btn-success" ng-click="agregarAPedido()">
                         <span class="glyphicon glyphicon-plus-sign"></span>
-                        <b>Agregar a Orden</b>
+                        <b><u>A</u>gregar a Orden</b>
                     </button>
                     <button type="button" class="btn btn-default" ng-click="$hide();dialOrdenMenu.show()">
                         <span class="glyphicon glyphicon-chevron-left"></span>
