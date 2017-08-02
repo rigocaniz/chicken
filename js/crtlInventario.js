@@ -3,12 +3,14 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 	// LISTA EL INVENTARIO GENERAL DE PRODUCTOS
 	$scope.lstInventario  = [];
 	$scope.inventarioMenu = 1;
+	$scope.accion         = 'insert';
 
 	$scope.$watch('inventarioMenu', function( _old, _new){
 		console.log( _old, _new );
 		if( $scope.inventarioMenu == 1 )
 			$scope.inventario();
 	});
+
 
 
 	$scope.dialIngreso     = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
@@ -203,12 +205,24 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 	};
 
 
-	// REGISTRAR TIPO PRODUCTO
-	$scope.registraTipoProdcuto = function( tipoProducto ){
+	$scope.tp = {
+		idTipoProducto : null,
+		tipoProducto   : ''
+	};
+	$scope.editarTipoProducto = function( tipoProducto ){
+		$scope.accion = 'update';
+		$scope.tp.idTipoProducto = tipoProducto.idTipoProducto;
+		$scope.tp.tipoProducto   = tipoProducto.tipoProducto;
+	};
+
+
+	// INSERT / UPDATE TIPO PRODUCTO
+	$scope.consultaTipoProducto = function( tipoProducto ){
 		if ( tipoProducto== undefined || !tipoProducto.length>3 ) {
 			alertify.set('notifier','position', 'top-right');
  			alertify.notify('Ingrese tipo de producto', 'warning', 3);
-		}else{
+		}
+		else{
 			$http.post('consultas.php',{
 				opcion:"consultaTipoProducto",
 				accion:'insert',

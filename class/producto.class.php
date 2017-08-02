@@ -181,8 +181,6 @@ class Producto
  		$cantidadMaxima = NULL;
  		$disponibilidad = NULL;
 
- 		var_dump( $data );
-
 		// SETEO VARIABLES GENERALES
  		$data->producto       = strlen( $data->producto ) > 0 	? (string)$data->producto 		: NULL;
  		$data->idTipoProducto = (int)$data->idTipoProducto > 0 	? (int)$data->idTipoProducto 	: NULL;
@@ -220,8 +218,6 @@ class Producto
 
  		else:
 	 		$sql = "CALL consultaProducto( '{$accion}', {$idProducto}, '{$producto}', {$idTipoProducto}, {$idMedida}, {$perecedero}, {$cantidadMinima}, {$cantidadMaxima}, {$disponibilidad}, {$importante} );";
-
-	 	echo $sql;
 
 	 		if( $rs = $this->con->query( $sql ) ){
 	 			@$this->con->next_result();
