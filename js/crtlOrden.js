@@ -9,9 +9,10 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	];
 
 	$scope.ordenActual = {
-		noTicket   : '',
-		lstAgregar : [],
-		lstPedidos : []
+		noTicket     : '',
+		totalAgregar : 0,
+		lstAgregar   : [],
+		lstPedidos   : []
 	};
 
 	$scope.menuActual     = {
@@ -19,13 +20,14 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	};
 	$scope.noTicket       = '';
 	$scope.idTipoServicio = '';
-	$scope.idTipoMenu = '';
+	$scope.idTipoMenu     = '';
+	$scope.accionOrden    = 'nuevo';
 
 	// DIALOGOS
-	$scope.dialOrden        = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false});
-	$scope.dialOrdenCliente = $modal({scope: $scope,template:'dial.orden.cliente.html', show: false, backdrop:false});
-	$scope.dialOrdenMenu    = $modal({scope: $scope,template:'dial.orden-menu.html', show: false, backdrop:false});
-	$scope.dialMenuCantidad = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false});
+	$scope.dialOrden        = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialOrdenCliente = $modal({scope: $scope,template:'dial.orden.cliente.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialOrdenMenu    = $modal({scope: $scope,template:'dial.orden-menu.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialMenuCantidad = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false, keyboard: false });
 
 	($scope.init = function () {
 		// CONSULTA TIPO DE SERVICIOS
@@ -60,12 +62,14 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	// #2 => CREA UNA NUEVA ORDEN
 	$scope.agregarOrden = function () {
 		if ( parseInt( $scope.noTicket ) > 0 ) {
+			$scope.accionOrden = 'nuevo';
 			$scope.dialOrden.hide();
 			$scope.dialOrdenCliente.show();
 			$scope.ordenActual = {
-				noTicket   : parseInt( $scope.noTicket ),
-				lstAgregar : [ {idMenu : 3, menu : "mi menu", cantidad : 5} ],
-				lstPedidos : []
+				noTicket     : parseInt( $scope.noTicket ),
+				totalAgregar : 0,
+				lstAgregar   : [],
+				lstPedidos   : []
 			};
 		} else {
 			alertify.set('notifier','position', 'top-right');
@@ -148,10 +152,14 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		else{
 			var tipoServicio = $scope.descripcion( 'lstTipoServicio', 'idTipoServicio', $scope.idTipoServicio, 'tipoServicio' );
 
+			$scope.ordenActual.totalAgregar += parseFloat( $scope.menuActual.precio );
+			console.log( $scope.ordenActual.totalAgregar );
+
 			$scope.ordenActual.lstAgregar.unshift({
 				idMenu         : $scope.menuActual.idMenu,
 				menu           : $scope.menuActual.menu,
 				cantidad       : $scope.menuActual.cantidad,
+				precio         : $scope.menuActual.precio,
 				tipoServicio   : tipoServicio,
 				idTipoServicio : $scope.idTipoServicio
 			});
@@ -171,7 +179,23 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		return descrip;
 	};
 
-	$timeout(function () {
-		//$scope.nuevaOrden();
+	// TECLA PARA ATAJOS RAPIDOS
+	$scope.$on('keyPress', function( event, key ) {
+		console.log( key );
+
+		// SI NO EXISTE NINGUN DIALOGO ABIERTO
+		if ( !$scope.modalOpen() ) {
+			console.log( "cerrado..." );
+			if ( key == 78 )
+				$scope.nuevaOrden();
+		}
+
+		if ( key == 77 )
+			$scope.mostrarMenus();
+
 	});
+
+	$scope.modalOpen = function () {
+		return $("body>div").hasClass('modal') && $("body>div").hasClass('top');
+	};
 });
