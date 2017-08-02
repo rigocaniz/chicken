@@ -181,21 +181,35 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key ) {
-		console.log( key );
 
 		// SI NO EXISTE NINGUN DIALOGO ABIERTO
 		if ( !$scope.modalOpen() ) {
-			console.log( "cerrado..." );
-			if ( key == 78 )
+			if ( key == 78 ) // {N}
 				$scope.nuevaOrden();
 		}
 
-		if ( key == 77 )
-			$scope.mostrarMenus();
+		// CUANDO ESTE ABIERTO ALGUN CUADRO DE DIALOGO
+		else{
 
+			// CUANDO EL DIALOGO DE NUEVA ORDEN ESTE ABIERTA
+			if ( $scope.modalOpen( 'dial_orden_cliente' ) ) {
+				if ( key == 77 ) // {M}
+					$scope.mostrarMenus();
+			}
+
+			// CUANDO EL DIALOGO DE NUEVA ORDEN ESTE ABIERTA
+			if ( $scope.modalOpen( 'dial_menu_cantidad' ) ) {
+				if ( key == 65 ) // {A}
+					$scope.agregarAPedido();
+			}
+		}
+		console.log( key );
 	});
 
-	$scope.modalOpen = function () {
-		return $("body>div").hasClass('modal') && $("body>div").hasClass('top');
+	$scope.modalOpen = function ( _name ) {
+		if ( _name == undefined )
+			return $("body>div").hasClass('modal') && $("body>div").hasClass('top');
+		else
+			return !!( $( '#' + _name ).data() && $( '#' + _name ).data().$scope.$isShown );
 	};
 });
