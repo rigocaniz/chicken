@@ -181,13 +181,15 @@ class Producto
  		$cantidadMaxima = NULL;
  		$disponibilidad = NULL;
 
+ 		var_dump( $data );
+
 		// SETEO VARIABLES GENERALES
- 		$data->producto       = strlen( $data->producto ) > 0 										? (string)$data->producto 		: NULL;
- 		$data->idTipoProducto = (int)$data->idTipoProducto > 0 AND !esNulo( $data->idTipoProducto ) ? (int)$data->idTipoProducto 	: NULL;
- 		$data->idMedida       = (int)$data->idMedida > 0 AND !esNulo( $data->idMedida ) 			? (int)$data->idMedida 			: NULL;
- 		$data->cantidadMinima = (double)$data->cantidadMinima AND !esNulo( $data->cantidadMinima )	? (double)$data->cantidadMinima : NULL;
- 		$data->cantidadMaxima = (double)$data->cantidadMaxima AND !esNulo( $data->cantidadMaxima )	? (double)$data->cantidadMaxima : NULL;
- 		$data->disponibilidad = (double)$data->disponibilidad AND !esNulo( $data->disponibilidad )	? (double)$data->disponibilidad : NULL;
+ 		$data->producto       = strlen( $data->producto ) > 0 	? (string)$data->producto 		: NULL;
+ 		$data->idTipoProducto = (int)$data->idTipoProducto > 0 	? (int)$data->idTipoProducto 	: NULL;
+ 		$data->idMedida       = (int)$data->idMedida > 0 		? (int)$data->idMedida 			: NULL;
+ 		$data->cantidadMinima = (double)$data->cantidadMinima 	? (double)$data->cantidadMinima : NULL;
+ 		$data->cantidadMaxima = (double)$data->cantidadMaxima 	? (double)$data->cantidadMaxima : NULL;
+ 		$data->disponibilidad = (double)$data->disponibilidad 	? (double)$data->disponibilidad : NULL;
  		$perecedero           = (int)$data->perecedero;
  		$importante           = (int)$data->importante;
 
@@ -218,6 +220,8 @@ class Producto
 
  		else:
 	 		$sql = "CALL consultaProducto( '{$accion}', {$idProducto}, '{$producto}', {$idTipoProducto}, {$idMedida}, {$perecedero}, {$cantidadMinima}, {$cantidadMaxima}, {$disponibilidad}, {$importante} );";
+
+	 	echo $sql;
 
 	 		if( $rs = $this->con->query( $sql ) ){
 	 			@$this->con->next_result();
