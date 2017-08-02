@@ -1,9 +1,9 @@
-<div style="margin:5px;">
+<div style="margin:5px;" ng-keyup="presionarTecla( $event.keyCode )">
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom:4px">
 			<button type="button" class="btn btn-success" ng-click="nuevaOrden()">
 				<span class="glyphicon glyphicon-plus"></span>
-				Nueva Orden
+				<u>N</u>ueva Orden
 			</button>
 			<button type="button" class="btn btn-info">
 				<span class="glyphicon glyphicon-search"></span>
@@ -75,11 +75,18 @@
                 </div>
                 <div class="modal-body">
                 	<div class="row">
-                		<div class="col-xs-7">
-                			<h4>Número Ticket</h4>
-                		</div>
                 		<div class="col-xs-5">
-                			<input type="text" class="form-control input-lg input-focus" ng-model="$parent.noTicket" id="noTicket">
+                			<h4># Ticket</h4>
+                		</div>
+                		<div class="col-xs-7">
+							<div class="input-group">
+								<input type="text" class="form-control input-lg input-focus" ng-model="$parent.noTicket" id="noTicket" ng-keypress="$event.keyCode==13 && agregarOrden()">
+								<span class="input-group-btn">
+									<button class="btn btn-lg btn-danger" type="button" ng-click="$parent.noTicket=''">
+										<span class="glyphicon glyphicon-remove"></span>
+									</button>
+								</span>
+							</div>
                 		</div>
                 		<div class="col-xs-12" style="margin-top:4px">
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'0'">0</button>
@@ -87,14 +94,13 @@
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'2'">2</button>
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'3'">3</button>
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'4'">4</button>
+                		</div>
+                		<div class="col-xs-12" style="margin-top:4px">
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'5'">5</button>
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'6'">6</button>
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'7'">7</button>
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'8'">8</button>
                 			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'9'">9</button>
-                			<button class="btn btn-lg btn-primary" ng-click="$parent.noTicket=''">
-                				<span class="glyphicon glyphicon-remove"></span>
-                			</button>
                 		</div>
                    </div>
                 </div>
@@ -115,7 +121,7 @@
 
 <!-- ADMINISTRAR ORDEN -->
 <script type="text/ng-template" id="dial.orden.cliente.html">
-    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" ng-keyup="presionarTecla( $event.keyCode )">
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-default">
                 <div class="modal-header panel-heading">
@@ -128,7 +134,7 @@
                 		<div class="col-xs-7">
                 			<button class="btn btn-primary" ng-click="mostrarMenus()">
                 				<span class="glyphicon glyphicon-plus"></span>
-                				<b>Menú</b>
+                				<b><u>M</u>enú</b>
                 			</button>
                 		</div>
                    </div>
@@ -138,16 +144,14 @@
                 				<thead>
                 					<tr>
                 						<th>Precio</th>
-                						<th>Menú</th>
+                						<th>Orden</th>
                 						<th>Cantidad</th>
                 						<th width="35px"></th>
                 					</tr>
                 				</thead>
                 				<tbody>
                 					<tr ng-repeat="item in ordenActual.lstAgregar">
-                						<td>
-                							{{11.5 | number}}
-                						</td>
+                						<td>{{item.precio | number:2}}</td>
                 						<td>{{item.menu}} » {{item.tipoServicio}}</td>
                 						<td>
                 							<button type="button" class="btn btn-xs btn-default" ng-click="item.cantidad = (item.cantidad>1 ? item.cantidad-1 : item.cantidad)">
@@ -169,7 +173,9 @@
                 		</div>
                 		<div class="col-xs-12">
                 			<div class="col-xs-5">
-	                			<h5><b>TOTAL: </b>Q. 24.00</h5>
+	                			<h4>
+	                				<b>TOTAL: </b> <span class="badge">Q. {{$parent.ordenActual.totalAgregar | number:2}}</span>
+	                			</h4>
                 			</div>
                 			<div class="col-xs-7 text-right">
 	                			<button type="button" class="btn btn-success">
@@ -201,8 +207,10 @@
                 </div>
                 <div class="modal-body">
                 	<div class="row">
-                		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstTipoMenu">
-                			<button type="button" class="btn btn-default" ng-click="$parent.$parent.idTipoMenu=item.idTipoMenu">
+                		<div class="col-xs-12" style="margin-bottom:4px">
+                			<button type="button" class="btn" ng-class="{'btn-default':idTipoMenu!=item.idTipoMenu, 'btn-info':idTipoMenu==item.idTipoMenu}" 
+                				ng-repeat="item in lstTipoMenu" ng-click="$parent.$parent.idTipoMenu=item.idTipoMenu" style="margin-right:5px">
+                				<span class="glyphicon glyphicon-ok" ng-show="idTipoMenu==item.idTipoMenu"></span>
 	                			<span>{{item.tipoMenu}}</span>
                 			</button>
                 		</div>

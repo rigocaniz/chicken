@@ -100,5 +100,11 @@ app.config(function($routeProvider) {
 /****controladores****/
 app.controller('restauranteCtrl', function($scope){//controlador principal
 });
-app.controller('inicioCtrl', function($scope){//controlador principal
+
+app.controller('inicioCtrl', function($scope, $rootScope){//controlador principal
+  // CAPTURA TECLA PARA ATAJOS RAPIDOS
+  $scope.pressKey = function ( key ) {
+    $rootScope.$broadcast('keyPress', key );
+  };
 });
+

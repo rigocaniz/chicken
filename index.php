@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="css/fileinput.min.css">
     <link rel="stylesheet" href="css/estilo.css">
 </head>
-<body>
+<body ng-controller="inicioCtrl" ng-keyup="pressKey( $event.keyCode )">
 	<!-- Navegacion-->
     <a id="menu-toggle" href="#" class="btn btn-dark btn-md toggle"><span class="glyphicon glyphicon-list"></span></a>
     <nav id="sidebar-wrapper">
