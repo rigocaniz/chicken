@@ -2283,7 +2283,7 @@ th {
   border-top: 1px solid #dddddd;
 }
 .table > thead > tr > th {
-  vertical-align: bottom;
+  vertical-align: middle;
   border-bottom: 2px solid #dddddd;
 }
 .table > caption + thead > tr:first-child > th,
@@ -3116,8 +3116,8 @@ fieldset[disabled] .btn-default.focus {
 }
 .btn-primary {
   color: #ffffff;
-  background-color: #337ab7;
-  border-color: #2e6da4;
+  background-color: #005ca5;
+  border-color: #0e5994;
 }
 .btn-primary:focus,
 .btn-primary.focus {
@@ -3173,7 +3173,7 @@ fieldset[disabled] .btn-primary.focus {
 }
 .btn-success {
   color: #ffffff;
-  background-color: #5cb85c;
+  background-color: #4caf50;
   border-color: #4cae4c;
 }
 .btn-success:focus,
@@ -4846,7 +4846,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 .label {
   display: inline;
   padding: .2em .6em .3em;
-  font-size: 75%;
+  font-size: 84%;
   font-weight: bold;
   line-height: 1;
   color: #ffffff;
@@ -5759,8 +5759,8 @@ button.list-group-item-danger.active:focus {
   border-color: #faebcc;
 }
 .panel-warning > .panel-heading {
-  color: #8a6d3b;
-  background-color: #fcf8e3;
+  color: #ffffff;
+  background-color: #ef7d3e;
   border-color: #faebcc;
 }
 .panel-warning > .panel-heading + .panel-collapse > .panel-body {

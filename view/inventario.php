@@ -14,20 +14,21 @@
 			</div>
 		</div>
 
-		<!--  tabla de porductos existentes -->
+		<!--  PRODUCTOS DEL INVENTARIO -->
 		<div class="col-sm-12" ng-show="inventarioMenu==1">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">Inventario de productos</h3>
 				</div>
 				<div class="panel-body">
-					<div class="col-sm-7">
-
-						<button type="button" class="btn btn-success btn-sm" ng-click="editarAccion( null, 'insert' )">
-							<span class="glyphicon glyphicon-plus"></span> Ingresar Nuevo
-						</button>
-						
+					<div class="text-right">
+						<p>
+							<button type="button" class="btn btn-success btn-sm" ng-click="editarAccion( null, 'insert' )">
+								<span class="glyphicon glyphicon-plus"></span> Ingresar Nuevo
+							</button>
+						</p>
 					</div>
+					<!-- TABLA -->
 					<table class="table table-hover">
 						<thead>
 							<tr>
@@ -37,11 +38,12 @@
 								<th class="col-sm-1 text-center">Medida</th>
 								<th class="col-sm-1 text-center">Perecedero</th>
 								<th class="col-sm-2 text-center">Disponibilidad</th>
-								<th class="col-sm-2 text-center"></th>
+								<th class="text-center">Reajustar Cantidad</th>
+								<th class="text-center">Editar</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="inv in lstInventario" ng-class="{'danger': !inv.disponibilidad, 'warning':  inv.disponibilidad < (inv.cantidadMinima + 5) }">
+							<tr ng-repeat="inv in lstInventario" ng-class="{'danger': !inv.disponibilidad, 'warning':  inv.disponibilidad <= (inv.cantidadMinima + 5) }">
 								<td class="text-right">
 									{{ inv.idProducto }}
 								</td>
@@ -60,24 +62,23 @@
 								<td class="text-center">
 									{{ inv.disponibilidad }}
 								</td>
-								<td class="text-center">	
-									<a ng-click="ingresar(inv.idProducto,inv.producto)" type="button" class="btn btn-success btn-sm">
+								<td class="text-center">
+									<button type="button" ng-click="ingresarReajuste( inv.idProducto, inv.producto, inv.disponibilidad )" class="btn btn-primary btn-sm">
 										<span class="glyphicon glyphicon-plus"></span>
-									</a>
-
+									</button>
+								</td>
+								<td class="text-center">
 									<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( inv.idProducto, 'update' )">
 										<span class="glyphicon glyphicon-pencil"></span>
 									</button>
-									<a ng-href="#/nuevoEdita/producto/{{inv.idProducto}}" type="button" class="btn btn-primary btn-sm">
-										<span class="glyphicon glyphicon-edit"></span>
-									</a>
 									<span class="label label-warning" ng-show="inv.disponibilidad==inv.cantidadMninima">Pronto a agotarse</span>
 								</td>
 							</tr>
 						</tbody>
 					</table>
+					<!-- PAGINADOR -->
 					<nav>
-						<ul class="pagination">
+						<ul class="pagination" ng-show="lstPaginacion.length > 1">
 							<li ng-repeat="(ixPagina, pagina) in lstPaginacion" ng-class="{'active': filter.pagina == pagina.noPagina}">
 								<a href="" ng-click="cargarPaginacion( pagina.noPagina );">
 									{{ pagina.noPagina }}
@@ -85,14 +86,12 @@
 							</li>
 						</ul>
 					</nav>
-
 				</div>
 			</div>
 		</div>
 
-		<!-- tipo de producto -->
-		<div class="col-sm-6 col-sm-offset-3" ng-show="inventarioMenu==2">
-			<br>
+		<!-- TIPOS DE PRODUCTO -->
+		<div class="col-sm-offset-2 col-sm-8" ng-show="inventarioMenu==2">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">Tipos de producto</h3>
@@ -114,11 +113,15 @@
 				<div class="panel-body">
 					<b>Tipos Registrados</b>
 					<ul class="list-group">
-						<li class="list-group-item" ng-repeat="tp in lstTipoProducto">{{tp.tipoProducto}}</li>
+						<li class="list-group-item" ng-repeat="tp in lstTipoProducto">
+							{{ tp.tipoProducto }}
+						</li>
 					</ul>
 				</div>
 			</div>
 		</div>
+
+
 		<!-- medida de producto -->
 		<div class="col-sm-6 col-sm-offset-3" ng-show="inventarioMenu==3">
 			<br>
@@ -133,7 +136,7 @@
 							<input type="text" class="form-control" ng-model="medidaProducto" maxlength="45">
 						</div>
 						<div class="col-sm-5">
-							<button type="button" class="btn btn-success" ng-click="registraMedidaProducto(medidaProducto)">Guradar</button>
+							<button type="button" class="btn btn-success" ng-click="registraMedidaProducto( medidaProducto )">Guardar</button>
 							<button type="button" class="btn btn-default" ng-click="medidaProducto='';">Cancelar</button>
 						</div>
 					</div>
@@ -177,26 +180,66 @@
 		</div>
 	</div>
 
-	<!-- dialogo ingreso a existencias -->
+	
+	<!-- DIALOGO INGRESO EXISTENCIA -->
 	<script type="text/ng-template" id="dial.ingreso.html">
 		<div class="modal" tabindex="-1" role="dialog">
 			<div class="modal-dialog">
-				<div class="modal-content panel-primary">
+				<div class="modal-content panel-warning">
 					<div class="modal-header panel-heading">
 						<button type="button" class="close" ng-click="$hide()">&times;</button>
-						Ingresar existencia de {{nombreProducto}}
+						<span class="glyphicon glyphicon-repeat"></span>
+						INGRESAR REAJUSTE DEL PRODUCTO
 					</div>
 					<div class="modal-body">
-						<div class="form-group">
-							<label class="col-sm-2">Cantidad</label>
-							<div class="col-sm-3">
-								<input type="number" class="form-control" ng-model="$parent.cantidad">
+						<form class="form-horizontal" role="form" name="$parent.formReajuste">
+							<div class="text-right">
+								<b>PRODUCTO: </b>
+								<label class="label label-warning">
+									{{ itemProducto.nombreProducto | uppercase }}
+								</label>
 							</div>
-						</div>
-						<br>
+							<div class="form-group">
+								<div class="col-sm-4 col-sm-offset-1">
+									<label class="control-label">ID PRODUCTO</label>
+									<input type="text" class="form-control" ng-model="itemProducto.idProducto" readonly>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-4 col-sm-offset-1">
+									<label class="control-label">DISPONIBLE</label>
+									<input type="text" class="form-control" ng-model="itemProducto.disponibilidad" readonly>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-4 col-sm-offset-1">
+									<label class="control-label">INGRESAR CANTIDAD</label>
+									<input type="text" class="form-control" placeholder="Cantidad" ng-model="itemProducto.cantidad">
+								</div>
+								<div class="col-sm-4 col-sm-offset-1">
+									<label class="control-label">NUEVA DISPONIBILIDAD</label>
+									<input type="text" class="form-control" placeholder="Cantidad" value="{{ retornarTotal() }}" readonly>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-10 col-sm-offset-1 text-center">
+									<button type="button" class="btn" ng-class="{'btn-success': itemProducto.esIncremento, 'btn-danger': !itemProducto.esIncremento}" ng-click="itemProducto.esIncremento=!itemProducto.esIncremento">
+										<span class="glyphicon" ng-class="{'glyphicon-plus': itemProducto.esIncremento, 'glyphicon-minus': !itemProducto.esIncremento}"></span> {{ itemProducto.esIncremento ? 'AGREGAR' : 'DISMINUIR' }} DISPONIBILIDAD
+									</button>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-10 col-sm-offset-1">
+									<label class="control-label">INGRESE OBSERVACIÓN</label>
+									<textarea rows="3" class="form-control" ng-model="itemProducto.observacion" placeholder="Ingrese la observación del reajuste"></textarea>
+									<label class="label label-info">
+										Caracteres <span class="badge">{{ itemProducto.observacion.length }}</span>
+									</label>
+							</div>
+						</form>
 					</div>
 					<div class="modal-footer">
-						<button class="btn btn-success" ng-click="guardaIngreso( idProducto, $parent.cantidad)">
+						<button class="btn btn-warning" ng-click="guardaIngreso( idProducto, $parent.cantidad )">
 							<span class="glyphicon glyphicon-ok"></span> Guardar
 						</button>
 						<button type="button" class="btn btn-default" ng-click="$hide()">
