@@ -20,6 +20,57 @@ class Producto
 	}
 
 
+
+	// GUARDAR // ACTUALIZAR => INGRESO
+	function consultaReajusteInventario( $accion, $data )
+	{
+		$validar = new Validar();
+
+		// INICIALIZACIÓN VAR
+ 		$idProducto  = 'NULL';
+ 		$cantidad    = 'NULL';
+ 		$observacion = 'NULL';
+
+		// SETEO VARIABLES GENERALES
+ 		$data->idProducto  = (int)$data->idProducto > 0  		? (int)$data->idProducto 		: NULL;
+ 		$data->cantidad    = (double)$data->cantidad 			? (double)$data->cantidad 		: NULL;
+ 		$data->observacion = strlen( $data->observacion ) > 0 	? (string)$data->observacion 	: NULL;
+
+ 		// VALIDACIONES
+		$idProducto   = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido, verifique.' );
+		$cantidad     = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 50000, 'la cantidad' );
+		$observacion  = $this->con->real_escape_string( $validar->validarTexto( $data->observacion, NULL, TRUE, 20, 1500, 'la observación' ) );
+		$esIncremento = (int)$data->esIncremento;
+
+		// OBTENER RESULTADO DE VALIDACIONES
+ 		if( $validar->getIsError() ):
+	 		$this->respuesta = 'danger';
+	 		$this->mensaje   = $validar->getMsj();
+
+ 		else:
+			$sql = "CALL consultaReajusteInventario( '{$accion}', {$idProducto}, {$cantidad}, '{$observacion}', {$esIncremento} );";
+
+	 		if( $rs = $this->con->query( $sql ) ){
+	 			@$this->con->next_result();
+	 			if( $row = $rs->fetch_object() ){
+	 				$this->respuesta = $row->respuesta;
+	 				$this->mensaje   = $row->mensaje;
+	 				if( $accion == 'insert' AND $this->respuesta == 'success' )
+	 					$this->data = (int)$row->id;
+	 			}
+	 		}
+	 		else{
+	 			$this->respuesta = 'danger';
+	 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+	 		}			
+	 		
+ 		endif;
+
+ 		return $this->getRespuesta();
+	}
+
+
+
 	// GUARDAR // ACTUALIZAR => INGRESO
 	function consultaIngreso( $accion, $data )
 	{
@@ -287,8 +338,6 @@ class Producto
 				FROM
 				    lstProducto
 				ORDER BY idProducto $orden LIMIT $inicio, $limite;";
-
-				//echo $sql;
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
@@ -310,10 +359,11 @@ class Producto
 					 	'fechaProducto'   => $row->fechaProducto
 					);
 
-				$productos->totalPaginas   = $this->getTotalProductos( $limite );
 				$productos->lstProductos[] = $producto;
 			}
 		}
+		
+		$productos->totalPaginas = $this->getTotalProductos( $limite );
 
 		return $productos;
 	}
