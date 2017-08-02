@@ -265,10 +265,20 @@
                 			</div>
                 		</div>
             			<div class="col-xs-12">
-            				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=item.idTipoServicio, 'btn-info':idTipoServicio==item.idTipoServicio}" 
-            					ng-repeat="item in lstTipoServicio" ng-click="$parent.$parent.idTipoServicio=item.idTipoServicio" style="margin-right:4px;margin-top:5px">
-            					{{item.tipoServicio}}
-            					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==item.idTipoServicio"></span>
+            				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=1,'btn-info':idTipoServicio==1}" 
+            					ng-click="$parent.idTipoServicio=1" style="margin-right:4px;margin-top:5px">
+            					<u>R</u>estaurante
+            					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==1"></span>
+            				</button>
+            				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=2,'btn-info':idTipoServicio==2}" 
+            					ng-click="$parent.idTipoServicio=2" style="margin-right:4px;margin-top:5px">
+            					Para <u>L</u>levar
+            					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==2"></span>
+            				</button>
+            				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=3,'btn-info':idTipoServicio==3}" 
+            					ng-click="$parent.idTipoServicio=3" style="margin-right:4px;margin-top:5px">
+            					A <u>D</u>omicilio
+            					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==3"></span>
             				</button>
             			</div>
                    </div>
@@ -280,7 +290,7 @@
                     </button>
                     <button type="button" class="btn btn-default" ng-click="$hide();dialOrdenMenu.show()">
                         <span class="glyphicon glyphicon-chevron-left"></span>
-                        <b>Regresar a Menú</b>
+                        <b><u>R</u>egresar a Menú</b>
                     </button>
                 </div>
             </div>

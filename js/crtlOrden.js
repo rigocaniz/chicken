@@ -197,10 +197,31 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 					$scope.mostrarMenus();
 			}
 
-			// CUANDO EL DIALOGO DE NUEVA ORDEN ESTE ABIERTA
+			// CUANDO EL DIALOGO DE CANTIDAD DE ORDEN SELECCIONADA ESTE ABIERTA
 			if ( $scope.modalOpen( 'dial_menu_cantidad' ) ) {
 				if ( key == 65 ) // {A}
 					$scope.agregarAPedido();
+
+				else if ( key == 189 && $scope.menuActual.cantidad > 1 ) // {-}
+					$scope.menuActual.cantidad--;
+
+				else if ( key == 187 ) // {+}
+					$scope.menuActual.cantidad++;
+
+				// SELECCION DE TIPO DE SERVICIO
+				else if ( key == 82 ) // {R}
+					$scope.idTipoServicio = 1;
+
+				else if ( key == 76 ) // {L}
+					$scope.idTipoServicio = 2;
+
+				else if ( key == 68 ) // {D}
+					$scope.idTipoServicio = 3;
+
+				else if ( key == 27 ) { // {esc}
+					$scope.dialMenuCantidad.hide();
+					$scope.dialOrdenMenu.show()
+				}
 			}
 		}
 		console.log( key );
