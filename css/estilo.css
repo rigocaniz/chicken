@@ -1,3 +1,12 @@
+@font-face {
+    font-family: 'OpenSans-Bold';
+    src: url(../fonts/OpenSans-Bold.ttf);
+}
+
+.panel-title{
+    font-family: 'OpenSans-Bold'
+}
+
 button,a{
     outline: 0 !important;
 }
@@ -144,12 +153,7 @@ button,a{
 }
 
 
-
-
-
-
 .tabs-title{
-    /*background-color: #2b4b80; */
     margin-top: 15px;
     margin-bottom: 20px;
 }

@@ -3,26 +3,29 @@
 
 			<!-- Nav tabs -->
 			<ul class="nav nav-tabs tabs-title" role="tablist">
-				<li role="presentation" ng-class="{'active' : inventarioMenu==1}" ng-click="accion='insert'; inventarioMenu=1">
+				<li role="presentation" ng-class="{'active' : inventarioMenu==1}" ng-click="resetValues(); inventarioMenu=1">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-list"></span> INVENTARIO
 					</a>
 				</li>
-				<li role="presentation" ng-class="{'active' : inventarioMenu==2}" ng-click="accion='insert'; inventarioMenu=2">
+				<li role="presentation" ng-class="{'active' : inventarioMenu==2}" ng-click="resetValues(); inventarioMenu=2">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-share-alt"></span> TIPO PRODUCTO
 					</a>
 				</li>
-				<li role="presentation" ng-class="{'active' : inventarioMenu==3}" ng-click="accion='insert'; inventarioMenu=3">
+				<li role="presentation" ng-class="{'active' : inventarioMenu==3}" ng-click="resetValues(); inventarioMenu=3">
 					<a href="" role="tab" data-toggle="tab">
-						<span class="glyphicon glyphicon-star-empty"></span> MEDIDAS
+						<span class="glyphicon glyphicon-scale"></span> MEDIDAS
+					</a>
+				</li>
+				<li role="presentation" ng-class="{'active' : inventarioMenu==4}" ng-click="resetValues(); inventarioMenu=4">
+					<a href="" role="tab" data-toggle="tab">
+						<span class="glyphicon glyphicon-shopping-cart"></span> INGRESO
 					</a>
 				</li>
 			</ul>
 
 			{{ accion }}
-
-			{{ tp }}
 
 			<!-- Tab panes -->
 			<div class="tab-content">
@@ -81,7 +84,7 @@
 											</button>
 										</td>
 										<td class="text-center">
-											<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( inv.idProducto, 'update' )">
+											<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( inv.idProducto, 'update', producto )">
 												<span class="glyphicon glyphicon-pencil"></span>
 											</button>
 											<span class="label label-warning" ng-show="inv.disponibilidad==inv.cantidadMninima">Pronto a agotarse</span>
@@ -113,13 +116,13 @@
 					<div class="col-sm-offset-1 col-sm-10">
 						<div class="panel panel-primary">
 							<div class="panel-heading">
-								<h3 class="panel-title">Tipos de producto</h3>
+								<h3 class="panel-title">TIPOS DE PRODUCTO</h3>
 							</div>
 							<div class="panel-body">
 								<div class="row">
 									<label class="col-sm-1 col-md-2">Tipo</label>
 									<div class="col-sm-6">
-										<input type="text" id="tipoProducto" class="form-control" ng-model="tp.tipoProducto" maxlength="45">
+										<input type="text" id="tipoProducto" ng-keyup="$event.keyCode == 13 && consultaTipoProducto()" class="form-control" ng-model="tp.tipoProducto" maxlength="45">
 									</div>
 									<div class="col-sm-5 col-md-4">
 										<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaTipoProducto()">
@@ -139,6 +142,16 @@
 									<span class="glyphicon glyphicon-sort-by-attributes"></span> TIPOS REGISTRADOS
 								</h4>
 								<br>
+								<div class="col-sm-4 col-md-6">
+								</div>
+								<div class="col-sm-8 col-md-6">
+									<div class="input-group">
+										<input type="text" class="form-control" ng-model="buscarTipoProducto" placeholder="Buscar tipo">
+										<span class="input-group-addon" id="basic-addon1">
+											<span class="glyphicon glyphicon-search"></span> BUSCAR
+										</span>
+									</div>
+								</div>
 								<table class="table table-hover">
 									<thead>
 										<tr>
@@ -148,7 +161,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr ng-repeat="tp in lstTipoProducto">
+										<tr ng-repeat="tp in lstResultTipos = (lstTipoProducto | filter: buscarTipoProducto)">
 											<td class="text-center">{{ $index + 1 }}</td>
 											<td>{{ tp.tipoProducto }}</td>
 											<td class="text-center">
@@ -159,6 +172,9 @@
 										</tr>
 									</tbody>
 								</table>
+								<div class="alert alert-info text-right" role="alert" ng-show="!lstResultTipos.length">
+									<span class="glyphicon glyphicon-info-sign"></span> NO SE ENCONTRARON RESULTADOS
+								</div>
 							</div>
 						</div>
 					</div>
@@ -173,28 +189,67 @@
 							</div>
 							<div class="panel-body">
 								<div class="row">
-									<label class="col-sm-2">Medida</label>
-									<div class="col-sm-5">
-										<input type="text" class="form-control" ng-model="medidaProducto" maxlength="45">
+									<label class="col-sm-1 col-md-2">Medida</label>
+									<div class="col-sm-6">
+										<input type="text" id="medida" ng-keyup="$event.keyCode == 13 && consultaMedida()" class="form-control" ng-model="medidaProd.medida" maxlength="45">
 									</div>
-									<div class="col-sm-5">
-										<button type="button" class="btn btn-success" ng-click="registraMedidaProducto( medidaProducto )">Guardar</button>
-										<button type="button" class="btn btn-default" ng-click="medidaProducto='';">Cancelar</button>
+									<div class="col-sm-5 col-md-4">
+										<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMedida()">
+											<span class="glyphicon glyphicon-ok"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
+										</button>
+										<button type="button" class="btn btn-sm btn-default" ng-click="resetValues( 6 )">
+											Cancelar
+										</button>
 									</div>
 								</div>
 							</div>
 						</div>
-						<div class="panel panel-primary">
+						<div class="panel panel-default">
 							<div class="panel-body">
-								<b>Medidas Registradas</b>
-								<ul class="list-group">
-									<li class="list-group-item" ng-repeat="m in lstMedidas">{{m.medida}}</li>
-								</ul>
+								<h4 class="panel-title">
+									<span class="glyphicon glyphicon-sort-by-attributes"></span> MEDIDAS REGISTRADOS
+								</h4>
+								<br>
+								<div class="col-sm-4 col-md-6">
+								</div>
+								<div class="col-sm-8 col-md-6">
+									<div class="input-group">
+										<input type="text" class="form-control" ng-model="buscarMedida" placeholder="Buscar medida">
+										<span class="input-group-addon" id="basic-addon1">
+											<span class="glyphicon glyphicon-search"></span> BUSCAR
+										</span>
+									</div>
+								</div>
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th class="text-center col-sm-1">No.</th>
+											<th class="text-center col-sm-8">Tipo de producto</th>
+											<th class="text-center col-sm-2">Editar</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="medida in lstResultMedida = (lstMedidas | filter: buscarMedida)">
+											<td class="text-center">{{ $index + 1 }}</td>
+											<td>{{ medida.medida }}</td>
+											<td class="text-center">
+												<button class="btn btn-info btn-sm" ng-click="editarMedida( medida )">
+													<span class="glyphicon glyphicon-pencil"></span>
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<div class="alert alert-info text-right" role="alert" ng-show="!lstResultMedida.length">
+									<span class="glyphicon glyphicon-info-sign"></span> NO SE ENCONTRARON RESULTADOS
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 
+				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==3}" ng-show="inventarioMenu==4">
+				</div>
 
 			</div>
 
@@ -267,29 +322,31 @@
 									<div class="form-group">
 										<div class="col-sm-4">
 											<label class="control-label">Ingresar Cantidad</label>
-											<input type="text" class="form-control" placeholder="Cantidad" ng-model="itemProducto.cantidad">
+											<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="itemProducto.cantidad">
 										</div>
 										<div class="col-sm-2">
 										</div>
 										<div class="col-sm-5">
 											<label class="control-label">Nueva Disponibilidad</label>
-											<div class="input-group">
-												<span class="input-group-addon">
-													<span class="glyphicon glyphicon-refresh"></span>
-												</span>
-												<input type="text" class="form-control" placeholder="Cantidad" value="{{ retornarTotal() }}" readonly>											  	
-											</div>
+											<input type="text" class="form-control" placeholder="Cantidad" value="{{ retornarTotal() }}" readonly>											  	
 										</div>
 									</div>
 									<div class="form-group">
+										<div class="col-sm-2">
+											<label class="control-label">DISPONIBILIDAD</label>
+										</div>
 										<div class="col-sm-10 text-center">
-											<button type="button" class="btn" ng-class="{'btn-success': itemProducto.esIncremento, 'btn-danger': !itemProducto.esIncremento}" ng-click="itemProducto.esIncremento=!itemProducto.esIncremento">
-												<span class="glyphicon" ng-class="{'glyphicon-plus': itemProducto.esIncremento, 'glyphicon-minus': !itemProducto.esIncremento}"></span> {{ itemProducto.esIncremento ? 'AGREGAR' : 'DISMINUIR' }} DISPONIBILIDAD
+											<button type="button" class="btn btn-default" ng-class="{'btn-success': itemProducto.esIncremento}" ng-click="itemProducto.esIncremento=true">
+												<span class="glyphicon" ng-class="{'glyphicon-check': itemProducto.esIncremento, 'glyphicon-unchecked': !itemProducto.esIncremento}"></span> AGREGAR
+											</button>
+
+											<button type="button" class="btn btn-default" ng-class="{'btn-danger': !itemProducto.esIncremento}" ng-click="itemProducto.esIncremento=false">
+												<span class="glyphicon" ng-class="{'glyphicon-unchecked': itemProducto.esIncremento, 'glyphicon-check': !itemProducto.esIncremento}"></span> DISMINUIR
 											</button>
 										</div>
 									</div>
 									<div class="form-group">
-										<div class="col-sm-10 ">
+										<div class="col-sm-12">
 											<label class="control-label">INGRESE OBSERVACIÓN</label>
 											<textarea rows="3" class="form-control" ng-model="itemProducto.observacion" placeholder="Ingrese la observación del reajuste"></textarea>
 											<label class="label label-info">
@@ -302,7 +359,7 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button class="btn btn-warning" ng-click="guardaIngreso( idProducto, $parent.cantidad )">
+						<button class="btn btn-warning" ng-click="consultaReajusteInventario()">
 							<span class="glyphicon glyphicon-ok"></span> Guardar
 						</button>
 						<button type="button" class="btn btn-default" ng-click="$hide()">
