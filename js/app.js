@@ -101,10 +101,16 @@ app.config(function($routeProvider) {
 app.controller('restauranteCtrl', function($scope){//controlador principal
 });
 
-app.controller('inicioCtrl', function($scope, $rootScope){//controlador principal
+app.controller('inicioCtrl', function($scope, $rootScope, $timeout){//controlador principal
   // CAPTURA TECLA PARA ATAJOS RAPIDOS
   $scope.pressKey = function ( key ) {
     $rootScope.$broadcast('keyPress', key );
   };
+
+  $(function () {
+    $('#cargando').removeAttr("style"); 
+  });
+
+  $scope.loading = false;
 });
 

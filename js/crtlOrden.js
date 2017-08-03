@@ -199,8 +199,20 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		$scope.watchPrecio();
 	});
 
+	$timeout(function () {
+		$scope.$parent.loading = true;
+	},5500);
+
+	$timeout(function () {
+		$scope.$parent.loading = false;
+	},10500);
+
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key ) {
+
+		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
+		if ( $scope.$parent.loading )
+			return false;
 
 		// SI NO EXISTE NINGUN DIALOGO ABIERTO
 		if ( !$scope.modalOpen() ) {

@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body ng-controller="inicioCtrl" ng-keyup="pressKey( $event.keyCode );">
-    <div class="cargando">
+    <div class="cargando" id="cargando" ng-show="loading">
         <div class="loading-bro">
             <h1>Cargando...</h1>
             <svg id="load" x="0px" y="0px" viewBox="0 0 150 150">
