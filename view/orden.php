@@ -213,12 +213,14 @@
 	                			<span>{{item.tipoMenu}}</span>
                 			</button>
                 		</div>
+                		<hr>
                    </div>
                 	<div class="row">
                 		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstMenu">
                 			<button type="button" class="menu-btn" ng-click="seleccionarMenu( item )">
+	                			<span class="codigo">{{item.idMenu}}</span>
 	                			<img ng-src="img-menu/{{item.imagen}}">
-	                			<span>{{item.menu}}</span>
+	                			<span class="menu">{{item.menu}}</span>
                 			</button>
                 		</div>
                    </div>
