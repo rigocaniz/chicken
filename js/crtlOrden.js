@@ -84,11 +84,16 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 	$scope.consultaMenus = function () {
+		if ( $scope.$parent.loading )
+			return false;
+
 		if ( $scope.idTipoMenu > 0 ) {
 			$scope.lstMenu = [];
+			$scope.$parent.loading = true; // cargando...
 			$http.post('consultas.php', { opcion : 'lstMenu', idTipoMenu : $scope.idTipoMenu })
 			.success(function (data) {
 				console.log( data );
+				$scope.$parent.loading = false; // cargando...
 				if ( data.length ) {
 					$scope.lstMenu = data;
 				}
@@ -98,14 +103,19 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 	// #3 => SELECCIONA MENU DE lst
 	$scope.seleccionarMenu = function ( menu ) {
+		if ( $scope.$parent.loading )
+			return false;
+		
 		$scope.menuActual           = angular.copy( menu );
 		$scope.menuActual.cantidad  = 1;
 		$scope.menuActual.precio    = 0;
 		$scope.menuActual.lstPrecio = [];
 
+		$scope.$parent.loading = true; // cargando...
 		// CONSULTA PRECIOS DEL MENU
 		$http.post('consultas.php', { opcion : 'cargarMenuPrecio', idMenu : menu.idMenu })
 		.success(function (data) {
+			$scope.$parent.loading = false; // cargando...
 			if ( data.length )
 				$scope.menuActual.lstPrecio = data;
 		});
@@ -198,14 +208,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.$watch('menuActual.lstPrecio', function ( _new, _old ) {
 		$scope.watchPrecio();
 	});
-
-	$timeout(function () {
-		$scope.$parent.loading = true;
-	},5500);
-
-	$timeout(function () {
-		$scope.$parent.loading = false;
-	},10500);
 
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key ) {
