@@ -2,7 +2,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 
 	// LISTA EL INVENTARIO GENERAL DE PRODUCTOS
 	$scope.lstInventario  = [];
-	$scope.inventarioMenu = 1;
+	$scope.inventarioMenu = 4;
 	$scope.accion         = 'insert';
 
 	$scope.$watch('inventarioMenu', function( _old, _new){
@@ -23,6 +23,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		$scope.dialAdministrar.hide();
 	};
 
+	$scope.consultarProducto = function(){
+
+	};
 
 	$scope.catTipoProducto = function(){
 		$http.post('consultas.php',{
