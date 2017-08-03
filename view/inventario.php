@@ -19,8 +19,10 @@
 					</a>
 				</li>
 			</ul>
-			
+
 			{{ accion }}
+
+			{{ tp }}
 
 			<!-- Tab panes -->
 			<div class="tab-content">
@@ -29,7 +31,7 @@
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==1}" ng-show="inventarioMenu==1">
 					<div class="panel panel-primary">
 						<div class="panel-heading">
-							<h3 class="panel-title">Inventario de productos</h3>
+							<h3 class="panel-title">INVENTARIO DE PRODUCTOS</h3>
 						</div>
 						<div class="panel-body">
 							<div class="text-right">
@@ -90,6 +92,11 @@
 							<!-- PAGINADOR -->
 							<nav>
 								<ul class="pagination" ng-show="lstPaginacion.length > 1">
+									<li ng-class="{disabled: filter.pagina == 1 }">
+										<a href="" ng-click="cargarPaginacion( 1 );" aria-label="Previous">
+											<span aria-hidden="true">&laquo;</span>
+										</a>
+									</li>
 									<li ng-repeat="(ixPagina, pagina) in lstPaginacion" ng-class="{'active': filter.pagina == pagina.noPagina}">
 										<a href="" ng-click="cargarPaginacion( pagina.noPagina );">
 											{{ pagina.noPagina }}
@@ -103,26 +110,22 @@
 
 				<!-- TIPOS DE PRODUCTO -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==2}" ng-show="inventarioMenu==2">
-					<div class="col-sm-offset-2 col-sm-8">
+					<div class="col-sm-offset-1 col-sm-10">
 						<div class="panel panel-primary">
 							<div class="panel-heading">
 								<h3 class="panel-title">Tipos de producto</h3>
 							</div>
 							<div class="panel-body">
 								<div class="row">
-									<label class="col-sm-1">Tipo</label>
+									<label class="col-sm-1 col-md-2">Tipo</label>
 									<div class="col-sm-6">
-										<input type="text" class="form-control" ng-model="tipoProducto" maxlength="45">
+										<input type="text" id="tipoProducto" class="form-control" ng-model="tp.tipoProducto" maxlength="45">
 									</div>
-									<div class="col-sm-5">
+									<div class="col-sm-5 col-md-4">
 										<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaTipoProducto()">
 											<span class="glyphicon glyphicon-ok"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 										</button>
-
-										<button type="button" class="btn btn-sm btn-success" ng-click="registraTipoProdcuto(tipoProducto)">
-											Guardar
-										</button>
-										<button type="button" class="btn btn-sm btn-default" ng-click="tipoProducto=''">
+										<button type="button" class="btn btn-sm btn-default" ng-click="resetValues( 4 )">
 											Cancelar
 										</button>
 									</div>
@@ -130,19 +133,17 @@
 							</div>
 						</div>
 
-						
-
 						<div class="panel panel-default">
 							<div class="panel-body">
 								<h4 class="panel-title">
-									<span class="glyphicon glyphicon-sort-by-attributes"></span> Tipos Registrados
+									<span class="glyphicon glyphicon-sort-by-attributes"></span> TIPOS REGISTRADOS
 								</h4>
-								<hr>
+								<br>
 								<table class="table table-hover">
 									<thead>
 										<tr>
 											<th class="text-center col-sm-1">No.</th>
-											<th class="text-center col-sm-8">Tipo de Producto</th>
+											<th class="text-center col-sm-8">Tipo de producto</th>
 											<th class="text-center col-sm-2">Editar</th>
 										</tr>
 									</thead>
@@ -162,65 +163,46 @@
 						</div>
 					</div>
 				</div>
-				<div role="tabpanel" class="tab-pane">
-					asda
-				</div>
-			</div>
 
-		</div>
-
-		<!-- Definir botones de inventario menu -->
-		<div class="col-sm-12 text-center">
-			<div class="btn-group">
-				<button class="btn btn-default" ng-click="inventarioMenu=1;inventario();">
-					<span class="glyphicon glyphicon-list"></span> Inventario
-				</button>
-				<button class="btn btn-default" ng-click="inventarioMenu=2;catTipoProducto();">
-					<span class="glyphicon glyphicon-share-alt"></span> Tipo Producto
-				</button>
-				<button class="btn btn-default" ng-click="inventarioMenu=3;catMedidas();"> 
-					<span class="glyphicon glyphicon-star-empty"></span> Medidas
-				</button>
-			</div>
-		</div>
-
-		
-
-		
-		
-
-
-		<!-- medida de producto -->
-		<div class="col-sm-6 col-md-offset-3" ng-show="inventarioMenu==3">
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title">Medida de producto</h3>
-				</div>
-				<div class="panel-body">
-					<div class="row">
-						<label class="col-sm-2">Medida</label>
-						<div class="col-sm-5">
-							<input type="text" class="form-control" ng-model="medidaProducto" maxlength="45">
+				<!-- MEDIDA DE PRODUCTO -->
+				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==3}" ng-show="inventarioMenu==3">
+					<div class="col-sm-offset-1 col-sm-10">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h3 class="panel-title">Medida de producto</h3>
+							</div>
+							<div class="panel-body">
+								<div class="row">
+									<label class="col-sm-2">Medida</label>
+									<div class="col-sm-5">
+										<input type="text" class="form-control" ng-model="medidaProducto" maxlength="45">
+									</div>
+									<div class="col-sm-5">
+										<button type="button" class="btn btn-success" ng-click="registraMedidaProducto( medidaProducto )">Guardar</button>
+										<button type="button" class="btn btn-default" ng-click="medidaProducto='';">Cancelar</button>
+									</div>
+								</div>
+							</div>
 						</div>
-						<div class="col-sm-5">
-							<button type="button" class="btn btn-success" ng-click="registraMedidaProducto( medidaProducto )">Guardar</button>
-							<button type="button" class="btn btn-default" ng-click="medidaProducto='';">Cancelar</button>
+						<div class="panel panel-primary">
+							<div class="panel-body">
+								<b>Medidas Registradas</b>
+								<ul class="list-group">
+									<li class="list-group-item" ng-repeat="m in lstMedidas">{{m.medida}}</li>
+								</ul>
+							</div>
 						</div>
 					</div>
 				</div>
+
+
 			</div>
-			<div class="panel panel-primary">
-				<div class="panel-body">
-					<b>Medidas Registradas</b>
-					<ul class="list-group">
-						<li class="list-group-item" ng-repeat="m in lstMedidas">{{m.medida}}</li>
-					</ul>
-				</div>
-			</div>
+
 		</div>
 
+
 		<!-- ingreso de productos a inventario -->
-		<div class="col-sm-12" ng-show="inventarioMenu==4">
+		<div class="col-sm-12" ng-show="inventarioMenu==1">
 			<br>
 			<div class="panel panel-success">
 				<div class="panel-heading">
@@ -314,23 +296,24 @@
 												Caracteres <span class="badge">{{ itemProducto.observacion.length }}</span>
 											</label>
 										</div>
-									</form>
-								</div>
+									</div>
+								</form>
 							</div>
 						</div>
-						<div class="modal-footer">
-							<button class="btn btn-warning" ng-click="guardaIngreso( idProducto, $parent.cantidad )">
-								<span class="glyphicon glyphicon-ok"></span> Guardar
-							</button>
-							<button type="button" class="btn btn-default" ng-click="$hide()">
-								<span class="glyphicon glyphicon-log-out"></span>
-								<b>Salir</b>
-							</button>
-						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-warning" ng-click="guardaIngreso( idProducto, $parent.cantidad )">
+							<span class="glyphicon glyphicon-ok"></span> Guardar
+						</button>
+						<button type="button" class="btn btn-default" ng-click="$hide()">
+							<span class="glyphicon glyphicon-log-out"></span>
+							<b>Salir</b>
+						</button>
 					</div>
 				</div>
 			</div>
-		</script>
+		</div>
+	</script>
 
 
 <!-- MODAL AGREGAR / EDITAR PRODUCTO -->

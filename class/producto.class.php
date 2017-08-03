@@ -129,13 +129,13 @@ class Producto
 		$validar = new Validar();
 
 		// SETEO VARIABLES GENERALES
- 		$data->tipoProducto = strlen( $data->tipoProducto ) > 0 	? (string)$data->tipoProducto 	: NULL;
+ 		$data->tipoProducto = strlen( $data->tipoProducto ) > 0 ? (string)$data->tipoProducto : NULL;
 
  		// VALIDACIONES
  		$idTipoProducto = 'NULL';
  		if( $accion == 'update' ):
  			$data->idTipoProducto = (int)$data->idTipoProducto > 0 ? (int)$data->idTipoProducto : NULL;
- 			$idTipoProducto       = $validar->validarEntero( $data->idTipoProducto, NULL, TRUE, 'El ID del Tipo Producto no es válido, verifique.' );
+ 			$idTipoProducto       = $validar->validarEntero( $data->idTipoProducto, NULL, TRUE, 'El ID del Tipo de Producto no es válido' );
  		endif;
 
 		$tipoProducto = $validar->validarTexto( $data->tipoProducto, NULL, TRUE, 3, 45, 'el Tipo Producto' );
@@ -161,7 +161,7 @@ class Producto
 	 			$this->respuesta = 'danger';
 	 			$this->mensaje   = 'Error al ejecutar la instrucción.';
 	 		}
-	 		
+
  		endif;
 
  		return $this->getRespuesta();

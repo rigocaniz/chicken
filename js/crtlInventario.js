@@ -12,7 +12,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 	});
 
 
-
 	$scope.dialIngreso     = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
 	$scope.dialAdministrar = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
 
@@ -67,6 +66,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 
 
 	$scope.resetValues = function( accion ){
+		$scope.accion = 'insert';
 
 		if( accion == 1 ){
 			$scope.producto = {
@@ -88,6 +88,13 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 				disponibilidad : null,
 				observacion    : '',
 				esIncremento   : true
+			};
+		}
+
+		else if( accion == 4 ){
+			$scope.tp = {
+				idTipoProducto : null,
+				tipoProducto   : ''
 			};
 		}
 
@@ -213,30 +220,37 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		$scope.accion = 'update';
 		$scope.tp.idTipoProducto = tipoProducto.idTipoProducto;
 		$scope.tp.tipoProducto   = tipoProducto.tipoProducto;
+		$('#tipoProducto').focus();
 	};
 
 
 	// INSERT / UPDATE TIPO PRODUCTO
 	$scope.consultaTipoProducto = function( tipoProducto ){
-		if ( tipoProducto== undefined || !tipoProducto.length>3 ) {
-			alertify.set('notifier','position', 'top-right');
- 			alertify.notify('Ingrese tipo de producto', 'warning', 3);
+		var tp = $scope.tp;
+
+		if( $scope.accion == 'update' && !(tp.idTipoProducto && tp.idTipoProducto > 0 ) ){
+			alertify.notify( 'El No. del Tipo de producto no es válido', 'danger', 5 );
+		}
+		else if( !(tp.tipoProducto && tp.tipoProducto.length > 3 ) ){
+			alertify.notify( 'El tipo de producto debe ser mayor a 3 caracteres', 'danger', 5 );
 		}
 		else{
 			$http.post('consultas.php',{
-				opcion:"consultaTipoProducto",
-				accion:'insert',
-				datos: {tipoProducto:tipoProducto}
+				opcion : "consultaTipoProducto",
+				accion : $scope.accion,
+				datos  : $scope.tp
 			}).success(function(data){
+				console.log( data );
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
 				if ( data.respuesta == 'success' ) {
-					$scope.tipoProducto = '';
+					$scope.resetValues( 4 );
 					$scope.catTipoProducto();
 				}
 			})
 		}
-	}
+	};
+
 
 	//registrar medida de producto
 	$scope.registraMedidaProducto = function(medidaProducto){
