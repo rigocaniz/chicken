@@ -1228,7 +1228,7 @@ h2,
 .h2,
 h3,
 .h3 {
-  margin-top: 20px;
+  margin-top: 15px;
   margin-bottom: 10px;
 }
 h1 small,
@@ -2285,6 +2285,7 @@ th {
 .table > thead > tr > th {
   vertical-align: middle;
   border-bottom: 2px solid #dddddd;
+  font-family: 'OpenSans-Bold'
 }
 .table > caption + thead > tr:first-child > th,
 .table > colgroup + thead > tr:first-child > th,
@@ -3344,7 +3345,7 @@ fieldset[disabled] .btn-warning.focus {
 }
 .btn-danger {
   color: #ffffff;
-  background-color: #d9534f;
+  background-color: #d00000;
   border-color: #d43f3a;
 }
 .btn-danger:focus,
@@ -4040,6 +4041,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   border: 1px solid #dddddd;
   border-bottom-color: transparent;
   cursor: default;
+  font-family: 'OpenSans-Bold'
 }
 .nav-tabs.nav-justified {
   width: 100%;

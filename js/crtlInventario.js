@@ -2,7 +2,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 
 	// LISTA EL INVENTARIO GENERAL DE PRODUCTOS
 	$scope.lstInventario  = [];
-	$scope.inventarioMenu = 1;
+	$scope.inventarioMenu = 4;
 	$scope.accion         = 'insert';
 
 	$scope.$watch('inventarioMenu', function( _old, _new){
@@ -23,6 +23,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		$scope.dialAdministrar.hide();
 	};
 
+	$scope.consultarProducto = function(){
+
+	};
 
 	$scope.catTipoProducto = function(){
 		$http.post('consultas.php',{
@@ -65,8 +68,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 	};
 
 
+	$scope.buscarTipoProducto = '';
 	$scope.resetValues = function( accion ){
-		$scope.accion = 'insert';
+		$scope.accion             = 'insert';
+		$scope.buscarTipoProducto = '';
+		$scope.buscarMedida       = '';
 
 		if( accion == 1 ){
 			$scope.producto = {
@@ -95,6 +101,13 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 			$scope.tp = {
 				idTipoProducto : null,
 				tipoProducto   : ''
+			};
+		}
+
+		else if( accion == 6 ){
+			$scope.medidaProd = {
+				idMedida : null,
+				medida   : ''
 			};
 		}
 
@@ -132,7 +145,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 	};
 
 
-	$scope.editarAccion = function( id, accion ){
+	$scope.editarAccion = function( id, accion, producto ){
+		console.log( 'producto::: ', producto );
 
 		$scope.id     = id;
 		$scope.accion = accion;
@@ -232,7 +246,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 			alertify.notify( 'El No. del Tipo de producto no es válido', 'danger', 5 );
 		}
 		else if( !(tp.tipoProducto && tp.tipoProducto.length > 3 ) ){
-			alertify.notify( 'El tipo de producto debe ser mayor a 3 caracteres', 'danger', 5 );
+			alertify.notify( 'La descripción del tipo de producto debe ser mayor a 3 caracteres', 'danger', 5 );
 		}
 		else{
 			$http.post('consultas.php',{
@@ -252,22 +266,39 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 	};
 
 
-	//registrar medida de producto
-	$scope.registraMedidaProducto = function(medidaProducto){
-		if ( medidaProducto== undefined || !medidaProducto.length>3 ) {
-			alertify.set('notifier','position', 'top-right');
- 			alertify.notify('Ingrese la medida para productos', 'warning', 3);
-		}else{
+	$scope.medidaProd = {
+		idMedida : null,
+		medida   : ''
+	};
+	$scope.editarMedida = function( medida ){
+		$scope.accion = 'update';
+		$scope.medidaProd.idMedida = medida.idMedida;
+		$scope.medidaProd.medida   = medida.medida;
+		$('#medida').focus();
+	};
+
+	// INSERTAR / ACTUALIZAR MEDIDA
+	$scope.consultaMedida = function(){
+		var medida = $scope.medidaProd;
+
+		if( $scope.accion == 'update' && !(medida.idMedida && medida.idMedida > 0 ) ){
+			alertify.notify( 'El No. de la medida no es válido', 'danger', 5 );
+		}
+		else if( !(medida.medida && medida.medida.length > 3 ) ){
+			alertify.notify( 'La descripcion de la medida debe ser mayor a 3 caracteres', 'danger', 5 );
+		}
+		else{
 			$http.post('consultas.php',{
-				opcion:"consultaMedida",
-				accion:'insert',
-				datos: {medida:medidaProducto}
+				opcion : "consultaMedida",
+				accion : $scope.accion,
+				datos  : $scope.medidaProd
 			}).success(function(data){
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
 				if ( data.respuesta == 'success' ) {
 					$scope.medidaProducto = '';
 					$scope.catMedidas();
+					$scope.resetValues( 6 );
 				}
 			})
 		}
@@ -310,11 +341,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 	}
 
 
-	$scope.guardaIngreso = function( idProducto, cantidad ){
+	$scope.consultaReajusteInventario = function(){
 		var itemProducto = $scope.itemProducto;
 
-		if( !(itemProducto.cantidad && itemProducto.cantidad > 0) ){
- 			alertify.notify('La cantidad debe ser mayor a 0', 'warning', 4);
+		if( !(itemProducto.cantidad && itemProducto.cantidad != 0) ){
+ 			alertify.notify('La cantidad debe ser diferente a 0', 'warning', 4);
 		}
 		else if( !(itemProducto.observacion && itemProducto.observacion.length > 20) ){
 			alertify.notify('La observación debe tener más de 20 caracteres', 'warning', 4);
@@ -326,7 +357,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 				datos  : $scope.itemProducto
 			}).success(function(data){
 				console.log( data );
-				//alertify.set('notifier','position', 'top-right');
+				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
 				if ( data.respuesta == 'success' ) {
 					$scope.inventario();
