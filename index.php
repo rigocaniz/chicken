@@ -14,6 +14,15 @@
     <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body ng-controller="inicioCtrl" ng-keyup="pressKey( $event.keyCode );">
+    <div class="cargando">
+        <div class="loading-bro">
+            <h1>Cargando...</h1>
+            <svg id="load" x="0px" y="0px" viewBox="0 0 150 150">
+                <circle id="loading-inner" cx="75" cy="75" r="60"/>
+            </svg>
+        </div>
+    </div>
+
 	<!-- Navegacion-->
     <a id="menu-toggle" href="#" class="btn btn-dark btn-md toggle"><span class="glyphicon glyphicon-list"></span></a>
     <nav id="sidebar-wrapper">
@@ -60,9 +69,7 @@
             </li>
         </ul>
     </nav>
-    <div class="contenedor">
-	   <div ng-view></div>
-    </div>
+   <div ng-view></div>
 
 	<!-- jQuery -->
     <script src="js/libs/jquery-3.2.1.min.js"></script>

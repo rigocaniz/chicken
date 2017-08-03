@@ -1,4 +1,4 @@
-<div style="margin:5px;">
+<div class="col-xs-12" style="margin-top:5px">
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom:4px">
 			<button type="button" class="btn btn-success" ng-click="nuevaOrden()">
@@ -10,7 +10,6 @@
 				Buscar Orden
 			</button>
 		</div>
-		<hr class="col-sm-12" style="margin:9px 40px">
 		<div class="col-sm-12">
 			<div class="btn-orden" ng-init="tab=1">
 				<button class="bt-info" ng-class="{'active':tab==1}" ng-click="tab=1">
@@ -143,7 +142,7 @@
                 			<table class="table table-condensed table-hover">
                 				<thead>
                 					<tr>
-                						<th>Precio</th>
+                						<th>Subtotal</th>
                 						<th>Orden</th>
                 						<th>Cantidad</th>
                 						<th width="35px"></th>
@@ -151,19 +150,19 @@
                 				</thead>
                 				<tbody>
                 					<tr ng-repeat="item in ordenActual.lstAgregar">
-                						<td>{{item.precio | number:2}}</td>
+                						<td>{{(item.precio*item.cantidad) | number:2}}</td>
                 						<td>{{item.menu}} » {{item.tipoServicio}}</td>
                 						<td>
-                							<button type="button" class="btn btn-xs btn-default" ng-click="item.cantidad = (item.cantidad>1 ? item.cantidad-1 : item.cantidad)">
+                							<button type="button" class="btn btn-xs btn-default" ng-click="ordenCantidad( $index, 0, item.cantidad, item.precio )">
                 								<span class="glyphicon glyphicon-minus"></span>
                 							</button>
                 							<b>{{item.cantidad}}</b>
-                							<button type="button" class="btn btn-xs btn-primary" ng-click="item.cantidad=item.cantidad+1">
+                							<button type="button" class="btn btn-xs btn-primary" ng-click="ordenCantidad( $index, 1, item.cantidad, item.precio )">
                 								<span class="glyphicon glyphicon-plus"></span>
                 							</button>
                 						</td>
                 						<td>
-                							<button type="button" class="btn btn-xs btn-danger" ng-click="ordenActual.lstAgregar.splice( $index, 1 )">
+                							<button type="button" class="btn btn-xs btn-danger" ng-click="quitarElemento( $index, item.cantidad, item.precio )">
                 								<span class="glyphicon glyphicon-remove"></span>
                 							</button>
                 						</td>

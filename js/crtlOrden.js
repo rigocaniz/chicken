@@ -96,10 +96,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		}
 	};
 
-	$scope.$watch('idTipoMenu', function (_new) {
-		$scope.consultaMenus();
-	});
-
 	// #3 => SELECCIONA MENU DE lst
 	$scope.seleccionarMenu = function ( menu ) {
 		$scope.menuActual           = angular.copy( menu );
@@ -114,30 +110,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				$scope.menuActual.lstPrecio = data;
 		});
 
-		//$scope.menuActual.idTipoServicio = '1';
-		//$scope.menuActual.tipoServicio   = '';
 		$scope.dialOrdenMenu.hide();
 		$scope.dialMenuCantidad.show();
 	};
-
-
-	$scope.watchPrecio = function () {
-		$scope.menuActual.precio = 0;
-
-		if ( $scope.menuActual.lstPrecio.length && $scope.idTipoServicio > 0 ) {
-			for ( var i = 0; i < $scope.menuActual.lstPrecio.length; i++ )
-				if ( $scope.menuActual.lstPrecio[ i ].idTipoServicio == $scope.idTipoServicio )
-					$scope.menuActual.precio = $scope.menuActual.lstPrecio[ i ].precio;
-		}
-	};
-
-	$scope.$watch('idTipoServicio', function ( _new, _old ) {
-		$scope.watchPrecio();
-	});
-
-	$scope.$watch('menuActual.lstPrecio', function ( _new, _old ) {
-		$scope.watchPrecio();
-	});
 
 	// #4 => AGREGAR MENU Y CANTIDAD A ORDEN A AGREGAR
 	$scope.agregarAPedido = function () {
@@ -152,8 +127,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		else{
 			var tipoServicio = $scope.descripcion( 'lstTipoServicio', 'idTipoServicio', $scope.idTipoServicio, 'tipoServicio' );
 
-			$scope.ordenActual.totalAgregar += parseFloat( $scope.menuActual.precio );
-			console.log( $scope.ordenActual.totalAgregar );
+			var subTotal = parseFloat( $scope.menuActual.precio ) * $scope.menuActual.cantidad;
+			$scope.ordenActual.totalAgregar += subTotal;
+			console.log( subTotal );
 
 			$scope.ordenActual.lstAgregar.unshift({
 				idMenu         : $scope.menuActual.idMenu,
@@ -168,6 +144,23 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		}
 	};
 
+	// SUMA O RESTA UNO A LA CANTIDAD DE UN MENU
+	$scope.ordenCantidad = function ( index, sumar, cantidad, precio ) {
+		if ( sumar ) {
+			$scope.ordenActual.lstAgregar[ index ].cantidad++;
+			$scope.ordenActual.totalAgregar += precio;
+		} else if ( cantidad > 1 ) {
+			$scope.ordenActual.lstAgregar[ index ].cantidad--;
+			$scope.ordenActual.totalAgregar -= precio;
+		}
+	};
+
+	// QUITAR ELEMENTO DE ORDEN
+	$scope.quitarElemento = function ( index, cantidad, precio ) {
+		$scope.ordenActual.totalAgregar -= ( cantidad * precio );
+		$scope.ordenActual.lstAgregar.splice( index, 1 );
+	};
+
 	// RETORNA LA DESCRIPCION DE UN ELEMENTO DE ACUEROD AL id DEL ARREGLO
 	$scope.descripcion = function ( arr, id, _value, _return ) {
 		var descrip = '';
@@ -178,6 +171,33 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 		return descrip;
 	};
+
+	$scope.watchPrecio = function () {
+		$scope.menuActual.precio = 0;
+
+		if ( $scope.menuActual.lstPrecio.length && $scope.idTipoServicio > 0 ) {
+			for ( var i = 0; i < $scope.menuActual.lstPrecio.length; i++ )
+				if ( $scope.menuActual.lstPrecio[ i ].idTipoServicio == $scope.idTipoServicio ) {
+					$scope.menuActual.precio = $scope.menuActual.lstPrecio[ i ].precio;
+					break;
+				}
+		}
+	};
+
+	// SI CAMBIA EL Tipo de Menú
+	$scope.$watch('idTipoMenu', function (_new) {
+		$scope.consultaMenus();
+	});
+
+	// SI CAMBIA EL Tipo de Servicio
+	$scope.$watch('idTipoServicio', function ( _new, _old ) {
+		$scope.watchPrecio();
+	});
+
+	// SI CAMBIA LA Lista de Precio
+	$scope.$watch('menuActual.lstPrecio', function ( _new, _old ) {
+		$scope.watchPrecio();
+	});
 
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key ) {
@@ -199,7 +219,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 			// CUANDO EL DIALOGO DE CANTIDAD DE ORDEN SELECCIONADA ESTE ABIERTA
 			if ( $scope.modalOpen( 'dial_menu_cantidad' ) ) {
-				if ( key == 65 ) // {A}
+				if ( key == 65 || key == 13 ) // {A}
 					$scope.agregarAPedido();
 
 				else if ( key == 189 && $scope.menuActual.cantidad > 1 ) // {-}
