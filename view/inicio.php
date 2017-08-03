@@ -2,6 +2,10 @@
     <div class="row">
         <div class="col-sm-12">
             <img src="img/logo_churchil.png" style="height: 125px;">
+            <h2>
+                <span class="glyphicon glyphicon-th"></span>
+                MENU
+            </h2>
         </div>
         <div class="col-md-2 col-sm-4">
             <a href="#/orden" class="item-menu">

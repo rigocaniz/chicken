@@ -1,6 +1,16 @@
 @font-face {
     font-family: 'OpenSans-Bold';
-    src: url(../fonts/OpenSans-Bold.ttf);
+    src: url(../fonts/OpenSans-Bold.ttf);   
+}
+
+@font-face {
+    font-family: 'OpenSans-ExtraBold';
+    src: url(../fonts/OpenSans-ExtraBold.ttf);
+}
+
+h2{
+    font-family: 'OpenSans-ExtraBold';
+    color: #e2002b;
 }
 
 .panel-title{
