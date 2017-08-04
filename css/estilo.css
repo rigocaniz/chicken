@@ -38,7 +38,10 @@ button,a{
     font-size: 13px;
     font-weight: bold;
     margin-bottom: 8px;
-    padding: 0 6px;
+    background: #aaaaaa;
+    color: #ffffff;
+    border-radius: 15px 0;
+    padding: 0 15px;
 }
 
 .item-menu{

@@ -115,7 +115,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http ){//co
 
     $scope.lstTipoServicio = [];
     $scope.lstDestinoMenu = [];
-    
+
     ($scope.catDestinoMenu = function(){
         $http.post('consultas.php',{
             opcion : 'catDestinoMenu'
@@ -133,6 +133,16 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http ){//co
             $scope.lstTipoServicio = data;
         })
     })();
+
+
+    $scope.returnTipoServicio = function( idTipoServicio ){
+        for (var i = 0; i < $scope.lstTipoServicio.length; i++) {
+            if( $scope.lstTipoServicio[ i ].idTipoServicio == idTipoServicio ){
+                return $scope.lstTipoServicio[ i ].tipoServicio;
+                break;
+            }
+        }
+    };
 
 });
 
