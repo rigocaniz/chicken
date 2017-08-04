@@ -72,16 +72,17 @@ BEGIN
 	IF !sesionValida() THEN # SI LA SESION ES INVALIDA
 		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
 
-	ELSEIF _action = 'insert' AND _cantidad != 1 THEN
-		SELECT 'danger' AS 'respuesta', 'No es posible agregar más de un menú a la vez' AS 'mensaje';
-
 	ELSEIF _action = 'insert' THEN
-		INSERT INTO detalleOrdenMenu (idOrdenCliente, idMenu, cantidad, idEstadoDetalleOrden, idTipoServicio, usuario, usuarioResponsable, perteneceCombo )
-		VALUES (_idOrdenCliente, _idMenu, _cantidad, 1, _idTipoServicio, @usuario, _usuarioResponsable, 0 );
+		WHILE _cantidad > 0 DO
+			INSERT INTO detalleOrdenMenu (idOrdenCliente, idMenu, cantidad, idEstadoDetalleOrden, idTipoServicio, usuario, usuarioResponsable, perteneceCombo )
+			VALUES (_idOrdenCliente, _idMenu, 1, 1, _idTipoServicio, @usuario, _usuarioResponsable, 0 );
+			
+			UPDATE menu SET top = top + 1 WHERE idMenu = _idMenu;
+            
+            SET _cantidad = _cantidad - 1;
+        END WHILE;
 
-		UPDATE menu SET top = top + 1 WHERE idMenu = _idMenu;
-
-		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
+		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
 
 	ELSEIF _action = 'estado' THEN
 		IF ( ( _idEstadoDetalleOrden > _estadoActualDetalle ) OR @isAdmin ) THEN
@@ -230,19 +231,21 @@ BEGIN
 	IF !sesionValida() THEN # SI LA SESION ES INVALIDA
 		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
 
-	ELSEIF _action = 'insert' AND _cantidad != 1 THEN
-		SELECT 'danger' AS 'respuesta', 'No es posible agregar más de un combo a la vez' AS 'mensaje';
-
 	ELSEIF _action = 'insert' THEN
-		INSERT INTO detalleOrdenCombo (idOrdenCliente, idCombo, cantidad, idEstadoDetalleOrden, idTipoServicio, usuario, usuarioResponsable)
-		VALUES (_idOrdenCliente, _idCombo, _cantidad, 1, _idTipoServicio, @usuario, _usuarioResponsable );
+		WHILE _cantidad > 0 DO
 
-		UPDATE combo SET top = top + 1 WHERE idCombo = _idCombo;
+			INSERT INTO detalleOrdenCombo (idOrdenCliente, idCombo, cantidad, idEstadoDetalleOrden, idTipoServicio, usuario, usuarioResponsable)
+			VALUES (_idOrdenCliente, _idCombo, 1, 1, _idTipoServicio, @usuario, _usuarioResponsable );
 
-		SET @idDetalleOrdenCombo = LAST_INSERT_ID();
+			UPDATE combo SET top = top + 1 WHERE idCombo = _idCombo;
 
-		# INGRESA DETALLE DE MENU DE COMBO
-		CALL _comboDetalleMenu( @idDetalleOrdenCombo, _idCombo, _idTipoServicio, 1, _usuarioResponsable, _idOrdenCliente );
+			SET @idDetalleOrdenCombo = LAST_INSERT_ID();
+
+			# INGRESA DETALLE DE MENU DE COMBO
+			CALL _comboDetalleMenu( @idDetalleOrdenCombo, _idCombo, _idTipoServicio, 1, _usuarioResponsable, _idOrdenCliente );
+
+			SET _cantidad = _cantidad - 1;
+		END WHILE;
 
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', @idDetalleOrdenCombo AS 'id';
 

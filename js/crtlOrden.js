@@ -105,7 +105,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.seleccionarMenu = function ( menu ) {
 		if ( $scope.$parent.loading )
 			return false;
-		
+
 		$scope.menuActual           = angular.copy( menu );
 		$scope.menuActual.cantidad  = 1;
 		$scope.menuActual.precio    = 0;
@@ -139,16 +139,32 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 			var subTotal = parseFloat( $scope.menuActual.precio ) * $scope.menuActual.cantidad;
 			$scope.ordenActual.totalAgregar += subTotal;
-			console.log( subTotal );
 
-			$scope.ordenActual.lstAgregar.unshift({
-				idMenu         : $scope.menuActual.idMenu,
-				menu           : $scope.menuActual.menu,
-				cantidad       : $scope.menuActual.cantidad,
-				precio         : $scope.menuActual.precio,
-				tipoServicio   : tipoServicio,
-				idTipoServicio : $scope.idTipoServicio
-			});
+			console.log(  $scope.menuActual.idMenu, $scope.idTipoServicio );
+
+			var index = -1;
+			for (var i = 0; i < $scope.ordenActual.lstAgregar.length; i++) {
+				if ( $scope.ordenActual.lstAgregar[ i ].idMenu == $scope.menuActual.idMenu && 
+					$scope.ordenActual.lstAgregar[ i ].idTipoServicio == $scope.idTipoServicio ) 
+				{
+					index = i;
+					break;
+				}
+			}
+
+			if ( index >= 0 ) {
+				$scope.ordenActual.lstAgregar[ index ].cantidad += $scope.menuActual.cantidad;
+			}
+			else{
+				$scope.ordenActual.lstAgregar.unshift({
+					idMenu         : $scope.menuActual.idMenu,
+					menu           : $scope.menuActual.menu,
+					cantidad       : $scope.menuActual.cantidad,
+					precio         : $scope.menuActual.precio,
+					tipoServicio   : tipoServicio,
+					idTipoServicio : $scope.idTipoServicio
+				});
+			}
 			$scope.dialOrdenCliente.show();
 			$scope.dialMenuCantidad.hide();
 		}
