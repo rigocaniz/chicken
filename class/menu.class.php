@@ -182,8 +182,9 @@ class Menu
 		 			if( $row = $rs->fetch_object() ){
 		 				$this->respuesta = $row->respuesta;
 		 				$this->mensaje   = $row->mensaje;
-		 				if( $accion == 'insert' AND $this->respuesta == 'success' )
+		 				if( $accion == 'insert' AND $this->respuesta == 'success' ){
 		 					$this->data = (int)$row->id;
+		 				}
 		 			}
 		 		}
 		 		else{

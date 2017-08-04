@@ -66,6 +66,9 @@ b,
 strong {
   font-weight: bold;
 }
+strong {
+  font-family: "OpenSans-Bold";
+}
 dfn {
   font-style: italic;
 }
@@ -3445,7 +3448,7 @@ fieldset[disabled] .btn-link:focus {
   padding: 5px 10px;
   font-size: 12px;
   line-height: 1.5;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 .btn-xs,
 .btn-group-xs > .btn {
@@ -4036,7 +4039,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav-tabs > li.active > a,
 .nav-tabs > li.active > a:hover,
 .nav-tabs > li.active > a:focus {
-  color: #555555;
+  color: #ea0016;
   background-color: #ffffff;
   border: 1px solid #dddddd;
   border-bottom-color: transparent;
@@ -4886,14 +4889,14 @@ a.label:focus {
   background-color: #286090;
 }
 .label-success {
-  background-color: #5cb85c;
+  background-color: #42ad42;
 }
 .label-success[href]:hover,
 .label-success[href]:focus {
   background-color: #449d44;
 }
 .label-info {
-  background-color: #5bc0de;
+  background-color: #00c1da;
 }
 .label-info[href]:hover,
 .label-info[href]:focus {
@@ -5029,8 +5032,8 @@ a.thumbnail.active {
   color: #333333;
 }
 .alert {
-  padding: 15px;
-  margin-bottom: 20px;
+  padding: 10px 15px;
+  margin-bottom: 15px;
   border: 1px solid transparent;
   border-radius: 4px;
 }

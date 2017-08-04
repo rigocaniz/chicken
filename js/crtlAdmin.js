@@ -1,6 +1,6 @@
 app.controller('crtlAdmin', function( $scope , $http, $modal ){
 
-	$scope.inventarioMenu = 1;
+	$scope.inventarioMenu = 2;
 
 	$scope.filtro = {
 		filter : { filter: 'idMedida', value : 8 },
@@ -9,17 +9,43 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 		page   : 1
 	};
 
-	$scope.dialIngreso     = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
-	$scope.dialAdministrar = $modal({scope: $scope,template:'dialAdmin.ingreso.html', show: false, backdrop: 'static'});
+	$scope.lstTipoServicio = [];
+	$scope.lstDestinoMenu  = [];
 
-	$scope.dialAdministrarAbrir = function(){
-		$scope.dialAdministrar.show();
-	};
+	($scope.inicio = function(){
+        $http.post('consultas.php',{
+            opcion : 'catDestinoMenu'
+        }).success(function(data){
+            console.log( 'destinos', data );
+            $scope.lstDestinoMenu = data;
+        })
+		
+	})();
 
-	$scope.dialAdministrarCerrar = function(){
-		$scope.dialAdministrar.hide();
-	};
 
+    ($scope.catTipoServicio = function(){
+        $http.post('consultas.php',{
+            opcion : 'catTiposServicio'
+        }).success(function(data){
+            console.log( 'tiposServicio', data );
+            $scope.lstTipoServicio = data;
+        })
+    })();
+
+
+    $scope.returnTipoServicio = function( idTipoServicio ){
+        for (var i = 0; i < $scope.lstTipoServicio.length; i++) {
+            if( $scope.lstTipoServicio[ i ].idTipoServicio == idTipoServicio ){
+                return $scope.lstTipoServicio[ i ].tipoServicio;
+                break;
+            }
+        }
+    };
+
+
+	$scope.dialIngreso    = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
+	$scope.dialAdminMenu  = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static'});
+	$scope.dialAdminCombo = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static'});
 
 	$scope.listaMenu = function(){
 		$http.post('consultas.php',{
@@ -44,7 +70,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 		$http.post('consultas.php',{
 			opcion:'lstCombo'
 		}).success(function(data){
-			console.log(data);
+			console.log('lstCombos: ',data);
 			$scope.lstCombos = data;
 		})
 	};
@@ -60,13 +86,14 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 	{
 		$scope.listaMenu();
 		$scope.catTipoMenu();
+		$scope.listaCombo();
 	})();
 
 	$scope.menu = {
 		'idEstadoMenu'  : 1,
 		'menu'          : '',
-		'idDestinoMenu' : null,
-		'idTipoMenu' : 1,
+		'idDestinoMenu' : 1,
+		'idTipoMenu'    : 1,
 		'descripcion'   : '',
 		'imagen'        : '',
 		'subirImagen'   : true,
@@ -77,7 +104,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 	$scope.accion = 'insert';
 	$scope.agregarMenuCombo = function( tipo ){
 		//console.log( 'tipo: ', tipo );
-
 		$scope.accion = 'insert';
 		if( $scope.tipo == 'menu' ){
 			$scope.menu = {
@@ -90,9 +116,20 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 				'subirImagen'   : true,
 				'lstPrecios'    : []
 			};
+
+			$scope.dialAdminMenu.show();
 		}
 
-		$scope.dialAdministrarAbrir();
+		else if( tipo == 'combo' ){
+			$scope.combo = {
+				'idEstadoMenu' : 1,
+				'combo'        : '',
+				'descripcion'  : '',
+				'subirImagen'  : true,
+				'imagen'       : '',
+			}
+			$scope.dialAdminCombo.show();
+		}
 
 	};
 	
@@ -177,12 +214,34 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
 				if ( data.respuesta == 'success' ) {
-					$scope.menu = {};
+					$scope.dialAdminMenu.hide();
+					$scope.reset;
+					//$scope.menu = {};
 				}
 			})
 
 		}
 	};
+
+
+		$scope.registraCombo = function(){
+			if ( $scope.formCombo.$invalid == true ) {
+				alertify.set('notifier','position', 'top-right');
+	 			alertify.notify('Ingrese los datos solicitados', 'warning', 3);
+			}else{
+				$http.post('consultas.php',{
+					opcion:"consultaCombo",
+					accion:$scope.accion,
+					datos: $scope.combo
+				}).success(function(data){
+					alertify.set('notifier','position', 'top-right');
+	 				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
+					if ( data.respuesta == 'success' ) {
+						$scope.combo = {};
+					}
+				})
+			}
+		}
 
 
 

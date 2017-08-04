@@ -414,7 +414,7 @@
 <script type="text/ng-template" id="dialAdmin.producto.html">
 	<div class="modal" tabindex="-1" role="dialog">
 		<div class="modal-dialog">
-			<div class="modal-content" ng-class="{'panel-success': accion == 'insert', 'panel-info': accion == 'update'}">
+			<div class="modal-content" ng-class="{'panel-warning': accion == 'insert', 'panel-info': accion == 'update'}">
 				<div class="modal-header panel-heading">
 					<button type="button" class="close" ng-click="$hide()">&times;</button>
 					<h3 class="panel-title">

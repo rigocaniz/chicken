@@ -1,247 +1,218 @@
-<div class="row">
-	<div class="col-sm-12">
-		<!-- Nav tabs -->
-		<ul class="nav nav-tabs tabs-title" role="tablist">
-			<li role="presentation" ng-class="{'active' : inventarioMenu==1}" ng-click="resetValues(); inventarioMenu=1">
-				<a href="" role="tab" data-toggle="tab">
-					<span class="glyphicon glyphicon-list"></span> MENUS
-				</a>
-			</li>
-			<li role="presentation" ng-class="{'active' : inventarioMenu==2}" ng-click="resetValues(); inventarioMenu=2">
-				<a href="" role="tab" data-toggle="tab">
-					<span class="glyphicon glyphicon-list-alt"></span> COMBOS
-				</a>
-			</li>
-			<li role="presentation" ng-class="{'active' : inventarioMenu==3}" ng-click="resetValues(); inventarioMenu=3">
-				<a href="" role="tab" data-toggle="tab">
-					<span class="glyphicon glyphicon-book"></span> RECETAS
-				</a>
-			</li>
-		</ul>
-
-		{{ accion }}
-		<!-- TAB PANELES -->
-		<div class="tab-content">
-			<!--  PRODUCTOS DEL INVENTARIO -->
-			<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==1}" ng-show="inventarioMenu==1">
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						<h3 class="panel-title">LISTADO DE MENUS</h3>
-					</div>
-					<div class="panel-body">
-						<div class="text-right">
-							<p>
-								<button type="button" class="btn btn-success btn-sm" ng-click="agregarMenuCombo( null, 'menu' )">
-									<span class="glyphicon glyphicon-plus"></span> INGRESAR MENU
-								</button>
-							</p>
-						</div>
-						<!-- TABLA -->
-						<table class="table table-hover">
-							<thead>
-								<tr>
-									<th class="text-center">No.</th>
-									<th class="col-sm-3 text-center">Producto</th>
-									<th class="col-sm-2 text-center">Tipo Producto</th>
-									<th class="col-sm-1 text-center">Medida</th>
-									<th class="col-sm-1 text-center">Perecedero</th>
-									<th class="col-sm-2 text-center">Disponibilidad</th>
-									<th class="text-center">Reajustar Cantidad</th>
-									<th class="text-center">Editar</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr ng-repeat="inv in lstInventario" ng-class="{'danger': !inv.disponibilidad, 'warning':  inv.disponibilidad <= (inv.cantidadMinima + 5) }">
-									<td class="text-right">
-										{{ inv.idProducto }}
-									</td>
-									<td>
-										{{ inv.producto }}
-									</td>
-									<td class="text-center">
-										{{ inv.tipoProducto }}
-									</td>
-									<td class="text-center">
-										{{ inv.medida }}
-									</td>
-									<td class="text-center">
-										{{ inv.esPerecedero }}
-									</td>
-									<td class="text-center">
-										{{ inv.disponibilidad }}
-									</td>
-									<td class="text-center">
-										<button type="button" ng-click="ingresarReajuste( inv.idProducto, inv.producto, inv.disponibilidad )" class="btn btn-primary btn-sm">
-											<span class="glyphicon glyphicon-plus"></span>
-										</button>
-									</td>
-									<td class="text-center">
-										<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( inv.idProducto, 'update', producto )">
-											<span class="glyphicon glyphicon-pencil"></span>
-										</button>
-										<span class="label label-warning" ng-show="inv.disponibilidad==inv.cantidadMninima">Pronto a agotarse</span>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<!-- PAGINADOR -->
-						<nav>
-							<ul class="pagination" ng-show="lstPaginacion.length > 1">
-								<li ng-class="{disabled: filter.pagina == 1 }">
-									<a href="" ng-click="cargarPaginacion( 1 );" aria-label="Previous">
-										<span aria-hidden="true">&laquo;</span>
-									</a>
-								</li>
-								<li ng-repeat="(ixPagina, pagina) in lstPaginacion" ng-class="{'active': filter.pagina == pagina.noPagina}">
-									<a href="" ng-click="cargarPaginacion( pagina.noPagina );">
-										{{ pagina.noPagina }}
-									</a>
-								</li>
-							</ul>
-						</nav>
-					</div>
-				</div>
-			</div>
-
-			<!-- TIPOS DE PRODUCTO -->
-			<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==2}" ng-show="inventarioMenu==2">
-				<div class="col-sm-offset-1 col-sm-10">
+<div class="contenedor">
+	<div class="row">
+		<div class="col-sm-12">
+			<!-- Nav tabs -->
+			<ul class="nav nav-tabs tabs-title" role="tablist">
+				<li role="presentation" ng-class="{'active' : inventarioMenu==1}" ng-click="resetValues(); inventarioMenu=1">
+					<a href="" role="tab" data-toggle="tab">
+						<span class="glyphicon glyphicon-list"></span> MENUS
+					</a>
+				</li>
+				<li role="presentation" ng-class="{'active' : inventarioMenu==2}" ng-click="resetValues(); inventarioMenu=2">
+					<a href="" role="tab" data-toggle="tab">
+						<span class="glyphicon glyphicon-list-alt"></span> COMBOS
+					</a>
+				</li>
+				<li role="presentation" ng-class="{'active' : inventarioMenu==3}" ng-click="resetValues(); inventarioMenu=3">
+					<a href="" role="tab" data-toggle="tab">
+						<span class="glyphicon glyphicon-book"></span> RECETAS
+					</a>
+				</li>
+			</ul>
+			{{ accion }}
+			<!-- TAB PANELES -->
+			<div class="tab-content">
+				<!--  PRODUCTOS DEL INVENTARIO -->
+				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==1}" ng-show="inventarioMenu==1">
 					<div class="panel panel-primary">
 						<div class="panel-heading">
-							<h3 class="panel-title">TIPOS DE PRODUCTO</h3>
+							<h3 class="panel-title">LISTADO DE MENUS</h3>
 						</div>
 						<div class="panel-body">
+							<div class="text-right">
+								<p>
+									<button type="button" class="btn btn-success btn-sm" ng-click="agregarMenuCombo( 'menu' )">
+										<span class="glyphicon glyphicon-plus"></span> INGRESAR MENU
+									</button>
+								</p>
+							</div>
 							<div class="row">
-								<label class="col-sm-1 col-md-2">Tipo</label>
-								<div class="col-sm-6">
-									<input type="text" id="tipoProducto" ng-keyup="$event.keyCode == 13 && consultaTipoProducto()" class="form-control" ng-model="tp.tipoProducto" maxlength="45">
-								</div>
-								<div class="col-sm-5 col-md-4">
-									<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaTipoProducto()">
-										<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
-									</button>
-									<button type="button" class="btn btn-sm btn-default" ng-click="resetValues( 4 )">
-										Cancelar
-									</button>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="panel panel-default">
-						<div class="panel-body">
-							<h4 class="panel-title">
-								<span class="glyphicon glyphicon-sort-by-attributes"></span> TIPOS REGISTRADOS
-							</h4>
-							<br>
-							<div class="col-sm-4 col-md-6">
-							</div>
-							<div class="col-sm-8 col-md-6">
-								<div class="input-group">
-									<input type="text" class="form-control" ng-model="buscarTipoProducto" placeholder="Buscar tipo">
-									<span class="input-group-addon" id="basic-addon1">
-										<span class="glyphicon glyphicon-search"></span> BUSCAR
-									</span>
-								</div>
-							</div>
-							<table class="table table-hover">
-								<thead>
-									<tr>
-										<th class="text-center col-sm-1">No.</th>
-										<th class="text-center col-sm-8">Tipo de producto</th>
-										<th class="text-center col-sm-2">Editar</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="tp in lstResultTipos = (lstTipoProducto | filter: buscarTipoProducto)">
-										<td class="text-center">{{ $index + 1 }}</td>
-										<td>{{ tp.tipoProducto }}</td>
-										<td class="text-center">
-											<button class="btn btn-info btn-sm" ng-click="editarTipoProducto( tp )">
-												<span class="glyphicon glyphicon-pencil"></span>
-											</button>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-							<div class="alert alert-info text-right" role="alert" ng-show="!lstResultTipos.length">
-								<span class="glyphicon glyphicon-info-sign"></span> NO SE ENCONTRARON RESULTADOS
+							  	<div class="col-sm-3" ng-repeat="m in lstMenus">
+							    	<div class="thumbnail">
+								    	<span class="label label-info">{{m.destinoMenu}}</span>
+								      	<img src="upload/Logo.png" alt="...">
+								      	<div class="caption">
+								        	<p>
+								        		<strong>{{ m.menu | uppercase }}</strong> 
+								        		<span class="label label-success">{{ m.estadoMenu }}</span>
+								        	</p>
+								        	<p>
+								        		{{ m.descripcion }}
+								        	</p>
+								        	<hr>
+								        	<p>
+								        		<a ng-href="#/nuevoEdita/menu/{{m.idMenu}}" type="button" class="btn btn-primary btn-sm">
+													<span class="glyphicon glyphicon-edit"></span> Editar
+												</a>
+												<a href="#" type="button" class="btn btn-info btn-sm">
+													<span class="glyphicon glyphicon-list"></span> Receta
+												</a>
+											</p>
+											<div class="btn-group" role="group" aria-label="...">
+											  	<button type="button" class="btn btn-default">1</button>
+											  	<div class="btn-group" role="group">
+											    	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											      		Opciones <span class="caret"></span>
+											    	</button>
+											    	<ul class="dropdown-menu">
+											      		<li><a href="#">Dropdown link</a></li>
+											      		<li><a href="#">Dropdown link</a></li>
+											    	</ul>
+											  	</div>
+											</div>
+											<div class="btn-group-vertical" role="group" aria-label="...">
+											  	<button type="button" class="btn btn-default">
+											  		<span class="glyphicon glyphicon-edit"></span> Editar
+											  	</button>
+											  	<button type="button" class="btn btn-default">
+											  		<span class="glyphicon glyphicon-th-list"></span> Receta
+											  	</button>
+											  	<button type="button" class="btn btn-default">
+											  		<span class="glyphicon glyphicon-list-alt"></span> Precios
+											  	</button>
+											</div>
+								      	</div>
+							    	</div>
+							  	</div>
+								<!-- PAGINADOR -->
+								<nav>
+									<ul class="pagination" ng-show="lstPaginacion.length > 1">
+										<li ng-class="{disabled: filter.pagina == 1 }">
+											<a href="" ng-click="cargarPaginacion( 1 );" aria-label="Previous">
+												<span aria-hidden="true">&laquo;</span>
+											</a>
+										</li>
+										<li ng-repeat="(ixPagina, pagina) in lstPaginacion" ng-class="{'active': filter.pagina == pagina.noPagina}">
+											<a href="" ng-click="cargarPaginacion( pagina.noPagina );">
+												{{ pagina.noPagina }}
+											</a>
+										</li>
+									</ul>
+								</nav>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 
-			<!-- MEDIDA DE PRODUCTO -->
-			<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==3}" ng-show="inventarioMenu==3">
-				<div class="col-sm-offset-1 col-sm-10">
+				<!-- COMBOS -->
+				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==2}" ng-show="inventarioMenu==2">
 					<div class="panel panel-primary">
 						<div class="panel-heading">
-							<h4 class="panel-title">MEDIDA DE PRODUCTO</h4>
+							<h3 class="panel-title">Menus</h3>
 						</div>
 						<div class="panel-body">
+							<div class="text-right">
+								<p>
+									<button type="button" class="btn btn-success btn-sm" ng-click="agregarMenuCombo( 'combo' )">
+										<span class="glyphicon glyphicon-plus"></span> INGRESAR COMBO
+									</button>
+								</p>
+							</div>
 							<div class="row">
-								<label class="col-sm-1 col-md-2">Medida</label>
-								<div class="col-sm-6">
-									<input type="text" id="medida" ng-keyup="$event.keyCode == 13 && consultaMedida()" class="form-control" ng-model="medidaProd.medida" maxlength="45">
-								</div>
-								<div class="col-sm-5 col-md-4">
-									<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMedida()">
-										<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
-									</button>
-									<button type="button" class="btn btn-sm btn-default" ng-click="resetValues( 6 )">
-										Cancelar
-									</button>
-								</div>
+								<br>
+							  	<div class="col-xs-6 col-sm-4 col-md-3" ng-repeat="c in lstCombos">
+							    	<div class="thumbnail">
+							      		<img ng-src="{{ c.imagen }}" alt="">
+							      		<div class="caption">
+							        		<h4>
+							        			<strong>{{ c.combo }}</strong> 
+							        		</h4> 
+							        		Estado <span class="label label-success">{{c.estadoMenu}}</span>
+							        		<p>{{c.descripcion}}</p>
+							        		<p>
+							        			<a ng-href="#/nuevoEdita/combo/{{c.idCombo}}" type="button" class="btn btn-primary btn-sm">
+													<span class="glyphicon glyphicon-edit"></span> Editar
+												</a>
+											</p>
+							      		</div>
+							    	</div>
+							  	</div>
 							</div>
 						</div>
 					</div>
-					<div class="panel panel-default">
-						<div class="panel-body">
-							<h4 class="panel-title">
-								<span class="glyphicon glyphicon-sort-by-attributes"></span> MEDIDAS REGISTRADOS
-							</h4>
-							<br>
-							<div class="col-sm-4 col-md-6">
+				</div>
+
+				<!-- MEDIDA DE PRODUCTO -->
+				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==3}" ng-show="inventarioMenu==3">
+					<div class="col-sm-offset-1 col-sm-10">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h4 class="panel-title">MEDIDA DE PRODUCTO</h4>
 							</div>
-							<div class="col-sm-8 col-md-6">
-								<div class="input-group">
-									<input type="text" class="form-control" ng-model="buscarMedida" placeholder="Buscar medida">
-									<span class="input-group-addon" id="basic-addon1">
-										<span class="glyphicon glyphicon-search"></span> BUSCAR
-									</span>
+							<div class="panel-body">
+								<div class="row">
+									<label class="col-sm-1 col-md-2">Medida</label>
+									<div class="col-sm-6">
+										<input type="text" id="medida" ng-keyup="$event.keyCode == 13 && consultaMedida()" class="form-control" ng-model="medidaProd.medida" maxlength="45">
+									</div>
+									<div class="col-sm-5 col-md-4">
+										<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMedida()">
+											<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
+										</button>
+										<button type="button" class="btn btn-sm btn-default" ng-click="resetValues( 6 )">
+											Cancelar
+										</button>
+									</div>
 								</div>
 							</div>
-							<table class="table table-hover">
-								<thead>
-									<tr>
-										<th class="text-center col-sm-1">No.</th>
-										<th class="text-center col-sm-8">Tipo de producto</th>
-										<th class="text-center col-sm-2">Editar</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="medida in lstResultMedida = (lstMedidas | filter: buscarMedida)">
-										<td class="text-center">{{ $index + 1 }}</td>
-										<td>{{ medida.medida }}</td>
-										<td class="text-center">
-											<button class="btn btn-info btn-sm" ng-click="editarMedida( medida )">
-												<span class="glyphicon glyphicon-pencil"></span>
-											</button>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-							<div class="alert alert-info text-right" role="alert" ng-show="!lstResultMedida.length">
-								<span class="glyphicon glyphicon-info-sign"></span> NO SE ENCONTRARON RESULTADOS
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-body">
+								<h4 class="panel-title">
+									<span class="glyphicon glyphicon-sort-by-attributes"></span> MEDIDAS REGISTRADOS
+								</h4>
+								<br>
+								<div class="col-sm-4 col-md-6">
+								</div>
+								<div class="col-sm-8 col-md-6">
+									<div class="input-group">
+										<input type="text" class="form-control" ng-model="buscarMedida" placeholder="Buscar medida">
+										<span class="input-group-addon" id="basic-addon1">
+											<span class="glyphicon glyphicon-search"></span> BUSCAR
+										</span>
+									</div>
+								</div>
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th class="text-center col-sm-1">No.</th>
+											<th class="text-center col-sm-8">Tipo de producto</th>
+											<th class="text-center col-sm-2">Editar</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="medida in lstResultMedida = (lstMedidas | filter: buscarMedida)">
+											<td class="text-center">{{ $index + 1 }}</td>
+											<td>{{ medida.medida }}</td>
+											<td class="text-center">
+												<button class="btn btn-info btn-sm" ng-click="editarMedida( medida )">
+													<span class="glyphicon glyphicon-pencil"></span>
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<div class="alert alert-info text-right" role="alert" ng-show="!lstResultMedida.length">
+									<span class="glyphicon glyphicon-info-sign"></span> NO SE ENCONTRARON RESULTADOS
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
+	</div>
 </div>
 
 	
@@ -332,8 +303,8 @@
 </script>
 
 
-<!-- MODAL AGREGAR / EDITAR PRODUCTO -->
-<script type="text/ng-template" id="dialAdmin.ingreso.html">
+<!-- MODAL AGREGAR / EDITAR MENU -->
+<script type="text/ng-template" id="dial.adminMenu.html">
 	<div class="modal" tabindex="-1" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content" ng-class="{'panel-warning': accion == 'insert', 'panel-info': accion == 'update'}">
@@ -358,15 +329,21 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<div class="col-sm-7">
-									<label class="control-label">Nombre Menu</label>
+								<div class="col-xs-7 col-sm-7 col-md-8">
+									<label class="control-label">NOMBRE DEL MENU</label>
 									<input type="text" class="form-control" ng-model="menu.menu" maxlength="45" required>
 								</div>
-								<div class="col-sm-5">
-									<label class="control-label">Destino Menu</label>
-									<select class="form-control" ng-model="menu.idDestinoMenu" required>
-										<option ng-repeat="dm in lstDestinoMenu" value="{{dm.idDestinoMenu}}">{{dm.destinoMenu}}</option>
-									</select>
+								<div class="col-xs-5 col-sm-5 col-md-4">
+									<label class="control-label">DESTINO DEL MENU</label>
+									<div>
+										<div class="btn-group btn-group-sm" role="group">
+										  	<button type="button" class="btn btn-default" ng-class="{'btn-info': dm.idDestinoMenu == menu.idDestinoMenu}" ng-click="menu.idDestinoMenu = dm.idDestinoMenu" ng-repeat="dm in lstDestinoMenu">
+										  		<span class="glyphicon" ng-class="{'glyphicon-check': dm.idDestinoMenu == menu.idDestinoMenu, 'glyphicon-unchecked': dm.idDestinoMenu != menu.idDestinoMenu}"></span>
+										  		{{ dm.destinoMenu }}
+										  	</button>
+										</div>
+										
+									</div>
 								</div>
 							</div>
 							<div class="form-group">
@@ -382,8 +359,8 @@
 							</div>
 							<div class="form-group">
 								<div class="col-sm-12">
-									<label class="control-label">Descripcion</label>
-									<textarea rows="3" class="form-control" ng-model='menu.descripcion' required></textarea>
+									<label class="control-label">DESCRIPCIÓN</label>
+									<textarea rows="3" class="form-control" placeholder="Ingrese la descripción del menu" ng-model='menu.descripcion' required></textarea>
 								</div>
 							</div>
 							<legend class="text-center">
@@ -392,7 +369,7 @@
 								</small>
 							</legend>
 							<div class="form-group">
-								<div class="col-sm-5">
+								<div class="col-xs-5 col-sm-6 col-md-5">
 									<label class="control-label">Tipo Servicio</label>
 									<select class="form-control" ng-model="precios.idTipoServicio">
 										<option value="{{ ts.idTipoServicio }}" ng-repeat="ts in lstTipoServicio">
@@ -400,17 +377,18 @@
 										</option>
 									</select>
 								</div>
-								<div class="col-sm-4">
+								<div class="col-xs-4 col-sm-6 col-md-4">
 									<label class="control-label">Precio</label>
 									<input type="number" min="0" class="form-control" ng-model="precios.precio">
 								</div>
-								<div class="col-sm-3">
+								<div class="col-xs-1 col-sm-2 col-md-2">
 									<br>
 									<button type="button" class="btn btn-sm btn-primary" ng-click="agregaPrecio( 'menu' )">
 										<span class="glyphicon glyphicon-plus"></span>
 										Agregar
 									</button>
 								</div>
+								<div class="clearfix"></div>
 								<div class="col-sm-12">
 									<br>
 									<div class="col-sm-offset-1 col-sm-10">
@@ -471,88 +449,61 @@
 </script>
 
 
-<div class="container">
-	<div class="row">
-
-		<!--  menus -->
-		<div class="col-sm-12" ng-show="btnMenu==1">
-			<br>
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title">Menus</h3>
+<script type="text/ng-template" id="dial.adminCombo.html">
+	<div class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content" ng-class="{'panel-warning': accion == 'insert', 'panel-info': accion == 'update'}">
+				<div class="modal-header panel-heading">
+					<button type="button" class="close" ng-click="$hide()">&times;</button>
+					<h3 class="panel-title">
+						<span class="glyphicon" ng-class="{'glyphicon-plus': accion == 'insert', 'glyphicon glyphicon-pencil': accion == 'update'}"></span>
+						{{ accion == 'insert' ? 'INGRESAR NUEVO' : 'ACTUALIZAR' }} COMBO
+					</h3>
 				</div>
-				<div class="panel-body">
-					<div class="col-sm-3">
-						<input type="text" class="form-control" ng-model="filtro" placeholder="buscar">
-					</div>
-					<div class="col-sm-7"></div>
-						<a type="button" class="btn btn-primary" ng-href="#/nuevoEdita/menu">
-							<span class="glyphicon glyphicon-plus"></span> Ingresar Nuevo
-						</a>
-					<div class="row">
-						<br>
-					  <div class="col-sm-3" ng-repeat="m in lstMenus |filter:filtro">
-					    <div class="thumbnail">
-					    	<span class="label label-info">{{m.destinoMenu}}</span>
-					      <img src="upload/Logo.png" alt="...">
-					      <div class="caption">
-					        <p>
-					        	<strong>{{m.menu}}</strong> 
-					        	<span class="label label-success">{{m.estadoMenu}}</span>
-					        </p> 
-					        <p>{{m.descripcion}}</p>
-					        <p>
-					        	<a ng-href="#/nuevoEdita/menu/{{m.idMenu}}" type="button" class="btn btn-primary btn-sm">
-									<span class="glyphicon glyphicon-edit"></span> Editar
-								</a>
-								<a href="#" type="button" class="btn btn-info btn-sm">
-									<span class="glyphicon glyphicon-list"></span> Receta
-								</a>
-							</p>
-					      </div>
-					    </div>
-					  </div>
-					</div>
+				<div class="modal-body">
+					<fieldset class="fieldset">
+						<legend class="legend">DATOS</legend>
+						<!-- FORMULARIO COMBO -->
+						<form class="form-horizontal" role="form" name="formCombo">
+							<div class="form-group">
+								<label class="control-label col-sm-2">Nombre Combo</label>
+								<div class="col-sm-8 ">
+									<input type="text" class="form-control" ng-model="combo.combo" maxlength="45" required>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2" ng-show="id>0">Estado Menu</label>
+								<div class="col-sm-2" ng-show="id>0">
+									<select class="form-control" ng-model="combo.idEstadoMenu" >
+										<option ng-repeat="e in lstEstadoMenu" value="{{e.idEstadoMenu}}">{{e.estadoMenu}}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-2">Descripcion</label>
+								<div class="col-sm-10">
+									<textarea rows="3" class="form-control" placeholder="Ingrese descripción del Combo" ng-model='combo.descripcion'></textarea>
+								</div>
+							</div>
+							<div class="form-group text-center">
+								<button type="button" class="btn btn-lg" ng-click="combo.subirImagen=!combo.subirImagen"  ng-class="{'btn-success': combo.subirImagen, 'btn-warning': !combo.subirImagen}">
+									<span class="glyphicon" ng-class="{'glyphicon-check': combo.subirImagen, 'glyphicon-unchecked': !combo.subirImagen}"></span>
+									Subir Imagen
+								</button>
+							</div>
+						</form>
+					</fieldset>
 				</div>
-			</div>
-		</div>
-		<!-- combos -->
-		<div class="col-sm-12" ng-show="btnMenu==2">
-			<br>
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title">Menus</h3>
-				</div>
-				<div class="panel-body">
-					<div class="col-sm-3">
-						<input type="text" class="form-control" ng-model="filtro" placeholder="buscar">
-					</div>
-					<div class="col-sm-7"></div>
-						<a type="button" class="btn btn-primary" ng-href="#/nuevoEdita/combo">
-							<span class="glyphicon glyphicon-plus"></span> Ingresar Nuevo
-						</a>
-					<div class="row">
-						<br>
-					  <div class="col-sm-3" ng-repeat="c in lstCombos |filter:filtro">
-					    <div class="thumbnail">
-					      <img src="upload/Logo.png" alt="...">
-					      <div class="caption">
-					        <p>
-					        	<strong>{{c.combo}}</strong> 
-					        	<span class="label label-success">{{c.estadoMenu}}</span>
-					        </p> 
-					        <p>{{c.descripcion}}</p>
-					        <p>
-					        	<a ng-href="#/nuevoEdita/combo/{{c.idCombo}}" type="button" class="btn btn-primary btn-sm">
-									<span class="glyphicon glyphicon-edit"></span> Editar
-								</a>
-							</p>
-					      </div>
-					    </div>
-					  </div>
-					</div>
+				<div class="modal-footer">
+					<button class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMenu()">
+						<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
+					</button>
+					<button type="button" class="btn btn-default" ng-click="resetValues( 1 ); $hide()">
+						<span class="glyphicon glyphicon-log-out"></span>
+						<b>Salir</b>
+					</button>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
+</script>
