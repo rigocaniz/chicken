@@ -4042,7 +4042,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   border-bottom-color: transparent;
   cursor: default;
   font-family: 'OpenSans-Bold';
-  border-top: 3px solid #ea0016;
+  border-top: 4px solid #ea0016;
 }
 .nav-tabs.nav-justified {
   width: 100%;
@@ -5763,8 +5763,8 @@ button.list-group-item-danger.active:focus {
 }
 .panel-warning > .panel-heading {
   color: #ffffff;
-  background-color: #ef7d3e;
-  border-color: #faebcc;
+  background-color: #ea5c2e;
+  border-color: #ff8100;
 }
 .panel-warning > .panel-heading + .panel-collapse > .panel-body {
   border-top-color: #faebcc;

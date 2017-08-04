@@ -336,7 +336,7 @@
 <script type="text/ng-template" id="dialAdmin.ingreso.html">
 	<div class="modal" tabindex="-1" role="dialog">
 		<div class="modal-dialog">
-			<div class="modal-content" ng-class="{'panel-success': accion == 'insert', 'panel-info': accion == 'update'}">
+			<div class="modal-content" ng-class="{'panel-warning': accion == 'insert', 'panel-info': accion == 'update'}">
 				<div class="modal-header panel-heading">
 					<button type="button" class="close" ng-click="$hide()">&times;</button>
 					<h3 class="panel-title">
@@ -370,6 +370,17 @@
 								</div>
 							</div>
 							<div class="form-group">
+								<label class="control-label col-sm-3">TIPO DE MENU: </label>
+								<div class="col-sm-7">
+									<div class="btn-group btn-group-sm" role="group">
+									  	<button type="button" class="btn btn-default" ng-class="{'btn-info': tipoMenu.idTipoMenu == menu.idTipoMenu}" ng-click="menu.idTipoMenu = tipoMenu.idTipoMenu" ng-repeat="tipoMenu in lstTipoMenu">
+									  		<span class="glyphicon" ng-class="{'glyphicon-check': tipoMenu.idTipoMenu == menu.idTipoMenu, 'glyphicon-unchecked': tipoMenu.idTipoMenu != menu.idTipoMenu}"></span>
+									  		{{ tipoMenu.tipoMenu }}
+									  	</button>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
 								<div class="col-sm-12">
 									<label class="control-label">Descripcion</label>
 									<textarea rows="3" class="form-control" ng-model='menu.descripcion' required></textarea>
@@ -383,19 +394,19 @@
 							<div class="form-group">
 								<div class="col-sm-5">
 									<label class="control-label">Tipo Servicio</label>
-									<select class="form-control" ng-model="tipoServicio">
-										<option ng-repeat="ts in lstTipoServicio" value="{{ ts.idTipoServicio }}">
+									<select class="form-control" ng-model="precios.idTipoServicio">
+										<option value="{{ ts.idTipoServicio }}" ng-repeat="ts in lstTipoServicio">
 											{{ ts.tipoServicio }}
 										</option>
 									</select>
 								</div>
 								<div class="col-sm-4">
 									<label class="control-label">Precio</label>
-									<input type="number" min="0" class="form-control" ng-model="precioMenu">
+									<input type="number" min="0" class="form-control" ng-model="precios.precio">
 								</div>
 								<div class="col-sm-3">
 									<br>
-									<button type="button" class="btn btn-sm btn-primary" ng-click="agregaPrecio(tipoServicio,precioMenu)">
+									<button type="button" class="btn btn-sm btn-primary" ng-click="agregaPrecio( 'menu' )">
 										<span class="glyphicon glyphicon-plus"></span>
 										Agregar
 									</button>
@@ -406,18 +417,35 @@
 										<table class="table table-hover">
 											<thead>
 												<tr>
-													<th>No.</th>
-													<th>Tipo Servicio</th>
-													<th>Q. Precio</th>
-													<th></th>
+													<th class="text-center col-sm-1">No.</th>
+													<th class="text-center col-sm-4">Tipo Servicio</th>
+													<th class="text-center col-sm-3">Q. Precio</th>
+													<th class="text-center col-sm-3"></th>
 												</tr>
 											</thead>
 											<tbody>
 												<tr ng-repeat="lp in menu.lstPrecios">
-													<td>{{lp.tipoServicio}}</td>
-													<td>{{lp.precio}}</td>
+													<td class="text-center">
+														{{ $index + 1 }}
+													</td>
 													<td>
-														<button type="button" class="btn btn-danger btn-xs" ng-click="removerPrecio( $index )">X</button>
+														{{ returnTipoServicio( lp.idTipoServicio ) }}
+													</td>
+													<td class="text-right">
+														<div ng-show="!lp.editar">
+															{{ lp.precio | number:2 }}
+														</div>
+														<div ng-show="lp.editar">
+															<input type="number" min="0" class="form-control" ng-model="lp.precio">
+														</div>
+													</td>
+													<td class="text-center">
+														<button type="button" class="btn btn-info btn-xs" ng-click="lp.editar=!lp.editar">
+															<span class="glyphicon glyphicon-pencil"></span>
+														</button>
+														<button type="button" class="btn btn-danger btn-xs" ng-click="removerPrecio( $index )" >
+															<span class="glyphicon glyphicon-remove"></span>
+														</button>
 													</td>
 												</tr>
 											</tbody>
@@ -425,15 +453,11 @@
 									</div>
 								</div>
 							</div>
-							<div class="text-center">
-								<button type="button" class="btn btn-success" ng-click="registraMenu()">Guardar</button>
-								<button type="button" class="btn btn-danger" ng-click="menu={}">Cancelar</button>
-							</div>
 						</form>
 					</fieldset>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaProducto()">
+					<button class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMenu()">
 						<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 					</button>
 					<button type="button" class="btn btn-default" ng-click="resetValues( 1 ); $hide()">
