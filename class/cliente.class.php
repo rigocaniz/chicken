@@ -57,7 +57,7 @@ class Cliente
  			$this->tiempo    = $validar->getTiempo();
 
  		else:
- 			$sql = "CALL consultaCliente( {$nit}, '{$nombre}', {$cui}, {$correo}, {$telefono}, '{$direccion}', {$idTipoCliente} );";
+ 			$sql = "CALL consultaCliente( '{$accion}',{$nit}, '{$nombre}', {$cui}, {$correo}, {$telefono}, '{$direccion}', {$idTipoCliente} );";
  			
  			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
  				@$this->con->next_result();
@@ -79,24 +79,22 @@ class Cliente
  	}
 
 
- 	function consultarCliente( $tipo, $valor )
+ 	function consultarCliente( $valor )
  	{
  		$dataCliente = array();
+ 		$comp = "";
+ 		if( is_numeric($valor) AND strlen($valor) >= 8  AND strlen($valor) < 13 ){
+ 			$comp = "nit=$valor";
+ 		}
+ 		elseif( is_numeric($valor) AND strlen($valor) == 13 ){
+ 			$comp = "cui=$valor";
+ 		}
+ 		else{
+ 			$valor= str_replace(' ','%', $valor);
+			$comp = "nombre like '%{$valor}%'";
+ 		}
 
- 		$nit    = NULL;
- 		$cui    = NULL;
- 		$nombre = NULL;
-
- 		if( $tipo == 'nit' ):
- 			$nit = $valor;
- 		elseif( $tipo== 'cui' ):
- 			$cui = $valor;
- 		elseif( $tipo == 'nombre' ):
-			$nombre = "'" . $valor . "'";
- 		endif;
-
-	 	$sql = "CALL consultarCliente( {$nit}, {$nombre}, {$cui} );";
-	 	
+	 	$sql = "SELECT *from vstCliente where $comp";
 	 	if( $rs = $this->con->query( $sql ) ){
 	 		if( $rs->num_rows > 0 ){
 	 			$this->respuesta = 'success';
