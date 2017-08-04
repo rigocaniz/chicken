@@ -24,7 +24,6 @@ class Orden
  	// CONSULTA ORDEN ACCIONES
  	function consultaOrdenCliente( $accion, $data )
  	{
-
  		// INICIALIZACIÓN DE VARIABLES
 		$idOrdenCliente     = "NULL";
 		$numeroTicket       = "NULL";
@@ -32,17 +31,19 @@ class Orden
 		$idEstadoOrden      = "NULL";
 
 		// SETEO DE VARIABLES
-		$data->numeroTicket       = (int)$data->numeroTicket > 0			? (int)$data->numeroTicket	 : "NULL";
-		$data->usuarioResponsable = strlen( $data->usuarioResponsable ) > 3	? $data->usuarioResponsable	 : "NULL";
+		$data->numeroTicket = (int)$data->numeroTicket > 0 ? (int)$data->numeroTicket	 : "NULL";
 
 		$validar = new Validar();
+
+		// SI USUARIO RESPONSABLE ESTA DEFINIDO
+		if ( isset( $data->usuarioResponsable ) AND strlen( $data->usuarioResponsable ) > 3 )
+			$usuarioResponsable = "'" . $this->con->real_escape_string( $validar->validarTexto( $data->usuarioResponsable, NULL, TRUE, 8, 16, "Usuario responsable" ) ) . "'";
 
 		// VALIDACIONES
 		if( $accion == 'insert' ):
 			// OBLIGATORIOS
-			$numeroTicket       = $validar->validarEntero( $data->numeroTicket, NULL, TRUE, 'El No. de Ticket no es válido' );
-			$usuarioResponsable = "'" . $this->con->real_escape_string( $validar->validarTexto( $data->usuarioResponsable, NULL, TRUE, 8, 16, "Usuario responsable" ) ) . "'";
-		
+			$numeroTicket = $validar->validarEntero( $data->numeroTicket, NULL, TRUE, 'El No. de Ticket no es válido' );
+
 		else:
 
 			// SETEO DE VARIABLES
@@ -53,8 +54,7 @@ class Orden
 			$idOrdenCliente = $validar->validarEntero( $data->idOrdenCliente, NULL, TRUE, 'El No. de Orden no es válido' );
 
 			if( $accion == 'update' ):
-				$numeroTicket       = $validar->validarEntero( $data->numeroTicket, NULL, TRUE, 'El No. de Ticket es válido' );
-				$usuarioResponsable = "'" . $this->con->real_escape_string( $validar->validarTexto( $data->usuarioResponsable, NULL, TRUE, 8, 16, "Usuario responsable" ) ) . "'";
+				$numeroTicket = $validar->validarEntero( $data->numeroTicket, NULL, TRUE, 'El No. de Ticket es válido' );
 			
 			elseif( $accion == 'status' ):
 				$idEstadoOrden = $validar->validarEntero( $data->idEstadoOrden, NULL, TRUE, 'El ID del estado de Orden no es válido' );

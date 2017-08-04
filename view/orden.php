@@ -266,15 +266,15 @@
                 			</div>
                 		</div>
             			<div class="col-xs-12">
-            				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=1,'btn-info':idTipoServicio==1}" 
-            					ng-click="$parent.idTipoServicio=1" style="margin-right:4px;margin-top:5px">
-            					<u>R</u>estaurante
-            					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==1"></span>
-            				</button>
             				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=2,'btn-info':idTipoServicio==2}" 
             					ng-click="$parent.idTipoServicio=2" style="margin-right:4px;margin-top:5px">
-            					Para <u>L</u>levar
+            					<u>R</u>estaurante
             					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==2"></span>
+            				</button>
+            				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=1,'btn-info':idTipoServicio==1}" 
+            					ng-click="$parent.idTipoServicio=1" style="margin-right:4px;margin-top:5px">
+            					Para <u>L</u>levar
+            					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==1"></span>
             				</button>
             				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=3,'btn-info':idTipoServicio==3}" 
             					ng-click="$parent.idTipoServicio=3" style="margin-right:4px;margin-top:5px">
