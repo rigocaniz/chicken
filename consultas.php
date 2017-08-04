@@ -17,7 +17,7 @@ include 'class/validar.class.php';
 include 'class/funciones.php';
 
 
-$sesion->setVariable( 'usuario', 'restaurante' );
+$sesion->setVariable( 'usuario', 'TEST' );
 $sql = "CALL definirSesion( '{$sesion->getUsuario()}' );";
 $conexion->query( $sql );
 

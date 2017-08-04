@@ -9,10 +9,11 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	];
 
 	$scope.ordenActual = {
-		noTicket     : '',
-		totalAgregar : 0,
-		lstAgregar   : [],
-		lstPedidos   : []
+		idOrdenCliente : 0,
+		noTicket       : '',
+		totalAgregar   : 0,
+		lstAgregar     : [],
+		lstPedidos     : []
 	};
 
 	$scope.menuActual     = {
@@ -42,7 +43,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		// CONSULTA TIPO DE MENU
 		$http.post('consultas.php', { opcion:'catTipoMenu'})
 		.success(function (data) {
-			console.log( data );
 			if ( data.length ) {
 				$scope.lstTipoMenu = data;
 				$scope.idTipoMenu  = data[ 0 ].idTipoMenu;
@@ -61,16 +61,52 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 	// #2 => CREA UNA NUEVA ORDEN
 	$scope.agregarOrden = function () {
+		if ( $scope.$parent.loading )
+			return false;
+		
 		if ( parseInt( $scope.noTicket ) > 0 ) {
-			$scope.accionOrden = 'nuevo';
-			$scope.dialOrden.hide();
-			$scope.dialOrdenCliente.show();
-			$scope.ordenActual = {
-				noTicket     : parseInt( $scope.noTicket ),
-				totalAgregar : 0,
-				lstAgregar   : [],
-				lstPedidos   : []
-			};
+
+			$scope.$parent.loading = true; // cargando...
+
+			// CONSULTA PRECIOS DEL MENU
+			$http.post('consultas.php', { 
+				opcion : 'consultaOrdenCliente',
+				accion : 'insert',
+				datos : {
+					numeroTicket       : $scope.noTicket,
+					usuarioResponsable : ''
+				}
+			})
+			.success(function (data) {
+				$scope.$parent.loading = false; // cargando...
+
+				console.log( data );
+				if ( data.respuesta == 'success' ) {
+					$scope.accionOrden = 'nuevo';
+					
+					// MUESTRA DIALOGO DE ORDEN GENERADA
+					$scope.dialOrden.hide();
+					$scope.dialOrdenCliente.show();
+
+					$scope.ordenActual = {
+						idOrdenCliente : data.data,
+						noTicket     : parseInt( $scope.noTicket ),
+						totalAgregar : 0,
+						lstAgregar   : [],
+						lstPedidos   : []
+					};
+
+					// MENSAJE
+					alertify.set('notifier','position', 'top-right');
+					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+				}
+				else{
+					alertify.set('notifier','position', 'top-right');
+					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+				}
+			});
+
+
 		} else {
 			alertify.set('notifier','position', 'top-right');
 			alertify.notify('Número de Ticket NO Válido', 'danger', 4);
@@ -83,6 +119,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		$scope.dialOrdenCliente.hide()
 	};
 
+	// CONSULTA MENUS
 	$scope.consultaMenus = function () {
 		if ( $scope.$parent.loading )
 			return false;
@@ -92,7 +129,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			$scope.$parent.loading = true; // cargando...
 			$http.post('consultas.php', { opcion : 'lstMenu', idTipoMenu : $scope.idTipoMenu })
 			.success(function (data) {
-				console.log( data );
 				$scope.$parent.loading = false; // cargando...
 				if ( data.length ) {
 					$scope.lstMenu = data;
