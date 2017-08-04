@@ -200,9 +200,9 @@ switch ( $data->opcion )
 		echo json_encode( $cliente->consultaCliente( $data->accion, $data->cliente ) );
 		break;
 
-	case 'cargarCliente':			// CARGAR CLIENTE
+	case 'consultarCliente':			// CARGAR CLIENTE
 		$cliente = new Cliente();
-		echo json_encode( $cliente->cargarCliente( $data->tipo, $data->cliente ) );
+		echo json_encode( $cliente->consultarCliente( $data->valor ) );
 		break;
 
 	/////////////////////////

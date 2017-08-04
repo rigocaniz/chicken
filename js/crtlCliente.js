@@ -1,11 +1,12 @@
 app.controller('clienteCtrl', function( $scope, $http ){
+	$scope.clienteMenu = 1;
 	$scope.catTipoCliente = function(){
 		$http.post('consultas.php',{
 			opcion:'catTiposCliente'
 		}).success(function(data){
 			$scope.lstTipoCliente = data;
 		})
-	}   
+	};  
 
 	$scope.catTipoCliente();
 
@@ -43,6 +44,21 @@ app.controller('clienteCtrl', function( $scope, $http ){
 		        $scope.data.error = { message: error, status: status};
 		        console.log($scope.data.error.status); 
   			}); 
+		}
+	};
+
+	$scope.buscarCliente = function(valor){
+		if (valor == "" || valor == undefined )  {
+			alertify.set('notifier','position', 'top-right');
+ 			alertify.notify('Ingrese algún dato para buscar', 'warning', 3);
+		}else{
+			$http.post('consultas.php',{
+				opcion:"consultarCliente",
+				valor: valor
+			}).success(function(data){
+				console.log(data);
+				
+			})
 		}
 	}
 });

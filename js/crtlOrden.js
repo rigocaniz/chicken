@@ -80,7 +80,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			.success(function (data) {
 				$scope.$parent.loading = false; // cargando...
 
-				console.log( data );
 				if ( data.respuesta == 'success' ) {
 					$scope.accionOrden = 'nuevo';
 					
@@ -95,18 +94,12 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 						lstAgregar   : [],
 						lstPedidos   : []
 					};
-
-					// MENSAJE
-					alertify.set('notifier','position', 'top-right');
-					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 				}
 				else{
 					alertify.set('notifier','position', 'top-right');
 					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 				}
 			});
-
-
 		} else {
 			alertify.set('notifier','position', 'top-right');
 			alertify.notify('Número de Ticket NO Válido', 'danger', 4);
@@ -176,8 +169,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			var subTotal = parseFloat( $scope.menuActual.precio ) * $scope.menuActual.cantidad;
 			$scope.ordenActual.totalAgregar += subTotal;
 
-			console.log(  $scope.menuActual.idMenu, $scope.idTipoServicio );
-
 			var index = -1;
 			for (var i = 0; i < $scope.ordenActual.lstAgregar.length; i++) {
 				if ( $scope.ordenActual.lstAgregar[ i ].idMenu == $scope.menuActual.idMenu && 
@@ -205,6 +196,60 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			$scope.dialMenuCantidad.hide();
 		}
 	};
+
+	// #5 => AGREGAR MENU Y CANTIDAD A ORDEN A AGREGAR
+	$scope.guardarOrden = function () {
+		if ( $scope.$parent.loading )
+			return false;
+		
+		// LISTA A AGREGAR
+		if ( $scope.ordenActual.lstAgregar.length ) {
+			var lstAgregar = [];
+
+			for (var i = 0; i < $scope.ordenActual.lstAgregar.length; i++) {
+				lstAgregar.push({
+					idMenu         : $scope.ordenActual.lstAgregar[ i ].idMenu,
+					cantidad       : $scope.ordenActual.lstAgregar[ i ].cantidad,
+					idTipoServicio : $scope.ordenActual.lstAgregar[ i ].idTipoServicio
+				});
+			}
+
+			$scope.$parent.loading = true; // cargando...
+
+			// CONSULTA PRECIOS DEL MENU
+			$http.post('consultas.php', { 
+				opcion : 'consultaDetalleOrdenMenu',
+				accion : 'insert',
+				datos : {
+					idOrdenCliente : $scope.ordenActual.idOrdenCliente,
+					lstAgregar     : lstAgregar
+				}
+			})
+			.success(function (data) {
+				$scope.$parent.loading = false; // cargando...
+
+				if ( data.respuesta == 'success' ) {
+					alertify.set('notifier','position', 'top-right');
+					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+					
+					$scope.dialOrdenCliente.hide();
+					$scope.ordenActual.lstAgregar = [];
+				}
+				else{
+					alertify.set('notifier','position', 'top-right');
+					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+				}
+			});
+		}
+		// SI NO SE A AGREGADO NINGUNA ORDEN
+		else{
+			alertify.set('notifier','position', 'top-right');
+			alertify.notify('No agregado ningún menú', 'danger', 4);
+		}
+	};
+
+
+
 
 	// SUMA O RESTA UNO A LA CANTIDAD DE UN MENU
 	$scope.ordenCantidad = function ( index, sumar, cantidad, precio ) {
@@ -310,7 +355,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				}
 			}
 		}
-		console.log( key );
 	});
 
 	$scope.modalOpen = function ( _name ) {

@@ -125,7 +125,8 @@
             <div class="modal-content panel-default">
                 <div class="modal-header panel-heading">
                     <h4>
-                    	Orden - Ticket # {{ordenActual.noTicket}}
+                    	<span ng-show="ordenActual.idOrdenCliente>0">Orden # <span class="badge-orden">{{ordenActual.idOrdenCliente}}</span></span> - 
+                    	<span ng-show="ordenActual.noTicket>0">Ticket: <span class="badge-ticket">{{ordenActual.noTicket}}</span></span>
                     </h4>
                 </div>
                 <div class="modal-body">
@@ -177,7 +178,7 @@
 	                			</h4>
                 			</div>
                 			<div class="col-xs-7 text-right">
-	                			<button type="button" class="btn btn-success">
+	                			<button type="button" class="btn btn-success" ng-click="guardarOrden()">
 	                				<span class="glyphicon glyphicon-ok"></span>
 	                				<b>Confirmar Orden</b>
 	                			</button>
