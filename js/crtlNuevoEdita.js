@@ -87,13 +87,7 @@ app.controller('nuevoEditaCtrl', function( $scope , $http, $modal, $routeParams 
 			'lstPrecios'    :[]
 		}
 
-		$scope.catDestinoMenu = function(){
-			$http.post('consultas.php',{
-				opcion:'catDestinoMenu'
-			}).success(function(data){
-				$scope.lstDestinoMenu = data;
-			})
-		}
+		
 
 		$scope.catEstadoMenu = function(){
 			$http.post('consultas.php',{

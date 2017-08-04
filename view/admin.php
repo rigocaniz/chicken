@@ -26,13 +26,13 @@
 			<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==1}" ng-show="inventarioMenu==1">
 				<div class="panel panel-primary">
 					<div class="panel-heading">
-						<h3 class="panel-title">INVENTARIO DE PRODUCTOS</h3>
+						<h3 class="panel-title">LISTADO DE MENUS</h3>
 					</div>
 					<div class="panel-body">
 						<div class="text-right">
 							<p>
-								<button type="button" class="btn btn-success btn-sm" ng-click="editarAccion( null, 'insert' )">
-									<span class="glyphicon glyphicon-plus"></span> Ingresar Nuevo
+								<button type="button" class="btn btn-success btn-sm" ng-click="agregarMenuCombo( null, 'menu' )">
+									<span class="glyphicon glyphicon-plus"></span> INGRESAR MENU
 								</button>
 							</p>
 						</div>
@@ -341,27 +341,15 @@
 					<button type="button" class="close" ng-click="$hide()">&times;</button>
 					<h3 class="panel-title">
 						<span class="glyphicon" ng-class="{'glyphicon-plus': accion == 'insert', 'glyphicon glyphicon-pencil': accion == 'update'}"></span>
-						{{ accion == 'insert' ? 'INGRESAR NUEVO' : 'ACTUALIZAR' }} PRODUCTO
+						{{ accion == 'insert' ? 'INGRESAR NUEVO' : 'ACTUALIZAR' }} MENU
 					</h3>
 				</div>
 				<div class="modal-body">
 					<fieldset class="fieldset">
 						<legend class="legend">DATOS</legend>
-						<!-- FORMULARIO PRODUCTO -->
+						<!-- FORMULARIO MENU -->
 						<form class="form-horizontal" role="form" name="formMenu">
-							<div class="form-group">
-								<label class="control-label col-sm-2">Nombre Menu</label>
-								<div class="col-sm-4 ">
-									<input type="text" class="form-control" ng-model="menu.menu" maxlength="45" required>
-								</div>
-								<label class="control-label col-sm-2">Destino Menu</label>
-								<div class="col-sm-2">
-									<select class="form-control" ng-model="menu.idDestinoMenu" required>
-										<option ng-repeat="dm in lstDestinoMenu" value="{{dm.idDestinoMenu}}">{{dm.destinoMenu}}</option>
-									</select>
-								</div>
-							</div>
-							<div class="form-group">
+							<div class="form-group" ng-show="accion == 'update'">
 								<label class="col-sm-2" ng-show="id>0">Estado Menu</label>
 								<div class="col-sm-2" ng-show="id>0">
 									<select class="form-control" ng-model="menu.idEstadoMenu" >
@@ -370,32 +358,55 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="control-label col-sm-2">Descripcion</label>
-								<div class="col-sm-8">
-									<textarea rows="2" class="form-control" ng-model='menu.descripcion' required></textarea>
+								<div class="col-sm-7">
+									<label class="control-label">Nombre Menu</label>
+									<input type="text" class="form-control" ng-model="menu.menu" maxlength="45" required>
+								</div>
+								<div class="col-sm-5">
+									<label class="control-label">Destino Menu</label>
+									<select class="form-control" ng-model="menu.idDestinoMenu" required>
+										<option ng-repeat="dm in lstDestinoMenu" value="{{dm.idDestinoMenu}}">{{dm.destinoMenu}}</option>
+									</select>
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="control-label col-sm-2">Tipo Servicio</label>
-								<div class="col-sm-3">
+								<div class="col-sm-12">
+									<label class="control-label">Descripcion</label>
+									<textarea rows="3" class="form-control" ng-model='menu.descripcion' required></textarea>
+								</div>
+							</div>
+							<legend class="text-center">
+								<small>
+									<i class="fa fa-money" aria-hidden="true"></i> AGREGAR PRECIOS
+								</small>
+							</legend>
+							<div class="form-group">
+								<div class="col-sm-5">
+									<label class="control-label">Tipo Servicio</label>
 									<select class="form-control" ng-model="tipoServicio">
 										<option ng-repeat="ts in lstTipoServicio" value="{{ ts.idTipoServicio }}">
 											{{ ts.tipoServicio }}
 										</option>
 									</select>
 								</div>
-								<label class="col-sm-1">Precio</label>
-								<div class="col-sm-2">
+								<div class="col-sm-4">
+									<label class="control-label">Precio</label>
 									<input type="number" min="0" class="form-control" ng-model="precioMenu">
 								</div>
-								<button type="button" class="btn btn-primary" ng-click="agregaPrecio(tipoServicio,precioMenu)">Agregar</button>
+								<div class="col-sm-3">
+									<br>
+									<button type="button" class="btn btn-sm btn-primary" ng-click="agregaPrecio(tipoServicio,precioMenu)">
+										<span class="glyphicon glyphicon-plus"></span>
+										Agregar
+									</button>
+								</div>
 								<div class="col-sm-12">
 									<br>
-									<div class="col-sm-2"></div>
-									<div class="col-sm-7">
+									<div class="col-sm-offset-1 col-sm-10">
 										<table class="table table-hover">
 											<thead>
 												<tr>
+													<th>No.</th>
 													<th>Tipo Servicio</th>
 													<th>Q. Precio</th>
 													<th></th>
@@ -406,7 +417,7 @@
 													<td>{{lp.tipoServicio}}</td>
 													<td>{{lp.precio}}</td>
 													<td>
-														<button type="button" class="btn btn-danger btn-xs" ng-click="removerPrecio($index)">X</button>
+														<button type="button" class="btn btn-danger btn-xs" ng-click="removerPrecio( $index )">X</button>
 													</td>
 												</tr>
 											</tbody>

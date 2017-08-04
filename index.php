@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="css/alertify.css">
     <link rel="stylesheet" href="css/themes/semantic.css">
     <link rel="stylesheet" href="css/fileinput.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    
     <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body ng-controller="inicioCtrl" ng-keyup="pressKey( $event.keyCode );">

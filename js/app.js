@@ -101,7 +101,7 @@ app.config(function($routeProvider) {
 app.controller('restauranteCtrl', function($scope){//controlador principal
 });
 
-app.controller('inicioCtrl', function($scope, $rootScope, $timeout){//controlador principal
+app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http ){//controlador principal
   // CAPTURA TECLA PARA ATAJOS RAPIDOS
   $scope.pressKey = function ( key ) {
     $rootScope.$broadcast('keyPress', key );
@@ -112,5 +112,27 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout){//controlado
   });
 
   $scope.loading = false;
+
+    $scope.lstTipoServicio = [];
+    $scope.lstDestinoMenu = [];
+    
+    ($scope.catDestinoMenu = function(){
+        $http.post('consultas.php',{
+            opcion : 'catDestinoMenu'
+        }).success(function(data){
+            console.log( 'destinos', data );
+            $scope.lstDestinoMenu = data;
+        })
+    })();
+
+    ($scope.catTipoServicio = function(){
+        $http.post('consultas.php',{
+            opcion : 'catTiposServicio'
+        }).success(function(data){
+            console.log( 'tiposServicio', data );
+            $scope.lstTipoServicio = data;
+        })
+    })();
+
 });
 
