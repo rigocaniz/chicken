@@ -20,17 +20,72 @@ class Orden
  		$this->sess = $sesion;
  	}
 
- 	function guardarOrdenCliente()
+ 	
+ 	// CONSULTA ORDEN ACCIONES
+ 	function consultaOrdenCliente( $accion, $data )
  	{
- 		$sql = "";
- 		
- 		if( $rs = $this->con->query( $sql ) ){
- 			
- 		}
- 		else{
- 			$this->respuesta = 'danger';
- 			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
- 		}
+
+ 		// INICIALIZACIÓN DE VARIABLES
+		$idOrdenCliente     = "NULL";
+		$numeroTicket       = "NULL";
+		$usuarioResponsable = "NULL";
+		$idEstadoOrden      = "NULL";
+
+		// SETEO DE VARIABLES
+		$data->numeroTicket       = (int)$data->numeroTicket > 0			? (int)$data->numeroTicket	 : "NULL";
+		$data->usuarioResponsable = strlen( $data->usuarioResponsable ) > 3	? $data->usuarioResponsable	 : "NULL";
+
+		$validar = new Validar();
+
+		// VALIDACIONES
+		if( $accion == 'insert' ):
+			// OBLIGATORIOS
+			$numeroTicket       = $validar->validarEntero( $data->numeroTicket, NULL, TRUE, 'El No. de Ticket no es válido' );
+			$usuarioResponsable = "'" . $this->con->real_escape_string( $validar->validarTexto( $data->usuarioResponsable, NULL, TRUE, 8, 16, "Usuario responsable" ) ) . "'";
+		
+		else:
+
+			// SETEO DE VARIABLES
+			$data->idOrdenCliente = (int)$data->idOrdenCliente > 0	? (int)$data->idOrdenCliente : "NULL";
+			$data->idEstadoOrden  = (int)$data->idEstadoOrden > 0	? (int)$data->idEstadoOrden	 : "NULL";
+
+			// OBLIGATORIOS
+			$idOrdenCliente = $validar->validarEntero( $data->idOrdenCliente, NULL, TRUE, 'El No. de Orden no es válido' );
+
+			if( $accion == 'update' ):
+				$numeroTicket       = $validar->validarEntero( $data->numeroTicket, NULL, TRUE, 'El No. de Ticket es válido' );
+				$usuarioResponsable = "'" . $this->con->real_escape_string( $validar->validarTexto( $data->usuarioResponsable, NULL, TRUE, 8, 16, "Usuario responsable" ) ) . "'";
+			
+			elseif( $accion == 'status' ):
+				$idEstadoOrden = $validar->validarEntero( $data->idEstadoOrden, NULL, TRUE, 'El ID del estado de Orden no es válido' );
+
+			endif;
+
+		endif;
+
+
+		// OBTENER RESULTADO DE VALIDACIONES
+ 		if( $validar->getIsError() ):
+	 		$this->respuesta = 'danger';
+	 		$this->mensaje   = $validar->getMsj();
+	 		$this->tiempo    = $validar->getTiempo();
+ 		else:
+	 		$sql = "CALL consultaOrdenCliente( '{$accion}', {$idOrdenCliente}, {$numeroTicket}, {$usuarioResponsable}, {$idEstadoOrden} )";
+	 		
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+	 			$this->respuesta = $row->respuesta;
+	 			$this->mensaje   = $row->mensaje;
+	 			if( $accion == 'insert' AND $row->respuesta == 'success' )
+	 				$this->data = (int)$row->id;
+	 		}
+	 		else{
+	 			$this->respuesta = 'danger';
+	 			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
+	 		}
+
+ 		endif;
+
+ 		return $this->getRespuesta();
  	}
 
 

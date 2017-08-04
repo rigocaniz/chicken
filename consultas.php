@@ -17,7 +17,7 @@ include 'class/validar.class.php';
 include 'class/funciones.php';
 
 
-$sesion->setVariable( 'usuario', 'TEST' );
+$sesion->setVariable( 'usuario', 'restaurante' );
 $sql = "CALL definirSesion( '{$sesion->getUsuario()}' );";
 $conexion->query( $sql );
 
@@ -295,14 +295,18 @@ switch ( $data->opcion )
 
 	
 	/////////////////////////
-	//***** MENU
+	//***** ORDEN
 	/////////////////////////
+	case 'consultaOrdenCliente':	// ACCION MENU: INSERT / MENU-CANTIDAD / ESTADO / RESPONSABLE / ETC
+		$orden = new Orden();
+		echo json_encode( $orden->consultaOrdenCliente( $data->accion, $data->datos ) );
+		break;
+
 	case 'consultaDetalleOrdenMenu':	// ACCION MENU: INSERT / MENU-CANTIDAD / ESTADO / RESPONSABLE / ETC
 		$orden = new Orden();
 		echo json_encode( $orden->consultaDetalleOrdenMenu( $data->accion, $data->datos ) );
 		break;
 
-		
 
 	/////////////////////////
 	/////////////////////////

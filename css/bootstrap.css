@@ -4041,7 +4041,8 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   border: 1px solid #dddddd;
   border-bottom-color: transparent;
   cursor: default;
-  font-family: 'OpenSans-Bold'
+  font-family: 'OpenSans-Bold';
+  border-top: 3px solid #ea0016;
 }
 .nav-tabs.nav-justified {
   width: 100%;
