@@ -135,60 +135,67 @@ class Menu
  	// GUARDAR // ACTUALIZAR => MENU
 	function consultaMenu( $accion, $data )
  	{
- 		$validar = new Validar();
+ 		
+ 		if( count( $data->lstPrecios ) ){
 
-		// INICIALIZACIÓN VAR
-		$idMenu        = 'NULL';
-		$menu          = NULL;
-		$imagen        = "NULL";
-		$descripcion   = NULL;
-		$idEstadoMenu  = NULL;
-		$idDestinoMenu = NULL;
+	 		$validar = new Validar();
 
-		// SETEO VARIABLES GENERALES
- 		$data->menu          = strlen( $data->menu ) > 0 		? (string)$data->menu : NULL;
- 		$data->descripcion   = strlen( $data->descripcion ) > 0 ? (string)$data->descripcion : NULL;
- 		$data->idEstadoMenu  = (int)$data->idEstadoMenu > 0  	? (int)$data->idEstadoMenu : NULL;
- 		$data->idDestinoMenu = (int)$data->idDestinoMenu > 0  	? (int)$data->idDestinoMenu : NULL;
- 		$data->idTipoMenu    = (int)$data->idTipoMenu > 0 		? (int)$data->idTipoMenu : NULL;
+			// INICIALIZACIÓN VAR
+			$idMenu        = 'NULL';
+			$menu          = NULL;
+			$imagen        = "NULL";
+			$descripcion   = NULL;
+			$idEstadoMenu  = NULL;
+			$idDestinoMenu = NULL;
 
- 
- 		// VALIDACIONES
- 		if( $accion == 'update' ):
- 			$data->idMenu = (int)$data->idMenu > 0 ? (int)$data->idMenu : NULL;
- 			$idMenu = $validar->validarEntero( $data->idMenu, NULL, TRUE, 'El ID del Menú no es válido, verifique.' );
- 		endif;
+			// SETEO VARIABLES GENERALES
+	 		$data->menu          = strlen( $data->menu ) > 0 		? (string)$data->menu : NULL;
+	 		$data->descripcion   = strlen( $data->descripcion ) > 0 ? (string)$data->descripcion : NULL;
+	 		$data->idEstadoMenu  = (int)$data->idEstadoMenu > 0  	? (int)$data->idEstadoMenu : NULL;
+	 		$data->idDestinoMenu = (int)$data->idDestinoMenu > 0  	? (int)$data->idDestinoMenu : NULL;
+	 		$data->idTipoMenu    = (int)$data->idTipoMenu > 0 		? (int)$data->idTipoMenu : NULL;
 
-		$menu          = $validar->validarTexto( $data->menu, NULL, TRUE, 3, 45, 'el nombre del menu' );
-		$descripcion   = $validar->validarTexto( $data->descripcion, NULL, TRUE, 3, 45, 'el nombre del descripcion' );
-		$idEstadoMenu  = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado Menú no es válido, verifique.' );
-		$idDestinoMenu = $validar->validarEntero( $data->idDestinoMenu, NULL, TRUE, 'El ID del tipo de medida no es válido, verifique.' );
-		$idTipoMenu    = $validar->validarEntero( $data->idTipoMenu, NULL, TRUE, 'El ID del tipo de menú no es válido, verifique.' );
+	 
+	 		// VALIDACIONES
+	 		if( $accion == 'update' ):
+	 			$data->idMenu = (int)$data->idMenu > 0 ? (int)$data->idMenu : NULL;
+	 			$idMenu = $validar->validarEntero( $data->idMenu, NULL, TRUE, 'El ID del Menú no es válido, verifique.' );
+	 		endif;
+
+			$menu          = $validar->validarTexto( $data->menu, NULL, TRUE, 3, 45, 'el nombre del menu' );
+			$descripcion   = $validar->validarTexto( $data->descripcion, NULL, TRUE, 3, 45, 'el nombre del descripcion' );
+			$idEstadoMenu  = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado Menú no es válido, verifique.' );
+			$idDestinoMenu = $validar->validarEntero( $data->idDestinoMenu, NULL, TRUE, 'El ID del tipo de medida no es válido, verifique.' );
+			$idTipoMenu    = $validar->validarEntero( $data->idTipoMenu, NULL, TRUE, 'El ID del tipo de menú no es válido, verifique.' );
 
 
-		// OBTENER RESULTADO DE VALIDACIONES
- 		if( $validar->getIsError() ):
-	 		$this->respuesta = 'danger';
-	 		$this->mensaje   = $validar->getMsj();
+			// OBTENER RESULTADO DE VALIDACIONES
+	 		if( $validar->getIsError() ):
+		 		$this->respuesta = 'danger';
+		 		$this->mensaje   = $validar->getMsj();
 
- 		else:
-	 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu}, {$idTipoMenu} );";
+	 		else:
+		 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu}, {$idTipoMenu} );";
 
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
-	 			if( $row = $rs->fetch_object() ){
-	 				$this->respuesta = $row->respuesta;
-	 				$this->mensaje   = $row->mensaje;
-	 				if( $accion == 'insert' AND $this->respuesta == 'success' )
-	 					$this->data = (int)$row->id;
-	 			}
-	 		}
-	 		else{
-	 			$this->respuesta = 'danger';
-	 			$this->mensaje   = 'Error al ejecutar la instrucción.';
-	 		}
-	 		
- 		endif;
+		 		if( $rs = $this->con->query( $sql ) ){
+		 			@$this->con->next_result();
+		 			if( $row = $rs->fetch_object() ){
+		 				$this->respuesta = $row->respuesta;
+		 				$this->mensaje   = $row->mensaje;
+		 				if( $accion == 'insert' AND $this->respuesta == 'success' )
+		 					$this->data = (int)$row->id;
+		 			}
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+		 		}
+		 		
+	 		endif;
+ 		}else{
+ 			$this->respuesta = 'info';
+		 	$this->mensaje   = 'No ha ingresado los precios del Menu';
+ 		}
 
  		return $this->getRespuesta();
  	}
@@ -200,8 +207,8 @@ class Menu
  		$validar = new Validar();
 
 		// INICIALIZACIÓN VAR
- 		$idMenu         = NULL;
- 		$idTipoServicio = NULL;		
+ 		$idMenu         = "NULL";
+ 		$idTipoServicio = "NULL";		
 
 		// SETEO VARIABLES GENERALES
 		$data->idTipoServicio = (int)$data->idTipoServicio > 0 	? (int)$data->idTipoServicio 	: NULL;

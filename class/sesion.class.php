@@ -9,10 +9,8 @@ class Sesion
 
 	function __construct()
 	{
-		/*
 		if( is_null( $this->sesion ) )
 			$this->iniciarSesion();
-			*/
 	}
 
 	private function iniciarSesion()

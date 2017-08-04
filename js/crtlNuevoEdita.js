@@ -8,6 +8,8 @@ app.controller('nuevoEditaCtrl', function( $scope , $http, $modal, $routeParams 
 		$scope.accion = 'update';
 	}
 
+	
+
 	if( $scope.evento == 'producto' ){
 
 		$scope.producto = {
@@ -27,7 +29,7 @@ app.controller('nuevoEditaCtrl', function( $scope , $http, $modal, $routeParams 
 			}).success(function(data){
 				$scope.lstTipoProducto = data;
 			})
-		}   
+		};
 
 		$scope.catMedidas = function(){
 			$http.post('consultas.php',{
@@ -142,26 +144,7 @@ app.controller('nuevoEditaCtrl', function( $scope , $http, $modal, $routeParams 
 			$scope.menu.lstPrecios.splice(index,1);
 		}
 
-		//registrar menu
-		$scope.registraMenu = function(){
-			console.log($scope.menu);
-			if ( $scope.formMenu.$invalid == true ) {
-				alertify.set('notifier','position', 'top-right');
-	 			alertify.notify('Ingrese los datos solicitados', 'warning', 3);
-			}else{
-				$http.post('consultas.php',{
-					opcion:"consultaMenu",
-					accion:$scope.accion,
-					datos: $scope.menu
-				}).success(function(data){
-					alertify.set('notifier','position', 'top-right');
-	 				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
-					if ( data.respuesta == 'success' ) {
-						$scope.menu = {};
-					}
-				})
-			}
-		}
+
 		//subir imagen
 		$("#imagenMenu").fileinput({
 	        language              : "es",
