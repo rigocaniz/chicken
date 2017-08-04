@@ -129,6 +129,7 @@ switch ( $data->opcion )
 		break;
 
 	case 'lstMenu':					// CARGAR LISTA DE MENU
+		var_dump( $data );
 		$menu = new Menu();
 		echo json_encode( $menu->lstMenu( $data->idTipoMenu ) );
 		break;

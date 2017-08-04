@@ -75,6 +75,23 @@ class Menu
 	}
 
 
+	// OBTENER TOTAL PRODUCTOS
+	function getTotalMenus( $limite = 25 )
+	{
+		$total = 0;
+		$sql = "SELECT COUNT(*) AS total FROM lstProducto";
+		
+		if( $rs = $this->con->query( $sql ) ){
+			if( $row = $rs->fetch_object() )
+				$total = (int)$row->total;
+		}
+
+		$totalPaginas = ceil( $total / $limite );
+		
+		return $totalPaginas;
+	}
+
+
  	// CONSULTAR LISTA DE MENUS
  	function lstMenu( $idTipoMenu = 0 )
  	{

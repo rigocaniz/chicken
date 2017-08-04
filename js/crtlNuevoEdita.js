@@ -124,6 +124,7 @@ app.controller('nuevoEditaCtrl', function( $scope , $http, $modal, $routeParams 
 				$scope.menu = data;
 			})
 		}
+		
 		//Agregar precios según tipo servicio
 		$scope.lstPrecios = [];
 		$scope.agregaPrecio = function(idTipoServicio,precio){
