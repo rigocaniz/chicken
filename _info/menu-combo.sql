@@ -54,6 +54,10 @@ BEGIN
 		WHERE idMenu = _idMenu;
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
 
+	ELSEIF _action = 'image' THEN
+		UPDATE menu SET imagen = _imagen WHERE idMenu = _idMenu;
+		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
+
 	ELSE
 		SELECT 'danger' AS 'respuesta', 'Acción no válida' AS 'mensaje';
 	END IF;
@@ -114,6 +118,11 @@ BEGIN
 			descripcion  = _descripcion,
 			idEstadoMenu = _idEstadoMenu
 		WHERE idCombo = _idCombo;
+
+		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
+
+	ELSEIF _action = 'image' THEN
+		UPDATE combo SET imagen = _imagen WHERE idCombo = _idCombo;
 
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
 
@@ -207,6 +216,11 @@ BEGIN
 			descripcion  = _descripcion,
 			idEstadoMenu = _idEstadoMenu
 		WHERE idSuperCombo = _idSuperCombo;
+
+		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
+
+	ELSEIF _action = 'image' THEN
+		UPDATE superCombo SET imagen = _imagen WHERE idSuperCombo = _idSuperCombo;
 
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
 
