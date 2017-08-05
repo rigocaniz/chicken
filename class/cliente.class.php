@@ -57,7 +57,7 @@ class Cliente
  			$this->tiempo    = $validar->getTiempo();
 
  		else:
- 			$sql = "CALL consultaCliente( '{$accion}',{$nit}, '{$nombre}', {$cui}, {$correo}, {$telefono}, '{$direccion}', {$idTipoCliente} );";
+ 			$sql = "CALL consultaCliente( '{$accion}','{$nit}', '{$nombre}', '{$cui}', {$correo}, '{$telefono}', '{$direccion}', {$idTipoCliente} )";
  			
  			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
  				@$this->con->next_result();
@@ -83,8 +83,8 @@ class Cliente
  	{
  		$dataCliente = array();
  		$comp = "";
- 		if( is_numeric($valor) AND strlen($valor) >= 8  AND strlen($valor) < 13 ){
- 			$comp = "nit=$valor";
+ 		if( strlen($valor) >= 8  AND strlen($valor) < 13 ){
+ 			$comp = "nit='$valor'";
  		}
  		elseif( is_numeric($valor) AND strlen($valor) == 13 ){
  			$comp = "cui=$valor";

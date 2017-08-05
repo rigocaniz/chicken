@@ -4,6 +4,13 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 
 	$scope.$on('cargarLista', function( event, data ){
 		console.log( ":::", event, ":::", data );
+		if( data == 'menu' )
+			$scope.cargarListaMenu();
+		else if( data == 'combo' )
+			$scope.cargarListaCombos();
+		else if( data == 'supercombo' )
+			$scope.cargarListaCombos();
+
 	});
 
 	$scope.filtro = {
@@ -26,6 +33,8 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 	$scope.lstDestinoMenu  = [];
 	$scope.lstTipoMenu     = [];
 	$scope.lstTipoServicio = [];
+	$scope.lstCombos       = [];
+	$scope.lstMenu         = [];
 	$scope.menu            = {};
 	$scope.combo           = {};
 	$scope.accion          = 'insert';
@@ -51,7 +60,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
         }
     };
 
-	$scope.listaMenu = function(){
+	$scope.cargarListaMenu = function(){
 		$http.post('consultas.php',{
 			opcion : 'lstMenu',
 			filtro : $scope.filtro
@@ -61,8 +70,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 		})
 	};
 
-	$scope.lstCombos = [];
-	$scope.lstMenu   = [];
 	$scope.cargarListaCombos = function(){
 		$http.post('consultas.php',{
 			opcion:'lstCombo'
@@ -74,7 +81,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 
 	($scope.inicio = function()
 	{
-		$scope.listaMenu();
+		$scope.cargarListaMenu();
 		$scope.cargarListaCombos();
 	})();
 

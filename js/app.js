@@ -159,7 +159,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     .on('filebatchuploadsuccess', function( event, data, previewId, index ) {
         console.log( "3", data.response );
         if( data.response.respuesta )
-            $rootScope.$broadcast('cargarLista', "pruebassss" );
+            $rootScope.$broadcast('cargarLista', data.response.accion );
 
     })
     .on('filebatchuploaderror', function( event, data, msg ) {
