@@ -4,14 +4,14 @@
 */
 
 // VARIABLES GENERALES
-$mensaje   = "";
-$respuesta = 0;
-$error     = FALSE;
-
+$mensaje   = "";		// MENSAJE
+$respuesta = 0;			// RESPUESTA
+$error     = FALSE;		// ERROR
+$imagen    = "";		// UBICACIÓN IMAGEN BD
 
 if( !isset( $_POST['id'] ) && !isset( $_POST['tipo'] ) || !isset( $_FILES ) )
 {
-	$error = TRUE;
+	$error   = TRUE;
 	$mensaje = "Datos inválidos, vuelva a intentarlo";
 	exit();
 }
@@ -22,13 +22,14 @@ else if( getimagesize( $_FILES[ 'imagen' ][ 'tmp_name' ]) == false )
 	$mensaje = "El archivo cargado no es una imagen";
 }
 
-else if( $_FILES[ 'imagen' ][ 'size' ] > 20000 )
+else if( $_FILES[ 'imagen' ][ 'size' ] > 200000 )
 {
 	$error   = TRUE;
 	$mensaje = "El archivo supera los 2MB de peso permitido";
 }
 
-else{
+else
+{
 
 	// CONEXION BD
 	include 'class/conexion.class.php';
@@ -37,7 +38,7 @@ else{
 	
 
 	// SETEO DE VARIABLES
-	$carpeta        = "upload/";
+	$carpeta        = "img-menu/";
 
 	$nombreArchivo  = $_FILES[ 'imagen' ][ 'name' ];
 	$tipoArchivo    = $_FILES[ 'imagen' ][ 'type' ];
@@ -45,30 +46,53 @@ else{
 	$errorArchivo   = $_FILES[ 'imagen' ][ 'error' ];
 	$pesoArchivo    = $_FILES[ 'imagen' ][ 'size' ];
 
+	$idUnico        = uniqid();
+
 	$info           = new SplFileInfo( $_FILES[ 'imagen' ][ 'name' ] );		// OBTENER EXTENSIÓN
-	$nombreArchivo  = $id . '_' . $nombreArchivo;
+	$nombreArchivo  = $id . '_' . $nombreArchivo . '_' . $idUnico;
 	$rutaArchivo    = $carpeta . $nombreArchivo; 		// DIRECTORIO + ARCHIVO
 
-
-	echo basename( $_FILES["imagen"]["name"] );
+	//echo basename( $_FILES["imagen"]["name"] );
 
 	// VALIDAR ARCHIVO CARGADO
 	if( move_uploaded_file( $nombreTemporal, $rutaArchivo ) )
 	{	
-		
 		// INICIALIZAR TRANSACCIÓN
 		$conexion->query( "START TRANSACTION" );
 
+		if( $tipo == 'menu' )		// MENU
+			$sql = "SELECT imagen FROM menu WHERE idMenu = {$id};"
+		
+		elseif( $tipo == 'combo' )	// COMBO
+			$sql = "SELECT imagen FROM combo WHERE idCombo = {$id};";
+		
+		elseif( $tipo == 'supercombo' )	// SUPERCOMBO
+			$sql = "SELECT imagen FROM superCombo WHERE idSuperCombo = {$id};";
+		
+		if( $rs = $this->con->query( $sql ) ){
+			@$this->con->next_result();
+			if( $row = $rs->fetch_object() ){
+				$imagen = $row->imagen;
+			}
+		}
+		else{
+			$this->respuesta = 'danger';
+			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
+		}
 
 		// FINALIZAR TRANSACCIÓN
-		if( $error ){
+		if( $error )
+		{
 			$conexion->query( "ROLLBACK" );
 			$respuesta = 0;
 		}
 		else{
 			$conexion->query( "COMMIT" );
 			$respuesta = 1;
-			$mensaje   = "Archivos registrados exitosamente.";
+			$mensaje   = "Guardado correctamente.";
+
+			if ( file_exists( $imagen ) )
+				unlink( $imagen );
 		}
 
 	}
@@ -81,14 +105,12 @@ else{
 	// SI HAY ERROR ELIMINAR TEMPORAL
 	if( $error )
 	{
-		if ( file_exists( $rutaArchivo ) ) {
+		if ( file_exists( $rutaArchivo ) )
 			unlink( $rutaArchivo );
-		}
 
 	}
 
 }
-
 
 
 if( $error )

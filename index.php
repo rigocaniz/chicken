@@ -25,22 +25,6 @@
         </div>
     </div>
 
-
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                {{ imagen | json }}
-                <form enctype="multipart/form-data">
-                    <label>
-                        <span class="glyphicon glyphicon-picture"></span>
-                        SELECCIONE UNA IMAGEN
-                    </label>
-                    <input id="imagen" name="imagen" type="file" multiple>
-                </form>
-            </div>
-        </div>
-    </div>
-
 	<!-- Navegacion-->
     <a id="menu-toggle" href="#" class="btn btn-dark btn-md toggle"><span class="glyphicon glyphicon-list"></span></a>
     <nav id="sidebar-wrapper">
@@ -87,7 +71,54 @@
             </li>
         </ul>
     </nav>
+    <button type="button" class="btn btn-success" ng-click="asignarValorImagen( 1, 'menu' )">
+        SUBIR
+    </button>
    <div ng-view></div>
+
+
+   <!-- MODAL SUBIR IMAGEN -->
+   <div class="modal fade" tabindex="-1" id="subirImagen" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content panel-warning">
+                <div class="modal-header panel-heading text-center">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <span class="glyphicon glyphicon-picture"></span> SUBIR IMAGEN
+                </div>
+                <div class="modal-body">
+                    {{ imagen | json }}
+                    <form name="$parent.subirImagen" enctype="multipart/form-data">
+                        <label>SELECCIONE UNA IMAGEN</label>
+                        <input id="imagen" name="imagen" type="file">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/ng-template" id="dial.html">
+        <div class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content panel-warning">
+                    <div class="modal-header panel-heading">
+                        <button type="button" class="close" ng-click="resetImagen()">&times;</button>
+                        
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" ng-click="resetImagen()">
+                            <span class="glyphicon glyphicon-log-out"></span>
+                            <b>Salir</b>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
 
 	<!-- jQuery -->
     <script src="js/libs/jquery-3.2.1.min.js"></script>
@@ -98,7 +129,7 @@
     <script src="js/libs/dirPagination.js"></script>
     
     <script src="js/libs/fileinput.js"></script>
-    
+
     <script src="js/app.js"></script>
     <script src="js/crtlCliente.js"></script>
     <script src="js/crtlInventario.js"></script>

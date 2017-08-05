@@ -102,22 +102,30 @@ app.config(function($routeProvider) {
 /****CONTROLADORES****/
 
 // CONTROLADOR PRINCIPAL
-app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http ){
+app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $modal ){
   // CAPTURA TECLA PARA ATAJOS RAPIDOS
     $scope.pressKey = function ( key ) {
         $rootScope.$broadcast('keyPress', key );
     };
 
-
     $scope.imagen = {
-        id   : 1,
-        tipo : 'menu'
+        id   : null,
+        tipo : ''
+    };
+
+    $scope.resetImagen = function(){
+        $scope.imagen = {
+            id   : null,
+            tipo : ''
+        };
+        $( '#subirImagen' ).modal( 'hide' );
     };
 
     // ASIGNAR VALOR OBJ IMAGEN
     $scope.asignarValorImagen = function( id, tipo ){
         $scope.imagen.id   = id;
         $scope.imagen.tipo = tipo;
+        $( '#subirImagen' ).modal( 'show' );
     };
 
     // IMAGEN
