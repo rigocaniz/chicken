@@ -9,28 +9,33 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 		page   : 1
 	};
 
-	$scope.lstTipoServicio = [];
+	$scope.filter = {
+		pagina: 1,
+		limite: 25,
+		orden: 'ASC'
+	};
+
+	$scope.dialIngreso    = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
+	$scope.dialAdminMenu  = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static'});
+	$scope.dialAdminCombo = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static'});
+
 	$scope.lstDestinoMenu  = [];
+	$scope.lstTipoMenu     = [];
+	$scope.lstTipoServicio = [];
+	$scope.menu            = {};
+	$scope.combo           = {};
+	$scope.accion          = 'insert';
 
 	($scope.inicio = function(){
         $http.post('consultas.php',{
-            opcion : 'catDestinoMenu'
+            opcion : 'inicioAdmin'
         }).success(function(data){
-            console.log( 'destinos', data );
-            $scope.lstDestinoMenu = data;
+            console.log( 'inicioAdmin: ', data );
+            $scope.lstDestinoMenu  = data.lstDestinoMenu || [];
+            $scope.lstTipoMenu     = data.lsTipoMenu || [];
+            $scope.lstTipoServicio = data.lstTiposServicio || [];
         })
-		
 	})();
-
-
-    ($scope.catTipoServicio = function(){
-        $http.post('consultas.php',{
-            opcion : 'catTiposServicio'
-        }).success(function(data){
-            console.log( 'tiposServicio', data );
-            $scope.lstTipoServicio = data;
-        })
-    })();
 
 
     $scope.returnTipoServicio = function( idTipoServicio ){
@@ -42,75 +47,44 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
         }
     };
 
-
-	$scope.dialIngreso    = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
-	$scope.dialAdminMenu  = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static'});
-	$scope.dialAdminCombo = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static'});
-
 	$scope.listaMenu = function(){
 		$http.post('consultas.php',{
 			opcion : 'lstMenu',
 			filtro : $scope.filtro
 		}).success(function(data){
 			console.log( 'lista: ', data );
-			$scope.lstMenus = data;
+			$scope.lstMenu = data;
 		})
 	};
 
-	$scope.lstTipoMenu = [];
-	$scope.catTipoMenu = function(){
-		$http.post('consultas.php',{
-			opcion:'catTipoMenu'
-		}).success(function(data){
-			$scope.lstTipoMenu = data;
-		})
-	};
-
-	$scope.listaCombo = function(){
+	$scope.lstCombos = [];
+	$scope.lstMenu   = [];
+	$scope.cargarListaCombos = function(){
 		$http.post('consultas.php',{
 			opcion:'lstCombo'
 		}).success(function(data){
 			console.log('lstCombos: ',data);
-			$scope.lstCombos = data;
+			$scope.lstCombos = data || [];
 		})
-	};
-
-
-	$scope.filter = {
-		pagina: 1,
-		limite: 25,
-		orden: 'ASC'
 	};
 
 	($scope.inicio = function()
 	{
 		$scope.listaMenu();
-		$scope.catTipoMenu();
-		$scope.listaCombo();
+		$scope.cargarListaCombos();
 	})();
 
-	$scope.menu = {
-		'idEstadoMenu'  : 1,
-		'menu'          : '',
-		'idDestinoMenu' : 1,
-		'idTipoMenu'    : 1,
-		'descripcion'   : '',
-		'imagen'        : '',
-		'subirImagen'   : true,
-		'lstPrecios'    : []
-	};
 
-
-	$scope.accion = 'insert';
 	$scope.agregarMenuCombo = function( tipo ){
-		//console.log( 'tipo: ', tipo );
+		console.log( 'tipo: ', tipo );
+		
 		$scope.accion = 'insert';
-		if( $scope.tipo == 'menu' ){
+		if( tipo == 'menu' ){
 			$scope.menu = {
 				'idEstadoMenu'  : 1,
 				'menu'          : '',
-				'idDestinoMenu' : null,
-				'idTipoMenu' : 1,
+				'idDestinoMenu' : 1,
+				'idTipoMenu'    : 1,
 				'descripcion'   : '',
 				'imagen'        : '',
 				'subirImagen'   : true,
@@ -167,7 +141,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 				};
 			}
 
-
 		}
 		
 	};
@@ -180,7 +153,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 	// REGISTRAR MENU
 	$scope.consultaMenu = function(){
 		var menu = $scope.menu;
-
 		console.log($scope.menu);
 		if( $scope.accion == 'update' && !(menu.idMenu && menu.idMenu > 0) ){
 			alertify.notify( 'No. de menú no válido', 'info', 5 );
@@ -219,29 +191,71 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 					//$scope.menu = {};
 				}
 			})
+		}
+	};
+
+	$scope.resetValores = function( accion ){
+		$scope.accion == 'insert';
+
+		if( accion == 'combo' ){
+			$scope.menu = {
+				'idEstadoMenu'  : 1,
+				'menu'          : '',
+				'idDestinoMenu' : 1,
+				'idTipoMenu'    : 1,
+				'descripcion'   : '',
+				'imagen'        : '',
+				'subirImagen'   : true,
+				'lstPrecios'    : []
+			};
+		}
+		else if( accion == 'combo' ){
+			$scope.combo = {
+				'idEstadoMenu' : 1,
+				'combo'        : '',
+				'descripcion'  : '',
+				'subirImagen'  : true,
+				'imagen'       : '',
+			}
 
 		}
 	};
 
+	$scope.registraCombo = function(){
+		var combo = $scope.combo;
 
-		$scope.registraCombo = function(){
-			if ( $scope.formCombo.$invalid == true ) {
-				alertify.set('notifier','position', 'top-right');
-	 			alertify.notify('Ingrese los datos solicitados', 'warning', 3);
-			}else{
-				$http.post('consultas.php',{
-					opcion:"consultaCombo",
-					accion:$scope.accion,
-					datos: $scope.combo
-				}).success(function(data){
-					alertify.set('notifier','position', 'top-right');
-	 				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
-					if ( data.respuesta == 'success' ) {
-						$scope.combo = {};
-					}
-				})
-			}
+		if( $scope.accion == 'update' && !(combo.idCombo && combo.idCombo > 0) ){
+			alertify.notify( 'No. de combo no válido, vuelve a seleccionarlo', 'info', 5 );
 		}
+		else if( !( combo.idEstadoMenu && combo.idEstadoMenu > 0 )  ){
+			alertify.notify( 'Seleccione el estado del combo', 'info', 5 );	
+		}
+		else if( !( combo.combo && combo.combo.length > 3 ) ){
+			alertify.notify( 'El nombre del combo debe ser mayor a 3 caracteres', 'info', 5 );		
+		}
+		else if( !( combo.combo && combo.combo.length > 3 ) ){
+			alertify.notify( 'El nombre del combo debe ser mayor a 3 caracteres', 'info', 5 );		
+		}
+		else if( !( combo.descripcion && combo.descripcion.length > 15 ) ){
+			alertify.notify( 'La descripción del menú debe ser mayor a 15 caracteres', 'info', 5 );		
+		}
+		else{
+			$http.post('consultas.php',{
+				opcion : "consultaCombo",
+				accion : $scope.accion,
+				datos  : $scope.combo
+			}).success(function(data){
+				console.log( data );
+				alertify.set('notifier','position', 'top-right');
+ 				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
+				if ( data.respuesta == 'success' ) {
+					$scope.cargarListaCombos();
+					$scope.dialAdminCombo.hide();
+					$scope.combo = {};
+				}
+			})
+		}
+	};
 
 
 

@@ -3,17 +3,17 @@
 		<div class="col-sm-12">
 			<!-- Nav tabs -->
 			<ul class="nav nav-tabs tabs-title" role="tablist">
-				<li role="presentation" ng-class="{'active' : inventarioMenu==1}" ng-click="resetValues(); inventarioMenu=1">
+				<li role="presentation" ng-class="{'active' : inventarioMenu==1}" ng-click="resetValores(); inventarioMenu=1">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-list"></span> MENUS
 					</a>
 				</li>
-				<li role="presentation" ng-class="{'active' : inventarioMenu==2}" ng-click="resetValues(); inventarioMenu=2">
+				<li role="presentation" ng-class="{'active' : inventarioMenu==2}" ng-click="resetValores(); inventarioMenu=2">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-list-alt"></span> COMBOS
 					</a>
 				</li>
-				<li role="presentation" ng-class="{'active' : inventarioMenu==3}" ng-click="resetValues(); inventarioMenu=3">
+				<li role="presentation" ng-class="{'active' : inventarioMenu==3}" ng-click="resetValores(); inventarioMenu=3">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-book"></span> RECETAS
 					</a>
@@ -37,7 +37,7 @@
 								</p>
 							</div>
 							<div class="row">
-							  	<div class="col-sm-3" ng-repeat="m in lstMenus">
+							  	<div class="col-sm-3" ng-repeat="m in lstMenu">
 							    	<div class="thumbnail">
 								    	<span class="label label-info">{{m.destinoMenu}}</span>
 								      	<img src="upload/Logo.png" alt="...">
@@ -159,7 +159,7 @@
 										<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMedida()">
 											<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 										</button>
-										<button type="button" class="btn btn-sm btn-default" ng-click="resetValues( 6 )">
+										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 6 )">
 											Cancelar
 										</button>
 									</div>
@@ -438,7 +438,7 @@
 					<button class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMenu()">
 						<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 					</button>
-					<button type="button" class="btn btn-default" ng-click="resetValues( 1 ); $hide()">
+					<button type="button" class="btn btn-default" ng-click="resetValores( 1 ); $hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
 						<b>Salir</b>
 					</button>
@@ -449,6 +449,7 @@
 </script>
 
 
+<!-- MODAL AGREGAR / EDITAR COMBO -->
 <script type="text/ng-template" id="dial.adminCombo.html">
 	<div class="modal" tabindex="-1" role="dialog">
 		<div class="modal-dialog">
@@ -495,10 +496,10 @@
 					</fieldset>
 				</div>
 				<div class="modal-footer">
-					<button class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMenu()">
+					<button class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="registraCombo()">
 						<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 					</button>
-					<button type="button" class="btn btn-default" ng-click="resetValues( 1 ); $hide()">
+					<button type="button" class="btn btn-default" ng-click="resetValores( 'combo' ); $hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
 						<b>Salir</b>
 					</button>

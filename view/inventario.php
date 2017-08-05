@@ -3,22 +3,22 @@
 
 			<!-- Nav tabs -->
 			<ul class="nav nav-tabs tabs-title" role="tablist">
-				<li role="presentation" ng-class="{'active' : inventarioMenu==1}" ng-click="resetValues(); inventarioMenu=1">
+				<li role="presentation" ng-class="{'active' : inventarioMenu==1}" ng-click="resetValores(); inventarioMenu=1">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-list"></span> INVENTARIO
 					</a>
 				</li>
-				<li role="presentation" ng-class="{'active' : inventarioMenu==2}" ng-click="resetValues(); inventarioMenu=2">
+				<li role="presentation" ng-class="{'active' : inventarioMenu==2}" ng-click="resetValores(); inventarioMenu=2">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-share-alt"></span> TIPO PRODUCTO
 					</a>
 				</li>
-				<li role="presentation" ng-class="{'active' : inventarioMenu==3}" ng-click="resetValues(); inventarioMenu=3">
+				<li role="presentation" ng-class="{'active' : inventarioMenu==3}" ng-click="resetValores(); inventarioMenu=3">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-scale"></span> MEDIDAS
 					</a>
 				</li>
-				<li role="presentation" ng-class="{'active' : inventarioMenu==4}" ng-click="resetValues(); inventarioMenu=4">
+				<li role="presentation" ng-class="{'active' : inventarioMenu==4}" ng-click="resetValores(); inventarioMenu=4">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-shopping-cart"></span> INGRESO
 					</a>
@@ -128,7 +128,7 @@
 										<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaTipoProducto()">
 											<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 										</button>
-										<button type="button" class="btn btn-sm btn-default" ng-click="resetValues( 4 )">
+										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 4 )">
 											Cancelar
 										</button>
 									</div>
@@ -197,7 +197,7 @@
 										<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMedida()">
 											<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 										</button>
-										<button type="button" class="btn btn-sm btn-default" ng-click="resetValues( 6 )">
+										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 6 )">
 											Cancelar
 										</button>
 									</div>
@@ -490,7 +490,7 @@
 					<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaProducto()">
 						<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 					</button>
-					<button type="button" class="btn btn-default" ng-click="resetValues( 1 ); $hide()">
+					<button type="button" class="btn btn-default" ng-click="resetValores( 1 ); $hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
 						<b>Salir</b>
 					</button>

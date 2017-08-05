@@ -10,10 +10,10 @@
 	<link href="css/stylish-portfolio.css" rel="stylesheet">
     <link rel="stylesheet" href="css/alertify.css">
     <link rel="stylesheet" href="css/themes/semantic.css">
-    <link rel="stylesheet" href="css/fileinput.min.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
-    
     <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/fileinput.css">
+    
 </head>
 <body ng-controller="inicioCtrl" ng-keyup="pressKey( $event.keyCode );">
     <div class="cargando" id="cargando" ng-show="loading">
@@ -22,6 +22,22 @@
             <svg id="load" x="0px" y="0px" viewBox="0 0 150 150">
                 <circle id="loading-inner" cx="75" cy="75" r="60"/>
             </svg>
+        </div>
+    </div>
+
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                {{ imagen | json }}
+                <form enctype="multipart/form-data">
+                    <label>
+                        <span class="glyphicon glyphicon-picture"></span>
+                        SELECCIONE UNA IMAGEN
+                    </label>
+                    <input id="imagen" name="imagen" type="file" multiple>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -80,7 +96,10 @@
 	<script src="js/libs/angular-route.min.js"></script>
     <script src="js/libs/ngstrap.js"></script>
     <script src="js/libs/dirPagination.js"></script>
-    <script src="js/libs/fileinput.min.js"></script>
+    
+    <script src="js/libs/fileinput.js"></script>
+    <script src="js/libs/fileinput_locale_es.js"></script>
+
     <script src="js/app.js"></script>
     <script src="js/crtlCliente.js"></script>
     <script src="js/crtlInventario.js"></script>

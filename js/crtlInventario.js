@@ -69,7 +69,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 
 
 	$scope.buscarTipoProducto = '';
-	$scope.resetValues = function( accion ){
+	$scope.resetValores = function( accion ){
 		$scope.accion             = 'insert';
 		$scope.buscarTipoProducto = '';
 		$scope.buscarMedida       = '';
@@ -116,7 +116,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 	($scope.cargarInicio = function(){
 		$scope.catMedidas();
 		$scope.catTipoProducto();
-		$scope.resetValues( 1 );
+		$scope.resetValores( 1 );
 	})();
 
 	/*$scope.filtro        = {
@@ -205,7 +205,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 
 				if ( data.respuesta == "success" ) {
-					$scope.resetValues( 1 );
+					$scope.resetValores( 1 );
 					$scope.inventario();
 					$scope.dialAdministrarCerrar();
 				}
@@ -258,7 +258,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
 				if ( data.respuesta == 'success' ) {
-					$scope.resetValues( 4 );
+					$scope.resetValores( 4 );
 					$scope.catTipoProducto();
 				}
 			})
@@ -298,7 +298,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 				if ( data.respuesta == 'success' ) {
 					$scope.medidaProducto = '';
 					$scope.catMedidas();
-					$scope.resetValues( 6 );
+					$scope.resetValores( 6 );
 				}
 			})
 		}
@@ -361,7 +361,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
 				if ( data.respuesta == 'success' ) {
 					$scope.inventario();
-					$scope.resetValues( 2 );
+					$scope.resetValores( 2 );
 					$scope.dialIngreso.hide();
 				}
 			})

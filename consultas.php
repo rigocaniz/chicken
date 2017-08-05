@@ -16,7 +16,7 @@ include 'class/usuario.class.php';
 include 'class/validar.class.php';
 include 'class/funciones.php';
 
-
+// DEFINIR SESION USUARIO
 $sesion->setVariable( 'usuario', 'restaurante' );
 $sql = "CALL definirSesion( '{$sesion->getUsuario()}' );";
 $conexion->query( $sql );
@@ -30,6 +30,18 @@ switch ( $data->opcion )
 		$usuario = new Usuario();
 		echo json_encode( $usuario->login( $data->usuario, $data->clave ) );
 		break;
+
+	/////////////////////////
+	//***** INICIOS
+	////////////////////////
+	case 'inicioAdmin':			// DATOS MEDIDA
+		$consulta = new Consulta();
+		$datos[ 'lstDestinoMenu' ]   = $consulta->catDestinoMenu();
+		$datos[ 'lsTipoMenu' ]       = $consulta->catTipoMenu();
+		$datos[ 'lstTiposServicio' ] = $consulta->catTiposServicio();
+		echo json_encode( $datos );
+		break;
+		
 
 	/////////////////////////
 	//***** CONSULTA DATOS

@@ -81,37 +81,82 @@ app.config(function($routeProvider) {
 		templateUrl:'view/inventario.php',
 		controller:'inventarioCtrl'
 	})
-  .when('/nuevoEdita/:evento/:id?',{
-    templateUrl:'view/nuevoEdita.php',
-    controller:'nuevoEditaCtrl'
-  })
-  .when('/admin',{
-    templateUrl:'view/admin.php',
-    controller:'crtlAdmin'
-  })
-  .when('/orden',{
-    templateUrl:'view/orden.php',
-    controller:'crtlOrden'
-  })
+    .when('/nuevoEdita/:evento/:id?',{
+        templateUrl:'view/nuevoEdita.php',
+        controller:'nuevoEditaCtrl'
+    })
+    .when('/admin',{
+        templateUrl:'view/admin.php',
+        controller:'crtlAdmin'
+    })
+    .when('/orden',{
+        templateUrl:'view/orden.php',
+        controller:'crtlOrden'
+    })
 	.otherwise({
         redirectTo:'/'
     });
-});
-/****controladores****/
-app.controller('restauranteCtrl', function($scope){//controlador principal
+
 });
 
-app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http ){//controlador principal
+/****CONTROLADORES****/
+
+// CONTROLADOR PRINCIPAL
+app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http ){
   // CAPTURA TECLA PARA ATAJOS RAPIDOS
-  $scope.pressKey = function ( key ) {
-    $rootScope.$broadcast('keyPress', key );
-  };
+    $scope.pressKey = function ( key ) {
+        $rootScope.$broadcast('keyPress', key );
+    };
 
-  $(function () {
-    $('#cargando').removeAttr("style"); 
-  });
 
-  $scope.loading = false;
+    $scope.imagen = {
+        id: null,
+        tipo: '',
+    };
+    // ASIGNAR VALOR OBJ IMAGEN
+    $scope.asignarValorImagen = function( id, tipo ){
+        $scope.imagen.id   = id;
+        $scope.imagen.tipo = tipo;
+    };
+
+    // IMAGEN
+    $("#imagen").fileinput({
+        language        : 'es',
+        uploadUrl       : "upload.php",
+        showRemove      : true,
+        showUpload      : true,
+        autoReplace     : true,
+        maxFileCount    : 1,
+        maxFileSize     : 1024,
+        uploadAsync     : false,
+        allowedFileExtensions : ['jpg','gif','png'],
+        uploadExtraData : function() {
+            return { datos : $scope.imagen };
+        }
+
+    })
+    .on('filebatchpreupload', function( event, data, previewId, index ) {
+        console.log( "1", data.response );
+    })
+    .on('fileuploaded', function( event, data, previewId, index ) {
+        console.log( "2", data.response );
+    })
+    .on('filebatchuploadsuccess', function( event, data, previewId, index ) {
+        console.log( "3", data.response );
+    })
+    .on('filebatchuploaderror', function( event, data, msg ) {
+        console.log( "4", data );
+    })
+    .on('fileuploaderror', function( event, data, msg ) {
+        console.log( "5", data );
+    });
+
+  
+    $(function () {
+        $('#cargando').removeAttr("style"); 
+    });
+
+    $scope.loading = false;
 
 });
 
