@@ -29,9 +29,15 @@ app.controller('clienteCtrl', function( $scope, $http ){
 			alertify.set('notifier','position', 'top-right');
  			alertify.notify('Ingrese nombre y tipo de cliente para guardar', 'warning', 3);
 		}else{
+			//validar accion a realizar
+			var accion = 'insert';
+			if ( $scope.cliente.idCliente > 0 ) {
+				accion = 'update';
+			}
+			
 			$http.post('consultas.php',{
 				opcion:"consultaCliente",
-				accion:'insert',
+				accion:accion,
 				cliente: $scope.cliente
 			}).success(function(data){
 				console.log(data);
@@ -56,9 +62,29 @@ app.controller('clienteCtrl', function( $scope, $http ){
 				opcion:"consultarCliente",
 				valor: valor
 			}).success(function(data){
-				console.log(data);
-				
+				var encontrados = data.length;
+				if (encontrados == 1 ) {
+					$scope.clienteMenu = 1;
+					$scope.cliente = data[0]
+					$scope.cliente.cui      = parseInt(data[0].cui);
+					$scope.cliente.telefono = parseInt(data[0].telefono);
+				}else if( encontrados > 1 ){
+					$scope.masEncontrados = 1;
+					$scope.lstClienteEncontrado = data;
+				}else{
+					alertify.set('notifier','position', 'top-right');
+ 					alertify.notify('Ningún cliente localizado', 'warning', 3);
+				}
 			})
 		}
-	}
+	};
+
+	$scope.editarCliente = function(cliente){
+		$scope.cliente          = angular.copy(cliente);
+		$scope.cliente.cui      = parseInt(cliente.cui);
+		$scope.cliente.telefono = parseInt(cliente.telefono);
+		$scope.masEncontrados   = 0;
+		$scope.clienteMenu      = 1;
+	};
+
 });

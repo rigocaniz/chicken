@@ -3,12 +3,12 @@
 		<div class="col-sm-12">
 			<!-- TABS -->
 			<ul class="nav nav-tabs tabs-title" role="tablist">
-				<li role="presentation" ng-class="{'active' : clienteMenu==1}" ng-click="clienteMenu=1">
+				<li role="presentation" ng-class="{'active' : clienteMenu==1}" ng-click="clienteMenu=1;cliente={}">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-user"></span> NUEVO CLIENTE
 					</a>
 				</li>
-				<li role="presentation" ng-class="{'active' : clienteMenu==2}" ng-click="clienteMenu=2">
+				<li role="presentation" ng-class="{'active' : clienteMenu==2}" ng-click="clienteMenu=2;txtCliente=''">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-list"></span> ADMIN CLIENTE
 					</a>
@@ -24,7 +24,7 @@
 								<div class="form-group">
 									<label class="col-sm-2">Nit</label>
 									<div class="col-sm-3 has-success">
-										<input type="number"  ng-model="cliente.nit" class="form-control"  maxlength="15" autofocus>
+										<input type="text"  ng-model="cliente.nit" class="form-control"  maxlength="15" autofocus>
 									</div> 
 								</div>
 								<div class="form-group">
@@ -92,7 +92,7 @@
 							</div>
 						</div>
 						<!-- listado busqueda por nombre -->
-						<div class="panel panel-info">
+						<div class="panel panel-info" ng-show="masEncontrados==1">
 							<div class="panel-heading">
 								<h3 class="panel-title">CLIENTES ENCONTRADOS</h3>
 							</div>
@@ -108,8 +108,16 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr>
-											<td></td>
+										<tr ng-repeat="en in lstClienteEncontrado">
+											<td>{{en.nombre}}</td>
+											<td>{{en.nit}}</td>
+											<td>{{en.cui}}</td>
+											<td>{{en.direccion}}</td>
+											<td>
+												<button type="button" class="btn btn-info btn-sm" ng-click="editarCliente(en)">
+												<span class="glyphicon glyphicon-pencil"></span>
+											</button>
+											</td>
 										</tr>
 									</tbody>
 								</table>
