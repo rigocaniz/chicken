@@ -25,6 +25,8 @@ class Validar
 			$valor = $default;
 			$this->error = TRUE;
 		endif;
+
+		return $valor;
 	}
 
 
@@ -45,6 +47,8 @@ class Validar
 			$valor = $default;
 			$this->error = TRUE;
 		endif;
+
+		return $valor;
 	}
 
 	

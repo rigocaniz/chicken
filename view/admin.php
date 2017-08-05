@@ -19,7 +19,7 @@
 					</a>
 				</li>
 			</ul>
-			{{ accion }}
+
 			<!-- TAB PANELES -->
 			<div class="tab-content">
 				<!--  PRODUCTOS DEL INVENTARIO -->

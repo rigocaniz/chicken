@@ -70,12 +70,11 @@ else
 			$sql = "SELECT imagen FROM superCombo WHERE idSuperCombo = {$id};";
 		
 		if( $rs = $conexion->query( $sql ) ){
-			if( $row = $rs->fetch_object() ){
+			if( $row = $rs->fetch_object() )
 				$imagen = $row->imagen;
-			}
 
 			if( $tipo == 'menu' )		// MENU
-			$sql = "UPDATE menu SET imagen = '{$rutaArchivo}' WHERE idMenu = {$id};";
+				$sql = "UPDATE menu SET imagen = '{$rutaArchivo}' WHERE idMenu = {$id};";
 		
 			elseif( $tipo == 'combo' )	// COMBO
 				$sql = "UPDATE combo SET imagen = '{$rutaArchivo}' WHERE idCombo = {$id};";

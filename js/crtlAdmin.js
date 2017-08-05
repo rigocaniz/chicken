@@ -5,11 +5,11 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 	$scope.$on('cargarLista', function( event, data ){
 		console.log( ":::", event, ":::", data );
 		if( data == 'menu' )
-			$scope.cargarListaMenu();
+			$scope.verListaMenu();
 		else if( data == 'combo' )
-			$scope.cargarListaCombos();
+			$scope.verListaCombos();
 		else if( data == 'supercombo' )
-			$scope.cargarListaCombos();
+			$scope.verListaSuperCombos();
 
 	});
 
@@ -60,7 +60,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
         }
     };
 
-	$scope.cargarListaMenu = function(){
+	$scope.verListaMenu = function(){
 		$http.post('consultas.php',{
 			opcion : 'lstMenu',
 			filtro : $scope.filtro
@@ -70,7 +70,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 		})
 	};
 
-	$scope.cargarListaCombos = function(){
+	$scope.verListaCombos = function(){
 		$http.post('consultas.php',{
 			opcion:'lstCombo'
 		}).success(function(data){
@@ -81,8 +81,8 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 
 	($scope.inicio = function()
 	{
-		$scope.cargarListaMenu();
-		$scope.cargarListaCombos();
+		$scope.verListaMenu();
+		$scope.verListaCombos();
 	})();
 
 
@@ -260,7 +260,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
 				if ( data.respuesta == 'success' ) {
-					$scope.cargarListaCombos();
+					$scope.verListaCombos();
 					$scope.dialAdminCombo.hide();
 					if( combo.subirImagen )
 						$scope.$parent.asignarValorImagen( data.data, 'combo' );
