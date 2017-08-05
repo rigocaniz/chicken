@@ -40,7 +40,8 @@
 							  	<div class="col-sm-3" ng-repeat="m in lstMenu">
 							    	<div class="thumbnail">
 								    	<span class="label label-info">{{ m.destinoMenu }}</span>
-								      	<img ng-src="{{ m.imagen }}" alt="{{ m.menu }}" ng-click="asignarValorImagen( m.idMenu, 'menu', 'actualizar' )">
+
+								      	<img ng-src="{{ m.imagen }}" alt="{{ m.menu }}" ng-click="asignarValorImagen( m.idMenu, 'menu' )">
 								      	<div class="caption">
 								        	<p>
 								        		<strong>{{ m.menu | uppercase }}</strong> 
@@ -122,17 +123,7 @@
 								<br>
 							  	<div class="col-xs-6 col-sm-4 col-md-3" ng-repeat="c in lstCombos">
 							    	<div class="thumbnail">
-							    		<div class="container">
-  											<img ng-src="{{ c.imagen }}" alt="Avatar" class="image img-thumbnail">
-  											<div class="overlay">
-    											<div class="text">
-    												Click Aquí<br>
-    												Actualizar Imagen
-    											</div>
-  											</div>
-										</div>
-
-							      		<img ng-src="{{ c.imagen }}" alt="">
+							      		<img ng-src="{{ c.imagen }}" class="img-thumbnail" ng-click="asignarValorImagen( c.idCombo, 'combo' )">
 							      		<div class="caption">
 							        		<h4>
 							        			<strong>{{ c.combo }}</strong> 
