@@ -129,8 +129,11 @@
     <script src="js/crtlNuevoEdita.js"></script>
     <script src="js/crtlAdmin.js"></script>
     <script src="js/crtlOrden.js"></script>
+    <script src="js/crtlReporte.js"></script>
+    <script src="js/crtlMantenimiento.js"></script>
     <script src="js/alertify.js"></script>
-     <script>
+
+    <script>
     // Closes the sidebar menu
     $("#menu-close").click(function(e) {
         e.preventDefault();
