@@ -93,6 +93,14 @@ app.config(function($routeProvider) {
         templateUrl:'view/orden.php',
         controller:'crtlOrden'
     })
+    .when('/reporte',{
+        templateUrl:'view/reporte.php',
+        controller:'reporteCtrl'
+    })
+    .when('/mantenimiento',{
+        templateUrl:'view/mantenimiento.php',
+        controller:'mantenimientoCtrl'
+    })
 	.otherwise({
         redirectTo:'/'
     });
