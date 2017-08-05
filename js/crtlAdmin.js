@@ -2,6 +2,10 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 
 	$scope.inventarioMenu = 2;
 
+	$scope.$on('cargarLista', function( event, data ){
+		console.log( ":::", event, ":::", data );
+	});
+
 	$scope.filtro = {
 		filter : { filter: 'idMedida', value : 8 },
 		order  : { by: 'idMedia', order: 'ASC' },
@@ -197,7 +201,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 	$scope.resetValores = function( accion ){
 		$scope.accion == 'insert';
 
-		if( accion == 'combo' ){
+		if( accion == 'menu' ){
 			$scope.menu = {
 				'idEstadoMenu'  : 1,
 				'menu'          : '',
@@ -251,7 +255,11 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 				if ( data.respuesta == 'success' ) {
 					$scope.cargarListaCombos();
 					$scope.dialAdminCombo.hide();
-					$scope.combo = {};
+					if( combo.subirImagen )
+						$scope.$parent.asignarValorImagen( data.data, 'combo' );
+
+					$scope.resetValores( 'combo' );
+
 				}
 			})
 		}

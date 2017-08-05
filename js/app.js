@@ -109,22 +109,24 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     };
 
     $scope.imagen = {
-        id   : null,
-        tipo : ''
+        id     : null,
+        tipo   : '',
+        accion : ''
     };
 
     $scope.resetImagen = function(){
         $scope.imagen = {
-            id   : null,
-            tipo : ''
+            id     : null,
+            tipo   : '',
+            accion : ''
         };
         $( '#subirImagen' ).modal( 'hide' );
     };
 
     // ASIGNAR VALOR OBJ IMAGEN
     $scope.asignarValorImagen = function( id, tipo ){
-        $scope.imagen.id   = id;
-        $scope.imagen.tipo = tipo;
+        $scope.imagen.id     = id;
+        $scope.imagen.tipo   = tipo;
         $( '#subirImagen' ).modal( 'show' );
     };
 
@@ -156,6 +158,9 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     })
     .on('filebatchuploadsuccess', function( event, data, previewId, index ) {
         console.log( "3", data.response );
+        if( data.response.respuesta )
+            $rootScope.$broadcast('cargarLista', "pruebassss" );
+
     })
     .on('filebatchuploaderror', function( event, data, msg ) {
         console.log( "4", data );

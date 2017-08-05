@@ -39,8 +39,8 @@
 							<div class="row">
 							  	<div class="col-sm-3" ng-repeat="m in lstMenu">
 							    	<div class="thumbnail">
-								    	<span class="label label-info">{{m.destinoMenu}}</span>
-								      	<img src="upload/Logo.png" alt="...">
+								    	<span class="label label-info">{{ m.destinoMenu }}</span>
+								      	<img ng-src="{{ m.imagen }}" alt="{{ m.menu }}" ng-click="asignarValorImagen( m.idMenu, 'menu', 'actualizar' )">
 								      	<div class="caption">
 								        	<p>
 								        		<strong>{{ m.menu | uppercase }}</strong> 
@@ -108,7 +108,7 @@
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==2}" ng-show="inventarioMenu==2">
 					<div class="panel panel-primary">
 						<div class="panel-heading">
-							<h3 class="panel-title">Menus</h3>
+							<h3 class="panel-title">MENUS</h3>
 						</div>
 						<div class="panel-body">
 							<div class="text-right">
@@ -122,6 +122,16 @@
 								<br>
 							  	<div class="col-xs-6 col-sm-4 col-md-3" ng-repeat="c in lstCombos">
 							    	<div class="thumbnail">
+							    		<div class="container">
+  											<img ng-src="{{ c.imagen }}" alt="Avatar" class="image img-thumbnail">
+  											<div class="overlay">
+    											<div class="text">
+    												Click Aquí<br>
+    												Actualizar Imagen
+    											</div>
+  											</div>
+										</div>
+
 							      		<img ng-src="{{ c.imagen }}" alt="">
 							      		<div class="caption">
 							        		<h4>
