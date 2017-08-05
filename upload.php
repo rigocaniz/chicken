@@ -3,11 +3,14 @@
 * SUBIR ARCHIVOS [ IMAGENES ]
 */
 
+define('MB', 1048576);
+
 // VARIABLES GENERALES
 $mensaje   = "";		// MENSAJE
 $respuesta = 0;			// RESPUESTA
 $error     = FALSE;		// ERROR
 $imagen    = "";		// UBICACIÓN IMAGEN BD
+$tipo      = "";
 
 if( !isset( $_POST['id'] ) && !isset( $_POST['tipo'] ) || !isset( $_FILES ) )
 {
@@ -22,7 +25,7 @@ else if( getimagesize( $_FILES[ 'imagen' ][ 'tmp_name' ]) == false )
 	$mensaje = "El archivo cargado no es una imagen";
 }
 
-else if( $_FILES[ 'imagen' ][ 'size' ] > 200000 )
+else if( $_FILES[ 'imagen' ][ 'size' ] > (2 * MB) )
 {
 	$error   = TRUE;
 	$mensaje = "El archivo supera los 2MB de peso permitido";
@@ -46,10 +49,7 @@ else
 	$errorArchivo   = $_FILES[ 'imagen' ][ 'error' ];
 	$pesoArchivo    = $_FILES[ 'imagen' ][ 'size' ];
 
-	$idUnico        = uniqid();
-
-	$info           = new SplFileInfo( $_FILES[ 'imagen' ][ 'name' ] );		// OBTENER EXTENSIÓN
-	$nombreArchivo  = $id . '_' . $nombreArchivo . '_' . $idUnico;
+	$nombreArchivo  = uniqid() . '_' . $nombreArchivo;
 	$rutaArchivo    = $carpeta . $nombreArchivo; 		// DIRECTORIO + ARCHIVO
 
 	//echo basename( $_FILES["imagen"]["name"] );
@@ -61,7 +61,7 @@ else
 		$conexion->query( "START TRANSACTION" );
 
 		if( $tipo == 'menu' )		// MENU
-			$sql = "SELECT imagen FROM menu WHERE idMenu = {$id};"
+			$sql = "SELECT imagen FROM menu WHERE idMenu = {$id};";
 		
 		elseif( $tipo == 'combo' )	// COMBO
 			$sql = "SELECT imagen FROM combo WHERE idCombo = {$id};";
@@ -69,11 +69,26 @@ else
 		elseif( $tipo == 'supercombo' )	// SUPERCOMBO
 			$sql = "SELECT imagen FROM superCombo WHERE idSuperCombo = {$id};";
 		
-		if( $rs = $this->con->query( $sql ) ){
-			@$this->con->next_result();
+		if( $rs = $conexion->query( $sql ) ){
 			if( $row = $rs->fetch_object() ){
 				$imagen = $row->imagen;
 			}
+
+			if( $tipo == 'menu' )		// MENU
+			$sql = "UPDATE menu SET imagen = '{$rutaArchivo}' WHERE idMenu = {$id};";
+		
+			elseif( $tipo == 'combo' )	// COMBO
+				$sql = "UPDATE combo SET imagen = '{$rutaArchivo}' WHERE idCombo = {$id};";
+			
+			elseif( $tipo == 'supercombo' )	// SUPERCOMBO
+				$sql = "UPDATE superCombo SET imagen = '{$rutaArchivo}' WHERE idSuperCombo = {$id};";
+
+			if( !$rs = $conexion->query( $sql ) ){
+				$error   = TRUE;
+				$mensaje = "ERROR al actualizar la imagen, vuelva a intentarlo";
+			}
+
+
 		}
 		else{
 			$this->respuesta = 'danger';
@@ -114,9 +129,9 @@ else
 
 
 if( $error )
-	$response = array( "respuesta" => $respuesta, "mensaje" => $mensaje, "error" => $mensaje );
+	$response = array( "accion" => $tipo, "respuesta" => $respuesta, "mensaje" => $mensaje, "error" => $mensaje );
 else
-	$response = array( "respuesta" => $respuesta, "mensaje" => $mensaje );
+	$response = array( "accion" => $tipo, "respuesta" => $respuesta, "mensaje" => $mensaje );
 
 
 echo json_encode( $response ); 

@@ -28,22 +28,22 @@ class Cliente
  		$idCliente = "NULL";
 
  		if( $accion == 'update' ):
- 			$cliente->idCliente = strlen( (int)$cliente->idCliente ) > 0 ? (int)$cliente->nit : NULL;
- 			$idCliente = $validar->validarNumero( $cliente->idCliente, NULL, TRUE, 1  );
- 		endif;
+ 			$cliente->idCliente = strlen( (int)$cliente->idCliente ) > 0 ? (int)$cliente->idCliente : NULL;
+ 			$idCliente          = $validar->validarNumero( $cliente->idCliente, NULL, TRUE, 1  );
+ 		endif; 		
 
  		// SET
  		$cliente->nit           = strlen( (int)$cliente->nit ) > 0 		? (string)$cliente->nit 		: NULL;
  		$cliente->nombre        = strlen( $cliente->nombre ) > 0 		? (string)$cliente->nombre 		: NULL;
- 		$cliente->cui           = strlen( $cliente->cui ) > 0 		? $cliente->cui 			: NULL;
+ 		$cliente->cui           = strlen( $cliente->cui ) > 0 			? (double)$cliente->cui 		: NULL;
  		$cliente->correo        = strlen( $cliente->correo ) > 0 		? (string)$cliente->correo 		: NULL;
  		$cliente->telefono      = strlen( $cliente->telefono ) > 0 		? (int)$cliente->telefono 		: NULL;
  		$cliente->direccion     = strlen( $cliente->direccion ) > 0 	? (string)$cliente->direccion 	: NULL;
- 		$cliente->idTipoCliente = strlen( $cliente->idTipoCliente ) > 0 ? (int)$cliente->idTipoCliente 	: NULL;
+ 		$cliente->idTipoCliente = (int)$cliente->idTipoCliente > 0 		? (int)$cliente->idTipoCliente 	: NULL;
 
  		// VALIDAR
-		$nit           = $validar->validarNit( $cliente->nit, NULL, !esNulo( $cliente->cui ) );
-		$nombre        = $validar->validarNombre( $cliente->nombre, NULL, !esNulo( $cliente->cui ) );
+		$nit           = $validar->validarNit( $cliente->nit, NULL, !esNulo( $cliente->nit ) );
+		$nombre        = $validar->validarNombre( $cliente->nombre, NULL, !esNulo( $cliente->nombre ) );
 		$cui           = $validar->validarCui( $cliente->cui, NULL, !esNulo( $cliente->cui ) );
 		$correo        = $validar->validarCorreo( $cliente->correo, NULL, !esNulo( $cliente->correo ) );
 		$telefono      = $validar->validarTelefono( $cliente->telefono, NULL, !esNulo( $cliente->telefono ) );

@@ -71,54 +71,47 @@
             </li>
         </ul>
     </nav>
-    <button type="button" class="btn btn-success" ng-click="asignarValorImagen( 1, 'menu' )">
-        SUBIR
-    </button>
    <div ng-view></div>
 
+    <button type="button" class="btn btn-success" ng-click="asignarValorImagen( 1, 'menu', 'actualizar' )">
+        SUBIR
+    </button>
 
-   <!-- MODAL SUBIR IMAGEN -->
-   <div class="modal fade" tabindex="-1" id="subirImagen" role="dialog">
+    <!-- MODAL SUBIR IMAGEN -->
+    <div class="modal fade" tabindex="-1" id="subirImagen" role="dialog">
         <div class="modal-dialog" role="document">
-            <div class="modal-content panel-warning">
+            <div class="modal-content panel-primary">
                 <div class="modal-header panel-heading text-center">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" ng-click="resetImagen()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                     <span class="glyphicon glyphicon-picture"></span> SUBIR IMAGEN
                 </div>
                 <div class="modal-body">
-                    {{ imagen | json }}
                     <form name="$parent.subirImagen" enctype="multipart/form-data">
-                        <label>SELECCIONE UNA IMAGEN</label>
-                        <input id="imagen" name="imagen" type="file">
+                        <div class="form-group">
+                            <span class="badge">CAMBIAR IMAGEN</span>
+                            <div class="pull-right">
+                                <label class="label label-info" style="font-size: 1.2em">
+                                    {{ imagen.tipo | uppercase }} #{{ imagen.id }}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>SELECCIONE UNA IMAGEN</label>
+                            <input id="imagen" name="imagen" type="file">
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-default" ng-click="resetImagen()">
+                        <span class="glyphicon glyphicon-log-out"></span> Cerrar
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script type="text/ng-template" id="dial.html">
-        <div class="modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content panel-warning">
-                    <div class="modal-header panel-heading">
-                        <button type="button" class="close" ng-click="resetImagen()">&times;</button>
-                        
-                    </div>
-                    <div class="modal-body">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" ng-click="resetImagen()">
-                            <span class="glyphicon glyphicon-log-out"></span>
-                            <b>Salir</b>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </script>
 
 	<!-- jQuery -->
     <script src="js/libs/jquery-3.2.1.min.js"></script>
