@@ -110,9 +110,10 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http ){
 
 
     $scope.imagen = {
-        id: null,
-        tipo: '',
+        id   : 1,
+        tipo : 'menu'
     };
+
     // ASIGNAR VALOR OBJ IMAGEN
     $scope.asignarValorImagen = function( id, tipo ){
         $scope.imagen.id   = id;
@@ -121,17 +122,21 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http ){
 
     // IMAGEN
     $("#imagen").fileinput({
-        language        : 'es',
-        uploadUrl       : "upload.php",
-        showRemove      : true,
-        showUpload      : true,
-        autoReplace     : true,
-        maxFileCount    : 1,
-        maxFileSize     : 1024,
-        uploadAsync     : false,
-        allowedFileExtensions : ['jpg','gif','png'],
+        language              : 'es',
+        uploadUrl             : "upload.php",
+        showRemove            : true,
+        showUpload            : true,
+        autoReplace           : true,
+        maxFileCount          : 1,
+        cache                 : false,
+        maxFileSize           : 2048,
+        uploadAsync           : false,
+        allowedFileExtensions : ['jpeg','jpg','gif','png'],
         uploadExtraData : function() {
-            return { datos : $scope.imagen };
+            return { 
+                id   : $scope.imagen.id,
+                tipo : $scope.imagen.tipo
+            };
         }
 
     })
