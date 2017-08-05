@@ -98,8 +98,7 @@
     <script src="js/libs/dirPagination.js"></script>
     
     <script src="js/libs/fileinput.js"></script>
-    <script src="js/libs/fileinput_locale_es.js"></script>
-
+    
     <script src="js/app.js"></script>
     <script src="js/crtlCliente.js"></script>
     <script src="js/crtlInventario.js"></script>
