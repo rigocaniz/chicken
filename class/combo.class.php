@@ -300,7 +300,7 @@ class Combo
  		endif;
 
 		$combo        = $validar->validarTexto( $data->combo, NULL, TRUE, 3, 45, 'el nombre del combo' );
-		$descripcion  = $validar->validarTexto( $data->descripcion, NULL, TRUE, 15, 45, 'la descripcion' );
+		$descripcion  = $validar->validarTexto( $data->descripcion, NULL, TRUE, 15, 1500, 'la descripcion' );
 		$idEstadoMenu = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado combo no es válido, verifique.' );
 
 

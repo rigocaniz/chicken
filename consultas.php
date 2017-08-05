@@ -39,6 +39,8 @@ switch ( $data->opcion )
 		$datos[ 'lstDestinoMenu' ]   = $consulta->catDestinoMenu();
 		$datos[ 'lsTipoMenu' ]       = $consulta->catTipoMenu();
 		$datos[ 'lstTiposServicio' ] = $consulta->catTiposServicio();
+		$datos[ 'lstEstadosMenu' ]   = $consulta->catEstadoMenu();
+		
 		echo json_encode( $datos );
 		break;
 		

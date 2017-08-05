@@ -109,7 +109,7 @@
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==2}" ng-show="inventarioMenu==2">
 					<div class="panel panel-primary">
 						<div class="panel-heading">
-							<h3 class="panel-title">MENUS</h3>
+							<h3 class="panel-title">LISTADO DE COMBOS</h3>
 						</div>
 						<div class="panel-body">
 							<div class="text-right">
@@ -123,7 +123,7 @@
 								<br>
 							  	<div class="col-xs-6 col-sm-4 col-md-3" ng-repeat="c in lstCombos">
 							    	<div class="thumbnail">
-							      		<img ng-src="{{ c.imagen }}" class="img-thumbnail" ng-click="asignarValorImagen( c.idCombo, 'combo' )">
+							      		<img ng-src="{{ c.imagen }}" class="img-responsive" ng-click="asignarValorImagen( c.idCombo, 'combo' )">
 							      		<div class="caption">
 							        		<h4>
 							        			<strong>{{ c.combo }}</strong> 
@@ -131,9 +131,9 @@
 							        		Estado <span class="label label-success">{{c.estadoMenu}}</span>
 							        		<p>{{c.descripcion}}</p>
 							        		<p>
-							        			<a ng-href="#/nuevoEdita/combo/{{c.idCombo}}" type="button" class="btn btn-primary btn-sm">
+							        			<button type="button" class="btn btn-sm btn-primary" ng-click="actualizarMenuCombo( 'combo', c )">
 													<span class="glyphicon glyphicon-edit"></span> Editar
-												</a>
+							        			</button>
 											</p>
 							      		</div>
 							    	</div>
@@ -343,7 +343,6 @@
 										  		{{ dm.destinoMenu }}
 										  	</button>
 										</div>
-										
 									</div>
 								</div>
 							</div>
@@ -467,18 +466,26 @@
 						<legend class="legend">DATOS</legend>
 						<!-- FORMULARIO COMBO -->
 						<form class="form-horizontal" role="form" name="formCombo">
+							<div class="form-group text-center" ng-show="accion == 'update'">
+								<img ng-src="{{ combo.imagen }}" alt="combo" class="img-circle img-portada">
+								<br>
+								<span class="badge">Codigo Combo #{{ combo.idCombo }}</span>
+							</div>
+							<div class="form-group" ng-show="accion == 'update'">
+								<label class="col-sm-4 control-label ">ESTADO DEL COMBO</label>
+								<div class="col-sm-6">
+									<div class="btn-group btn-group-sm" role="group">
+									  	<button type="button" class="btn btn-default" ng-class="{'btn-info': estadoMenu.idEstadomenu == combo.idEstadoMenu}" ng-click="combo.idEstadoMenu = estadoMenu.idEstadoMenu" ng-repeat="estadoMenu in lstEstadosMenu">
+									  		<span class="glyphicon" ng-class="{'glyphicon-check': estadoMenu.idEstadoMenu == combo.idEstadoMenu, 'glyphicon-unchecked': estadoMenu.idEstadoMenu != combo.idEstadoMenu}"></span>
+									  		{{ estadoMenu.estadoMenu }}
+									  	</button>
+									</div>
+								</div>
+							</div>
 							<div class="form-group">
 								<label class="control-label col-sm-2">Nombre Combo</label>
 								<div class="col-sm-8 ">
 									<input type="text" class="form-control" ng-model="combo.combo" maxlength="45" required>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-2" ng-show="id>0">Estado Menu</label>
-								<div class="col-sm-2" ng-show="id>0">
-									<select class="form-control" ng-model="combo.idEstadoMenu" >
-										<option ng-repeat="e in lstEstadoMenu" value="{{e.idEstadoMenu}}">{{e.estadoMenu}}</option>
-									</select>
 								</div>
 							</div>
 							<div class="form-group">

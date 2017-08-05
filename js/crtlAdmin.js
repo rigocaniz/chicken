@@ -33,6 +33,8 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 	$scope.lstDestinoMenu  = [];
 	$scope.lstTipoMenu     = [];
 	$scope.lstTipoServicio = [];
+	$scope.lstEstadosMenu  = [];
+
 	$scope.lstCombos       = [];
 	$scope.lstMenu         = [];
 	$scope.menu            = {};
@@ -47,6 +49,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
             $scope.lstDestinoMenu  = data.lstDestinoMenu || [];
             $scope.lstTipoMenu     = data.lsTipoMenu || [];
             $scope.lstTipoServicio = data.lstTiposServicio || [];
+            $scope.lstEstadosMenu  = data.lstEstadosMenu || [];
         })
 	})();
 
@@ -85,6 +88,31 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 		$scope.verListaCombos();
 	})();
 
+
+	$scope.actualizarMenuCombo = function( tipo, data )
+	{
+		console.log( 'tipo: ', tipo, ' data: ', data );
+		$scope.accion = 'update';
+			if( tipo == 'menu' ){
+				$scope.menu = {
+					'idEstadoMenu'  : 1,
+					'menu'          : '',
+					'idDestinoMenu' : 1,
+					'idTipoMenu'    : 1,
+					'descripcion'   : '',
+					'imagen'        : '',
+					'subirImagen'   : true,
+					'lstPrecios'    : []
+				};
+
+				$scope.dialAdminMenu.show();
+			}
+
+			else if( tipo == 'combo' ){
+				$scope.combo = data
+				$scope.dialAdminCombo.show();
+			}
+	};
 
 	$scope.agregarMenuCombo = function( tipo ){
 		console.log( 'tipo: ', tipo );
