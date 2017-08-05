@@ -71,14 +71,14 @@
             </li>
         </ul>
     </nav>
+   <div ng-view></div>
+
     <button type="button" class="btn btn-success" ng-click="asignarValorImagen( 1, 'menu', 'actualizar' )">
         SUBIR
     </button>
-   <div ng-view></div>
 
-
-   <!-- MODAL SUBIR IMAGEN -->
-   <div class="modal fade" tabindex="-1" id="subirImagen" role="dialog">
+    <!-- MODAL SUBIR IMAGEN -->
+    <div class="modal fade" tabindex="-1" id="subirImagen" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content panel-primary">
                 <div class="modal-header panel-heading text-center">
