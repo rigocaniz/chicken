@@ -56,6 +56,8 @@ class Validar
 
 		$warning = FALSE;
 
+		//echo $valor;
+
 		if( !(strlen( $valor ) == 13) ):
 			$warning = TRUE;
 			$this->mensaje = 'No. de CUI inválido, verifique que tenga 13 dígitos.'.$valor;
@@ -78,7 +80,7 @@ class Validar
 
 		$warning = FALSE;
 
-		if( !(strlen( (int)$valor ) >= 8) ):
+		if( !(strlen( $valor ) >= 8) ):
 			$warning = TRUE;
 			$this->mensaje = 'No. de NIT inválido, verifique.';
 			$this->tiempo  = 4;
