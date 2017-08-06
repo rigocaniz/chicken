@@ -1,7 +1,11 @@
 <div class="contenedor">
 	<div class="row">
 		<div class="col-sm-12">
-			<!-- Nav tabs -->
+			<!--
+			<div class="pull-right">
+                <img class="img-responsive" src="img/logo_churchil.png" style="height: 100px;">
+            </div>
+
 			<ul class="nav nav-tabs tabs-title" role="tablist">
 				<li role="presentation" ng-class="{'active' : menuTab=='menu'}" ng-click="verListaMenu(); resetValores(); menuTab='menu'">
 					<a href="" role="tab" data-toggle="tab">
@@ -19,6 +23,36 @@
 					</a>
 				</li>
 			</ul>
+			-->
+
+			<nav class="navbar">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						
+							<img alt="Brand" class="navbar-brand" src="img/logo_churchil.png" style="height: 58px;">
+						
+					</div>
+
+					<ul class="nav nav-tabs tabs-title" role="tablist">
+						<li role="presentation" ng-class="{'active' : menuTab=='menu'}" ng-click="verListaMenu(); resetValores(); menuTab='menu'">
+							<a href="" role="tab" data-toggle="tab">
+								<span class="glyphicon glyphicon-list"></span> MENUS
+							</a>
+						</li>
+						<li role="presentation" ng-class="{'active' : menuTab=='combo'}" ng-click="verListaCombos(); resetValores(); menuTab='combo'">
+							<a href="" role="tab" data-toggle="tab">
+								<span class="glyphicon glyphicon-list-alt"></span> COMBOS
+							</a>
+						</li>
+						<li role="presentation" ng-class="{'active' : menuTab=='superCombo'}" ng-click="resetValores(); menuTab='superCombo'">
+							<a href="" role="tab" data-toggle="tab">
+								<span class="glyphicon glyphicon-book"></span> RECETAS
+							</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+
 
 			<!-- TAB PANELES -->
 			<div class="tab-content">
@@ -60,29 +94,16 @@
 													<span class="glyphicon glyphicon-list"></span> Receta
 												</a>
 											</p>
-											<div class="btn-group" role="group" aria-label="...">
-											  	<button type="button" class="btn btn-default">1</button>
-											  	<div class="btn-group" role="group">
-											    	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-											      		Opciones <span class="caret"></span>
-											    	</button>
-											    	<ul class="dropdown-menu">
-											      		<li><a href="#">Dropdown link</a></li>
-											      		<li><a href="#">Dropdown link</a></li>
-											    	</ul>
-											  	</div>
-											</div>
-											<div class="btn-group-vertical" role="group" aria-label="...">
-											  	<button type="button" class="btn btn-default">
-											  		<span class="glyphicon glyphicon-edit"></span> Editar
-											  	</button>
-											  	<button type="button" class="btn btn-default">
-											  		<span class="glyphicon glyphicon-th-list"></span> Receta
-											  	</button>
-											  	<button type="button" class="btn btn-default">
-											  		<span class="glyphicon glyphicon-list-alt"></span> Precios
-											  	</button>
-											</div>
+
+										  	<div class="btn-group btn-group-sm" role="group">
+										    	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										      		Opciones <span class="caret"></span>
+										    	</button>
+										    	<ul class="dropdown-menu">
+										      		<li><a href="#">Editar</a></li>
+										      		<li><a href="#">Receta</a></li>
+										    	</ul>
+										  	</div>
 								      	</div>
 							    	</div>
 							  	</div>
@@ -199,7 +220,7 @@
 
 				<!-- PAGINADOR -->
 				<nav>
-					<ul class="pagination" ng-show="lstPaginacion.length > 1">
+					<ul class="pagination pagination-lg" ng-show="lstPaginacion.length > 1">
 						<li ng-class="{disabled: filter.pagina == 1 }">
 							<a href="" ng-click="cargarPaginacion( 1 );" aria-label="Previous">
 								<span aria-hidden="true">&laquo;</span>

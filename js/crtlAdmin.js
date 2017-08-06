@@ -85,6 +85,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 			$scope.generarPaginacion( data.totalPaginas );
 		})
 	};
+	$scope.verListaMenu();
 
 	// VER LISTA DE COMBOS
 	$scope.verListaCombos = function(){
