@@ -22,7 +22,7 @@
 
 			<!-- TAB PANELES -->
 			<div class="tab-content">
-				<!--  PRODUCTOS DEL INVENTARIO -->
+				<!--  MENUS -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==1}" ng-show="inventarioMenu==1">
 					<div class="panel panel-primary">
 						<div class="panel-heading">
@@ -52,9 +52,10 @@
 								        	</p>
 								        	<hr>
 								        	<p>
-								        		<a ng-href="#/nuevoEdita/menu/{{m.idMenu}}" type="button" class="btn btn-primary btn-sm">
-													<span class="glyphicon glyphicon-edit"></span> Editar
-												</a>
+								        		<button type="button" class="btn btn-primary" ng-click="actualizarMenuCombo( 'menu', m)">
+								        			<span class="glyphicon glyphicon-edit"></span> Editar
+								        		</button>
+
 												<a href="#" type="button" class="btn btn-info btn-sm">
 													<span class="glyphicon glyphicon-list"></span> Receta
 												</a>
@@ -321,12 +322,20 @@
 						<legend class="legend">DATOS</legend>
 						<!-- FORMULARIO MENU -->
 						<form class="form-horizontal" role="form" name="formMenu">
+							<div class="form-group text-center" ng-show="accion == 'update'">
+								<img ng-src="{{ menu.imagen }}" alt="MENU" class="img-circle img-portada">
+								<br>
+								<span class="badge">Codigo Menú #{{ menu.idMenu }}</span>
+							</div>
 							<div class="form-group" ng-show="accion == 'update'">
-								<label class="col-sm-2" ng-show="id>0">Estado Menu</label>
-								<div class="col-sm-2" ng-show="id>0">
-									<select class="form-control" ng-model="menu.idEstadoMenu" >
-										<option ng-repeat="e in lstEstadoMenu" value="{{e.idEstadoMenu}}">{{e.estadoMenu}}</option>
-									</select>
+								<label class="col-sm-4">ESTADO DEL MENÚ</label>
+								<div class="col-sm-6">
+									<div class="btn-group btn-group-sm" role="group">
+									  	<button type="button" class="btn btn-default" ng-class="{'btn-info': estadoMenu.idEstadoMenu == menu.idEstadoMenu}" ng-click="menu.idEstadoMenu = estadoMenu.idEstadoMenu" ng-repeat="estadoMenu in lstEstadosMenu">
+									  		<span class="glyphicon" ng-class="{'glyphicon-check': estadoMenu.idEstadoMenu == menu.idEstadoMenu, 'glyphicon-unchecked': estadoMenu.idEstadoMenu != menu.idEstadoMenu}"></span>
+									  		{{ estadoMenu.estadoMenu }}
+									  	</button>
+									</div>
 								</div>
 							</div>
 							<div class="form-group">
@@ -472,7 +481,7 @@
 								<span class="badge">Codigo Combo #{{ combo.idCombo }}</span>
 							</div>
 							<div class="form-group" ng-show="accion == 'update'">
-								<label class="col-sm-4 control-label ">ESTADO DEL COMBO</label>
+								<label class="col-sm-4">ESTADO DEL COMBO</label>
 								<div class="col-sm-6">
 									<div class="btn-group btn-group-sm" role="group">
 									  	<button type="button" class="btn btn-default" ng-class="{'btn-info': estadoMenu.idEstadomenu == combo.idEstadoMenu}" ng-click="combo.idEstadoMenu = estadoMenu.idEstadoMenu" ng-repeat="estadoMenu in lstEstadosMenu">

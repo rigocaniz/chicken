@@ -102,7 +102,7 @@ class Menu
  		if ( $idTipoMenu > 0 )
 	 		$where = " WHERE idTipoMenu = $idTipoMenu ";
 
- 		$sql = "SELECT idMenu, menu, imagen, descripcion, idEstadoMenu, estadoMenu, idDestinoMenu, destinoMenu FROM lstMenu $where";
+ 		$sql = "SELECT idMenu, menu, imagen, descripcion, idEstadoMenu, estadoMenu, idDestinoMenu, destinoMenu, idTipoMenu, tipoMenu FROM lstMenu $where";
  		
  		if( $rs = $this->con->query( $sql ) ){
  			while( $row = $rs->fetch_object() ){

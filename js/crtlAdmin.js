@@ -1,6 +1,6 @@
 app.controller('crtlAdmin', function( $scope , $http, $modal ){
 
-	$scope.inventarioMenu = 2;
+	$scope.inventarioMenu = 1;
 
 	$scope.$on('cargarLista', function( event, data ){
 		console.log( ":::", event, ":::", data );
@@ -26,9 +26,9 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 		orden: 'ASC'
 	};
 
-	$scope.dialIngreso    = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
-	$scope.dialAdminMenu  = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static'});
-	$scope.dialAdminCombo = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static'});
+	$scope.dialIngreso    = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialAdminMenu  = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialAdminCombo = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static', keyboard: false});
 
 	$scope.lstDestinoMenu  = [];
 	$scope.lstTipoMenu     = [];
@@ -94,6 +94,8 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 		console.log( 'tipo: ', tipo, ' data: ', data );
 		$scope.accion = 'update';
 			if( tipo == 'menu' ){
+				$scope.menu = data;
+				/*
 				$scope.menu = {
 					'idEstadoMenu'  : 1,
 					'menu'          : '',
@@ -104,6 +106,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 					'subirImagen'   : true,
 					'lstPrecios'    : []
 				};
+				*/
 
 				$scope.dialAdminMenu.show();
 			}
