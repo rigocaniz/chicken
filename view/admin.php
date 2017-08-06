@@ -52,7 +52,7 @@
 								        	</p>
 								        	<hr>
 								        	<p>
-								        		<button type="button" class="btn btn-primary" ng-click="actualizarMenuCombo( 'menu', m)">
+								        		<button type="button" class="btn btn-primary btn-sm" ng-click="actualizarMenuCombo( 'menu', m)">
 								        			<span class="glyphicon glyphicon-edit"></span> Editar
 								        		</button>
 
@@ -372,73 +372,38 @@
 									<textarea rows="3" class="form-control" placeholder="Ingrese la descripción del menu" ng-model='menu.descripcion' required></textarea>
 								</div>
 							</div>
-							<legend class="text-center">
-								<small>
-									<i class="fa fa-money" aria-hidden="true"></i> AGREGAR PRECIOS
-								</small>
-							</legend>
 							<div class="form-group">
-								<div class="col-xs-5 col-sm-6 col-md-5">
-									<label class="control-label">Tipo Servicio</label>
-									<select class="form-control" ng-model="precios.idTipoServicio">
-										<option value="{{ ts.idTipoServicio }}" ng-repeat="ts in lstTipoServicio">
-											{{ ts.tipoServicio }}
-										</option>
-									</select>
-								</div>
-								<div class="col-xs-4 col-sm-6 col-md-4">
-									<label class="control-label">Precio</label>
-									<input type="number" min="0" class="form-control" ng-model="precios.precio">
-								</div>
-								<div class="col-xs-1 col-sm-2 col-md-2">
-									<br>
-									<button type="button" class="btn btn-sm btn-primary" ng-click="agregaPrecio( 'menu' )">
-										<span class="glyphicon glyphicon-plus"></span>
-										Agregar
-									</button>
-								</div>
-								<div class="clearfix"></div>
-								<div class="col-sm-12">
-									<br>
-									<div class="col-sm-offset-1 col-sm-10">
-										<table class="table table-hover">
-											<thead>
-												<tr>
-													<th class="text-center col-sm-1">No.</th>
-													<th class="text-center col-sm-4">Tipo Servicio</th>
-													<th class="text-center col-sm-3">Q. Precio</th>
-													<th class="text-center col-sm-3"></th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr ng-repeat="lp in menu.lstPrecios">
-													<td class="text-center">
-														{{ $index + 1 }}
-													</td>
-													<td>
-														{{ returnTipoServicio( lp.idTipoServicio ) }}
-													</td>
-													<td class="text-right">
-														<div ng-show="!lp.editar">
-															{{ lp.precio | number:2 }}
-														</div>
-														<div ng-show="lp.editar">
-															<input type="number" min="0" class="form-control" ng-model="lp.precio">
-														</div>
-													</td>
-													<td class="text-center">
-														<button type="button" class="btn btn-info btn-xs" ng-click="lp.editar=!lp.editar">
-															<span class="glyphicon glyphicon-pencil"></span>
-														</button>
-														<button type="button" class="btn btn-danger btn-xs" ng-click="removerPrecio( $index )" >
-															<span class="glyphicon glyphicon-remove"></span>
-														</button>
-													</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
+								<legend class="text-center">
+									<small>
+										<i class="fa fa-money" aria-hidden="true"></i> AGREGAR PRECIOS
+									</small>
+								</legend>
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th class="text-center col-sm-2">No.</th>
+											<th class="text-center col-sm-4">Tipo Servicio</th>
+											<th class="text-center col-sm-3">Q. Precio</th>
+											<th class="text-center col-sm-3"></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="lp in menu.lstPrecios">
+											<td class="text-center">
+												{{ $index + 1 }}
+											</td>
+											<td>
+												{{ returnTipoServicio( lp.idTipoServicio ) }}
+											</td>
+											<td class="text-right">
+												<input type="number" min="0" ng-init="lp.precio=0" class="form-control" ng-model="lp.precio" required>
+											</td>
+											<td class="text-right">
+												<kbd>{{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>
+											</td>
+										</tr>
+									</tbody>
+								</table>
 							</div>
 						</form>
 					</fieldset>

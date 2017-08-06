@@ -20,6 +20,14 @@ class Menu
  	}
 
 
+ 	// LIBERAR SIGUIENTE RESULTADO
+ 	private function siguienteResultado()
+ 	{
+ 		if( $this->con->more_results() )
+ 			$this->con->next_result();
+ 	}
+
+
 	// CONSULTAR DATOS MENU
 	function cargarMenu( $idMenu )
 	{
@@ -163,7 +171,7 @@ class Menu
 	 		endif;
 
 			$menu          = $validar->validarTexto( $data->menu, NULL, TRUE, 3, 45, 'el nombre del menu' );
-			$descripcion   = $validar->validarTexto( $data->descripcion, NULL, TRUE, 3, 45, 'el nombre del descripcion' );
+			$descripcion   = $validar->validarTexto( $data->descripcion, NULL, TRUE, 3, 1500, 'en la descripcion' );
 			$idEstadoMenu  = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado Menú no es válido, verifique.' );
 			$idDestinoMenu = $validar->validarEntero( $data->idDestinoMenu, NULL, TRUE, 'El ID del tipo de medida no es válido, verifique.' );
 			$idTipoMenu    = $validar->validarEntero( $data->idTipoMenu, NULL, TRUE, 'El ID del tipo de menú no es válido, verifique.' );
@@ -175,15 +183,22 @@ class Menu
 		 		$this->mensaje   = $validar->getMsj();
 
 	 		else:
+	 			// INICIALIZAR TRANSACCION
+	 			$this->con->query( 'START TRANSACTION' );
+
 		 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu}, {$idTipoMenu} );";
 
 		 		if( $rs = $this->con->query( $sql ) ){
-		 			@$this->con->next_result();
+		 			$this->siguienteResultado();
 		 			if( $row = $rs->fetch_object() ){
 		 				$this->respuesta = $row->respuesta;
 		 				$this->mensaje   = $row->mensaje;
-		 				if( $accion == 'insert' AND $this->respuesta == 'success' ){
-		 					$this->data = (int)$row->id;
+		 				
+		 				if( ( $accion == 'insert' OR $accion == 'update' ) AND $this->respuesta == 'success' ){
+		 					if( $accion == 'insert' )
+		 						$idMenu = $this->data = (int)$row->id;
+		 					// INSERTAR PRECIOS
+		 					$this->consultaMenuPrecio( $accion, $idMenu, $data->lstPrecios );
 		 				}
 		 			}
 		 		}
@@ -191,11 +206,17 @@ class Menu
 		 			$this->respuesta = 'danger';
 		 			$this->mensaje   = 'Error al ejecutar la instrucción.';
 		 		}
-		 		
+
+		 		// FINALIZAR TRANSACCION
+		 		if( $this->respuesta )
+		 			$this->con->query( 'COMMIT' );
+		 		else
+		 			$this->con->query( 'ROLLBACK' );
+
 	 		endif;
  		}else{
  			$this->respuesta = 'info';
-		 	$this->mensaje   = 'No ha ingresado los precios del Menu';
+		 	$this->mensaje   = 'No hay ingresado los precios del Menu';
  		}
 
  		return $this->getRespuesta();
@@ -203,50 +224,44 @@ class Menu
 
 
  	// GUARDAR // ACTUALIZAR => MENU PRECIO
-	function consultaMenuPrecio( $accion, $data )
+	function consultaMenuPrecio( $accion, $idMenu, $lstPrecios )
  	{
- 		$validar = new Validar();
+ 		
+ 		foreach ( $lstPrecios AS $ixPrecio => $precio ) {
 
-		// INICIALIZACIÓN VAR
- 		$idMenu         = "NULL";
- 		$idTipoServicio = "NULL";		
+ 			// SETEO VARIABLES GENERALES
+			$precio->idTipoServicio = (int)$precio->idTipoServicio > 0 	? (int)$precio->idTipoServicio	: NULL;
 
-		// SETEO VARIABLES GENERALES
-		$data->idTipoServicio = (int)$data->idTipoServicio > 0 	? (int)$data->idTipoServicio 	: NULL;
-		$data->precio         = (double)$data->precio 	 		? (double)$data->precio 		: NULL;
+			$validar = new Validar();
 
-		$idMenu         = $validar->validarEntero( $data->idMenu, NULL, TRUE, 'El ID del menú no es válido, verifique.' );
-		$idTipoServicio = $validar->validarEntero( $data->idTipoServicio, NULL, TRUE, 'El ID del tipo de servicio no es válido, verifique.' );
-		
-		$precio = "NULL";
-		if( $accion <> 'delete' ):
-			$data->idMenu = (int)$data->idMenu > 0 	? (int)$data->idMenu : NULL;
-			$precio = $validar->validarCantidad( $data->precio, NULL, TRUE, 1, 2500, 'el precio del menú' );
-		endif;
+			$idTipoServicio = $validar->validarEntero( $precio->idTipoServicio, NULL, TRUE, "ID del servicio {$precio->tipoServicio} inválido" );
+			$precio                 = (double)$precio->precio;
 
-		// OBTENER RESULTADO DE VALIDACIONES
- 		if( $validar->getIsError() ):
-	 		$this->respuesta = 'danger';
-	 		$this->mensaje   = $validar->getMsj();
+			if( $validar->getIsError() ):
+	 			$this->respuesta = 'danger';
+	 			$this->mensaje   = $validar->getMsj();
+	 		
+	 		else:
+		 		$sql = "CALL consultaMenuPrecio( '{$accion}', {$idMenu}, {$idTipoServicio}, {$precio} );";
 
- 		else:
-	 		$sql = "CALL consultaMenuPrecio( '{$accion}', {$idMenu}, {$idTipoServicio}, {$precio} );";
-
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
-	 			if( $row = $rs->fetch_object() ){
+		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+		 			$this->siguienteResultado();
+		 			
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
-	 			}
-	 		}
-	 		else{
-	 			$this->respuesta = 'danger';
-	 			$this->mensaje   = 'Error al ejecutar la instrucción.';
-	 		}
-	 		
- 		endif;
+	 				
+	 				if( $this->respuesta == 'danger' )
+	 					break;
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+		 		}
+		 		
+	 		endif;
 
- 		return $this->getRespuesta();
+ 			
+ 		}
  	}
 
 

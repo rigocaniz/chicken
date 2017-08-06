@@ -130,7 +130,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 				'descripcion'   : '',
 				'imagen'        : '',
 				'subirImagen'   : true,
-				'lstPrecios'    : []
+				'lstPrecios'    : angular.copy( $scope.lstTipoServicio )
 			};
 
 			$scope.dialAdminMenu.show();
@@ -158,6 +158,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 	$scope.agregaPrecio = function( tipo ){
 		var precio = $scope.precios;
 		console.log( $scope.menu );
+		var error = false;
 
 		if( tipo == 'menu' )
 		{
@@ -185,10 +186,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 
 		}
 		
-	};
-
-	$scope.removerPrecio = function( index ){
-		$scope.menu.lstPrecios.splice( index, 1);
 	};
 
 
@@ -225,12 +222,13 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 				accion:$scope.accion,
 				datos: $scope.menu
 			}).success(function(data){
+				console.log(  data );
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
 				if ( data.respuesta == 'success' ) {
+					$scope.menu = {};
 					$scope.dialAdminMenu.hide();
-					$scope.reset;
-					//$scope.menu = {};
+					$scope.verListaMenu();
 				}
 			})
 		}
