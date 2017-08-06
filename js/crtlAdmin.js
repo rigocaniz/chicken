@@ -1,6 +1,6 @@
 app.controller('crtlAdmin', function( $scope , $http, $modal ){
 
-	$scope.inventarioMenu = 1;
+	$scope.menuTab = 'menu';
 
 	$scope.$on('cargarLista', function( event, data ){
 		console.log( ":::", event, ":::", data );
@@ -8,9 +8,8 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 			$scope.verListaMenu();
 		else if( data == 'combo' )
 			$scope.verListaCombos();
-		else if( data == 'supercombo' )
+		else if( data == 'superCombo' )
 			$scope.verListaSuperCombos();
-
 	});
 
 	$scope.filtro = {
@@ -22,8 +21,20 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 
 	$scope.filter = {
 		pagina: 1,
-		limite: 25,
+		limite: 10,
 		orden: 'ASC'
+	};
+
+	$scope.cargarPaginacion = function( pagina ){
+		$scope.filter.pagina = pagina;
+		if( $scope.menuTab == 'menu' )
+			$scope.verListaMenu();
+
+		else if( $scope.menuTab == 'combo' )
+			$scope.verListaCombos();
+
+		else if( $scope.menuTab == 'superCombo' )
+		$scope.inventario();
 	};
 
 	$scope.dialIngreso    = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static', keyboard: false});
@@ -53,40 +64,47 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
         })
 	})();
 
+	$scope.lstPaginacion = [];
+	$scope.generarPaginacion = function( totalPaginas ){
+		$scope.lstPaginacion = [];
+		for (var i = 1; i <= totalPaginas; i++) {
+			$scope.lstPaginacion.push({
+				noPagina : i
+			});
+		}
+	};
 
-    $scope.returnTipoServicio = function( idTipoServicio ){
-        for (var i = 0; i < $scope.lstTipoServicio.length; i++) {
-            if( $scope.lstTipoServicio[ i ].idTipoServicio == idTipoServicio ){
-                return $scope.lstTipoServicio[ i ].tipoServicio;
-                break;
-            }
-        }
-    };
-
+	// VER LISTA DE MENUS
 	$scope.verListaMenu = function(){
 		$http.post('consultas.php',{
-			opcion : 'lstMenu',
-			filtro : $scope.filtro
+			opcion : 'getListaMenus',
+			filtro : $scope.filter
 		}).success(function(data){
-			console.log( 'lista: ', data );
-			$scope.lstMenu = data;
+			console.log( 'listaMenu: ', data );
+			$scope.lstMenu = data.lstMenus || [];
+			$scope.generarPaginacion( data.totalPaginas );
 		})
 	};
 
+	// VER LISTA DE COMBOS
 	$scope.verListaCombos = function(){
 		$http.post('consultas.php',{
-			opcion:'lstCombo'
+			opcion : 'getListaCombos',
+			filtro : $scope.filter
 		}).success(function(data){
-			console.log('lstCombos: ',data);
-			$scope.lstCombos = data || [];
+			console.log('lstCombos: ', data);
+			$scope.lstCombos = data.lstCombos || [];
+			$scope.generarPaginacion( data.totalPaginas );
 		})
 	};
 
+	/*
 	($scope.inicio = function()
 	{
 		$scope.verListaMenu();
 		$scope.verListaCombos();
 	})();
+	*/
 
 
 	$scope.actualizarMenuCombo = function( tipo, data )

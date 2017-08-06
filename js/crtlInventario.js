@@ -44,8 +44,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		})
 	};
 
+	
 	$scope.lstPaginacion = [];
-
 	$scope.generarPaginacion = function( totalPaginas ){
 		$scope.lstPaginacion = [];
 		for (var i = 1; i <= totalPaginas; i++) {

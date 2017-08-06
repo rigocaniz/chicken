@@ -25,8 +25,6 @@
 				</li>
 			</ul>
 
-			{{ accion }}
-
 			<!-- Tab panes -->
 			<div class="tab-content">
 

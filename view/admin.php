@@ -3,17 +3,17 @@
 		<div class="col-sm-12">
 			<!-- Nav tabs -->
 			<ul class="nav nav-tabs tabs-title" role="tablist">
-				<li role="presentation" ng-class="{'active' : inventarioMenu==1}" ng-click="resetValores(); inventarioMenu=1">
+				<li role="presentation" ng-class="{'active' : menuTab=='menu'}" ng-click="verListaMenu(); resetValores(); menuTab='menu'">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-list"></span> MENUS
 					</a>
 				</li>
-				<li role="presentation" ng-class="{'active' : inventarioMenu==2}" ng-click="resetValores(); inventarioMenu=2">
+				<li role="presentation" ng-class="{'active' : menuTab=='combo'}" ng-click="verListaCombos(); resetValores(); menuTab='combo'">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-list-alt"></span> COMBOS
 					</a>
 				</li>
-				<li role="presentation" ng-class="{'active' : inventarioMenu==3}" ng-click="resetValores(); inventarioMenu=3">
+				<li role="presentation" ng-class="{'active' : menuTab=='superCombo'}" ng-click="resetValores(); menuTab='superCombo'">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-book"></span> RECETAS
 					</a>
@@ -23,7 +23,7 @@
 			<!-- TAB PANELES -->
 			<div class="tab-content">
 				<!--  MENUS -->
-				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==1}" ng-show="inventarioMenu==1">
+				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuTab=='menu'}" ng-show="menuTab=='menu'">
 					<div class="panel panel-primary">
 						<div class="panel-heading">
 							<h3 class="panel-title">LISTADO DE MENUS</h3>
@@ -86,28 +86,13 @@
 								      	</div>
 							    	</div>
 							  	</div>
-								<!-- PAGINADOR -->
-								<nav>
-									<ul class="pagination" ng-show="lstPaginacion.length > 1">
-										<li ng-class="{disabled: filter.pagina == 1 }">
-											<a href="" ng-click="cargarPaginacion( 1 );" aria-label="Previous">
-												<span aria-hidden="true">&laquo;</span>
-											</a>
-										</li>
-										<li ng-repeat="(ixPagina, pagina) in lstPaginacion" ng-class="{'active': filter.pagina == pagina.noPagina}">
-											<a href="" ng-click="cargarPaginacion( pagina.noPagina );">
-												{{ pagina.noPagina }}
-											</a>
-										</li>
-									</ul>
-								</nav>
 							</div>
 						</div>
 					</div>
 				</div>
 
 				<!-- COMBOS -->
-				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==2}" ng-show="inventarioMenu==2">
+				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuTab=='combo'}" ng-show="menuTab=='combo'">
 					<div class="panel panel-primary">
 						<div class="panel-heading">
 							<h3 class="panel-title">LISTADO DE COMBOS</h3>
@@ -145,7 +130,7 @@
 				</div>
 
 				<!-- MEDIDA DE PRODUCTO -->
-				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==3}" ng-show="inventarioMenu==3">
+				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuTab=='superCombo'}" ng-show="menuTab=='superCombo'">
 					<div class="col-sm-offset-1 col-sm-10">
 						<div class="panel panel-primary">
 							<div class="panel-heading">
@@ -211,6 +196,22 @@
 						</div>
 					</div>
 				</div>
+
+				<!-- PAGINADOR -->
+				<nav>
+					<ul class="pagination" ng-show="lstPaginacion.length > 1">
+						<li ng-class="{disabled: filter.pagina == 1 }">
+							<a href="" ng-click="cargarPaginacion( 1 );" aria-label="Previous">
+								<span aria-hidden="true">&laquo;</span>
+							</a>
+						</li>
+						<li ng-repeat="(ixPagina, pagina) in lstPaginacion" ng-class="{'active': filter.pagina == pagina.noPagina}">
+							<a href="" ng-click="cargarPaginacion( pagina.noPagina );">
+								{{ pagina.noPagina }}
+							</a>
+						</li>
+					</ul>
+				</nav>
 			</div>
 		</div>
 

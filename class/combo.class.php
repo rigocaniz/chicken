@@ -20,6 +20,68 @@ class Combo
  		$this->sess = $sesion;
  	}
 
+ 	// OBTENER TOTAL COMBOS
+	function getTotalPagMenu( $limite = 25 )
+	{
+		$total = 0;
+		$sql = "SELECT COUNT(*) AS total FROM lstCombo;";
+		
+		if( $rs = $this->con->query( $sql ) ){
+			if( $row = $rs->fetch_object() )
+				$total = (int)$row->total;
+		}
+
+		$totalPaginas = ceil( $total / $limite );
+		
+		return $totalPaginas;
+	}
+
+
+	// OBTENER LISTA DE COMBOS
+	function getListaCombos( $filter )
+	{
+		$pagina = $filter->pagina > 0 		? (int)$filter->pagina 	: 1;
+		$limite = $filter->limite > 0 		? (int)$filter->limite 	: 25;
+		$orden  = strlen( $filter->orden ) 	? $filter->orden 		: 'ASC';
+
+		$combos = (object)array(
+				'totalPaginas' => 0,
+				'lstCombos'    => array()
+			);
+
+		$inicio = ($pagina - 1) * $limite;
+
+
+		$sql = "SELECT 
+					    idCombo,
+					    combo,
+					    imagen,
+					    descripcion,
+					    idEstadoMenu,
+					    estadoMenu
+					FROM
+					    lstCombo ORDER BY idCombo $orden LIMIT $inicio, $limite;";
+		
+		if( $rs = $this->con->query( $sql ) ){
+			while( $row = $rs->fetch_object() ){
+				$combo = array(
+						'idCombo'      => (int)$row->idCombo,
+						'combo'        => $row->combo,
+						'imagen'       => $row->imagen == '' ? 'img-menu/notFound.png' : $row->imagen,
+						'descripcion'  => $row->descripcion,
+						'idEstadoMenu' => (int)$row->idEstadoMenu,
+						'estadoMenu'   => $row->estadoMenu
+				);
+
+				$combos->lstCombos[] = $combo;
+			}
+		}
+
+		$combos->totalPaginas = $this->getTotalPagMenu( $limite );
+
+		return $combos;
+	}
+
 
  	// CONSULTAR DATOS COMBO
 	function cargarCombo( $idCombo )
@@ -45,6 +107,7 @@ class Combo
 
 		return $combo;
 	}
+
 
 
 	// CONSULTAR DATOS COMBO DETALLE

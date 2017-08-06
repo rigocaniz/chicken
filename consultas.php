@@ -78,6 +78,8 @@ switch ( $data->opcion )
 		echo json_encode( $receta->cargarReceta( $data->idMenu, $data->idProducto ) );
 		break;
 
+
+
 	case 'cargarCombo':				// DATOS COMBO
 		$combo = new Combo();
 		echo json_encode( $combo->cargarCombo( $data->idCombo ) );
@@ -268,6 +270,11 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** COMBO
 	/////////////////////////
+	case 'getListaCombos':			// CONSULTAR LISTA DE PRODUCTOS
+		$combo = new Combo();
+		echo json_encode( $combo->getListaCombos( $data->filtro ) );
+		break;
+
 	case 'consultaCombo':			// CONSULTA COMBO: INSERT / UPDATE
 		$combo = new Combo();
 		echo json_encode( $combo->consultaCombo( $data->accion, $data->datos ) );
@@ -297,6 +304,16 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** MENU
 	/////////////////////////
+	case 'consultaMenu':			// ACCION MENU: INSERT / UPDATE
+		$menu = new Menu();
+		echo json_encode( $menu->consultaMenu( $data->accion, $data->datos ) );
+		break;
+
+	case 'getListaMenus':			// CONSULTAR LISTA DE PRODUCTOS
+		$menu = new Menu();
+		echo json_encode( $menu->getListaMenus( $data->filtro ) );
+		break;
+
 	case 'consultaMenu':			// ACCION MENU: INSERT / UPDATE
 		$menu = new Menu();
 		echo json_encode( $menu->consultaMenu( $data->accion, $data->datos ) );

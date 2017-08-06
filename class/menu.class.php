@@ -84,10 +84,10 @@ class Menu
 
 
 	// OBTENER TOTAL PRODUCTOS
-	function getTotalMenus( $limite = 25 )
+	function getTotalPagMenu( $limite = 25 )
 	{
 		$total = 0;
-		$sql = "SELECT COUNT(*) AS total FROM lstProducto";
+		$sql = "SELECT COUNT(*) AS total FROM lstMenu;";
 		
 		if( $rs = $this->con->query( $sql ) ){
 			if( $row = $rs->fetch_object() )
@@ -97,6 +97,60 @@ class Menu
 		$totalPaginas = ceil( $total / $limite );
 		
 		return $totalPaginas;
+	}
+
+
+	// OBTENER LISTA DE MENUS
+	function getListaMenus( $filter )
+	{
+		$pagina = $filter->pagina > 0 		? (int)$filter->pagina 	: 1;
+		$limite = $filter->limite > 0 		? (int)$filter->limite 	: 25;
+		$orden  = strlen( $filter->orden ) 	? $filter->orden 		: 'ASC';
+
+		$menus = (object)array(
+				'totalPaginas' => 0,
+				'lstMenus' => array()
+			);
+
+		$inicio = ($pagina - 1) * $limite;
+
+
+		$sql = "SELECT 
+					idMenu,
+					menu,
+					imagen,
+					descripcion,
+					idEstadoMenu,
+					estadoMenu,
+					idDestinoMenu,
+					destinoMenu,
+					idTipoMenu,
+					tipoMenu
+				FROM
+					lstMenu ORDER BY idMenu $orden LIMIT $inicio, $limite;";
+		
+		if( $rs = $this->con->query( $sql ) ){
+			while( $row = $rs->fetch_object() ){
+				$menu = array(
+						'idMenu'        => (int)$row->idMenu,
+						'menu'          => $row->menu,
+						'imagen'        => $row->imagen == '' ? 'img-menu/notFound.png' : $row->imagen,
+						'descripcion'   => $row->descripcion,
+						'idEstadoMenu'  => (int)$row->idEstadoMenu,
+						'estadoMenu'    => $row->estadoMenu,
+						'idDestinoMenu' => (int)$row->idDestinoMenu,
+						'destinoMenu'   => $row->destinoMenu,
+						'idTipoMenu'    => (int)$row->idTipoMenu,
+						'tipoMenu'      => $row->tipoMenu
+				);
+
+				$menus->lstMenus[] = $menu;
+			}
+		}
+
+		$menus->totalPaginas = $this->getTotalPagMenu( $limite );
+
+		return $menus;
 	}
 
 
