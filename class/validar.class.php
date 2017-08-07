@@ -136,14 +136,15 @@ class Validar
 		$warning = FALSE;
 		$valor   = (int)$valor;
 
-		if( !(strlen( $valor ) == 8) AND $required ):
+		if( !(strlen( (string)$valor ) == 8) )
 			$warning = TRUE;
-    		$this->mensaje = 'No. de teléfono inválid, verifique que tenga 8 dígitos.';
-		endif;
+
+		if( $warning AND !$required )
+			$valor = $default;
 
 		if( $warning AND $required ):
-			$valor = $default;
 			$this->error = TRUE;
+    		$this->mensaje = 'No. de teléfono inválid, verifique que tenga 8 dígitos.';
 		endif;
 
 		return $valor;
@@ -181,18 +182,17 @@ class Validar
 
 		$warning = FALSE;
 
-		if ( !filter_var( $valor, FILTER_VALIDATE_EMAIL ) AND $required ):
-    		$warning = TRUE;
-    		$this->mensaje = 'Correo electronico invalido, verifique.';
-    		$this->tiempo  = 4;
-		endif;
+		if ( !filter_var( $valor, FILTER_VALIDATE_EMAIL ) )
+			$warning = TRUE;
 
-		if( $warning AND $required ):
-			$valor = "NULL";
-			$this->error = TRUE;
-		else:
-			$valor = "'" . $valor . "'";
-		endif;
+		if( $warning AND !$required )
+			$valor = $default;
+
+		if ( $required AND $warning ) {
+			$this->tiempo  = 4;
+			$this->mensaje = 'Correo electronico invalido, verifique.';
+			$this->error   = TRUE;
+		}
 
 		return $valor;
 	}
@@ -206,21 +206,29 @@ class Validar
 		
 		$warning = FALSE;
 		$valor   = (double)$valor;
+		$msj = "";
 
 		if ( !is_numeric( $valor ) ):
-			$warning       = TRUE;
-			$this->mensaje = "El valor ingresado en {$msj} no es númerico, verifique.";
+			$warning = TRUE;
+			$msj     = "El valor ingresado en {$msj} no es númerico, verifique.";
+
 		elseif( $valor < $minimo ):
-			$warning       = TRUE;
-			$this->mensaje = "El valor ingresado en {$msj} no puede ser menor a {$minimo}, verifique.";
+			$warning = TRUE;
+			$msj     = "El valor ingresado en {$msj} no puede ser menor a {$minimo}, verifique.";
+
 		elseif( $valor > $maximo ):
-			$warning       = TRUE;
-			$this->mensaje = "El valor ingresado en {$msj} no puede ser mayor a {$maximo}, verifique.";
+			$warning = TRUE;
+			$msj     = "El valor ingresado en {$msj} no puede ser mayor a {$maximo}, verifique.";
+
 		endif;
 
+
+		if ( !$required AND $warning )
+			$valor = $default;
+			
 		if( $warning AND $required ):
-			$valor       = $default;
-			$this->error = TRUE;
+			$this->error   = TRUE;
+			$this->mensaje = $msj;
 		endif;
 
 		return $valor;
@@ -236,14 +244,15 @@ class Validar
 		$warning = FALSE;
 		$valor   = (int)$valor;
 
-		if ( !filter_var( $valor, FILTER_VALIDATE_INT ) AND $required ):
-			$warning       = TRUE;
-			$this->mensaje = $msj;
-		endif;
+		if ( !filter_var( $valor, FILTER_VALIDATE_INT ) )
+			$warning = TRUE;
+
+		if ( !$required AND $warning )
+			$valor = $default;
 
 		if( $warning AND $required ):
-			$valor       = $default;
-			$this->error = TRUE;
+			$this->mensaje = $msj;
+			$this->error   = TRUE;
 		endif;
 
 		return $valor;
