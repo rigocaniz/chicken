@@ -182,6 +182,7 @@ button,a{
 
 .tabs-title{
     margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 
@@ -274,4 +275,11 @@ button,a{
 .img-portada{
     width: 110px;
     height: 110px;
+}
+
+
+input.ng-dirty.ng-invalid {
+    color: #ff0000;
+    border: 1px solid #e84646;
+    box-shadow: 0px 0px 5px #ff8585;
 }

@@ -1547,11 +1547,10 @@ code {
   font-size: 90%;
   color: #c7254e;
   background-color: #f9f2f4;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 kbd {
-  padding: 2px 4px;
-  font-size: 90%;
+  padding: 2px 5px;
   color: #ffffff;
   background-color: #333333;
   border-radius: 3px;

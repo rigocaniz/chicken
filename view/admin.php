@@ -1,10 +1,11 @@
 <div class="contenedor">
+
 	<div class="row">
+		<!-- TABS -->
 		<div class="col-sm-12">
-			<!--
 			<div class="pull-right">
-                <img class="img-responsive" src="img/logo_churchil.png" style="height: 100px;">
-            </div>
+	            <img class="img-responsive" src="img/logo_churchil.png" style="height: 55px;">
+	        </div>
 
 			<ul class="nav nav-tabs tabs-title" role="tablist">
 				<li role="presentation" ng-class="{'active' : menuTab=='menu'}" ng-click="verListaMenu(); resetValores(); menuTab='menu'">
@@ -23,38 +24,11 @@
 					</a>
 				</li>
 			</ul>
-			-->
+		</div>
 
-			<nav class="navbar">
-				<div class="container-fluid">
-					<div class="navbar-header">
-						<a href="./" role="tab" data-toggle="tab">
-							<img alt="Brand" class="navbar-brand" src="img/logo_churchil.png" style="height: 58px;">
-						</a>
-					</div>
-
-					<ul class="nav nav-tabs tabs-title" role="tablist">
-						<li role="presentation" ng-class="{'active' : menuTab=='menu'}" ng-click="verListaMenu(); resetValores(); menuTab='menu'">
-							<a href="" role="tab" data-toggle="tab">
-								<span class="glyphicon glyphicon-list"></span> MENUS
-							</a>
-						</li>
-						<li role="presentation" ng-class="{'active' : menuTab=='combo'}" ng-click="verListaCombos(); resetValores(); menuTab='combo'">
-							<a href="" role="tab" data-toggle="tab">
-								<span class="glyphicon glyphicon-list-alt"></span> COMBOS
-							</a>
-						</li>
-						<li role="presentation" ng-class="{'active' : menuTab=='superCombo'}" ng-click="resetValores(); menuTab='superCombo'">
-							<a href="" role="tab" data-toggle="tab">
-								<span class="glyphicon glyphicon-book"></span> RECETAS
-							</a>
-						</li>
-					</ul>
-				</div>
-			</nav>
-
-
-			<!-- TAB PANELES -->
+	
+		<!-- TAB PANELES -->
+		<div class="col-sm-12">
 			<div class="tab-content">
 				<!--  MENUS -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuTab=='menu'}" ng-show="menuTab=='menu'">
@@ -85,25 +59,13 @@
 								        		{{ m.descripcion }}
 								        	</p>
 								        	<hr>
-								        	<p>
-								        		<button type="button" class="btn btn-primary btn-sm" ng-click="actualizarMenuCombo( 'menu', m)">
-								        			<span class="glyphicon glyphicon-edit"></span> Editar
-								        		</button>
+							        		<button type="button" class="btn btn-primary btn-sm" ng-click="actualizarMenuCombo( 'menu', m)">
+							        			<span class="glyphicon glyphicon-edit"></span> Editar
+							        		</button>
 
-												<a href="#" type="button" class="btn btn-info btn-sm">
-													<span class="glyphicon glyphicon-list"></span> Receta
-												</a>
-											</p>
-
-										  	<div class="btn-group btn-group-sm" role="group">
-										    	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-										      		Opciones <span class="caret"></span>
-										    	</button>
-										    	<ul class="dropdown-menu">
-										      		<li><a href="#">Editar</a></li>
-										      		<li><a href="#">Receta</a></li>
-										    	</ul>
-										  	</div>
+											<a href="#" type="button" class="btn btn-info btn-sm">
+												<span class="glyphicon glyphicon-list"></span> Receta
+											</a>
 								      	</div>
 							    	</div>
 							  	</div>
@@ -235,8 +197,8 @@
 				</nav>
 			</div>
 		</div>
-
 	</div>
+
 </div>
 
 	
@@ -372,7 +334,7 @@
 							<div class="form-group">
 								<div class="col-xs-7 col-sm-7 col-md-8">
 									<label class="control-label">NOMBRE DEL MENU</label>
-									<input type="text" class="form-control" ng-model="menu.menu" maxlength="45" required>
+									<input type="text" class="form-control" ng-model="menu.menu" maxlength="40" required>
 								</div>
 								<div class="col-xs-5 col-sm-5 col-md-4">
 									<label class="control-label">DESTINO DEL MENU</label>
@@ -387,7 +349,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="control-label col-sm-3">TIPO DE MENU: </label>
+								<label class="col-sm-3">TIPO DE MENU: </label>
 								<div class="col-sm-7">
 									<div class="btn-group btn-group-sm" role="group">
 									  	<button type="button" class="btn btn-default" ng-class="{'btn-info': tipoMenu.idTipoMenu == menu.idTipoMenu}" ng-click="menu.idTipoMenu = tipoMenu.idTipoMenu" ng-repeat="tipoMenu in lstTipoMenu">
@@ -427,7 +389,10 @@
 												{{ lp.tipoServicio }}
 											</td>
 											<td class="text-right">
-												<input type="number" min="0" ng-init="accion== 'update' ? lp.precio : lp.precio=0" class="form-control" ng-model="lp.precio" required>
+												<!--
+												<input type="number" min="0" ng-init="accion== 'update' ? lp.precio : lp.precio=0" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+?$/" step="any" required>
+												-->
+												<input type="number" min="0" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
 											</td>
 											<td class="text-right">
 												<kbd>Q. {{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>

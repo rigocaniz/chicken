@@ -129,7 +129,7 @@ class Menu
 					idTipoMenu,
 					tipoMenu
 				FROM
-					lstMenu ORDER BY idMenu $orden LIMIT $inicio, $limite;";
+					lstMenu WHERE idEstadoMenu <> 3 ORDER BY idMenu $orden LIMIT $inicio, $limite;";
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
