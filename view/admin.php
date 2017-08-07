@@ -28,9 +28,9 @@
 			<nav class="navbar">
 				<div class="container-fluid">
 					<div class="navbar-header">
-						
+						<a href="./" role="tab" data-toggle="tab">
 							<img alt="Brand" class="navbar-brand" src="img/logo_churchil.png" style="height: 58px;">
-						
+						</a>
 					</div>
 
 					<ul class="nav nav-tabs tabs-title" role="tablist">
@@ -344,6 +344,15 @@
 						<legend class="legend">DATOS</legend>
 						<!-- FORMULARIO MENU -->
 						<form class="form-horizontal" role="form" name="formMenu">
+							<div class="text-right" ng-show="accion == 'update'">
+								<div class="col-sm-12">
+									<label class="control-label">ELIMINAR MENU</label>
+								  	<button type="button" class="btn btn-default btn-sm" ng-class="{'btn-danger': estadoMenu.idEstadoMenu == menu.idEstadoMenu}" ng-click="menu.idEstadoMenu = 3" ng-show="estadoMenu.idEstadoMenu==3" ng-repeat="estadoMenu in lstEstadosMenu">
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': menu.idEstadoMenu == 3, 'glyphicon-unchecked': menu.idEstadoMenu != 3}"></span>
+								  		ELIMINAR
+								  	</button>
+								</div>
+							</div>
 							<div class="form-group text-center" ng-show="accion == 'update'">
 								<img ng-src="{{ menu.imagen }}" alt="MENU" class="img-circle img-portada">
 								<br>
@@ -353,7 +362,7 @@
 								<label class="col-sm-4">ESTADO DEL MENÚ</label>
 								<div class="col-sm-6">
 									<div class="btn-group btn-group-sm" role="group">
-									  	<button type="button" class="btn btn-default" ng-class="{'btn-info': estadoMenu.idEstadoMenu == menu.idEstadoMenu}" ng-click="menu.idEstadoMenu = estadoMenu.idEstadoMenu" ng-repeat="estadoMenu in lstEstadosMenu">
+									  	<button type="button" class="btn btn-default" ng-class="{'btn-info': estadoMenu.idEstadoMenu == menu.idEstadoMenu}" ng-click="menu.idEstadoMenu = estadoMenu.idEstadoMenu" ng-hide="estadoMenu.idEstadoMenu==3" ng-repeat="estadoMenu in lstEstadosMenu">
 									  		<span class="glyphicon" ng-class="{'glyphicon-check': estadoMenu.idEstadoMenu == menu.idEstadoMenu, 'glyphicon-unchecked': estadoMenu.idEstadoMenu != menu.idEstadoMenu}"></span>
 									  		{{ estadoMenu.estadoMenu }}
 									  	</button>
@@ -415,13 +424,13 @@
 												{{ $index + 1 }}
 											</td>
 											<td>
-												{{ returnTipoServicio( lp.idTipoServicio ) }}
+												{{ lp.tipoServicio }}
 											</td>
 											<td class="text-right">
-												<input type="number" min="0" ng-init="lp.precio=0" class="form-control" ng-model="lp.precio" required>
+												<input type="number" min="0" ng-init="accion== 'update' ? lp.precio : lp.precio=0" class="form-control" ng-model="lp.precio" required>
 											</td>
 											<td class="text-right">
-												<kbd>{{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>
+												<kbd>Q. {{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>
 											</td>
 										</tr>
 									</tbody>

@@ -58,23 +58,25 @@ class Menu
 	// CONSULTAR DATOS MENU PRECIO
 	function cargarMenuPrecio( $idMenu )
 	{
-		$idMenu = (int)$idMenu;
+		$idMenu     = (int)$idMenu;
 		$menuPrecio = array();
 
 		$sql = "SELECT 
 				    idMenu, 
 				    idTipoServicio, 
+				    tipoServicio,
 				    precio
 				FROM
 				    lstMenuPrecio
 				WHERE
 				    idMenu = {$idMenu};";
-		
+
 		if( $rs = $this->con->query( $sql ) ){
 			while( $rs AND $row = $rs->fetch_object() )
-				$menuPrecio[] = (object)array(
+				$menuPrecio[] = array(
 					'idMenu'         => (int)$row->idMenu,
 					'idTipoServicio' => (int)$row->idTipoServicio,
+					'tipoServicio'   => $row->tipoServicio,
 					'precio'         => (double)$row->precio,
 				);
 		}

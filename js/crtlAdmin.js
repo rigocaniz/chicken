@@ -1,4 +1,4 @@
-app.controller('crtlAdmin', function( $scope , $http, $modal ){
+app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 	$scope.menuTab = 'menu';
 
@@ -56,13 +56,24 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
         $http.post('consultas.php',{
             opcion : 'inicioAdmin'
         }).success(function(data){
-            console.log( 'inicioAdmin: ', data );
+            //console.log( 'inicioAdmin: ', data );
             $scope.lstDestinoMenu  = data.lstDestinoMenu || [];
             $scope.lstTipoMenu     = data.lsTipoMenu || [];
             $scope.lstTipoServicio = data.lstTiposServicio || [];
             $scope.lstEstadosMenu  = data.lstEstadosMenu || [];
         })
 	})();
+
+	// CONSULTAR PRECIOS MENU
+	$scope.cargarLstPreciosMenu = function( idMenu )
+	{
+		$http.post('consultas.php',{opcion: 'cargarMenuPrecio', idMenu: idMenu})
+		.success(function(data){
+			$scope.menu.lstPrecios = data;
+		}).error(function(data){
+			console.log(data);
+		});
+	};
 
 	$scope.lstPaginacion = [];
 	$scope.generarPaginacion = function( totalPaginas ){
@@ -99,14 +110,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 		})
 	};
 
-	/*
-	($scope.inicio = function()
-	{
-		$scope.verListaMenu();
-		$scope.verListaCombos();
-	})();
-	*/
-
 
 	$scope.actualizarMenuCombo = function( tipo, data )
 	{
@@ -114,20 +117,10 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 		$scope.accion = 'update';
 			if( tipo == 'menu' ){
 				$scope.menu = data;
-				/*
-				$scope.menu = {
-					'idEstadoMenu'  : 1,
-					'menu'          : '',
-					'idDestinoMenu' : 1,
-					'idTipoMenu'    : 1,
-					'descripcion'   : '',
-					'imagen'        : '',
-					'subirImagen'   : true,
-					'lstPrecios'    : []
-				};
-				*/
-
-				$scope.dialAdminMenu.show();
+				$scope.cargarLstPreciosMenu( $scope.menu.idMenu );
+				$timeout(function(){
+					$scope.dialAdminMenu.show();
+				}, 200);
 			}
 
 			else if( tipo == 'combo' ){
