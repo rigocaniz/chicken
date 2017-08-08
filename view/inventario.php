@@ -1,7 +1,8 @@
+<div class="contenedor">
 	<div class="row">
 		<div class="col-sm-12">
 
-			<!-- Nav tabs -->
+			<!-- MENU TABS -->
 			<ul class="nav nav-tabs tabs-title" role="tablist">
 				<li role="presentation" ng-class="{'active' : inventarioMenu==1}" ng-click="resetValores(); inventarioMenu=1">
 					<a href="" role="tab" data-toggle="tab">
@@ -25,8 +26,15 @@
 				</li>
 			</ul>
 
-			<!-- Tab panes -->
+			<!-- INGRESO NUEVO PRODUCTO -->
 			<div class="tab-content">
+				<div class="text-right">
+					<p>
+						<button type="button" class="btn btn-success btn-sm" ng-click="editarAccion( null, 'insert' )">
+							<span class="glyphicon glyphicon-plus"></span> Ingresar Producto
+						</button>
+					</p>
+				</div>
 
 				<!--  PRODUCTOS DEL INVENTARIO -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==1}" ng-show="inventarioMenu==1">
@@ -35,13 +43,6 @@
 							<h3 class="panel-title">INVENTARIO DE PRODUCTOS</h3>
 						</div>
 						<div class="panel-body">
-							<div class="text-right">
-								<p>
-									<button type="button" class="btn btn-success btn-sm" ng-click="editarAccion( null, 'insert' )">
-										<span class="glyphicon glyphicon-plus"></span> Ingresar Nuevo
-									</button>
-								</p>
-							</div>
 							<!-- TABLA -->
 							<table class="table table-hover">
 								<thead>
@@ -249,37 +250,35 @@
 				<!-- INGRESO DE PRODUCTOS A INVENTARIO -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==4}" ng-show="inventarioMenu==4">
 					<div class="col-md-offset-1 col-md-10 col-sm-12">
-						<div class="panel panel-success">
+						<div class="panel panel-warning">
 							<div class="panel-heading">
-								<h4 class="panel-title">INGRESO DE PRODUCTOS</h4>
+								<h4 class="panel-title">INGRESAR DE PRODUCTOS</h4>
 							</div>
 							<div class="panel-body">
 								<form class="form-horizontal" role="form">
 									<div class="form-group">
-										<div class="col-sm-5">
+										<div class="col-sm-5 col-md-5">
 											<label class="control-label">Producto</label>
-											<input type="text" class="form-control" placeholder="Ingrese producto" >
 
-											<ul class="list-group">
-										    <li class="list-group-item">Cras justo odio</li>
-										    <li class="list-group-item">Dapibus ac facilisis in</li>
-										    <li class="list-group-item">Morbi leo risus</li>
-										    <li class="list-group-item">Porta ac consectetur ac</li>
-										    <li class="list-group-item">Vestibulum at eros</li>
-										  </ul>
-
+											<input type="text" class="form-control" ng-model="nombreProducto" placeholder="Ingrese producto" ng-change="buscarProducto( nombreProducto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
+											<ul class="list-group" ng-show="lstProductos.length">
+												
+											    <li class="list-group-item" ng-class="{'active': $parent.idxProducto == ixProducto}" ng-repeat="(ixProducto, producto) in lstProductos" ng-click="seleccionarProducto( producto )" ng-mouseenter="$parent.idxProducto = ixProducto">
+											    	{{ producto.producto }}
+											    </li>
+											</ul>
 										</div>
-										<div class="col-sm-3">
+										<div class="col-sm-3 col-md-3">
 											<label class="control-label">Cantidad</label>
 											<input type="number" min="0" class="form-control" placeholder="Ingrese cantidad" >
 										</div>
 										<div class="col-sm-4">
 											<br>
-											<button type="button" class="btn btn-primary">
+											<button type="button" class="btn btn-sm btn-warning">
 												<span class="glyphicon glyphicon-plus"></span>
 												Agregar
 											</button>
-											<button type="button" class="btn btn-default">
+											<button type="button" class="btn btn-sm btn-default">
 												Cancelar
 											</button>
 										</div>
@@ -319,6 +318,7 @@
 		</div>
 
 	</div>
+</div>
 
 	
 <!-- DIALOGO INGRESO EXISTENCIA -->

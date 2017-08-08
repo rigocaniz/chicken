@@ -20,7 +20,7 @@
 				</li>
 				<li role="presentation" ng-class="{'active' : menuTab=='superCombo'}" ng-click="resetValores(); menuTab='superCombo'">
 					<a href="" role="tab" data-toggle="tab">
-						<span class="glyphicon glyphicon-book"></span> RECETAS
+						<span class="glyphicon glyphicon-book"></span> SUPERCOMBOS
 					</a>
 				</li>
 			</ul>

@@ -23,10 +23,75 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		$scope.dialAdministrar.hide();
 	};
 
-	$scope.consultarProducto = function(){
+	// OBJ PRODUCTO
+	$scope.prod = {
+		nombreProducto : '',
+		cantidad       : 0
+	};
+	
+	$scope.idxProducto = -1;
+	$scope.seleccionKeyProducto = function( key ){
+		console.log( key, ":::", $scope.idxProducto );
+
+		// CODIGO ENTER
+		if( key == 13 ){
+
+			if( $scope.lstProductos.length == 1 )
+				$scope.seleccionarProducto( $scope.lstProductos[ 0 ] );
+
+			else if( $scope.idxProducto != -1 )
+				$scope.seleccionarProducto( $scope.lstProductos[ $scope.idxProducto ] );
+			
+		}
+
+		// CODIGO UP
+		else if( key == 38 ){
+
+			if( $scope.lstProductos.length && $scope.idxProducto > 0 )
+				$scope.idxProducto--;
+
+			else if( $scope.idxProducto == 0 )
+				$scope.idxProducto = $scope.lstProductos.length - 1;
+		}
+		
+		// CODIGO DOWN
+		else if( key == 40 ){
+
+			if( $scope.lstProductos.length && $scope.idxProducto + 1 < $scope.lstProductos.length )
+				$scope.idxProducto++;
+
+			else if( $scope.lstProductos.length && $scope.idxProducto + 1 )
+				$scope.idxProducto = 0;
+		}
 
 	};
 
+
+	$scope.seleccionarProducto = function( producto )
+	{
+		console.log( producto );
+	};
+
+
+	// BUSCAR PRODUCTOS
+	$scope.lstProductos = [];
+	$scope.buscarProducto = function( nombreProducto ){
+		if( nombreProducto.length )
+		{
+			$http.post('consultas.php',{opcion: 'buscarProducto', nombreProducto: nombreProducto})
+			.success(function(data){
+				console.log('buscarProducto::: ',data);
+				$scope.lstProductos = data;
+			}).error(function(data){
+				console.log(data);
+			});
+		}
+		else
+			$scope.lstProductos = []
+
+	};
+
+	// TIPOS DE PRODUCTO
 	$scope.catTipoProducto = function(){
 		$http.post('consultas.php',{
 			opcion:'catTipoProducto'
@@ -35,7 +100,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		})
 	};
 
-
+	
+	// TIPOS DE MEDIDA
 	$scope.catMedidas = function(){
 		$http.post('consultas.php',{
 			opcion:'catMedidas'
@@ -44,6 +110,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		})
 	};
 
+	
 	
 	$scope.lstPaginacion = [];
 	$scope.generarPaginacion = function( totalPaginas ){

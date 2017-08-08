@@ -307,7 +307,24 @@ class Producto
 	}
 
 
-	function lstProductos( $filter  )
+	// BUSCAR PRODUCTO(S)
+	function buscarProducto( $nombreProducto )
+	{
+		$lstProductos = array();
+
+		$sql = "SELECT idProducto, producto, tipoProducto FROM lstProducto WHERE producto LIKE '%{$nombreProducto}%' LIMIT 10;";
+		
+		if( $rs = $this->con->query( $sql ) ){
+			while( $row = $rs->fetch_object() ){
+				$lstProductos[] = $row;
+			}
+		}
+
+		return $lstProductos;
+	}
+
+
+	function lstProductos( $filter )
 	{
 
 		$pagina = $filter->pagina > 0 		? (int)$filter->pagina 	: 1;
