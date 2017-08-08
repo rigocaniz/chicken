@@ -218,14 +218,13 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 			// CONSULTA PRECIOS DEL MENU
 			$http.post('consultas.php', { 
-				opcion : 'consultaDetalleOrdenMenu',
-				accion : 'insert',
-				datos : {
-					idOrdenCliente : $scope.ordenActual.idOrdenCliente,
-					lstAgregar     : lstAgregar
-				}
+				opcion         : 'guardarDetalleOrden',
+				idOrdenCliente : $scope.ordenActual.idOrdenCliente,
+				lstAgregar     : lstAgregar
 			})
 			.success(function (data) {
+				console.log( data );
+
 				$scope.$parent.loading = false; // cargando...
 
 				if ( data.respuesta == 'success' ) {
@@ -340,10 +339,10 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 					$scope.menuActual.cantidad++;
 
 				// SELECCION DE TIPO DE SERVICIO
-				else if ( key == 82 ) // {R}
+				else if ( key == 76 ) // {L}
 					$scope.idTipoServicio = 1;
 
-				else if ( key == 76 ) // {L}
+				else if ( key == 82 ) // {R}
 					$scope.idTipoServicio = 2;
 
 				else if ( key == 68 ) // {D}

@@ -172,21 +172,17 @@
                 			</table>
                 		</div>
                 		<div class="col-xs-12">
-                			<div class="col-xs-5">
-	                			<h4>
-	                				<b>TOTAL: </b> <span class="badge">Q. {{$parent.ordenActual.totalAgregar | number:2}}</span>
-	                			</h4>
-                			</div>
-                			<div class="col-xs-7 text-right">
-	                			<button type="button" class="btn btn-success" ng-click="guardarOrden()">
-	                				<span class="glyphicon glyphicon-ok"></span>
-	                				<b>Confirmar Orden</b>
-	                			</button>
-                			</div>
+                			<h4>
+                				<b>TOTAL: </b> <span class="badge" style="font-size:1.1em">Q. {{$parent.ordenActual.totalAgregar | number:2}}</span>
+                			</h4>
                 		</div>
                    </div>
                 </div>
                 <div class="modal-footer">
+        			<button type="button" class="btn btn-success" ng-click="guardarOrden()">
+        				<span class="glyphicon glyphicon-ok"></span>
+        				<b>Confirmar Orden</b>
+        			</button>
                     <button type="button" class="btn btn-default" ng-click="$hide()">
                         <span class="glyphicon glyphicon-log-out"></span>
                         <b>Salir</b>
@@ -250,7 +246,7 @@
                 		<div class="col-xs-6 text-center">
                 			<img ng-src="img-menu/{{menuActual.imagen}}">
                 			<h4>{{menuActual.menu}}</h4>
-                			<b>Q. {{menuActual.precio | number:2}}</b>
+                			<h3>Q. {{menuActual.precio | number:2}}</h3>
                 		</div>
                 		<div class="col-xs-6">
                 			<div class="col-xs-12">
