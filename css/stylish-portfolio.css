@@ -50,8 +50,8 @@ body {
 
 .btn-light {
     border-radius: 0;
-    color: #333;
-    background-color: rgb(255,255,255);
+    color: #ff5722;
+    background-color: #fffde7;
 }
 
 .btn-light:hover,
@@ -73,16 +73,17 @@ hr.small {
     z-index: 1000;
     position: fixed;
     right: 0;
-    width: 250px;
+    width: 230px;
     height: 100%;
     transform: translateX(250px);
-    overflow-y: auto;
-    background: #222;
+    background: #ef6c00;
     -webkit-transition: all 0.4s ease 0s;
     -moz-transition: all 0.4s ease 0s;
     -ms-transition: all 0.4s ease 0s;
     -o-transition: all 0.4s ease 0s;
     transition: all 0.4s ease 0s;
+    overflow-x: auto;
+    overflow-y: overlay;
 }
 
 .sidebar-nav {
@@ -102,13 +103,13 @@ hr.small {
 .sidebar-nav li a {
     display: block;
     text-decoration: none;
-    color: #999;
+    color: #ffffff;
 }
 
 .sidebar-nav li a:hover {
     text-decoration: none;
-    color: #fff;
-    background: rgba(255,255,255,0.2);
+    color: #ffffff;
+    background: rgba(255,255,255,0.25);
 }
 
 .sidebar-nav li a:active,
@@ -123,7 +124,8 @@ hr.small {
 }
 
 .sidebar-nav > .sidebar-brand a {
-    color: #999;
+    color: #ef6c00;
+    color: #ffffff;
 }
 
 .sidebar-nav > .sidebar-brand a:hover {

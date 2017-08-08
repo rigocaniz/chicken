@@ -4,7 +4,7 @@
 		<!-- TABS -->
 		<div class="col-sm-12">
 			<div class="pull-right">
-	            <img class="img-responsive" src="img/logo_churchil.png" style="height: 55px;">
+	            <img class="img-responsive" src="img/logo_churchil.png" style="height: 56px;">
 	        </div>
 
 			<ul class="nav nav-tabs tabs-title" role="tablist">

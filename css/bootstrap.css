@@ -5311,6 +5311,7 @@ button.list-group-item {
   background-color: #de3500;
   border-color: #b72c00;
   cursor: pointer;
+  font-weight: 700;
 }
 .list-group-item.active .list-group-item-heading,
 .list-group-item.active:hover .list-group-item-heading,

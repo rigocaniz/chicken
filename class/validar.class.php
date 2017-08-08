@@ -18,12 +18,15 @@ class Validar
 
 		if( !(strlen( $valor ) >= 3) ):
 			$warning = TRUE;
-			$this->mensaje = 'Nombre inválido, verifique un minímo de 3 caracteres.';
 		endif;
 
 		if( $warning AND $required ):
+			$this->mensaje = 'Nombre inválido, verifique un minímo de 3 caracteres.';
+			$this->error   = TRUE;
+		
+		elseif( !$required AND $warning ):
 			$valor = $default;
-			$this->error = TRUE;
+
 		endif;
 
 		return $valor;
@@ -40,12 +43,16 @@ class Validar
 
 		if( !(strlen( $valor ) >= 10) ):
 			$warning = TRUE;
-			$this->mensaje = 'Dirección inválida, verifique que tenga un mínimo de 10 caracteres.';
 		endif;
 
+
 		if( $warning AND $required ):
+			$this->error   = TRUE;
+			$this->mensaje = 'Dirección inválida, verifique que tenga un mínimo de 10 caracteres.';
+		
+		elseif( !$required AND $warning ):
 			$valor = $default;
-			$this->error = TRUE;
+
 		endif;
 
 		return $valor;
@@ -60,16 +67,18 @@ class Validar
 
 		$warning = FALSE;
 
-		//echo $valor;
-
 		if( !(strlen( $valor ) == 13) ):
 			$warning = TRUE;
-			$this->mensaje = 'No. de CUI inválido, verifique que tenga 13 dígitos.'.$valor;
 		endif;
 
+
 		if( $warning AND $required ):
+			$this->error   = TRUE;
+			$this->mensaje = 'No. de CUI inválido, verifique que tenga 13 dígitos.'.$valor;
+
+		elseif( !$required AND $warning ):
 			$valor = $default;
-			$this->error = TRUE;
+
 		endif;
 
 		return $valor;
@@ -86,13 +95,16 @@ class Validar
 
 		if( !(strlen( $valor ) >= 8) ):
 			$warning = TRUE;
-			$this->mensaje = 'No. de NIT inválido, verifique.';
-			$this->tiempo  = 4;
 		endif;
 
 		if( $warning AND $required ):
+			$this->error   = TRUE;
+			$this->mensaje = 'No. de NIT inválido, verifique.';
+			$this->tiempo  = 4;
+
+		elseif( !$required AND $warning ):
 			$valor = $default;
-			$this->error = TRUE;
+
 		endif;
 
 		return $valor;
@@ -107,20 +119,27 @@ class Validar
 		
 		$warning = FALSE;
 		$valor   = (int)$valor;
+		$msj     = "";
+		$tiempo  = 3;
 
 		if ( !filter_var( $valor, FILTER_VALIDATE_INT ) AND $required ):
 			$warning = TRUE;
-    		$this->mensaje = 'El número ingresado es inválido, verifique.';
-    		$this->tiempo  = 4;
+			$msj     = 'El número ingresado es inválido, verifique.';
+			$tiempo  = 4;
     	elseif( $valor < $min ):
     		$warning = TRUE;
-    		$this->mensaje = "El número ingresado debe ser mayor a {$min}, verifique.";
-    		$this->tiempo  = 5;
+    		$msj     = "El número ingresado debe ser mayor a {$min}, verifique.";
+    		$tiempo  = 5;
 		endif;
 
 		if( $warning AND $required ):
+			$this->error   = TRUE;
+			$this->mensaje = $msj;
+			$this->tiempo  = $tiempo;
+
+		elseif( !$required AND $warning ):
 			$valor = $default;
-			$this->error = TRUE;
+
 		endif;
 
 		return $valor;
@@ -223,12 +242,13 @@ class Validar
 		endif;
 
 
-		if ( !$required AND $warning )
+		if ( !$required AND $warning ):
 			$valor = $default;
-			
-		if( $warning AND $required ):
+
+		elseif( $warning AND $required ):
 			$this->error   = TRUE;
 			$this->mensaje = $msj;
+
 		endif;
 
 		return $valor;
@@ -267,22 +287,29 @@ class Validar
 
 		$warning = FALSE;
 		$valor   = (string)$valor;
+		$msj     = "";
 
 		if( !strlen( $valor ) AND $required ):
 			$warning = TRUE;
-			$this->mensaje = "No ha ingresado ningún texto en {$msj}, verifique.";
-			$this->tiempo  = 5;
+			$msj     = "No ha ingresado ningún texto en {$msj}, verifique.";
+
 		elseif( strlen( $valor ) < $minimo ):
 			$warning = TRUE;
-			$this->mensaje = "El contenido ingresado en {$msj} no puede ser menor a {$minimo} caracteres, verifique.";
+			$msj     = "El contenido ingresado en {$msj} no puede ser menor a {$minimo} caracteres, verifique.";
+
 		elseif( strlen( $valor ) > $maximo ):
 			$warning = TRUE;
-			$this->mensaje = "El contenido ingresado en {$msj} no puede ser mayor a {$maximo} caracteres, verifique.";
+			$msj     = "El contenido ingresado en {$msj} no puede ser mayor a {$maximo} caracteres, verifique.";
+			
 		endif;
 
 		if( $warning AND $required ):
-			$valor       = $default;
-			$this->error = TRUE;
+			$this->error   = TRUE;
+			$this->mensaje = $msj;
+
+		elseif( $warning AND !$required ):
+			$valor = $default;
+
 		endif;
 
 		return $valor;

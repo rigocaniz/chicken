@@ -25,10 +25,13 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 
 	// OBJ PRODUCTO
 	$scope.prod = {
+		idProducto     : null,
 		nombreProducto : '',
-		cantidad       : 0
+		cantidad       : 0,
+		seleccionado   : false
 	};
 	
+	$scope.lstProductosIngreso = [];
 	$scope.idxProducto = -1;
 	$scope.seleccionKeyProducto = function( key ){
 		console.log( key, ":::", $scope.idxProducto );
@@ -70,6 +73,19 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 	$scope.seleccionarProducto = function( producto )
 	{
 		console.log( producto );
+		if( !(producto.idProducto && producto.idProducto > 0) ) {
+			alertify.notify( 'El código del Producto no es válido', 'danger', 5 );
+		}
+		else if( !(producto.producto && producto.producto.length > 0) ){
+
+		}
+		/*
+		$scope.lstProductosIngreso
+		$scope.prod = {
+			nombreProducto : '',
+			cantidad       : 0
+		};
+		*/
 	};
 
 

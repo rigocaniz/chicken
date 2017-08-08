@@ -1,6 +1,9 @@
 <div class="contenedor">
 	<div class="row">
 		<div class="col-sm-12">
+			<div class="pull-right">
+	            <img class="img-responsive" src="img/logo_churchil.png" style="height: 56px;">
+	        </div>
 
 			<!-- MENU TABS -->
 			<ul class="nav nav-tabs tabs-title" role="tablist">
@@ -259,14 +262,18 @@
 									<div class="form-group">
 										<div class="col-sm-5 col-md-5">
 											<label class="control-label">Producto</label>
+											<div ng-show="!prod.seleccionado">
+												<input type="text" class="form-control" ng-model="prod.nombreProducto" placeholder="Ingrese producto" ng-change="buscarProducto( prod.nombreProducto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
+												<ul class="list-group" ng-show="lstProductos.length">
 
-											<input type="text" class="form-control" ng-model="nombreProducto" placeholder="Ingrese producto" ng-change="buscarProducto( nombreProducto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
-											<ul class="list-group" ng-show="lstProductos.length">
-												
-											    <li class="list-group-item" ng-class="{'active': $parent.idxProducto == ixProducto}" ng-repeat="(ixProducto, producto) in lstProductos" ng-click="seleccionarProducto( producto )" ng-mouseenter="$parent.idxProducto = ixProducto">
-											    	{{ producto.producto }}
-											    </li>
-											</ul>
+												    <li class="list-group-item" ng-class="{'active': $parent.idxProducto == ixProducto}" ng-repeat="(ixProducto, producto) in lstProductos" ng-click="seleccionarProducto( producto )" ng-mouseenter="$parent.idxProducto = ixProducto">
+												    	{{ producto.producto }}
+												    </li>
+												</ul>
+											</div>
+											<div ng-show="prod.seleccionado">
+												<input type="text" class="form-control" ng-model="prod.nombreProducto" placeholder="Ingrese producto" ng-change="buscarProducto( prod.nombreProducto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
+											</div>
 										</div>
 										<div class="col-sm-3 col-md-3">
 											<label class="control-label">Cantidad</label>

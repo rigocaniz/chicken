@@ -25,10 +25,10 @@ else if( getimagesize( $_FILES[ 'imagen' ][ 'tmp_name' ]) == false )
 	$mensaje = "El archivo cargado no es una imagen";
 }
 
-else if( $_FILES[ 'imagen' ][ 'size' ] > (2 * MB) )
+else if( $_FILES[ 'imagen' ][ 'size' ] > (1 * MB) )
 {
 	$error   = TRUE;
-	$mensaje = "El archivo supera los 2MB de peso permitido";
+	$mensaje = "El archivo supera 1MB, peso máximo permitido";
 }
 
 else

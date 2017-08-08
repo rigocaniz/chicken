@@ -31,7 +31,7 @@
         <ul class="sidebar-nav">
             <a id="menu-close" href="#" class="btn btn-light btn-lg pull-right toggle"><span class="glyphicon glyphicon-list"></span></a>
             <li class="sidebar-brand">
-                <a href="#/" onclick='$("#menu-close").click()'>Inicio</a>
+                <a href="#/" onclick='$("#menu-close").click()'>INICIO</a>
             </li>
             <li>
                 <a href="#/orden" onclick='$("#menu-close").click()'>Ordenes</a>
