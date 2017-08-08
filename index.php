@@ -127,6 +127,7 @@
     <script src="js/crtlOrden.js"></script>
     <script src="js/crtlReporte.js"></script>
     <script src="js/crtlMantenimiento.js"></script>
+    <script src="js/crtlFactura.js"></script>
     <script src="js/alertify.js"></script>
 
     <script>
