@@ -111,7 +111,31 @@ app.config(function($routeProvider) {
 
 // CONTROLADOR PRINCIPAL
 app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $modal ){
-  // CAPTURA TECLA PARA ATAJOS RAPIDOS
+
+    $scope.difLocalServer = 0;
+
+    // DIFERENCIA DE TIEMPO RESPECTO AL SERVIDOR
+    $http.post('consultas.php', { opcion : 'timeNow' })
+    .success(function (data) {
+        $scope.difLocalServer = moment( new Date() ).diff( moment( data.timeNow ) );
+    });
+
+    // MUESTRA TIEMPO TRANSCURRIDO
+    $scope.tiempoTranscurrido = function ( tiempo ) {
+        var de   = moment( new Date() ).add( $scope.difLocalServer );
+        var para = moment( tiempo );
+
+        return para.to( de );
+    };
+
+    $scope.formatoFecha = function function_name( fecha, formato ) {
+        var _for = formato || "D [de] MMMM [de] YYYY";
+        var txt = moment( fecha ).format( _for )
+
+        return txt;
+    };
+
+    // CAPTURA TECLA PARA ATAJOS RAPIDOS
     $scope.pressKey = function ( key ) {
         $rootScope.$broadcast('keyPress', key );
     };

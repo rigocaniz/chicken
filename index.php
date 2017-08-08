@@ -116,8 +116,9 @@
 	<script src="js/libs/angular-route.min.js"></script>
     <script src="js/libs/ngstrap.js"></script>
     <script src="js/libs/dirPagination.js"></script>
-    
     <script src="js/libs/fileinput.js"></script>
+    <script src="js/libs/moment.min.js"></script>
+    
 
     <script src="js/app.js"></script>
     <script src="js/crtlCliente.js"></script>

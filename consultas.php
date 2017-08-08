@@ -25,6 +25,9 @@ $datos = array();
 
 switch ( $data->opcion )
 {
+	case 'timeNow':
+		echo json_encode( array( 'timeNow' => date("Y-m-d h:m:s") ) );
+		break;
 
 	case 'login':
 		$usuario = new Usuario();
@@ -341,9 +344,9 @@ switch ( $data->opcion )
 
 	/////////////////////////
 	/////////////////////////
-	case 'guardarOrdenCliente':
+	case 'guardarDetalleOrden':
 		$orden = new Orden();
-		$orden->guardarOrdenCliente( $data->detalleOrden ) ;
+		$orden->guardarDetalleOrden( $data->idOrdenCliente, $data->lstAgregar ) ;
 		echo json_encode( $orden->getRespuesta() );
 		break;
 	
