@@ -1,4 +1,4 @@
-app.controller('inventarioCtrl', function( $scope , $http, $modal ){
+app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 	// LISTA EL INVENTARIO GENERAL DE PRODUCTOS
 	$scope.lstInventario  = [];
@@ -27,7 +27,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 	$scope.prod = {
 		idProducto     : null,
 		nombreProducto : '',
-		cantidad       : 0,
+		cantidad       : null,
 		seleccionado   : false
 	};
 	
@@ -39,7 +39,10 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		// CODIGO ENTER
 		if( key == 13 ){
 
-			if( $scope.lstProductos.length == 1 )
+			if( !$scope.lstProductos.length )
+				alertify.notify( 'No se encontro el producto ingresaoo', 'info', 5 );
+
+			else if( $scope.lstProductos.length == 1 )
 				$scope.seleccionarProducto( $scope.lstProductos[ 0 ] );
 
 			else if( $scope.idxProducto != -1 )
@@ -70,29 +73,107 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 	};
 
 
+	$scope.cancelarIngreso = function( accion )
+	{
+		if( accion == 1 ){
+
+			$scope.prod = {
+				idProducto     : null,
+				nombreProducto : '',
+				cantidad       : null,
+				seleccionado   : false
+			};
+			$timeout(function(){
+				$('#producto').focus();
+			}, 50);
+		}
+	};
+
+
+	$scope.quitarProdIngreso = function( index ){
+		$scope.lstProductosIngreso.splice( index, 1 );
+	};
+
+	$scope.agregarIngresoProducto = function(){
+		console.log( "carga" );
+		var prod = $scope.prod;
+
+		if( !(prod.idProducto && prod.idProducto > 0) )
+		{
+			alertify.notify( 'El código del Producto no es válido', 'danger', 5 );
+		}
+		else if( !(prod.cantidad && prod.cantidad > 0) ){
+			alertify.notify( 'La cantidad ingresada debe ser mayor a 0', 'danger', 5 );
+		}
+		else{
+			$scope.lstProductosIngreso.push({
+				idProducto : prod.idProducto,
+				producto   : prod.producto,
+				cantidad   : prod.cantidad
+			});
+
+			$scope.cancelarIngreso( 1 );
+			alertify.notify( 'Agregado a la lista', 'success', 3 );
+		}
+	};
+
+
 	$scope.seleccionarProducto = function( producto )
 	{
-		console.log( producto );
 		if( !(producto.idProducto && producto.idProducto > 0) ) {
 			alertify.notify( 'El código del Producto no es válido', 'danger', 5 );
 		}
-		else if( !(producto.producto && producto.producto.length > 0) ){
+		else{
+			$scope.prod = {
+				idProducto   : producto.idProducto,
+				producto     : producto.producto,
+				cantidad     : null,
+				seleccionado : true
+			};
 
+			$('#cantidad').focus();
+
+			$scope.lstProductos = [];
 		}
-		/*
-		$scope.lstProductosIngreso
-		$scope.prod = {
-			nombreProducto : '',
-			cantidad       : 0
-		};
-		*/
+	};
+
+	$scope.guardarLstProductosIngresos = function(){
+		var error = false;
+
+		if( !($scope.lstProductosIngreso.length) ){
+			var error = true;
+			alertify.notify( 'No ha ingrado ningun producto, verifique', 'info', 5 );
+		}
+		else{
+			for (var i = 0; i < $scope.lstProductosIngreso.length; i++) {
+				if( $scope.lstProductosIngreso[i].idProducto ){
+					var error = true;
+					alertify.notify( 'El Código del producto no es válido, verifique', 'warning', 5 );
+					break;
+				}
+				else if( !($scope.lstProductosIngreso[i].cantidad && $scope.lstProductosIngreso[i].cantidad > 0 ) ){
+					alertify.notify( 'La cantidad debe ser mayor a 0', 'warning', 5 );
+					var error = true;
+					break;
+				}
+			}
+		}
+
+		if( !error ){
+			$http.post('consultas.php',{opcion: 'consultaIngreso', data: $scope.lstProductosIngreso})
+			.success(function(data){
+				console.log(data);
+			}).error(function(data){
+				console.log(data);
+			});
+		}
 	};
 
 
 	// BUSCAR PRODUCTOS
 	$scope.lstProductos = [];
 	$scope.buscarProducto = function( nombreProducto ){
-		if( nombreProducto.length )
+		if( nombreProducto.length && !$scope.prod.seleccionado )
 		{
 			$http.post('consultas.php',{opcion: 'buscarProducto', nombreProducto: nombreProducto})
 			.success(function(data){
@@ -256,25 +337,25 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		var producto = $scope.producto, accion = $scope.accion;
 
 		if( accion == 'update' && !(producto.idProducto > 0) ){
-			alertify.notify( 'No. de producto no definido', 'danger', 5 );
+			alertify.notify( 'No. de producto no definido', 'warning', 5 );
 		}
 		else if( !(producto.producto && producto.producto.length >= 3) ){
-			alertify.notify( 'El nombre del producto debe ser mayor a 3 caracteres', 'danger', 5 );
+			alertify.notify( 'El nombre del producto debe ser mayor a 3 caracteres', 'warning', 5 );
 		}
 		else if( !(producto.idTipoProducto && producto.idTipoProducto > 0) ){
-			alertify.notify( 'Seleccione el tipo de producto', 'danger', 5 );	
+			alertify.notify( 'Seleccione el tipo de producto', 'warning', 5 );	
 		}
 		else if( !(producto.idMedida && producto.idMedida > 0) ){
-			alertify.notify( 'Seleccione la medida', 'danger', 5 );	
+			alertify.notify( 'Seleccione la medida', 'warning', 5 );	
 		}
 		else if( !(producto.cantidadMinima && producto.cantidadMinima > 0) ){
-			alertify.notify( 'La cantidad mínima debe ser mayor a 0', 'danger', 5 );	
+			alertify.notify( 'La cantidad mínima debe ser mayor a 0', 'warning', 5 );	
 		}
 		else if( !(producto.cantidadMinima && producto.cantidadMinima > 0) ){
-			alertify.notify( 'La cantidad máxima debe ser mayor a 0', 'danger', 5 );	
+			alertify.notify( 'La cantidad máxima debe ser mayor a 0', 'warning', 5 );	
 		}
 		else if( !(producto.disponibilidad && producto.disponibilidad > 0) ){
-			alertify.notify( 'La disponibilidad debe ser mayor a 0', 'danger', 5 );	
+			alertify.notify( 'La disponibilidad debe ser mayor a 0', 'warning', 5 );	
 		}
 		else{
 
@@ -326,10 +407,10 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		var tp = $scope.tp;
 
 		if( $scope.accion == 'update' && !(tp.idTipoProducto && tp.idTipoProducto > 0 ) ){
-			alertify.notify( 'El No. del Tipo de producto no es válido', 'danger', 5 );
+			alertify.notify( 'El No. del Tipo de producto no es válido', 'warning', 5 );
 		}
 		else if( !(tp.tipoProducto && tp.tipoProducto.length > 3 ) ){
-			alertify.notify( 'La descripción del tipo de producto debe ser mayor a 3 caracteres', 'danger', 5 );
+			alertify.notify( 'La descripción del tipo de producto debe ser mayor a 3 caracteres', 'warning', 5 );
 		}
 		else{
 			$http.post('consultas.php',{
@@ -365,10 +446,10 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal ){
 		var medida = $scope.medidaProd;
 
 		if( $scope.accion == 'update' && !(medida.idMedida && medida.idMedida > 0 ) ){
-			alertify.notify( 'El No. de la medida no es válido', 'danger', 5 );
+			alertify.notify( 'El No. de la medida no es válido', 'warning', 5 );
 		}
 		else if( !(medida.medida && medida.medida.length > 3 ) ){
-			alertify.notify( 'La descripcion de la medida debe ser mayor a 3 caracteres', 'danger', 5 );
+			alertify.notify( 'La descripcion de la medida debe ser mayor a 3 caracteres', 'warning', 5 );
 		}
 		else{
 			$http.post('consultas.php',{

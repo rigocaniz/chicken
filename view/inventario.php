@@ -137,7 +137,6 @@
 								</div>
 							</div>
 						</div>
-
 						<div class="panel panel-default">
 							<div class="panel-body">
 								<h4 class="panel-title">
@@ -263,7 +262,7 @@
 										<div class="col-sm-5 col-md-5">
 											<label class="control-label">Producto</label>
 											<div ng-show="!prod.seleccionado">
-												<input type="text" class="form-control" ng-model="prod.nombreProducto" placeholder="Ingrese producto" ng-change="buscarProducto( prod.nombreProducto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
+												<input type="text" id="producto" class="form-control" ng-model="prod.producto" maxlength="35" placeholder="Ingrese producto" ng-change="buscarProducto( prod.producto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
 												<ul class="list-group" ng-show="lstProductos.length">
 
 												    <li class="list-group-item" ng-class="{'active': $parent.idxProducto == ixProducto}" ng-repeat="(ixProducto, producto) in lstProductos" ng-click="seleccionarProducto( producto )" ng-mouseenter="$parent.idxProducto = ixProducto">
@@ -272,46 +271,62 @@
 												</ul>
 											</div>
 											<div ng-show="prod.seleccionado">
-												<input type="text" class="form-control" ng-model="prod.nombreProducto" placeholder="Ingrese producto" ng-change="buscarProducto( prod.nombreProducto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
+												<input type="text" class="form-control" ng-model="prod.producto" placeholder="Ingrese producto" disabled>
 											</div>
 										</div>
 										<div class="col-sm-3 col-md-3">
 											<label class="control-label">Cantidad</label>
-											<input type="number" min="0" class="form-control" placeholder="Ingrese cantidad" >
+											<input type="number" min="0.01" ng-keydown="$event.keyCode == 13 && agregarIngresoProducto();" ng-model="prod.cantidad" id="cantidad" class="form-control" placeholder="Cantidad" >
 										</div>
 										<div class="col-sm-4">
 											<br>
-											<button type="button" class="btn btn-sm btn-warning">
+											<button type="button" class="btn btn-sm btn-warning" ng-click="agregarIngresoProducto();">
 												<span class="glyphicon glyphicon-plus"></span>
 												Agregar
 											</button>
-											<button type="button" class="btn btn-sm btn-default">
+											<button type="button" class="btn btn-sm btn-default" ng-click="cancelarIngreso( 1 )">
 												Cancelar
 											</button>
 										</div>
 									</div>
 									<!-- LISTA DE PRODUCTOS -->
-									<div class="form-group">
-										<legend class="text-center">
-											<small>PRODUCTOS AGREGADOS</small>
-										</legend>
-										<table class="table table-striped">
-											<thead>
-												<tr>
-													<th>No.</th>
-													<th>Producto</th>
-													<th>Cantidad</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td></td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-									<div class="form-group">
-										<button type="button" class="btn btn-success">
+									<legend class="text-center">
+										<small>PRODUCTOS AGREGADOS</small>
+									</legend>
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th class="text-center col-sm-1">Cod. Producto</th>
+												<th class="text-center col-sm-4">Producto</th>
+												<th class="text-center col-sm-3">Cantidad</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="(ixProdIngreso, prodIngreso) in lstProductosIngreso">
+												<td class="text-center">
+													{{ prodIngreso.idProducto }}
+												</td>
+												<td>
+													{{ prodIngreso.producto }}
+												</td>
+												<td class="text-center">
+													<input type="number" min="0.01" ng-model="prodIngreso.cantidad" class="form-control" placeholder="Cantidad" ng-disabled="!prodIngreso.editar" required>
+												</td>
+												<td class="text-center">
+													<button type="button" class="btn btn-xs btn-info" ng-click="prodIngreso.editar=!prodIngreso.editar">
+														<span class="glyphicon glyphicon-pencil"></span> Editar
+													</button>
+													<button type="button" class="btn btn-xs btn-danger" ng-click="quitarProdIngreso( ixProdIngreso );">
+														<span class="glyphicon glyphicon-remove"></span> Quitar
+													</button>
+													
+												</td>
+											</tr>
+										</tbody>
+									</table>
+									<div class="form-group text-center">
+										<button type="button" class="btn btn-success" ng-click="guardarLstProductosIngresos()">
 											<span class="glyphicon glyphicon-saved"></span> GUARDAR
 										</button>
 									</div>
@@ -320,10 +335,9 @@
 						</div>
 					</div>
 				</div>
-
 			</div>
-		</div>
 
+		</div>
 	</div>
 </div>
 

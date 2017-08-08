@@ -25,6 +25,9 @@ $datos = array();
 
 switch ( $data->opcion )
 {
+	case 'timeNow':
+		echo json_encode( array( 'timeNow' => date("Y-m-d h:m:s") ) );
+		break;
 
 	case 'login':
 		$usuario = new Usuario();
@@ -146,7 +149,7 @@ switch ( $data->opcion )
 
 	case 'lstMenu':					// CARGAR LISTA DE MENU
 		$menu = new Menu();
-		echo json_encode( $menu->lstMenu( 1 ) );
+		echo json_encode( $menu->lstMenu( $data->idTipoMenu ) );
 		break;
 
 	case 'lstMenuPrecio':			// CARGAR LISTA PRECIOS MENU
@@ -346,9 +349,9 @@ switch ( $data->opcion )
 
 	/////////////////////////
 	/////////////////////////
-	case 'guardarOrdenCliente':
+	case 'guardarDetalleOrden':
 		$orden = new Orden();
-		$orden->guardarOrdenCliente( $data->detalleOrden ) ;
+		$orden->guardarDetalleOrden( $data->idOrdenCliente, $data->lstAgregar ) ;
 		echo json_encode( $orden->getRespuesta() );
 		break;
 	

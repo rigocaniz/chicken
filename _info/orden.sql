@@ -59,6 +59,7 @@ BEGIN
 	DECLARE _estadoActualDetalle INT DEFAULT NULL;
 	DECLARE _estadoActualOrden INT DEFAULT NULL;
 	DECLARE _perteneceCombo BOOLEAN;
+	DECLARE _ids TEXT DEFAULT '';
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
 
@@ -75,14 +76,16 @@ BEGIN
 	ELSEIF _action = 'insert' THEN
 		WHILE _cantidad > 0 DO
 			INSERT INTO detalleOrdenMenu (idOrdenCliente, idMenu, cantidad, idEstadoDetalleOrden, idTipoServicio, usuario, usuarioResponsable, perteneceCombo )
-			VALUES (_idOrdenCliente, _idMenu, 1, 1, _idTipoServicio, @usuario, _usuarioResponsable, 0 );
+			VALUES (_idOrdenCliente, _idMenu, 1, 1, _idTipoServicio, @usuario, IFNULL( _usuarioResponsable, @usuario ), 0 );
+
+			SET _ids = CONCAT( _ids, '_', LAST_INSERT_ID() );
 			
 			UPDATE menu SET top = top + 1 WHERE idMenu = _idMenu;
             
             SET _cantidad = _cantidad - 1;
         END WHILE;
 
-		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
+		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', _ids AS 'ids';
 
 	ELSEIF _action = 'estado' THEN
 		IF ( ( _idEstadoDetalleOrden > _estadoActualDetalle ) OR @isAdmin ) THEN
@@ -235,7 +238,7 @@ BEGIN
 		WHILE _cantidad > 0 DO
 
 			INSERT INTO detalleOrdenCombo (idOrdenCliente, idCombo, cantidad, idEstadoDetalleOrden, idTipoServicio, usuario, usuarioResponsable)
-			VALUES (_idOrdenCliente, _idCombo, 1, 1, _idTipoServicio, @usuario, _usuarioResponsable );
+			VALUES (_idOrdenCliente, _idCombo, 1, 1, _idTipoServicio, @usuario, IFNULL( _usuarioResponsable, @usuario ) );
 
 			UPDATE combo SET top = top + 1 WHERE idCombo = _idCombo;
 
