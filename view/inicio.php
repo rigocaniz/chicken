@@ -1,15 +1,15 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
-            <div class="col-xs-6 col-sm-4 col-md-8">
+            <div class="col-xs-6 col-sm-7 col-md-8">
                 <h2>
                     <span class="glyphicon glyphicon-th"></span>
                     MENU
                 </h2>
             </div>
-            <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-xs-6 col-sm-5 col-md-4">
                 <div class="pull-right">
-                    <img class="img-responsive" src="img/logo_churchil.png" style="height: 125px;">
+                    <img class="img-responsive" src="img/logo_churchil.png" style="height: 100px;">
                 </div>
             </div>
         </div>

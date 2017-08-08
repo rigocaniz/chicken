@@ -1,4 +1,4 @@
-app.controller('crtlAdmin', function( $scope , $http, $modal ){
+app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 	$scope.menuTab = 'menu';
 
@@ -56,13 +56,24 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
         $http.post('consultas.php',{
             opcion : 'inicioAdmin'
         }).success(function(data){
-            console.log( 'inicioAdmin: ', data );
+            //console.log( 'inicioAdmin: ', data );
             $scope.lstDestinoMenu  = data.lstDestinoMenu || [];
             $scope.lstTipoMenu     = data.lsTipoMenu || [];
             $scope.lstTipoServicio = data.lstTiposServicio || [];
             $scope.lstEstadosMenu  = data.lstEstadosMenu || [];
         })
 	})();
+
+	// CONSULTAR PRECIOS MENU
+	$scope.cargarLstPreciosMenu = function( idMenu )
+	{
+		$http.post('consultas.php',{opcion: 'cargarMenuPrecio', idMenu: idMenu})
+		.success(function(data){
+			$scope.menu.lstPrecios = data;
+		}).error(function(data){
+			console.log(data);
+		});
+	};
 
 	$scope.lstPaginacion = [];
 	$scope.generarPaginacion = function( totalPaginas ){
@@ -99,14 +110,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 		})
 	};
 
-	/*
-	($scope.inicio = function()
-	{
-		$scope.verListaMenu();
-		$scope.verListaCombos();
-	})();
-	*/
-
 
 	$scope.actualizarMenuCombo = function( tipo, data )
 	{
@@ -114,20 +117,10 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 		$scope.accion = 'update';
 			if( tipo == 'menu' ){
 				$scope.menu = data;
-				/*
-				$scope.menu = {
-					'idEstadoMenu'  : 1,
-					'menu'          : '',
-					'idDestinoMenu' : 1,
-					'idTipoMenu'    : 1,
-					'descripcion'   : '',
-					'imagen'        : '',
-					'subirImagen'   : true,
-					'lstPrecios'    : []
-				};
-				*/
-
-				$scope.dialAdminMenu.show();
+				$scope.cargarLstPreciosMenu( $scope.menu.idMenu );
+				$timeout(function(){
+					$scope.dialAdminMenu.show();
+				});
 			}
 
 			else if( tipo == 'combo' ){
@@ -210,36 +203,47 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 
 	// REGISTRAR MENU
 	$scope.consultaMenu = function(){
-		var menu = $scope.menu;
-		console.log($scope.menu);
+		var menu = $scope.menu, error = false;
+			console.log($scope.menu);
 		if( $scope.accion == 'update' && !(menu.idMenu && menu.idMenu > 0) ){
+			error = true;
 			alertify.notify( 'No. de menú no válido', 'info', 5 );
 		}
 		else if( !( menu.idEstadoMenu && menu.idEstadoMenu > 0 )  ){
+			error = true;
 			alertify.notify( 'Seleccione el estado del Menú', 'info', 5 );	
 		}
 		else if( !( menu.menu && menu.menu.length > 3 ) ){
+			error = true;
 			alertify.notify( 'El nombre del menú debe ser mayor a 3 caracteres', 'info', 5 );		
 		}
 		else if( !( menu.idDestinoMenu && menu.idDestinoMenu > 0 ) ){
+			error = true;
 			alertify.notify( 'Seleccione el destino del Menú', 'info', 5 );	
 		}
 		else if( !( menu.idTipoMenu && menu.idTipoMenu > 0 ) ){
+			error = true;
 			alertify.notify( 'Seleccione el tipo de Menú', 'info', 5 );	
 		}
 		else if( !( menu.descripcion && menu.descripcion.length > 15 ) ){
+			error = true;
 			alertify.notify( 'La descripción del menú debe ser mayor a 15 caracteres', 'info', 5 );		
 		}
-		/*
-		else if( !menu.lstPrecios.length  ){
-			alertify.notify( 'No ha ingresado los precios del Menu', 'info', 5 );		
-		}
-		*/
 		else{
+			for (var i = 0; i < menu.lstPrecios.length; i++) {
+				if( !( menu.lstPrecios[ i ].precio && menu.lstPrecios[ i ].precio >= 0 ) ){
+					alertify.notify( 'Ingrese un precio válido en el servicio ' + menu.lstPrecios[ i ].tipoServicio, 'warning', 4 );
+					error = true;
+					break;
+				}
+			}
+		}
+		
+		if( !error ){
 			$http.post('consultas.php',{
-				opcion:"consultaMenu",
-				accion:$scope.accion,
-				datos: $scope.menu
+				opcion : "consultaMenu",
+				accion : $scope.accion,
+				datos  : $scope.menu
 			}).success(function(data){
 				console.log(  data );
 				alertify.set('notifier','position', 'top-right');
@@ -252,6 +256,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal ){
 			})
 		}
 	};
+
 
 	$scope.resetValores = function( accion ){
 		$scope.accion == 'insert';

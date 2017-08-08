@@ -227,6 +227,11 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** PRODUCTO
 	/////////////////////////
+	case 'buscarProducto':			// BUSCAR PRODUCTO(S) POR NOMBRE
+		$producto = new Producto();
+		echo json_encode( $producto->buscarProducto( $data->nombreProducto ) );
+		break;
+
 	case 'consultaProducto':			// ACCION PRODUCTO: INSERT / UPDATE
 		$producto = new Producto();
 		echo json_encode( $producto->consultaProducto( $data->accion, $data->datos ) );
