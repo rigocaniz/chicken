@@ -58,7 +58,6 @@ class Cliente
 
  		else:
  			$sql = "CALL consultaCliente( '{$accion}','{$nit}', '{$nombre}', '{$cui}', {$correo}, '{$telefono}', '{$direccion}', {$idTipoCliente} )";
- 			
  			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
  				@$this->con->next_result();
 

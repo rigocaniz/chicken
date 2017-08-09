@@ -6,131 +6,148 @@
 define('MB', 1048576);
 
 // VARIABLES GENERALES
-$mensaje   = "";		// MENSAJE
-$respuesta = 0;			// RESPUESTA
-$error     = FALSE;		// ERROR
-$imagen    = "";		// UBICACIÓN IMAGEN BD
+$mensaje   = "";        // MENSAJE
+$respuesta = 0;         // RESPUESTA
+$error     = FALSE;     // ERROR
+$imagen    = "";        // UBICACIÓN IMAGEN BD
 $tipo      = "";
 
 if( !isset( $_POST['id'] ) && !isset( $_POST['tipo'] ) || !isset( $_FILES ) )
 {
-	$error   = TRUE;
-	$mensaje = "Datos inválidos, vuelva a intentarlo";
-	exit();
+    $error   = TRUE;
+    $mensaje = "Datos inválidos, vuelva a intentarlo";
+    exit();
 }
 
 else if( getimagesize( $_FILES[ 'imagen' ][ 'tmp_name' ]) == false )
 {
-	$error   = TRUE;
-	$mensaje = "El archivo cargado no es una imagen";
+    $error   = TRUE;
+    $mensaje = "El archivo cargado no es una imagen";
 }
 
 else if( $_FILES[ 'imagen' ][ 'size' ] > (1 * MB) )
 {
-	$error   = TRUE;
-	$mensaje = "El archivo supera 1MB, peso máximo permitido";
+    $error   = TRUE;
+    $mensaje = "El archivo supera 1MB, peso máximo permitido";
 }
 
 else
 {
 
-	// CONEXION BD
-	include 'class/conexion.class.php';
-	$id      = $_POST['id'];
-	$tipo    = $_POST['tipo'];
-	
+    // CONEXION BD
+    include 'class/conexion.class.php';
+    $id      = (int)$_POST['id'];
+    $tipo    = $_POST['tipo'];
+ 
 
-	// SETEO DE VARIABLES
-	$carpeta        = "img-menu/";
+    // SETEO DE VARIABLES
+    $carpeta                = "img-menu/";
+    $nombreArchivo          = $_FILES[ 'imagen' ][ 'name' ];
+    $tipoArchivo            = $_FILES[ 'imagen' ][ 'type' ];
+    $imagenTemporal         = $_FILES[ 'imagen' ][ 'tmp_name' ];
+    $errorArchivo           = $_FILES[ 'imagen' ][ 'error' ];
+    $pesoArchivo            = $_FILES[ 'imagen' ][ 'size' ];
 
-	$nombreArchivo  = $_FILES[ 'imagen' ][ 'name' ];
-	$tipoArchivo    = $_FILES[ 'imagen' ][ 'type' ];
-	$nombreTemporal = $_FILES[ 'imagen' ][ 'tmp_name' ];
-	$errorArchivo   = $_FILES[ 'imagen' ][ 'error' ];
-	$pesoArchivo    = $_FILES[ 'imagen' ][ 'size' ];
+    $info                   = new SplFileInfo( $nombreArchivo );
+    $extension              = $info->getExtension();
+    $nombreArchivo          = uniqid() . '_' . $id . "." . $extension;
+    list( $width, $height ) = getimagesize( $imagenTemporal );
+    $imagenNueva            = imagecreatetruecolor( 300, 300 );
+    $thumbnail              = $carpeta.$nombreArchivo;
 
-	$nombreArchivo  = uniqid() . '_' . $nombreArchivo;
-	$rutaArchivo    = $carpeta . $nombreArchivo; 		// DIRECTORIO + ARCHIVO
+    switch( $tipoArchivo ){
+        case 'image/png':
+			imagesavealpha($imagenNueva, true);
+			$bkTransparente = imagecolorallocatealpha($imagenNueva, 0, 0, 0, 127);
+			imagefill( $imagenNueva, 0, 0, $bkTransparente);
+            $source = imagecreatefrompng( $imagenTemporal );
+            break;
 
-	//echo basename( $_FILES["imagen"]["name"] );
+        case 'image/jpeg':
+            $source = imagecreatefromjpeg( $imagenTemporal );
+            break;
+     }
 
-	// VALIDAR ARCHIVO CARGADO
-	if( move_uploaded_file( $nombreTemporal, $rutaArchivo ) )
-	{	
-		// INICIALIZAR TRANSACCIÓN
-		$conexion->query( "START TRANSACTION" );
+    imagecopyresized( $imagenNueva, $source, 0, 0, 0, 0, 300, 300, $width, $height );
 
-		if( $tipo == 'menu' )		// MENU
-			$sql = "SELECT imagen FROM menu WHERE idMenu = {$id};";
-		
-		elseif( $tipo == 'combo' )	// COMBO
-			$sql = "SELECT imagen FROM combo WHERE idCombo = {$id};";
-		
-		elseif( $tipo == 'supercombo' )	// SUPERCOMBO
-			$sql = "SELECT imagen FROM superCombo WHERE idSuperCombo = {$id};";
-		
-		if( $rs = $conexion->query( $sql ) ){
-			if( $row = $rs->fetch_object() )
-				$imagen = $row->imagen;
+    switch( $tipoArchivo ){
+        case 'image/png':
+            imagepng( $imagenNueva, $thumbnail );
+            break;
 
-			if( $tipo == 'menu' )		// MENU
-				$sql = "UPDATE menu SET imagen = '{$rutaArchivo}' WHERE idMenu = {$id};";
-		
-			elseif( $tipo == 'combo' )	// COMBO
-				$sql = "UPDATE combo SET imagen = '{$rutaArchivo}' WHERE idCombo = {$id};";
-			
-			elseif( $tipo == 'supercombo' )	// SUPERCOMBO
-				$sql = "UPDATE superCombo SET imagen = '{$rutaArchivo}' WHERE idSuperCombo = {$id};";
+        case 'image/jpeg':
+            imagejpeg( $imagenNueva, $thumbnail, 100 );
+            break;
+    }
 
-			if( !$rs = $conexion->query( $sql ) ){
-				$error   = TRUE;
-				$mensaje = "ERROR al actualizar la imagen, vuelva a intentarlo";
-			}
+    
+    // INICIALIZAR TRANSACCIÓN
+    $conexion->query( "START TRANSACTION" );
 
+    if( $tipo == 'menu' )       // MENU
+        $sql = "SELECT imagen FROM menu WHERE idMenu = {$id};";
+    
+    elseif( $tipo == 'combo' )  // COMBO
+        $sql = "SELECT imagen FROM combo WHERE idCombo = {$id};";
+    
+    elseif( $tipo == 'supercombo' ) // SUPERCOMBO
+        $sql = "SELECT imagen FROM superCombo WHERE idSuperCombo = {$id};";
+    
+    if( $rs = $conexion->query( $sql ) ){
+        if( $row = $rs->fetch_object() )
+            $imagen = $row->imagen;
 
-		}
-		else{
-			$this->respuesta = 'danger';
-			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
-		}
+        if( $tipo == 'menu' )       // MENU
+            $sql = "UPDATE menu SET imagen = '{$thumbnail}' WHERE idMenu = {$id};";
+    
+        elseif( $tipo == 'combo' )  // COMBO
+            $sql = "UPDATE combo SET imagen = '{$thumbnail}' WHERE idCombo = {$id};";
+        
+        elseif( $tipo == 'supercombo' ) // SUPERCOMBO
+            $sql = "UPDATE superCombo SET imagen = '{$thumbnail}' WHERE idSuperCombo = {$id};";
 
-		// FINALIZAR TRANSACCIÓN
-		if( $error )
-		{
-			$conexion->query( "ROLLBACK" );
-			$respuesta = 0;
-		}
-		else{
-			$conexion->query( "COMMIT" );
-			$respuesta = 1;
-			$mensaje   = "Guardado correctamente.";
+        if( !$rs = $conexion->query( $sql ) ){
+            $error   = TRUE;
+            $mensaje = "ERROR al actualizar la imagen, vuelva a intentarlo";
+        }
 
-			if ( file_exists( $imagen ) )
-				unlink( $imagen );
-		}
+    }
+    else{
+        $this->respuesta = 'danger';
+        $this->mensaje   = 'Error al ejecutar al actualizar la imagen';
+    }
 
-	}
-	else{
-		$error = TRUE;
-		$mensaje = "Error al mover el archivo, vuelva a intentarlo";
-	}
+    // FINALIZAR TRANSACCIÓN
+    if( $error )
+    {
+        $conexion->query( "ROLLBACK" );
+        $respuesta = 0;
+    }
+    else{
+        $conexion->query( "COMMIT" );
+        $respuesta = 1;
+        $mensaje   = "Guardado correctamente.";
 
-	
-	// SI HAY ERROR ELIMINAR TEMPORAL
-	if( $error )
-	{
-		if ( file_exists( $rutaArchivo ) )
-			unlink( $rutaArchivo );
+        if ( file_exists( $imagen ) )
+            unlink( $imagen );
+    }
+    
 
-	}
+    // SI HAY ERROR ELIMINAR ARCHIVO
+    if( $error )
+    {
+        if ( file_exists( $thumbnail ) )
+            unlink( $thumbnail );
+
+    }
 
 }
 
 
 if( $error )
-	$response = array( "accion" => $tipo, "respuesta" => $respuesta, "mensaje" => $mensaje, "error" => $mensaje );
+    $response = array( "accion" => $tipo, "respuesta" => $respuesta, "mensaje" => $mensaje, "error" => $mensaje );
 else
-	$response = array( "accion" => $tipo, "respuesta" => $respuesta, "mensaje" => $mensaje );
+    $response = array( "accion" => $tipo, "respuesta" => $respuesta, "mensaje" => $mensaje );
 
 
 echo json_encode( $response ); 

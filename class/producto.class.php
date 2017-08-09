@@ -70,6 +70,26 @@ class Producto
 	}
 
 
+	// OBTENER LISTA DE PRODUCTOS INGRESO
+	function getLstIngreso( $lstProductosIngreso )
+	{
+
+		if( count( $lstProductosIngreso ) )
+		{
+			foreach ($lstProductosIngreso AS $ixProducto => $ixProducto ) {
+				
+			}
+		}
+		else
+		{
+			$this->respuesta = 'warning';
+			$this->mensaje   = 'No ha ingrado ningun producto, verifique';
+		}
+
+		//$this->con->
+		return $this->getRespuesta();
+	}
+
 
 	// GUARDAR // ACTUALIZAR => INGRESO
 	function consultaIngreso( $accion, $data )
