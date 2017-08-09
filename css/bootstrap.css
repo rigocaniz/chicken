@@ -5998,6 +5998,9 @@ button.close {
     width: 900px;
   }
 }
+.modal-xl {
+  width: 90%;
+}
 .carousel {
   position: relative;
 }

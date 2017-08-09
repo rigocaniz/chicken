@@ -58,8 +58,6 @@
 								        	<p>
 								        		<strong>{{ m.menu | uppercase }}</strong>
 								        	</p>
-								        	glyphicon glyphicon-cutlery
-								        	
 								        	<hr>
 							        		<button type="button" class="btn btn-info btn-sm" ng-click="actualizarMenuCombo( 'menu', m)">
 							        			<span class="glyphicon glyphicon-edit"></span> Editar
@@ -424,7 +422,7 @@
 <!-- MODAL AGREGAR / EDITAR MENU -->
 <script type="text/ng-template" id="dial.recetaMenu.html">
 	<div class="modal" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog modal-xl">
 			<div class="modal-content panel-danger">
 				<div class="modal-header panel-heading">
 					<button type="button" class="close" ng-click="$hide()">&times;</button>
@@ -462,17 +460,57 @@
 							</li>
 						</ul>
 
+						<legend class="text-center">
+							<small>
+								<span class="glyphicon glyphicon-file"></span> RECETA PARA EL MENU
+							</small>
+						</legend>
 						<form class="form-horizontal" role="form" name="formMenu">
+							<!-- INGRESAR RECETA -->
+							<fieldset class="fieldset">
+								<legend class="legend">Ingresar Receta</legend>
+								<div class="form-group">
+									<div class="col-sm-7 col-md-5">
+										<label class="control-label">Producto</label>
+										<div ng-show="!prod.seleccionado">
+											<input type="text" id="producto" class="form-control" ng-model="prod.producto" maxlength="35" placeholder="Ingrese producto" ng-change="buscarProducto( prod.producto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
+											<ul class="list-group" ng-show="lstProductos.length">
+
+											    <li class="list-group-item" ng-class="{'active': $parent.idxProducto == ixProducto}" ng-repeat="(ixProducto, producto) in lstProductos" ng-click="seleccionarProducto( producto )" ng-mouseenter="$parent.idxProducto = ixProducto">
+											    	{{ producto.producto }}
+											    </li>
+											</ul>
+										</div>
+										<div ng-show="prod.seleccionado">
+											<input type="text" class="form-control" ng-model="prod.producto" placeholder="Ingrese producto" disabled>
+										</div>
+									</div>
+									<div class="col-sm-4 col-md-3">
+										<label class="control-label">Cantidad</label>
+										<input type="number" min="0.01" ng-keydown="$event.keyCode == 13 && agregarIngresoProducto();" ng-model="prod.cantidad" id="cantidad" class="form-control" placeholder="Cantidad" >
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-7">
+										<label class="control-label">Observacion</label>
+										<textarea class="form-control" ng-model="prod.observacion"></textarea>
+									</div>
+									<div class="col-sm-4">
+										<br>
+										<button type="button" class="btn btn-sm btn-warning" ng-click="agregarIngresoProducto();">
+											<span class="glyphicon glyphicon-plus"></span> Agregar
+										</button>
+										<button type="button" class="btn btn-sm btn-default" ng-click="cancelarIngreso( 1 )">
+											<span class="glyphicon glyphicon-remove"></span> Cancelar
+										</button>
+									</div>
+								</div>
+							</fieldset>
 							<div class="form-group">
-								<legend class="text-center">
-									<small>
-										<span class="glyphicon glyphicon-file"></span> RECETA PARA EL MENU
-									</small>
-								</legend>
-								<table class="table table-hover">
+								<table class="table table-hover" ng-show="objMenu.lstRecetaMenu.length">
 									<thead>
 										<tr>
-											<th class="text-center">No.</th>
+											<th class="text-center">Cod. Prod.</th>
 											<th class="text-center col-sm-4">Producto</th>
 											<th class="text-center col-sm-1">Medida</th>
 											<th class="text-center col-sm-3">Tipo de Producto</th>
@@ -509,6 +547,9 @@
 										</tr>
 									</tbody>
 								</table>
+								<div class="alert alert-warning text-right" role="alert" ng-show="!objMenu.lstRecetaMenu.length">
+									<span class="glyphicon glyphicon-info-sign"></span> NO SE HA INGRESADO LA RECETA DEL MENÚ
+								</div>
 							</div>
 						</form>
 					</fieldset>
