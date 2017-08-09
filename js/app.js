@@ -125,7 +125,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
         var de   = moment( new Date() ).add( $scope.difLocalServer );
         var para = moment( tiempo );
 
-        return para.to( de );
+        return de.to( para );
     };
 
     $scope.formatoFecha = function function_name( fecha, formato ) {
