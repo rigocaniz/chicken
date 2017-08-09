@@ -59,11 +59,11 @@
 								        		{{ m.descripcion }}
 								        	</p>
 								        	<hr>
-							        		<button type="button" class="btn btn-primary btn-sm" ng-click="actualizarMenuCombo( 'menu', m)">
+							        		<button type="button" class="btn btn-info btn-sm" ng-click="actualizarMenuCombo( 'menu', m)">
 							        			<span class="glyphicon glyphicon-edit"></span> Editar
 							        		</button>
 
-											<a href="#" type="button" class="btn btn-info btn-sm">
+											<a href="#" type="button" class="btn btn-warning btn-sm">
 												<span class="glyphicon glyphicon-list"></span> Receta
 											</a>
 								      	</div>
@@ -100,7 +100,7 @@
 							        		Estado <span class="label label-success">{{c.estadoMenu}}</span>
 							        		<p>{{c.descripcion}}</p>
 							        		<p>
-							        			<button type="button" class="btn btn-sm btn-primary" ng-click="actualizarMenuCombo( 'combo', c )">
+							        			<button type="button" class="btn btn-sm btn-info" ng-click="actualizarMenuCombo( 'combo', c )">
 													<span class="glyphicon glyphicon-edit"></span> Editar
 							        			</button>
 											</p>

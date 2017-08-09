@@ -177,7 +177,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
         cache                 : false,
         maxFileSize           : 1024,
         uploadAsync           : false,
-        allowedFileExtensions : ['jpeg','jpg','gif','png'],
+        allowedFileExtensions : ['jpeg','jpg','png'],
         uploadExtraData : function() {
             return { 
                 id   : $scope.imagen.id,
