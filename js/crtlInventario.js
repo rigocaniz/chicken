@@ -137,30 +137,30 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		}
 	};
 
-	$scope.guardarLstProductosIngresos = function(){
+	$scope.guardarLstProductosIngreso = function(){
 		var error = false;
 
 		if( !($scope.lstProductosIngreso.length) ){
-			var error = true;
+			error = true;
 			alertify.notify( 'No ha ingrado ningun producto, verifique', 'info', 5 );
 		}
 		else{
 			for (var i = 0; i < $scope.lstProductosIngreso.length; i++) {
 				if( $scope.lstProductosIngreso[i].idProducto ){
-					var error = true;
+					error = true;
 					alertify.notify( 'El Código del producto no es válido, verifique', 'warning', 5 );
 					break;
 				}
 				else if( !($scope.lstProductosIngreso[i].cantidad && $scope.lstProductosIngreso[i].cantidad > 0 ) ){
 					alertify.notify( 'La cantidad debe ser mayor a 0', 'warning', 5 );
-					var error = true;
+					error = true;
 					break;
 				}
 			}
 		}
 
 		if( !error ){
-			$http.post('consultas.php',{opcion: 'consultaIngreso', data: $scope.lstProductosIngreso})
+			$http.post('consultas.php',{opcion: 'guardarLstProductosIngreso', data: $scope.lstProductosIngreso})
 			.success(function(data){
 				console.log(data);
 			}).error(function(data){
