@@ -283,3 +283,21 @@ input.ng-dirty.ng-invalid {
     border: 1px solid #e84646;
     box-shadow: 0px 0px 5px #ff8585;
 }
+
+
+
+.primary {
+    background: #03a9f4;
+}
+
+.info {
+    background: #03a9f4;
+}
+
+.warning {
+    background: #f34a15;
+}
+
+.danger {
+    background: #d0091c;
+}

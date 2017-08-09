@@ -25,6 +25,31 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 		orden: 'ASC'
 	};
 
+	
+	// CARGAR RECETA MENU
+	$scope.objMenu = {};
+	$scope.cargarRecetaMenu = function( menu )
+	{
+		$scope.objMenu = menu;
+		if( $scope.objMenu.idMenu > 0 ){
+			$scope.lstRecetaMenu( $scope.objMenu.idMenu );
+		}
+	};
+	
+	$scope.lstRecetaMenu = function( idMenu )
+	{
+		$http.post('consultas.php',{opcion: 'lstRecetaMenu', idMenu: idMenu})
+		.success(function(data){
+			console.log('data::: ', data);
+			$scope.objMenu.lstRecetaMenu = data;
+			$scope.dialRecetaMenu.show();
+		}).error(function(data){
+			console.log(data);
+		});
+	};
+
+
+
 	$scope.cargarPaginacion = function( pagina ){
 		$scope.filter.pagina = pagina;
 		if( $scope.menuTab == 'menu' )
@@ -40,6 +65,8 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	$scope.dialIngreso    = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static', keyboard: false});
 	$scope.dialAdminMenu  = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static', keyboard: false});
 	$scope.dialAdminCombo = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialRecetaMenu = $modal({scope: $scope,template:'dial.recetaMenu.html', show: false, backdrop: 'static', keyboard: false});
+	
 
 	$scope.lstDestinoMenu  = [];
 	$scope.lstTipoMenu     = [];

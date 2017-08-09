@@ -26,7 +26,6 @@
 			</ul>
 		</div>
 
-	
 		<!-- TAB PANELES -->
 		<div class="col-sm-12">
 			<div class="tab-content">
@@ -45,27 +44,31 @@
 								</p>
 							</div>
 							<div class="row">
-							  	<div class="col-sm-3" ng-repeat="m in lstMenu">
+							  	<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" ng-repeat="m in lstMenu">
 							    	<div class="thumbnail">
-								    	<span class="label label-info">{{ m.destinoMenu }}</span>
-
-								      	<img ng-src="{{ m.imagen }}" alt="{{ m.menu }}" ng-click="asignarValorImagen( m.idMenu, 'menu' )">
+								    	<span class="label label-default" 
+								    		ng-class="{'label-danger': m.idDestinoMenu == 1, 'label-warning': m.idDestinoMenu == 2}">
+								    		{{ m.destinoMenu }}
+								    	</span>
+								      	<img ng-src="{{ m.imagen }}" alt="{{ m.menu }}" 	ng-click="asignarValorImagen( m.idMenu, 'menu' )">
 								      	<div class="caption">
+								      		<div class="text-right">
+								      			<span class="label label-success">{{ m.estadoMenu }}</span>
+								      		</div>
 								        	<p>
-								        		<strong>{{ m.menu | uppercase }}</strong> 
-								        		<span class="label label-success">{{ m.estadoMenu }}</span>
+								        		<strong>{{ m.menu | uppercase }}</strong>
 								        	</p>
-								        	<p>
-								        		{{ m.descripcion }}
-								        	</p>
+								        	glyphicon glyphicon-cutlery
+								        	
 								        	<hr>
 							        		<button type="button" class="btn btn-info btn-sm" ng-click="actualizarMenuCombo( 'menu', m)">
 							        			<span class="glyphicon glyphicon-edit"></span> Editar
 							        		</button>
 
-											<a href="#" type="button" class="btn btn-warning btn-sm">
-												<span class="glyphicon glyphicon-list"></span> Receta
-											</a>
+							        		<button type="button" class="btn btn-warning btn-sm" ng-click="cargarRecetaMenu( m )">
+							        			<span class="glyphicon glyphicon-list"></span> Receta
+							        		</button>
+
 								      	</div>
 							    	</div>
 							  	</div>
@@ -90,7 +93,7 @@
 							</div>
 							<div class="row">
 								<br>
-							  	<div class="col-xs-6 col-sm-4 col-md-3" ng-repeat="c in lstCombos">
+							  	<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" ng-repeat="c in lstCombos">
 							    	<div class="thumbnail">
 							      		<img ng-src="{{ c.imagen }}" class="img-responsive" ng-click="asignarValorImagen( c.idCombo, 'combo' )">
 							      		<div class="caption">
@@ -112,7 +115,7 @@
 					</div>
 				</div>
 
-				<!-- MEDIDA DE PRODUCTO -->
+				<!-- SUPERCOMBO -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuTab=='superCombo'}" ng-show="menuTab=='superCombo'">
 					<div class="col-sm-offset-1 col-sm-10">
 						<div class="panel panel-primary">
@@ -303,7 +306,7 @@
 				</div>
 				<div class="modal-body">
 					<fieldset class="fieldset">
-						<legend class="legend">DATOS</legend>
+						<legend class="legend" ng-class="{'warning': accion == 'insert', 'info': accion == 'update'}">DATOS</legend>
 						<!-- FORMULARIO MENU -->
 						<form class="form-horizontal" role="form" name="formMenu">
 							<div class="text-right" ng-show="accion == 'update'">
@@ -396,6 +399,112 @@
 											</td>
 											<td class="text-right">
 												<kbd>Q. {{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</form>
+					</fieldset>
+				</div>
+				<div class="modal-footer">
+					<button class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMenu()">
+						<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
+					</button>
+					<button type="button" class="btn btn-default" ng-click="resetValores( 1 ); $hide()">
+						<span class="glyphicon glyphicon-log-out"></span>
+						<b>Salir</b>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+
+<!-- MODAL AGREGAR / EDITAR MENU -->
+<script type="text/ng-template" id="dial.recetaMenu.html">
+	<div class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content panel-danger">
+				<div class="modal-header panel-heading">
+					<button type="button" class="close" ng-click="$hide()">&times;</button>
+					<h3 class="panel-title">
+						<span class="glyphicon glyphicon-book"></span>
+						RECETA DEL MENU
+					</h3>
+				</div>
+				<div class="modal-body">
+					<fieldset class="fieldset">
+						<legend class="legend danger">DATOS</legend>
+						<!-- FORMULARIO MENU -->
+						<ul class="media-list">
+							<li class="media">
+								<div class="media-left text-center">
+									<img class="media-object" width="125px" height="125px" ng-src="{{ objMenu.imagen }}" alt="MENU">
+									<small><b>CÓDIGO #{{ objMenu.idMenu }}</b></small>
+								</div>
+								<div class="media-body">
+									<div class="pull-right">
+										<label class="label label-success"> {{ objMenu.estadoMenu }} </label><br>
+									</div>
+									<h4 class="media-heading">
+										{{ objMenu.menu | uppercase }}
+									</h4>
+									<div class="pull-right">
+									</div>
+									<p>
+										<strong>DESCRIPCIÓN:</strong>
+									</p>
+									<p>
+										{{ objMenu.descripcion }}
+									</p>
+								</div>
+							</li>
+						</ul>
+
+						<form class="form-horizontal" role="form" name="formMenu">
+							<div class="form-group">
+								<legend class="text-center">
+									<small>
+										<span class="glyphicon glyphicon-file"></span> RECETA PARA EL MENU
+									</small>
+								</legend>
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th class="text-center">No.</th>
+											<th class="text-center col-sm-4">Producto</th>
+											<th class="text-center col-sm-1">Medida</th>
+											<th class="text-center col-sm-3">Tipo de Producto</th>
+											<th class="text-center col-sm-3">Cantidad</th>
+											<th class="text-center col-sm-2"></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="receta in objMenu.lstRecetaMenu">
+											<td>
+												{{ receta.idProducto }}
+											</td>
+											<td>
+												{{ receta.producto }}<br>
+												<button type="button" class="btn btn-default btn-xs" ng-click="receta.mostrar=!receta.mostrar">
+													<span class="glyphicon" ng-class="{'glyphicon-eye-open': receta.mostrar, 'glyphicon-eye-close': !receta.mostrar}"></span> {{ receta.mostrar ? 'Ocultar' : 'Mostrar' }} 
+												</button>
+												<div ng-show="receta.mostrar">
+													{{ receta.observacion }}
+												</div>
+											</td>
+											<td class="text-center">
+												{{ receta.medida }}
+											</td>
+											<td class="text-center">
+												{{ receta.tipoProducto }}
+											</td>
+											<td class="text-right">
+												<input type="number" min="0" class="form-control" ng-model="receta.cantidad" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
+											</td>
+											<td class="text-right">
+												
 											</td>
 										</tr>
 									</tbody>

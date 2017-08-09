@@ -28,6 +28,37 @@ class Menu
  	}
 
 
+ 	// LST RECETA(S) POR MENU
+ 	function lstRecetaMenu( $idMenu )
+ 	{
+ 		
+ 		$idMenu = (int)$idMenu;
+ 		$lstReceta = array();
+
+ 		$sql = "SELECT 
+				    idMenu,
+				    idProducto,
+				    producto,
+				    cantidad,
+				    medida,
+				    tipoProducto,
+				    observacion
+				FROM
+				    lstReceta
+				WHERE idMenu = {$idMenu};";
+ 		
+ 		if( $rs = $this->con->query( $sql ) ){
+ 			while( $row = $rs->fetch_object() ){
+ 				$row->idProducto = (int)$row->idProducto;
+ 				$row->cantidad   = (double)$row->cantidad;
+ 				$lstReceta[] = $row;
+ 			}
+ 		}
+
+ 		return $lstReceta;
+ 	}
+
+
 	// CONSULTAR DATOS MENU
 	function cargarMenu( $idMenu )
 	{

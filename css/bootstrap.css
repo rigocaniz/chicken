@@ -4900,14 +4900,14 @@ a.label:focus {
   background-color: #31b0d5;
 }
 .label-warning {
-  background-color: #f0ad4e;
+  background-color: #fb8c00;
 }
 .label-warning[href]:hover,
 .label-warning[href]:focus {
   background-color: #ec971f;
 }
 .label-danger {
-  background-color: #d9534f;
+  background-color: #d0091c;
 }
 .label-danger[href]:hover,
 .label-danger[href]:focus {
@@ -5239,7 +5239,11 @@ a.thumbnail.active {
 }
 .media-heading {
   margin-top: 0;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+  font-family: "OpenSans-Bold";
+  border-bottom: 1px solid #eee;
+  padding: 6px 0;
+  color: #d0091c;
 }
 .media-list {
   padding-left: 0;

@@ -312,6 +312,11 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** MENU
 	/////////////////////////
+	case 'lstRecetaMenu':			// ACCION MENU: INSERT / UPDATE
+		$menu = new Menu();
+		echo json_encode( $menu->lstRecetaMenu( $data->idMenu ) );
+		break;
+		
 	case 'consultaMenu':			// ACCION MENU: INSERT / UPDATE
 		$menu = new Menu();
 		echo json_encode( $menu->consultaMenu( $data->accion, $data->datos ) );
