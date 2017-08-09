@@ -5,7 +5,7 @@
 				<span class="glyphicon glyphicon-plus"></span>
 				<u>N</u>ueva Orden
 			</button>
-			<button type="button" class="btn btn-info">
+			<button type="button" class="btn btn-info" ng-click="modalBuscar()">
 				<span class="glyphicon glyphicon-search"></span>
 				Buscar Orden
 			</button>
@@ -162,7 +162,7 @@
                 							<button type="button" class="btn btn-xs btn-default" ng-click="ordenCantidad( $index, 0, item.cantidad, item.precio )">
                 								<span class="glyphicon glyphicon-minus"></span>
                 							</button>
-                							<b>{{item.cantidad}}</b>
+                							<b style="font-size:17px">{{item.cantidad}}</b>
                 							<button type="button" class="btn btn-xs btn-info" ng-click="ordenCantidad( $index, 1, item.cantidad, item.precio )">
                 								<span class="glyphicon glyphicon-plus"></span>
                 							</button>
@@ -315,3 +315,72 @@
     </div>
 </script>
 
+<!-- LISTADO DE MENUS -->
+<script type="text/ng-template" id="dial.orden-busqueda.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_busqueda">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-info">
+                <div class="modal-header panel-heading">
+                	<span class="glyphicon glyphicon-search"></span>
+                    Buscar Orden
+                </div>
+                <div class="modal-body">
+                	<div class="row">
+                		<div class="col-xs-7">
+                			<input type="text" class="form-control" id="inputSearch">
+                		</div>
+                		<div class="col-xs-5">
+                			<button type="button" class="btn btn-primary">
+                				<span class="glyphicon glyphicon-search"></span>
+                				<span class="hidden-xs">Buscar</span>
+                			</button>
+                		</div>
+                	</div>
+                	<div class="row">
+                		<div class="col-xs-12">
+                			<table class="table table-condensed table-hover">
+                				<thead>
+                					<tr>
+                						<th>Cantidad</th>
+                						<th>Orden</th>
+                						<th>Subtotal</th>
+                						<th width="35px"></th>
+                					</tr>
+                				</thead>
+                				<tbody>
+                					<tr ng-repeat="item in ordenActual.lstAgregar">
+                						<td>
+                							<button type="button" class="btn btn-xs btn-default" ng-click="ordenCantidad( $index, 0, item.cantidad, item.precio )">
+                								<span class="glyphicon glyphicon-minus"></span>
+                							</button>
+                							<b style="font-size:17px">{{item.cantidad}}</b>
+                							<button type="button" class="btn btn-xs btn-info" ng-click="ordenCantidad( $index, 1, item.cantidad, item.precio )">
+                								<span class="glyphicon glyphicon-plus"></span>
+                							</button>
+                						</td>
+                						<td>
+                							<span class="glyphicon glyphicon-gift" ng-show="item.tipoMenu=='combo'"></span>
+                							<span>{{item.menu}} » {{item.tipoServicio}}</span>
+                						</td>
+                						<td>{{(item.precio*item.cantidad) | number:2}}</td>
+                						<td>
+                							<button type="button" class="btn btn-xs btn-danger" ng-click="quitarElemento( $index, item.cantidad, item.precio )">
+                								<span class="glyphicon glyphicon-remove"></span>
+                							</button>
+                						</td>
+                					</tr>
+                				</tbody>
+                			</table>
+                		</div>
+                   </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" ng-click="$hide();">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <b>Salir</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script> 

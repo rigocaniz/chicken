@@ -21,10 +21,11 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 	// DIALOGOS
-	$scope.dialOrden        = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialOrdenCliente = $modal({scope: $scope,template:'dial.orden.cliente.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialOrdenMenu    = $modal({scope: $scope,template:'dial.orden-menu.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialMenuCantidad = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialOrden         = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialOrdenCliente  = $modal({scope: $scope,template:'dial.orden.cliente.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialOrdenMenu     = $modal({scope: $scope,template:'dial.orden-menu.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialMenuCantidad  = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialOrdenBusqueda = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: false });
 
 	($scope.init = function () {
 		// CONSULTA TIPO DE SERVICIOS
@@ -45,6 +46,13 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			}
 		});
 	})();
+
+	$scope.modalBuscar = function () {
+		$scope.dialOrdenBusqueda.show();
+		$timeout(function () {
+			document.getElementById('inputSearch').focus();
+		},200);
+	};
 
 	// CONSULTA ORDENES
 	$scope.lstOrdenCliente = [];
