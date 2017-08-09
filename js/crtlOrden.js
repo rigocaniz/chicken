@@ -6,6 +6,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.idTipoServicio  = '';
 	$scope.idTipoMenu      = '';
 	$scope.accionOrden     = 'nuevo';
+	$scope.idEstadoOrden   = 1;
 
 	$scope.ordenActual = {
 		idOrdenCliente : 0,
@@ -47,14 +48,25 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 	// CONSULTA ORDENES
 	$scope.lstOrdenCliente = [];
-	($scope.consultaOrdenCliente = function () {
-		// CONSULTA TIPO DE SERVICIOS
-		$http.post('consultas.php', { opcion:'lstOrdenCliente', idEstadoOrden: 1})
-		.success(function (data) {
+	$scope.consultaOrdenCliente = function () {
+		if ( $scope.$parent.loading )
+			return false;
 
-			$scope.lstOrdenCliente = data;
-		});
-	})();
+		if ( $scope.idEstadoOrden > 0 ) {
+			$scope.lstOrdenCliente = [];
+			$scope.$parent.loading = true; // cargando...
+			// CONSULTA TIPO DE SERVICIOS
+			$http.post('consultas.php', { opcion : 'lstOrdenCliente', idEstadoOrden : $scope.idEstadoOrden })
+			.success(function (data) {
+				$scope.$parent.loading = false; // cargando...
+				$scope.lstOrdenCliente = data;
+			});
+		}
+	};
+
+	$scope.$watch('idEstadoOrden', function (_new) {
+		$scope.consultaOrdenCliente();
+	});
 
 
 	// #1 => MUESTRA DIALOGO INGRESO DE TICKET
@@ -261,7 +273,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				lstAgregar.push({
 					idMenu         : $scope.ordenActual.lstAgregar[ i ].idMenu,
 					cantidad       : $scope.ordenActual.lstAgregar[ i ].cantidad,
-					idTipoServicio : $scope.ordenActual.lstAgregar[ i ].idTipoServicio
+					idTipoServicio : $scope.ordenActual.lstAgregar[ i ].idTipoServicio,
+					tipoMenu       : $scope.ordenActual.lstAgregar[ i ].tipoMenu
 				});
 			}
 

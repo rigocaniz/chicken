@@ -246,7 +246,7 @@ class Orden
 
  			$validar = new Validar();
 
- 			$idOrdenes = "";
+ 			$idOrdenesMenu = $idOrdenesCombo = "";
 		 	
 		 	$this->con->query( "START TRANSACTION" );
 
@@ -255,15 +255,26 @@ class Orden
 				$item->cantidad       = (int)$item->cantidad > 0		? (int)$item->cantidad			: 0;
 				$item->idTipoServicio = (int)$item->idTipoServicio > 0	? (int)$item->idTipoServicio	: 0;
 
-		 		$sql = "CALL consultaDetalleOrdenMenu( 'insert', NULL, {$idOrdenCliente}, {$item->idMenu}, {$item->cantidad}, NULL, {$item->idTipoServicio}, NULL, NULL );";
+				if ( $item->tipoMenu == 'menu' )
+					$sql = "CALL consultaDetalleOrdenMenu( 'insert', NULL, {$idOrdenCliente}, {$item->idMenu}, {$item->cantidad}, NULL, {$item->idTipoServicio}, NULL, NULL );";
+				
+				else if ( $item->tipoMenu == 'combo' )
+					$sql = "CALL consultaDetalleOrdenCombo( 'insert', NULL, {$idOrdenCliente}, {$item->idMenu}, {$item->cantidad}, NULL, {$item->idTipoServicio}, NULL, NULL );";
 
 		 		if( $rs = $this->con->query( $sql ) ){
 		 			@$this->con->next_result();
 		 			if( $row = $rs->fetch_object() ) {
 						$this->respuesta = $row->respuesta;
 						$this->mensaje   = $row->mensaje;
-						if ( $this->respuesta == 'success' )
-							$idOrdenes .= $row->ids;
+
+						// SI SE GUARDO VA CONCATENANDO LOS IDS GENERADOS
+						if ( $this->respuesta == 'success' ) {
+							if ( $item->tipoMenu == 'menu' )
+								$idOrdenesMenu .= $row->ids;
+
+							else if ( $item->tipoMenu == 'combo' )
+								$idOrdenesCombo .= $row->ids;
+						}
 		 			}
 		 		}
 		 		else{
@@ -283,8 +294,7 @@ class Orden
 		 	else
 		 		$this->con->query( "ROLLBACK" );
 
-		 	$idOrdenes = rtrim( $idOrdenes, '_' );
-		 	$this->data = $this->lstMenuAgregado( $idOrdenes );
+		 	$this->data = $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo );
 
  		else:
 			$this->respuesta = 'danger';
@@ -292,12 +302,15 @@ class Orden
  		endif;
  	}
 
- 	public function lstMenuAgregado( $txtId )
+ 	public function lstMenuAgregado( $txtIdMenu, $txtIdOrden )
  	{
  		$lst = array();
 
- 		$txtId = str_replace("_", " OR idDetalleOrdenMenu = ", $txtId );
- 		$txtId = substr( $txtId, 3 );
+ 		if ( strlen( $txtIdMenu ) > 2 )
+ 			$txtIdMenu = substr( str_replace("_", " OR idDetalleOrdenMenu = ", rtrim( $txtIdMenu, '_' ) ), 3 );
+
+ 		if ( strlen( $txtIdOrden ) > 2 )
+ 			$txtIdOrden = substr( str_replace("_", " OR idDetalleOrdenCombo = ", rtrim( $txtIdOrden, '_' ) ), 3 );
 
  		$sql = "SELECT 
 					idDetalleOrdenMenu,
@@ -312,29 +325,61 @@ class Orden
 				    idDestinoMenu,
 				    destinoMenu,
 				    usuarioResponsable,
-				    fechaRegistro
+				    fechaRegistro,
+				    perteneceCombo,
+    				idDetalleOrdenCombo
 				FROM vOrdenes
-				WHERE $txtId ";
+				WHERE ";
 
- 		if( $rs = $this->con->query( $sql ) ){
- 			while ( $row = $rs->fetch_object() )
- 				$lst[] = $row;
- 		}
+		// SI SE AGREGO AL MENOS UN MENU
+		if ( strlen( $txtIdMenu ) > 2 ):
+	 		if( $rs = $this->con->query( $sql . $txtIdMenu ) ){
+	 			while ( $row = $rs->fetch_object() ) {
+					$row->idDetalleOrdenMenu   = (int)$row->idDetalleOrdenMenu;
+					$row->idMenu               = (int)$row->idMenu;
+					$row->precio               = (double)$row->precio;
+					$row->idEstadoDetalleOrden = (int)$row->idEstadoDetalleOrden;
+					$row->idTipoServicio       = (int)$row->idTipoServicio;
+					$row->idDestinoMenu        = (int)$row->idDestinoMenu;
+					$row->perteneceCombo       = (int)$row->perteneceCombo;
+					$row->idDetalleOrdenCombo  = (int)$row->idDetalleOrdenCombo;
+	 				$lst[] = $row;
+	 			}
+	 		}
+		endif;
+
+		// SI SE AGREGO AL MENOS UN COMBO
+		if ( strlen( $txtIdOrden ) > 2 ):
+	 		if( $rs = $this->con->query( $sql . $txtIdOrden ) ){
+	 			while ( $row = $rs->fetch_object() ) {
+	 				$row->idDetalleOrdenMenu   = (int)$row->idDetalleOrdenMenu;
+					$row->idMenu               = (int)$row->idMenu;
+					$row->precio               = (double)$row->precio;
+					$row->idEstadoDetalleOrden = (int)$row->idEstadoDetalleOrden;
+					$row->idTipoServicio       = (int)$row->idTipoServicio;
+					$row->idDestinoMenu        = (int)$row->idDestinoMenu;
+					$row->perteneceCombo       = (int)$row->perteneceCombo;
+					$row->idDetalleOrdenCombo  = (int)$row->idDetalleOrdenCombo;
+	 				$lst[] = $row;
+	 			}
+	 		}
+		endif;
 
  		return $lst;
  	}
 
- 	public function lstOrdenCliente( $idEstadoOrden, $limite = 10 )
+ 	public function lstOrdenCliente( $idEstadoOrden, $limite = 20 )
  	{
 		$lst   = array();
 		$limit = "";
 
- 		if ( $limite > 0 )
+		// SI EL ESTADO ES DIFERENTE A PENDIENTE Y LIMITE ES MAYOR A CERO
+ 		if ( $limite > 0 AND $idEstadoOrden > 1 )
  			$limit = " LIMIT " . $limite;
 
  		$sql = "SELECT 
 					idOrdenCliente, numeroTicket, usuarioResponsable, idEstadoOrden, estadoOrden, fechaRegistro
-				FROM vOrdenCliente WHERE idEstadoOrden = {$idEstadoOrden} " . $limit;
+				FROM vOrdenCliente WHERE idEstadoOrden = {$idEstadoOrden} ORDER BY idOrdenCliente DESC " . $limit;
 
 		if( $rs = $this->con->query( $sql ) ) {
  			while ( $row = $rs->fetch_object() )

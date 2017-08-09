@@ -11,20 +11,20 @@
 			</button>
 		</div>
 		<div class="col-sm-12">
-			<div class="btn-orden" ng-init="tab=1">
-				<button class="bt-info" ng-class="{'active':tab==1}" ng-click="tab=1">
+			<div class="btn-orden">
+				<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="idEstadoOrden=1">
 					<span class="glyphicon glyphicon-time"></span>
 					<span class="hidden-xs">Pendientes</span>
 				</button>
-				<button class="bt-success" ng-class="{'active':tab==2}" ng-click="tab=2">
+				<button class="bt-success" ng-class="{'active':idEstadoOrden==2}" ng-click="idEstadoOrden=2">
 					<span class="glyphicon glyphicon-play"></span>
 					<span class="hidden-xs">En Progreso</span>
 				</button>
-				<button class="bt-primary" ng-class="{'active':tab==3}" ng-click="tab=3">
+				<button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="idEstadoOrden=3">
 					<span class="glyphicon glyphicon-flag"></span>
 					<span class="hidden-xs">Finalizados</span>
 				</button>
-				<button class="bt-danger" ng-class="{'active':tab==4}" ng-click="tab=4">
+				<button class="bt-danger" ng-class="{'active':idEstadoOrden==10}" ng-click="idEstadoOrden=10">
 					<span class="glyphicon glyphicon-remove"></span>
 					<span class="hidden-xs">Cancelados</span>
 				</button>
@@ -41,6 +41,8 @@
 								<th># Orden</th>
 								<th>Ticket</th>
 								<th>Lapso</th>
+								<th>Responsable</th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -48,6 +50,12 @@
 								<td>{{item.idOrdenCliente}}</td>
 								<td>{{item.numeroTicket}}</td>
 								<td>{{tiempoTranscurrido( item.fechaRegistro )}}</td>
+								<td><kbd>{{item.usuarioResponsable}}</kbd></td>
+								<td>
+									<button type="button" class="btn btn-sm btn-default">
+										<span class="glyphicon glyphicon-th-large"></span>
+									</button>
+								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -155,11 +163,14 @@
                 								<span class="glyphicon glyphicon-minus"></span>
                 							</button>
                 							<b>{{item.cantidad}}</b>
-                							<button type="button" class="btn btn-xs btn-primary" ng-click="ordenCantidad( $index, 1, item.cantidad, item.precio )">
+                							<button type="button" class="btn btn-xs btn-info" ng-click="ordenCantidad( $index, 1, item.cantidad, item.precio )">
                 								<span class="glyphicon glyphicon-plus"></span>
                 							</button>
                 						</td>
-                						<td>{{item.menu}} » {{item.tipoServicio}}</td>
+                						<td>
+                							<span class="glyphicon glyphicon-gift" ng-show="item.tipoMenu=='combo'"></span>
+                							<span>{{item.menu}} » {{item.tipoServicio}}</span>
+                						</td>
                 						<td>{{(item.precio*item.cantidad) | number:2}}</td>
                 						<td>
                 							<button type="button" class="btn btn-xs btn-danger" ng-click="quitarElemento( $index, item.cantidad, item.precio )">
@@ -296,7 +307,7 @@
                     </button>
                     <button type="button" class="btn btn-default" ng-click="$hide();dialOrdenMenu.show()">
                         <span class="glyphicon glyphicon-chevron-left"></span>
-                        <b>Regresar a Menú</b>
+                        <b>Regresar</b>
                     </button>
                 </div>
             </div>
