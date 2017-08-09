@@ -26,7 +26,7 @@ $datos = array();
 switch ( $data->opcion )
 {
 	case 'timeNow':
-		echo json_encode( array( 'timeNow' => date("Y-m-d h:m:s") ) );
+		echo json_encode( array( 'timeNow' => date("Y-m-d H:i:s") ) );
 		break;
 
 	case 'login':
@@ -95,7 +95,7 @@ switch ( $data->opcion )
 
 	case 'cargarComboPrecio':		// DATOS COMBO DETALLE
 		$combo = new Combo();
-		echo json_encode( $combo->cargarComboPrecio( $data->idCombo, $data->idTipoServicio ) );
+		echo json_encode( $combo->cargarComboPrecio( $data->idCombo, @$data->idTipoServicio ) );
 		break;
 
 	case 'cargarSuperCombo':		// DATOS SUPER COMBO
@@ -119,7 +119,7 @@ switch ( $data->opcion )
 	////////////////////////
 	case 'lstCombo':				// CARGAR LISTA DE COMBOS
 		$combo = new Combo();
-		echo json_encode( $combo->lstCombo() );
+		echo json_encode( $combo->lstCombo( @$data->idEstadoMenu ) );
 		break;
 
 	case 'lstComboDetalle':			// CARGAR LISTA DE COMBOS DETALLE
@@ -149,7 +149,7 @@ switch ( $data->opcion )
 
 	case 'lstMenu':					// CARGAR LISTA DE MENU
 		$menu = new Menu();
-		echo json_encode( $menu->lstMenu( $data->idTipoMenu ) );
+		echo json_encode( $menu->lstMenu( $data->idTipoMenu, @$data->idEstadoMenu ) );
 		break;
 
 	case 'lstMenuPrecio':			// CARGAR LISTA PRECIOS MENU
@@ -322,11 +322,6 @@ switch ( $data->opcion )
 		echo json_encode( $menu->getListaMenus( $data->filtro ) );
 		break;
 
-	case 'consultaMenu':			// ACCION MENU: INSERT / UPDATE
-		$menu = new Menu();
-		echo json_encode( $menu->consultaMenu( $data->accion, $data->datos ) );
-		break;
-
 	case 'consultaMenuPrecio':		// ACCION MENU PRECIO: INSERT / UPDATE
 		$menu = new Menu();
 		echo json_encode( $menu->consultaMenuPrecio( $data->accion, $data->datos ) );
@@ -339,6 +334,11 @@ switch ( $data->opcion )
 	case 'consultaOrdenCliente':	// ACCION MENU: INSERT / MENU-CANTIDAD / ESTADO / RESPONSABLE / ETC
 		$orden = new Orden();
 		echo json_encode( $orden->consultaOrdenCliente( $data->accion, $data->datos ) );
+		break;
+
+	case 'lstOrdenCliente':	// ORDEN CLIENTE
+		$orden = new Orden();
+		echo json_encode( $orden->lstOrdenCliente( $data->idEstadoOrden ) );
 		break;
 
 	case 'consultaDetalleOrdenMenu':	// ACCION MENU: INSERT / MENU-CANTIDAD / ESTADO / RESPONSABLE / ETC
