@@ -39,20 +39,15 @@
 						<thead>
 							<tr>
 								<th># Orden</th>
-								<th>Menú ({{tab}})</th>
+								<th>Ticket</th>
 								<th>Lapso</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>321</td>
-								<td>Pollo Frito</td>
-								<td>Hace 5 minutos</td>
-							</tr>
-							<tr>
-								<td>123</td>
-								<td>Papas fritas</td>
-								<td>Hace 4 minutos</td>
+							<tr ng-repeat="item in lstOrdenCliente">
+								<td>{{item.idOrdenCliente}}</td>
+								<td>{{item.numeroTicket}}</td>
+								<td>{{tiempoTranscurrido( item.fechaRegistro )}}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -131,10 +126,14 @@
                 </div>
                 <div class="modal-body">
                 	<div class="row">
-                		<div class="col-xs-7">
-                			<button class="btn btn-primary" ng-click="mostrarMenus()">
+                		<div class="col-xs-12">
+                			<button class="btn btn-primary" ng-click="mostrarMenus( 'menu' )">
                 				<span class="glyphicon glyphicon-plus"></span>
                 				<b><u>M</u>enú</b>
+                			</button>
+                			<button class="btn btn-primary" ng-click="mostrarMenus( 'combo' )">
+                				<span class="glyphicon glyphicon-plus"></span>
+                				<b><u>C</u>ombo</b>
                 			</button>
                 		</div>
                    </div>
@@ -143,16 +142,14 @@
                 			<table class="table table-condensed table-hover">
                 				<thead>
                 					<tr>
-                						<th>Subtotal</th>
-                						<th>Orden</th>
                 						<th>Cantidad</th>
+                						<th>Orden</th>
+                						<th>Subtotal</th>
                 						<th width="35px"></th>
                 					</tr>
                 				</thead>
                 				<tbody>
                 					<tr ng-repeat="item in ordenActual.lstAgregar">
-                						<td>{{(item.precio*item.cantidad) | number:2}}</td>
-                						<td>{{item.menu}} » {{item.tipoServicio}}</td>
                 						<td>
                 							<button type="button" class="btn btn-xs btn-default" ng-click="ordenCantidad( $index, 0, item.cantidad, item.precio )">
                 								<span class="glyphicon glyphicon-minus"></span>
@@ -162,6 +159,8 @@
                 								<span class="glyphicon glyphicon-plus"></span>
                 							</button>
                 						</td>
+                						<td>{{item.menu}} » {{item.tipoServicio}}</td>
+                						<td>{{(item.precio*item.cantidad) | number:2}}</td>
                 						<td>
                 							<button type="button" class="btn btn-xs btn-danger" ng-click="quitarElemento( $index, item.cantidad, item.precio )">
                 								<span class="glyphicon glyphicon-remove"></span>
@@ -202,7 +201,7 @@
                     Seleccione Menú - Ticket # {{ordenActual.noTicket}}
                 </div>
                 <div class="modal-body">
-                	<div class="row">
+                	<div class="row" ng-show="tipoMenu=='menu'">
                 		<div class="col-xs-12" style="margin-bottom:4px">
                 			<button type="button" class="btn" ng-class="{'btn-default':idTipoMenu!=item.idTipoMenu, 'btn-info':idTipoMenu==item.idTipoMenu}" 
                 				ng-repeat="item in lstTipoMenu" ng-click="$parent.$parent.idTipoMenu=item.idTipoMenu" style="margin-right:5px">
@@ -212,12 +211,21 @@
                 		</div>
                 		<hr>
                    </div>
-                	<div class="row">
+                	<div class="row" ng-show="tipoMenu=='menu'">
                 		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstMenu">
                 			<button type="button" class="menu-btn" ng-click="seleccionarMenu( item )">
 	                			<span class="codigo">{{item.idMenu}}</span>
 	                			<img ng-src="img-menu/{{item.imagen}}">
 	                			<span class="menu">{{item.menu}}</span>
+                			</button>
+                		</div>
+                   </div>
+                   <div class="row" ng-show="tipoMenu=='combo'">
+                		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstCombo">
+                			<button type="button" class="menu-btn" ng-click="seleccionarMenu( item )">
+	                			<span class="codigo">{{item.idCombo}}</span>
+	                			<img ng-src="img-menu/{{item.imagen}}">
+	                			<span class="menu">{{item.combo}}</span>
                 			</button>
                 		</div>
                    </div>
@@ -288,7 +296,7 @@
                     </button>
                     <button type="button" class="btn btn-default" ng-click="$hide();dialOrdenMenu.show()">
                         <span class="glyphicon glyphicon-chevron-left"></span>
-                        <b><u>R</u>egresar a Menú</b>
+                        <b>Regresar a Menú</b>
                     </button>
                 </div>
             </div>

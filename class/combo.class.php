@@ -135,11 +135,15 @@ class Combo
 	}
 
 	// CONSULTAR DATOS COMBO PRECIO
-	function cargarComboPrecio( $idCombo, $idTipoServicio )
+	function cargarComboPrecio( $idCombo, $idTipoServicio = NULL )
 	{
 		$idCombo        = (int)$idCombo;
 		$idTipoServicio = (int)$idTipoServicio;
 		$comboPrecio = array();
+
+		$where = "";
+		if ( $idTipoServicio > 0 )
+			$where = " AND idTipoServicio = {$idTipoServicio} ";
 
 		$sql = "SELECT 
 				    idCombo,
@@ -148,11 +152,19 @@ class Combo
 				FROM
 				    lstComboPrecio
 				WHERE
-				   idCombo = {$idCombo} AND idTipoServicio = {$idTipoServicio};";
+				   idCombo = {$idCombo} " . $where;
 		
 		if( $rs = $this->con->query( $sql ) ){
-			if( $row = $rs->fetch_object() )
-				$comboPrecio = $row;
+			if ( $idTipoServicio > 0 ) {
+				if( $row = $rs->fetch_object() )
+					$comboPrecio = $row;
+			}
+			else {
+				while( $row = $rs->fetch_object() ) {
+					$row->precio   = (double)$row->precio;
+					$comboPrecio[] = $row;
+				}
+			}
 		}
 
 		return $comboPrecio;
@@ -238,15 +250,19 @@ class Combo
 
 
  	// CONSULTAR LISTA DE COMBOS
- 	function lstCombo()
+ 	function lstCombo( $idEstadoMenu = NULL )
  	{
  		$lstCombo = array();
 
- 		$sql = "SELECT idCombo, combo, imagen, descripcion, idEstadoMenu, estadoMenu FROM lstCombo;";
+ 		$where = "";
+ 		if ( !IS_NULL( $idEstadoMenu ) )
+ 			$where = " WHERE idEstadoMenu = $idEstadoMenu ";
+
+ 		$sql = "SELECT idCombo, combo, imagen, descripcion, idEstadoMenu, estadoMenu FROM lstCombo " . $where;
  		
  		if( $rs = $this->con->query( $sql ) ){
  			while( $row = $rs->fetch_object() ){
- 				$row->imagen = $row->imagen == '' ? 'img-menu/notFound.png' : $row->imagen;
+ 				$row->imagen = $row->imagen == '' ? 'notFound.png' : $row->imagen;
  				$lstCombo[] = $row;
  			}
  		}

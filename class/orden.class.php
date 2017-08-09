@@ -324,6 +324,26 @@ class Orden
  		return $lst;
  	}
 
+ 	public function lstOrdenCliente( $idEstadoOrden, $limite = 10 )
+ 	{
+		$lst   = array();
+		$limit = "";
+
+ 		if ( $limite > 0 )
+ 			$limit = " LIMIT " . $limite;
+
+ 		$sql = "SELECT 
+					idOrdenCliente, numeroTicket, usuarioResponsable, idEstadoOrden, estadoOrden, fechaRegistro
+				FROM vOrdenCliente WHERE idEstadoOrden = {$idEstadoOrden} " . $limit;
+
+		if( $rs = $this->con->query( $sql ) ) {
+ 			while ( $row = $rs->fetch_object() )
+ 				$lst[] = $row;
+ 		}
+
+ 		return $lst;
+ 	}
+
 
  	function getRespuesta()
  	{

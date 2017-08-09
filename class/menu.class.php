@@ -188,7 +188,7 @@ class Menu
 
 
  	// CONSULTAR LISTA DE MENUS
- 	function lstMenu( $idTipoMenu = 0 )
+ 	function lstMenu( $idTipoMenu = 0, $idEstadoMenu = NULL )
  	{
  		$lstMenu = array();
 
@@ -197,11 +197,19 @@ class Menu
  		if ( $idTipoMenu > 0 )
 	 		$where = " WHERE idTipoMenu = $idTipoMenu ";
 
+ 		if ( !IS_NULL( $idEstadoMenu ) ) {
+	 		if ( $where == '' )
+	 			$where = " WHERE idEstadoMenu = $idEstadoMenu ";
+
+	 		else
+	 			$where .= " AND idEstadoMenu = $idEstadoMenu ";
+ 		}
+
  		$sql = "SELECT idMenu, menu, imagen, descripcion, idEstadoMenu, estadoMenu, idDestinoMenu, destinoMenu, idTipoMenu, tipoMenu FROM lstMenu $where";
  		
  		if( $rs = $this->con->query( $sql ) ){
  			while( $row = $rs->fetch_object() ){
-				$row->imagen = $row->imagen == '' ? 'img-menu/notFound.png' : $row->imagen;
+				$row->imagen = $row->imagen == '' ? 'notFound.png' : $row->imagen;
 				$lstMenu[]   = $row;
  			}
  		}
