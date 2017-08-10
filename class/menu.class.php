@@ -62,7 +62,7 @@ class Menu
  	function actualizarLstReceta( $accion, $lstRecetaProductos )
  	{
  		if( count( $lstRecetaProductos ) ) {
- 			
+
  			foreach ( $lstRecetaProductos AS $data ) {
 
 				// ASIGNACIÓN DE VARIABLES
@@ -375,19 +375,19 @@ class Menu
 
 		 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu}, {$idTipoMenu} );";
 
-		 		if( $rs = $this->con->query( $sql ) ){
+		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 			$this->siguienteResultado();
-		 			if( $row = $rs->fetch_object() ){
-		 				$this->respuesta = $row->respuesta;
-		 				$this->mensaje   = $row->mensaje;
-		 				
-		 				if( ( $accion == 'insert' OR $accion == 'update' ) AND $this->respuesta == 'success' ){
-		 					if( $accion == 'insert' )
-		 						$idMenu = $this->data = (int)$row->id;
-		 					// INSERTAR PRECIOS
-		 					$this->consultaMenuPrecio( 'insert', $idMenu, $data->lstPrecios );
-		 				}
-		 			}
+
+	 				$this->respuesta = $row->respuesta;
+	 				$this->mensaje   = $row->mensaje;
+	 				
+	 				if( ( $accion == 'insert' OR $accion == 'update' ) AND $this->respuesta == 'success' ){
+	 					if( $accion == 'insert' )
+	 						$idMenu = $this->data = (int)$row->id;
+	 					// INSERTAR PRECIOS
+	 					$this->consultaMenuPrecio( 'insert', $idMenu, $data->lstPrecios );
+	 				}
+
 		 		}
 		 		else{
 		 			$this->respuesta = 'danger';
@@ -395,13 +395,14 @@ class Menu
 		 		}
 
 		 		// FINALIZAR TRANSACCION
-		 		if( $this->respuesta )
-		 			$this->con->query( 'COMMIT' );
-		 		else
+		 		if( $this->respuesta == 'danger' )
 		 			$this->con->query( 'ROLLBACK' );
+		 		else
+		 			$this->con->query( 'COMMIT' );
 
 	 		endif;
- 		}else{
+ 		}
+ 		else{
  			$this->respuesta = 'info';
 		 	$this->mensaje   = 'No hay ingresado los precios del Menu';
  		}

@@ -1,6 +1,6 @@
 app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
-	$scope.menuTab         = 'menu';
+	$scope.menuTab         = 'combo';
 	$scope.accion          = 'insert';
 	$scope.lstDestinoMenu  = [];
 	$scope.lstTipoMenu     = [];
@@ -263,8 +263,15 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 		$http.post('consultas.php',{opcion: 'cargarMenuPrecio', idMenu: idMenu})
 		.success(function(data){
 			$scope.menu.lstPrecios = data;
-		}).error(function(data){
-			console.log(data);
+		});
+	};
+
+	// CONSULTAR PRECIOS COMBO
+	$scope.cargarLstPreciosCombo = function( idCombo )
+	{
+		$http.post('consultas.php',{opcion: 'lstComboPrecio', idCombo: idCombo})
+		.success(function(data){
+			$scope.combo.lstPrecios = data;
 		});
 	};
 
@@ -308,19 +315,23 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	$scope.actualizarMenuCombo = function( tipo, data )
 	{
 		console.log( 'tipo: ', tipo, ' data: ', data );
-		$scope.accion = 'update';
-			if( tipo == 'menu' ){
-				$scope.menu = data;
-				$scope.cargarLstPreciosMenu( $scope.menu.idMenu );
-				$timeout(function(){
-					$scope.dialAdminMenu.show();
-				});
-			}
 
-			else if( tipo == 'combo' ){
-				$scope.combo = data
+		$scope.accion = 'update';
+		if( tipo == 'menu' ){
+			$scope.menu = data;
+			$scope.cargarLstPreciosMenu( $scope.menu.idMenu );
+			$timeout(function(){
+				$scope.dialAdminMenu.show();
+			});
+		}
+
+		else if( tipo == 'combo' ){
+			$scope.combo = data;
+			$scope.cargarLstPreciosCombo( $scope.combo.idCombo );
+			$timeout(function(){
 				$scope.dialAdminCombo.show();
-			}
+			});
+		}
 	};
 
 	$scope.agregarMenuCombo = function( tipo ){
@@ -349,6 +360,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 				'descripcion'  : '',
 				'subirImagen'  : true,
 				'imagen'       : '',
+				'lstPrecios'   : angular.copy( $scope.lstTipoServicio )
 			}
 			$scope.dialAdminCombo.show();
 		}
@@ -506,24 +518,35 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	};
 
 	$scope.registraCombo = function(){
-		var combo = $scope.combo;
+		var combo = $scope.combo, error = false;
 
 		if( $scope.accion == 'update' && !(combo.idCombo && combo.idCombo > 0) ){
+			error = true;
 			alertify.notify( 'No. de combo no válido, vuelve a seleccionarlo', 'info', 5 );
 		}
 		else if( !( combo.idEstadoMenu && combo.idEstadoMenu > 0 )  ){
+			error = true;
 			alertify.notify( 'Seleccione el estado del combo', 'info', 5 );	
 		}
 		else if( !( combo.combo && combo.combo.length > 3 ) ){
-			alertify.notify( 'El nombre del combo debe ser mayor a 3 caracteres', 'info', 5 );		
-		}
-		else if( !( combo.combo && combo.combo.length > 3 ) ){
+			error = true;
 			alertify.notify( 'El nombre del combo debe ser mayor a 3 caracteres', 'info', 5 );		
 		}
 		else if( !( combo.descripcion && combo.descripcion.length > 15 ) ){
-			alertify.notify( 'La descripción del menú debe ser mayor a 15 caracteres', 'info', 5 );		
+			error = true;
+			alertify.notify( 'La descripción del combo debe ser mayor a 15 caracteres', 'info', 5 );		
 		}
 		else{
+			for (var i = 0; i < combo.lstPrecios.length; i++) {
+				if( !( combo.lstPrecios[ i ].precio && combo.lstPrecios[ i ].precio >= 0 ) ){
+					alertify.notify( 'Ingrese un precio válido en el servicio ' + combo.lstPrecios[ i ].tipoServicio, 'warning', 4000 );
+					error = true;
+					break;
+				}
+			}
+		}
+
+		if( !error ) {
 			$http.post('consultas.php',{
 				opcion : "consultaCombo",
 				accion : $scope.accion,
@@ -540,10 +563,10 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 					$scope.resetValores( 'combo' );
 				}
-			})
+			});
+			
 		}
 	};
-
 
 
 });

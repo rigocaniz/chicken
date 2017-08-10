@@ -93,22 +93,29 @@
 								</p>
 							</div>
 							<div class="row">
-								<br>
-							  	<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" ng-repeat="c in lstCombos">
+								<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" ng-repeat="c in lstCombos">
 							    	<div class="thumbnail">
-							      		<img ng-src="{{ c.imagen }}" class="img-responsive" ng-click="asignarValorImagen( c.idCombo, 'combo' )">
-							      		<div class="caption">
-							        		<h4>
-							        			<strong>{{ c.combo }}</strong> 
-							        		</h4> 
-							        		Estado <span class="label label-success">{{c.estadoMenu}}</span>
-							        		<p>{{c.descripcion}}</p>
-							        		<p>
-							        			<button type="button" class="btn btn-sm btn-info" ng-click="actualizarMenuCombo( 'combo', c )">
-													<span class="glyphicon glyphicon-edit"></span> Editar
-							        			</button>
-											</p>
-							      		</div>
+								      	<img ng-src="{{ c.imagen }}" alt="{{ c.combo }}" ng-click="asignarValorImagen( c.idCombo, 'combo' )">
+								      	<div class="caption">
+								      		<div class="text-right">
+								      			<label class="label" ng-class="{'label-success': c.idEstadoMenu == 1, 'label-default': c.idEstadoMenu == 2}">
+								      				{{ c.estadoMenu }}
+								      				<span class="glyphicon" ng-class="{'glyphicon-ok-sign': c.idEstadoMenu == 1, 'glyphicon-remove-sign': c.idEstadoMenu == 2}"></span>
+								      			</label>
+								      		</div>
+								        	<p>
+								        		<strong>{{ c.combo | uppercase }}</strong>
+								        	</p>
+								        	<hr>
+							        		<button type="button" class="btn btn-info btn-sm" ng-click="actualizarMenuCombo( 'combo', c)">
+							        			<span class="glyphicon glyphicon-edit"></span> Editar
+							        		</button>
+
+							        		<button type="button" class="btn btn-warning btn-sm" ng-click="cargarRecetaCombo( c )">
+							        			<span class="glyphicon glyphicon-list"></span> Receta
+							        		</button>
+
+								      	</div>
 							    	</div>
 							  	</div>
 							</div>
@@ -515,39 +522,77 @@
 						<legend class="legend">DATOS</legend>
 						<!-- FORMULARIO COMBO -->
 						<form class="form-horizontal" role="form" name="formCombo">
+							<div class="text-right" ng-show="accion == 'update'">
+								<div class="col-sm-12">
+									<label class="control-label">ELIMINAR MENU</label>
+								  	<button type="button" class="btn btn-default btn-sm" ng-class="{'btn-danger': estadoMenu.idEstadoMenu == combo.idEstadoMenu}" ng-click="combo.idEstadoMenu = 3" ng-show="estadoMenu.idEstadoMenu==3" ng-repeat="estadoMenu in lstEstadosMenu">
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': combo.idEstadoMenu == 3, 'glyphicon-unchecked': combo.idEstadoMenu != 3}"></span>
+								  		ELIMINAR
+								  	</button>
+								</div>
+							</div>
 							<div class="form-group text-center" ng-show="accion == 'update'">
-								<img ng-src="{{ combo.imagen }}" alt="combo" class="img-circle img-portada">
+								<img ng-src="{{ combo.imagen }}" alt="MENU" class="img-circle img-portada">
 								<br>
 								<span class="badge">Codigo Combo #{{ combo.idCombo }}</span>
 							</div>
 							<div class="form-group" ng-show="accion == 'update'">
-								<label class="col-sm-4">ESTADO DEL COMBO</label>
+								<label class="col-sm-4">ESTADO DEL MENÚ</label>
 								<div class="col-sm-6">
 									<div class="btn-group btn-group-sm" role="group">
-									  	<button type="button" class="btn btn-default" ng-class="{'btn-info': estadoMenu.idEstadomenu == combo.idEstadoMenu}" ng-click="combo.idEstadoMenu = estadoMenu.idEstadoMenu" ng-repeat="estadoMenu in lstEstadosMenu">
+									  	<button type="button" class="btn btn-default" ng-class="{'btn-info': estadoMenu.idEstadoMenu == combo.idEstadoMenu}" ng-click="combo.idEstadoMenu = estadoMenu.idEstadoMenu" ng-hide="estadoMenu.idEstadoMenu==3" ng-repeat="estadoMenu in lstEstadosMenu">
 									  		<span class="glyphicon" ng-class="{'glyphicon-check': estadoMenu.idEstadoMenu == combo.idEstadoMenu, 'glyphicon-unchecked': estadoMenu.idEstadoMenu != combo.idEstadoMenu}"></span>
 									  		{{ estadoMenu.estadoMenu }}
 									  	</button>
 									</div>
 								</div>
 							</div>
+
+
 							<div class="form-group">
-								<label class="control-label col-sm-2">Nombre Combo</label>
-								<div class="col-sm-8 ">
+								<div class="col-sm-12">
+									<label class="control-label">NOMBRE DEL COMBO</label>
 									<input type="text" class="form-control" ng-model="combo.combo" maxlength="45" required>
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="control-label col-sm-2">Descripcion</label>
-								<div class="col-sm-10">
+								<div class="col-sm-12">
+									<label class="control-label">DESCRIPCION</label>
 									<textarea rows="3" class="form-control" placeholder="Ingrese descripción del Combo" ng-model='combo.descripcion'></textarea>
 								</div>
 							</div>
-							<div class="form-group text-center">
-								<button type="button" class="btn btn-lg" ng-click="combo.subirImagen=!combo.subirImagen"  ng-class="{'btn-success': combo.subirImagen, 'btn-warning': !combo.subirImagen}">
-									<span class="glyphicon" ng-class="{'glyphicon-check': combo.subirImagen, 'glyphicon-unchecked': !combo.subirImagen}"></span>
-									Subir Imagen
-								</button>
+							<div class="form-group">
+								<legend class="text-center">
+									<small>
+										<i class="fa fa-money" aria-hidden="true"></i> AGREGAR PRECIOS
+									</small>
+								</legend>
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th class="text-center col-sm-2">No.</th>
+											<th class="text-center col-sm-4">Tipo Servicio</th>
+											<th class="text-center col-sm-3">Q. Precio</th>
+											<th class="text-center col-sm-3"></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="lp in combo.lstPrecios">
+											<td class="text-center">
+												{{ $index + 1 }}
+											</td>
+											<td>
+												{{ lp.tipoServicio }}
+											</td>
+											<td class="text-right">
+												<input type="number" min="0" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
+											</td>
+											<td class="text-right">
+												<kbd>Q. {{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>
+											</td>
+										</tr>
+									</tbody>
+								</table>
 							</div>
 						</form>
 					</fieldset>
