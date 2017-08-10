@@ -262,7 +262,7 @@ class Combo
  		
  		if( $rs = $this->con->query( $sql ) ){
  			while( $row = $rs->fetch_object() ){
- 				$row->imagen = $row->imagen == '' ? 'notFound.png' : $row->imagen;
+ 				$row->imagen = $row->imagen == '' ? 'img-menu/notFound.png' : $row->imagen;
  				$lstCombo[] = $row;
  			}
  		}

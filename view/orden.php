@@ -226,7 +226,7 @@
                 		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstMenu">
                 			<button type="button" class="menu-btn" ng-click="seleccionarMenu( item )">
 	                			<span class="codigo">{{item.idMenu}}</span>
-	                			<img ng-src="img-menu/{{item.imagen}}">
+	                			<img ng-src="{{item.imagen}}">
 	                			<span class="menu">{{item.menu}}</span>
                 			</button>
                 		</div>
@@ -235,7 +235,7 @@
                 		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstCombo">
                 			<button type="button" class="menu-btn" ng-click="seleccionarMenu( item )">
 	                			<span class="codigo">{{item.idCombo}}</span>
-	                			<img ng-src="img-menu/{{item.imagen}}">
+	                			<img ng-src="{{item.imagen}}">
 	                			<span class="menu">{{item.combo}}</span>
                 			</button>
                 		</div>
@@ -263,7 +263,7 @@
                 <div class="modal-body">
                 	<div class="row">
                 		<div class="col-xs-6 text-center">
-                			<img ng-src="img-menu/{{menuActual.imagen}}">
+                			<img ng-src="{{menuActual.imagen}}">
                 			<h4>{{menuActual.menu}}</h4>
                 			<h3>Q. {{menuActual.precio | number:2}}</h3>
                 		</div>
