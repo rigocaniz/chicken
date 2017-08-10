@@ -265,15 +265,6 @@ switch ( $data->opcion )
 		echo json_encode( $medida->consultaMedida( $data->accion, $data->datos ) );
 		break;
 
-
-	/////////////////////////
-	//***** RECETAS
-	/////////////////////////
-	case 'consultaReceta':			// ACCION RECETA: INSERT / UPDATE
-		$receta = new Receta();
-		echo json_encode( $receta->consultaReceta( $data->accion, $data->datos ) );
-		break;
-
 	
 	/////////////////////////
 	//***** COMBO
@@ -312,6 +303,11 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** MENU
 	/////////////////////////
+	case 'consultaReceta':			// ACCION RECETA: INSERT / UPDATE
+		$menu = new Menu();
+		echo json_encode( $menu->consultaReceta( $data->accion, $data->datos ) );
+		break;
+
 	case 'lstRecetaMenu':			// ACCION MENU: INSERT / UPDATE
 		$menu = new Menu();
 		echo json_encode( $menu->lstRecetaMenu( $data->idMenu ) );

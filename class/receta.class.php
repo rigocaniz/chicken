@@ -64,51 +64,7 @@ class Receta
 	}
 	
 
-	// CONSULTA RECETA
- 	function consultaReceta( $accion, $data )
- 	{
-		$validar = new Validar();
 
-		// INICIALIZACIÓN VAR
-		$idMenu      = NULL;
-		$idProducto  = NULL;
-		$cantidad    = NULL;
-		$observacion = NULL;
-
-		// SETEO VARIABLES GENERALES
- 		$data->idMenu      = (int)$data->idMenu > 0 AND !esNulo( $data->idMenu )			? (int)$data->idMenu 		: NULL;
- 		$data->idProducto  = (int)$data->idProducto > 0 AND !esNulo( $data->idProducto ) 	? (int)$data->idProducto 	: NULL;
- 		$data->cantidad    = (double)$data->cantidad > 0 AND !esNulo( $data->cantidad ) 	? (int)$data->cantidad 		: NULL;
- 		$data->observacion = strlen( $data->observacion ) > 0 	? (string)$data->observacion : NULL;
-
- 		// VALIDACIONES
- 		$idMenu      = $validar->validarEntero( $data->idMenu, NULL, TRUE, 'El ID del Menú no es válido, verifique.' );
-		$idProducto  = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido, verifique.' );
-		$cantidad    = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 2500, 'la cantidad' );
-		$observacion = $validar->validarTexto( $data->observacion, NULL, !esNulo( $data->observacion ), 15, 1500, 'la observación' );
-
- 		if( $validar->getIsError() ):
-	 		$this->respuesta = 'danger';
-	 		$this->mensaje   = $validar->getMsj();
- 		else:
-	 		$sql = "CALL consultaReceta( '{$accion}', {$idMenu}, {$idProducto}, {$cantidad}, '{$observacion}' );";
-	 		//echo $sql;
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
-	 			if( $row = $rs->fetch_object() ){
-	 				$this->respuesta = $row->respuesta;
-	 				$this->mensaje   = $row->mensaje;
-	 			}
-	 		}
-	 		else{
-	 			$this->respuesta = 'danger';
-	 			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
-	 		}
-	 		
- 		endif;
-
- 		return $this->getRespuesta();
- 	}
 
  	// OBTENER ARREGLO RESPUESTA
  	private function getRespuesta()

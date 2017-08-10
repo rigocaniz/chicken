@@ -332,7 +332,7 @@ class Producto
 	{
 		$lstProductos = array();
 
-		$sql = "SELECT idProducto, producto, tipoProducto FROM lstProducto WHERE producto LIKE '%{$nombreProducto}%' LIMIT 10;";
+		$sql = "SELECT idProducto, producto, medida, tipoProducto FROM lstProducto WHERE producto LIKE '%{$nombreProducto}%' LIMIT 10;";
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
