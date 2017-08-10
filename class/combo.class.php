@@ -20,6 +20,15 @@ class Combo
  		$this->sess = $sesion;
  	}
 
+
+	// LIBERAR SIGUIENTE RESULTADO
+ 	private function siguienteResultado()
+ 	{
+ 		if( $this->con->more_results() )
+ 			$this->con->next_result();
+ 	}
+
+
  	// OBTENER TOTAL COMBOS
 	function getTotalPagMenu( $limite = 25 )
 	{
@@ -289,20 +298,36 @@ class Combo
 
 
  	// CONSULTAR LISTA DE COMBOS PRECIO
- 	function lstComboPrecio()
+ 	function lstComboPrecio( $idCombo )
  	{
- 		$lstComboPrecio = array();
 
- 		$sql = "SELECT idCombo, precio, idTipoServicio, tipoServicio FROM lstComboPrecio;";
- 		
- 		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() ){
- 				$lstComboPrecio[] = $row;
- 			}
- 		}
+ 		$idCombo     = (int)$idCombo;
+		$lstComboPrecios = array();
 
- 		return $lstComboPrecio;
+		$sql = "SELECT 
+				    idCombo,
+				    precio,
+				    idTipoServicio,
+				    tipoServicio
+				FROM
+				    lstComboPrecio
+				WHERE
+				    idCombo = {$idCombo};";
+
+		if( $rs = $this->con->query( $sql ) ){
+			while( $rs AND $row = $rs->fetch_object() )
+				$lstComboPrecios[] = array(
+					'idCombo'        => (int)$row->idCombo,
+					'idTipoServicio' => (int)$row->idTipoServicio,
+					'tipoServicio'   => $row->tipoServicio,
+					'precio'         => (double)$row->precio
+				);
+		}
+
+		return $lstComboPrecios;
  	}
+
+
 
  	// CONSULTAR LISTA DE COMBOS
  	function lstSuperCombo()
@@ -358,104 +383,120 @@ class Combo
 	// GUARDAR // ACTUALIZAR => CONSULTA COMBO
 	function consultaCombo( $accion, $data )
  	{
- 		$validar = new Validar();
+ 		if( count( $data->lstPrecios ) ){
+ 		
+	 		$validar = new Validar();
 
-		// INICIALIZACIÓN VAR
-		$idCombo      = 'NULL';
-		$combo        = NULL;
-		$imagen       = "NULL";
-		$descripcion  = NULL;
-		$idEstadoMenu = NULL;
+			// INICIALIZACIÓN VAR
+			$idCombo      = 'NULL';
+			$combo        = NULL;
+			$imagen       = "NULL";
+			$descripcion  = NULL;
+			$idEstadoMenu = NULL;
 
-		// SETEO VARIABLES GENERALES
- 		$data->combo        = strlen( $data->combo ) > 0 ? (string)$data->combo : NULL;
- 		$data->descripcion  = strlen( $data->descripcion ) > 0 ? (string)$data->descripcion : NULL;
- 		$data->idEstadoMenu = (int)$data->idEstadoMenu > 0 AND !esNulo( $data->idEstadoMenu ) ? (int)$data->idEstadoMenu : NULL;
- 
- 		// VALIDACIONES
- 		if( $accion == 'update' ):
- 			$data->idCombo = (int)$data->idCombo > 0 ? (int)$data->idCombo : NULL;
- 			$idCombo       = $validar->validarEntero( $data->idCombo, NULL, TRUE, 'El ID del COMBO no es válido, verifique.' );
- 		endif;
+			// SETEO VARIABLES GENERALES
+	 		$data->combo        = strlen( $data->combo ) 		? (string)$data->combo 			: NULL;
+	 		$data->descripcion  = strlen( $data->descripcion ) 	? (string)$data->descripcion 	: NULL;
+	 		$data->idEstadoMenu = (int)$data->idEstadoMenu > 0 	? (int)$data->idEstadoMenu 		: NULL;
+	 
+	 		// VALIDACIONES
+	 		if( $accion == 'update' ):
+	 			$data->idCombo = (int)$data->idCombo > 0 ? (int)$data->idCombo : NULL;
+	 			$idCombo       = $validar->validarEntero( $data->idCombo, NULL, TRUE, 'El ID del COMBO no es válido, verifique.' );
+	 		endif;
 
-		$combo        = $validar->validarTexto( $data->combo, NULL, TRUE, 3, 45, 'el nombre del combo' );
-		$descripcion  = $validar->validarTexto( $data->descripcion, NULL, TRUE, 15, 1500, 'la descripcion' );
-		$idEstadoMenu = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado combo no es válido, verifique.' );
+			$combo        = $validar->validarTexto( $data->combo, NULL, TRUE, 3, 45, 'el nombre del combo' );
+			$descripcion  = $validar->validarTexto( $data->descripcion, NULL, TRUE, 15, 1500, 'la descripcion' );
+			$idEstadoMenu = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado combo no es válido, verifique.' );
 
 
-		// OBTENER RESULTADO DE VALIDACIONES
- 		if( $validar->getIsError() ):
-	 		$this->respuesta = 'danger';
-	 		$this->mensaje   = $validar->getMsj();
+			// OBTENER RESULTADO DE VALIDACIONES
+	 		if( $validar->getIsError() ):
+		 		$this->respuesta = 'danger';
+		 		$this->mensaje   = $validar->getMsj();
 
- 		else:
-	 		$sql = "CALL consultaCombo( '{$accion}', {$idCombo}, '{$combo}', {$imagen}, '{$descripcion}', {$idEstadoMenu} );";
+	 		else:
 
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
-	 			if( $row = $rs->fetch_object() ){
+	 			// INICIALIZAR TRANSACCION
+	 			$this->con->query( 'START TRANSACTION' );
+
+		 		$sql = "CALL consultaCombo( '{$accion}', {$idCombo}, '{$combo}', {$imagen}, '{$descripcion}', {$idEstadoMenu} );";
+
+		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+		 			$this->siguienteResultado();
+		 			
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
-	 				if( $accion == 'insert' AND $this->respuesta == 'success' )
-	 					$this->data = (int)$row->id;
-	 			}
-	 		}
-	 		else{
-	 			$this->respuesta = 'danger';
-	 			$this->mensaje   = 'Error al ejecutar la instrucción.';
-	 		}
-	 		
- 		endif;
+
+	 				if( ( $accion == 'insert' OR $accion == 'update' ) AND $this->respuesta == 'success' ){
+	 					if( $accion == 'insert' )
+	 						$idCombo = $this->data = (int)$row->id;
+	 					// INSERTAR PRECIOS
+	 					$this->consultaComboPrecio( 'insert', $idCombo, $data->lstPrecios );
+	 				}
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+		 		}
+
+
+		 		// FINALIZAR TRANSACCION
+		 		if( $this->respuesta == 'danger' )
+		 			$this->con->query( 'ROLLBACK' );
+		 		else
+		 			$this->con->query( 'COMMIT' );
+		 		
+	 		endif;
+ 		}
+ 		else{
+ 			$this->respuesta = 'info';
+		 	$this->mensaje   = 'No hay ingresado los precios del Menu';
+ 		}
 
  		return $this->getRespuesta();
  	}
 
 
- 	// GUARDAR // ACTUALIZAR => COMBO PRECIO
-	function consultaComboPrecio( $accion, $data )
+	// GUARDAR // ACTUALIZAR => COMBO PRECIO
+	function consultaComboPrecio( $accion, $idCombo, $lstPrecios )
  	{
- 		$validar = new Validar();
+ 		
+ 		foreach ( $lstPrecios AS $ixPrecio => $precio ) {
 
-		// INICIALIZACIÓN VAR
- 		$idCombo        = NULL;
- 		$idTipoServicio = NULL;
+	 		$validar = new Validar();
 
-		// SETEO VARIABLES GENERALES
-		$data->idTipoServicio = (int)$data->idTipoServicio > 0 	? (int)$data->idTipoServicio 	: NULL;
-		$data->precio         = (double)$data->precio 	 		? (double)$data->precio 		: NULL;
+			// SETEO DE VARIABLES
+	 		$precio->idTipoServicio = (int)$precio->idTipoServicio > 0 ? (int)$precio->idTipoServicio : NULL;
 
-		$idCombo        = $validar->validarEntero( $data->idCombo, NULL, TRUE, 'El ID del menú no es válido, verifique.' );
-		$idTipoServicio = $validar->validarEntero( $data->idTipoServicio, NULL, TRUE, 'El ID del tipo de servicio no es válido, verifique.' );
-		
-		$precio = "NULL";
-		if( $accion <> 'delete' ):
-			$data->idCombo = (int)$data->idCombo > 0 ? (int)$data->idCombo : NULL;
-			$precio = $validar->validarCantidad( $data->precio, NULL, TRUE, 1, 2500, 'el precio del menú' );
-		endif;
+	 		// VALIDACIÓN
+			$idTipoServicio = $validar->validarEntero( $precio->idTipoServicio, NULL, TRUE, "ID del servicio {$precio->tipoServicio} inválido" );
+			$precio         = (double)$precio->precio;
 
-		// OBTENER RESULTADO DE VALIDACIONES
- 		if( $validar->getIsError() ):
-	 		$this->respuesta = 'danger';
-	 		$this->mensaje   = $validar->getMsj();
+			// OBTENER RESULTADO DE VALIDACIONES
+	 		if( $validar->getIsError() ):
+		 		$this->respuesta = 'danger';
+		 		$this->mensaje   = $validar->getMsj();
 
- 		else:
-	 		$sql = "CALL consultaComboPrecio( '{$accion}', {$idCombo}, {$idTipoServicio}, {$precio} );";
+	 		else:
+		 		$sql = "CALL consultaComboPrecio( '{$accion}', {$idCombo}, {$idTipoServicio}, {$precio} );";
 
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
-	 			if( $row = $rs->fetch_object() ){
+		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+		 			$this->siguienteResultado();
+		 			
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
-	 			}
-	 		}
-	 		else{
-	 			$this->respuesta = 'danger';
-	 			$this->mensaje   = 'Error al ejecutar la instrucción.';
-	 		}
-	 		
- 		endif;
 
- 		return $this->getRespuesta();
+	 				if( $this->respuesta == 'danger' )
+	 					break;
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+		 		}
+		 		
+	 		endif;		
+ 		}
  	}
 
 

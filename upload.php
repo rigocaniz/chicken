@@ -38,7 +38,7 @@ else
     include 'class/conexion.class.php';
     $id      = (int)$_POST['id'];
     $tipo    = $_POST['tipo'];
- 
+
 
     // SETEO DE VARIABLES
     $carpeta                = "img-menu/";
@@ -48,6 +48,8 @@ else
     $errorArchivo           = $_FILES[ 'imagen' ][ 'error' ];
     $pesoArchivo            = $_FILES[ 'imagen' ][ 'size' ];
 
+
+    //var_dump(  getimagesize( $imagenTemporal ) );
     $info                   = new SplFileInfo( $nombreArchivo );
     $extension              = $info->getExtension();
     $nombreArchivo          = uniqid() . '_' . $id . "." . $extension;
@@ -60,23 +62,25 @@ else
 			imagesavealpha($imagenNueva, true);
 			$bkTransparente = imagecolorallocatealpha($imagenNueva, 0, 0, 0, 127);
 			imagefill( $imagenNueva, 0, 0, $bkTransparente);
-            $source = imagecreatefrompng( $imagenTemporal );
+            $source = @imagecreatefrompng( $imagenTemporal );
             break;
 
         case 'image/jpeg':
-            $source = imagecreatefromjpeg( $imagenTemporal );
+            $backgroundColor = imagecolorallocate($imagenNueva, 255, 255, 255);
+            imagefill( $imagenNueva, 0, 0, $backgroundColor );
+            $source = @imagecreatefromjpeg( $imagenTemporal );
             break;
      }
 
-    imagecopyresized( $imagenNueva, $source, 0, 0, 0, 0, 300, 300, $width, $height );
+    @imagecopyresized( $imagenNueva, $source, 0, 0, 0, 0, 300, 300, $width, $height );
 
     switch( $tipoArchivo ){
         case 'image/png':
-            imagepng( $imagenNueva, $thumbnail );
+            @imagepng( $imagenNueva, $thumbnail );
             break;
 
         case 'image/jpeg':
-            imagejpeg( $imagenNueva, $thumbnail, 100 );
+            @imagejpeg( $imagenNueva, $thumbnail, 100 );
             break;
     }
 
@@ -102,7 +106,7 @@ else
     
         elseif( $tipo == 'combo' )  // COMBO
             $sql = "UPDATE combo SET imagen = '{$thumbnail}' WHERE idCombo = {$id};";
-        
+
         elseif( $tipo == 'supercombo' ) // SUPERCOMBO
             $sql = "UPDATE superCombo SET imagen = '{$thumbnail}' WHERE idSuperCombo = {$id};";
 

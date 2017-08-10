@@ -81,8 +81,6 @@ switch ( $data->opcion )
 		echo json_encode( $receta->cargarReceta( $data->idMenu, $data->idProducto ) );
 		break;
 
-
-
 	case 'cargarCombo':				// DATOS COMBO
 		$combo = new Combo();
 		echo json_encode( $combo->cargarCombo( $data->idCombo ) );
@@ -129,7 +127,7 @@ switch ( $data->opcion )
 
 	case 'lstComboPrecio':			// CARGAR LISTA DE COMBOS PRECIO
 		$combo = new Combo();
-		echo json_encode( $combo->lstComboPrecio() );
+		echo json_encode( $combo->lstComboPrecio( $data->idCombo ) );
 		break;
 
 	case 'lstSuperCombo':			// CARGAR LISTA DE SUPER COMBOS
@@ -303,6 +301,11 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** MENU
 	/////////////////////////
+	case 'actualizarLstReceta':		// ACCION RECETA: INSERT / UPDATE
+		$menu = new Menu();
+		echo json_encode( $menu->actualizarLstReceta( $data->accion, $data->datos ) );
+		break;
+
 	case 'consultaReceta':			// ACCION RECETA: INSERT / UPDATE
 		$menu = new Menu();
 		echo json_encode( $menu->consultaReceta( $data->accion, $data->datos ) );
