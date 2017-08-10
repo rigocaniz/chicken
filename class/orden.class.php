@@ -378,7 +378,7 @@ class Orden
  			$limit = " LIMIT " . $limite;
 
  		$sql = "SELECT 
-					idOrdenCliente, numeroTicket, usuarioResponsable, idEstadoOrden, estadoOrden, fechaRegistro
+					idOrdenCliente, numeroTicket, usuarioResponsable, idEstadoOrden, estadoOrden, fechaRegistro, numMenu
 				FROM vOrdenCliente WHERE idEstadoOrden = {$idEstadoOrden} ORDER BY idOrdenCliente DESC " . $limit;
 
 		if( $rs = $this->con->query( $sql ) ) {

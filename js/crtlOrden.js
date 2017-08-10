@@ -224,7 +224,11 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 	// #4 => AGREGAR MENU Y CANTIDAD A ORDEN A AGREGAR
 	$scope.agregarAPedido = function () {
-		if ( !( $scope.menuActual.cantidad > 0 ) ) {
+		if ( !( $scope.menuActual.precio > 0 ) ) {
+			alertify.set('notifier','position', 'top-right');
+			alertify.notify('Menú no disponible para este Tipo de Servicio', 'danger', 4);
+		}
+		else if ( !( $scope.menuActual.cantidad > 0 ) ) {
 			alertify.set('notifier','position', 'top-right');
 			alertify.notify('La cantidad debe ser mayor a cero', 'danger', 4);
 		}
