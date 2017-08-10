@@ -53,7 +53,10 @@
 								      	<img ng-src="{{ m.imagen }}" alt="{{ m.menu }}" 	ng-click="asignarValorImagen( m.idMenu, 'menu' )">
 								      	<div class="caption">
 								      		<div class="text-right">
-								      			<span class="label label-success">{{ m.estadoMenu }}</span>
+								      			<label class="label" ng-class="{'label-success': m.idEstadoMenu == 1, 'label-default': m.idEstadoMenu == 2}">
+								      				{{ m.estadoMenu }}
+								      				<span class="glyphicon" ng-class="{'glyphicon-ok-sign': m.idEstadoMenu == 1, 'glyphicon-remove-sign': m.idEstadoMenu == 2}"></span>
+								      			</label>
 								      		</div>
 								        	<p>
 								        		<strong>{{ m.menu | uppercase }}</strong>
@@ -202,93 +205,6 @@
 
 </div>
 
-	
-<!-- DIALOGO INGRESO EXISTENCIA -->
-<script type="text/ng-template" id="dial.ingreso.html">
-	<div class="modal" tabindex="-1" role="dialog">
-		<div class="modal-dialog">
-			<div class="modal-content panel-warning">
-				<div class="modal-header panel-heading">
-					<button type="button" class="close" ng-click="$hide()">&times;</button>
-					<span class="glyphicon glyphicon-repeat"></span>
-					INGRESAR REAJUSTE DEL PRODUCTO
-				</div>
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-sm-10 col-sm-offset-1">
-							<div class="pull-right">
-								<b>PRODUCTO: </b>
-								<label class="label label-warning">
-									{{ itemProducto.nombreProducto | uppercase }}
-								</label>
-							</div>
-							<hr>
-							<form class="form-horizontal" role="form" name="$parent.formReajuste">
-								<div class="form-group">
-									<div class="col-sm-4">
-										<label class="control-label">Disponible</label>
-										<input type="text" class="form-control" ng-model="itemProducto.disponibilidad" readonly>
-									</div>
-									<div class="col-sm-4">
-									</div>
-									<div class="col-sm-4">
-										<label class="control-label">ID PRODUCTO</label>
-										<input type="text" class="form-control" ng-model="itemProducto.idProducto" readonly>
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-sm-4">
-										<label class="control-label">Ingresar Cantidad</label>
-										<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="itemProducto.cantidad">
-									</div>
-									<div class="col-sm-2">
-									</div>
-									<div class="col-sm-5">
-										<label class="control-label">Nueva Disponibilidad</label>
-										<input type="text" class="form-control" placeholder="Cantidad" value="{{ retornarTotal() }}" readonly>											  	
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-sm-2">
-										<label class="control-label">DISPONIBILIDAD</label>
-									</div>
-									<div class="col-sm-10 text-center">
-										<button type="button" class="btn btn-default" ng-class="{'btn-success': itemProducto.esIncremento}" ng-click="itemProducto.esIncremento=true">
-											<span class="glyphicon" ng-class="{'glyphicon-check': itemProducto.esIncremento, 'glyphicon-unchecked': !itemProducto.esIncremento}"></span> AGREGAR
-										</button>
-
-										<button type="button" class="btn btn-default" ng-class="{'btn-danger': !itemProducto.esIncremento}" ng-click="itemProducto.esIncremento=false">
-											<span class="glyphicon" ng-class="{'glyphicon-unchecked': itemProducto.esIncremento, 'glyphicon-check': !itemProducto.esIncremento}"></span> DISMINUIR
-										</button>
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-sm-12">
-										<label class="control-label">INGRESE OBSERVACIÓN</label>
-										<textarea rows="3" class="form-control" ng-model="itemProducto.observacion" placeholder="Ingrese la observación del reajuste"></textarea>
-										<label class="label label-info">
-											Caracteres <span class="badge">{{ itemProducto.observacion.length }}</span>
-										</label>
-									</div>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button class="btn btn-warning" ng-click="consultaReajusteInventario()">
-						<span class="glyphicon glyphicon-saved"></span> Guardar
-					</button>
-					<button type="button" class="btn btn-default" ng-click="$hide()">
-						<span class="glyphicon glyphicon-log-out"></span>
-						<b>Salir</b>
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
-</script>
-
 
 <!-- MODAL AGREGAR / EDITAR MENU -->
 <script type="text/ng-template" id="dial.adminMenu.html">
@@ -296,7 +212,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content" ng-class="{'panel-warning': accion == 'insert', 'panel-info': accion == 'update'}">
 				<div class="modal-header panel-heading">
-					<button type="button" class="close" ng-click="$hide()">&times;</button>
+					<button type="button" class="close" ng-click="resetValores( 'menu' ); $hide();">&times;</button>
 					<h3 class="panel-title">
 						<span class="glyphicon" ng-class="{'glyphicon-plus': accion == 'insert', 'glyphicon glyphicon-pencil': accion == 'update'}"></span>
 						{{ accion == 'insert' ? 'INGRESAR NUEVO' : 'ACTUALIZAR' }} MENU
@@ -409,7 +325,7 @@
 					<button class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMenu()">
 						<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 					</button>
-					<button type="button" class="btn btn-default" ng-click="resetValores( 1 ); $hide()">
+					<button type="button" class="btn btn-default" ng-click="resetValores( 'menu' ); $hide();">
 						<span class="glyphicon glyphicon-log-out"></span>
 						<b>Salir</b>
 					</button>
@@ -419,7 +335,8 @@
 	</div>
 </script>
 
-<!-- MODAL AGREGAR / EDITAR MENU -->
+
+<!-- MODAL AGREGAR / EDITAR RECETA MENU -->
 <script type="text/ng-template" id="dial.recetaMenu.html">
 	<div class="modal" tabindex="-1" role="dialog">
 		<div class="modal-dialog modal-xl">
@@ -439,7 +356,9 @@
 							<li class="media">
 								<div class="media-left text-center">
 									<img class="media-object" width="125px" height="125px" ng-src="{{ objMenu.imagen }}" alt="MENU">
-									<small><b>CÓDIGO #{{ objMenu.idMenu }}</b></small>
+									<label class="label label-info">
+										<b>CÓDIGO #{{ objMenu.idMenu }}</b>
+									</label>
 								</div>
 								<div class="media-body">
 									<div class="pull-right">
@@ -504,35 +423,35 @@
 								</div>
 							</fieldset>
 							<br><br>
-							<legend class="text-center">
-								<small>
-									<span class="glyphicon glyphicon-file"></span> RECETA PARA EL MENU
-								</small>
+							<legend class="text-center legend-red">
+								<span class="glyphicon glyphicon-file"></span> RECETA PARA EL MENU
 							</legend>
 							<div class="form-group">
 								<table class="table table-hover" ng-show="objMenu.lstRecetaMenu.length">
 									<thead>
 										<tr>
-											<th class="text-center">Cod. Prod.</th>
 											<th class="text-center col-sm-4">Producto</th>
 											<th class="text-center col-sm-1">Medida</th>
-											<th class="text-center col-sm-3">Tipo de Producto</th>
+											<th class="text-center col-sm-2">Tipo de Producto</th>
 											<th class="text-center col-sm-3">Cantidad</th>
-											<th class="text-center col-sm-2"></th>
+											<th class="text-center col-sm-1">Editar</th>
+											<th class="text-center col-sm-1">Eliminar</th>
 										</tr>
 									</thead>
 									<tbody>
 										<tr ng-repeat="receta in objMenu.lstRecetaMenu">
 											<td>
-												{{ receta.idProducto }}
-											</td>
-											<td>
 												{{ receta.producto }}<br>
 												<button type="button" class="btn btn-default btn-xs" ng-click="receta.mostrar=!receta.mostrar">
 													<span class="glyphicon" ng-class="{'glyphicon-eye-open': receta.mostrar, 'glyphicon-eye-close': !receta.mostrar}"></span> {{ receta.mostrar ? 'Ocultar' : 'Mostrar' }} 
 												</button>
-												<div ng-show="receta.mostrar">
-													{{ receta.observacion }}
+												<div ng-show="receta.mostrar || receta.editar">
+													<div ng-show="receta.editar">
+														<textarea rows="2" class="form-control" ng-model="receta.observacion"></textarea>
+													</div>
+													<div ng-show="receta.mostrar && !receta.editar">
+														{{ receta.observacion }}
+													</div>
 												</div>
 											</td>
 											<td class="text-center">
@@ -542,10 +461,17 @@
 												{{ receta.tipoProducto }}
 											</td>
 											<td class="text-right">
-												<input type="number" min="0" class="form-control" ng-model="receta.cantidad" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
+												<input type="number" min="0" class="form-control" ng-model="receta.cantidad" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required ng-disabled="!receta.editar">
 											</td>
-											<td class="text-right">
-												
+											<td class="text-center">
+												<button type="button" class="btn btn-info btn-sm" ng-click="receta.editar=!receta.editar">
+													<span class="glyphicon glyphicon-pencil"></span>
+												</button>
+											</td>
+											<td class="text-center">
+												<button type="button" class="btn btn-danger btn-sm" ng-click="eliminarProdReceta( receta.idMenu, receta.idProducto )">
+													<span class="glyphicon glyphicon-trash"></span>
+												</button>
 											</td>
 										</tr>
 									</tbody>
@@ -558,8 +484,8 @@
 					</fieldset>
 				</div>
 				<div class="modal-footer">
-					<button class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMenu()">
-						<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
+					<button class="btn btn-success" ng-click="actualizarLstReceta()">
+						<span class="glyphicon glyphicon-saved"></span> Guardar
 					</button>
 					<button type="button" class="btn btn-default" ng-click="resetValores( 'receta' ); $hide()">
 						<span class="glyphicon glyphicon-log-out"></span>

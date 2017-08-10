@@ -59,34 +59,80 @@ class Menu
  	}
 
 
+ 	function actualizarLstReceta( $accion, $lstRecetaProductos )
+ 	{
+ 		if( count( $lstRecetaProductos ) ) {
+ 			
+ 			foreach ( $lstRecetaProductos AS $data ) {
+
+				// ASIGNACIÓN DE VARIABLES
+		 		$idMenu      = (int)$data->idMenu;
+		 		$idProducto  = (int)$data->idProducto;
+				$cantidad    = (double)$data->cantidad;
+				$observacion = strlen( $data->observacion )	? (string)$data->observacion 	: "NULL";
+
+		 		$sql = "CALL consultaReceta( '{$accion}', {$idMenu}, {$idProducto}, {$cantidad}, '{$observacion}' );";
+			 		
+		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+		 			$this->siguienteResultado();
+	 				
+	 				$this->respuesta = $row->respuesta;
+	 				$this->mensaje   = $row->mensaje;
+		 			if( $this->respuesta == 'danger' )
+		 				break;
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
+		 		}
+ 			}
+ 			
+ 		}
+ 		else{
+ 			$this->respuesta = 'warning';
+		 	$this->mensaje   = 'No hay productos ingresados en la lista de recetas';
+ 		}
+
+ 		return $this->getRespuesta();
+ 	}
+
+
  	// CONSULTA RECETA
  	function consultaReceta( $accion, $data )
  	{
 		$validar = new Validar();
 
 		// INICIALIZACIÓN VAR
-		$idMenu      = NULL;
-		$idProducto  = NULL;
-		$cantidad    = NULL;
-		$observacion = NULL;
+		$idMenu      = "NULL";
+		$idProducto  = "NULL";
+		$cantidad    = "NULL";
+		$observacion = "NULL";
 
 		// SETEO VARIABLES GENERALES
  		$data->idMenu      = (int)$data->idMenu > 0 		? (int)$data->idMenu 			: NULL;
  		$data->idProducto  = (int)$data->idProducto > 0  	? (int)$data->idProducto 		: NULL;
- 		$data->cantidad    = (double)$data->cantidad > 0  	? (int)$data->cantidad 			: NULL;
- 		$data->observacion = strlen( $data->observacion )	? (string)$data->observacion 	: NULL;
 
  		// VALIDACIONES
  		$idMenu      = $validar->validarEntero( $data->idMenu, NULL, TRUE, 'El ID del Menú no es válido, verifique.' );
 		$idProducto  = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido, verifique.' );
-		$cantidad    = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 2500, 'la cantidad' );
-		$observacion = $validar->validarTexto( $data->observacion, NULL, !esNulo( $data->observacion ), 15, 1500, 'la observación' );
+
+ 		if( $accion == 'insert' OR $accion == 'update' )
+ 		{
+ 			$data->cantidad    = (double)$data->cantidad > 0  	? (int)$data->cantidad 			: NULL;
+ 			$data->observacion = strlen( $data->observacion )	? (string)$data->observacion 	: NULL;
+
+	 		// VALIDACIONES
+			$cantidad    = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 2500, 'la cantidad' );
+			$observacion = $validar->validarTexto( $data->observacion, NULL, !esNulo( $data->observacion ), 15, 1500, 'la observación' );
+ 		}
+
 
  		if( $validar->getIsError() ):
 	 		$this->respuesta = 'danger';
 	 		$this->mensaje   = $validar->getMsj();
  		else:
 	 		$sql = "CALL consultaReceta( '{$accion}', {$idMenu}, {$idProducto}, {$cantidad}, '{$observacion}' );";
+	 		//echo $sql;
 	 		
 	 		if( $rs = $this->con->query( $sql ) ){
 	 			@$this->con->next_result();
@@ -304,7 +350,6 @@ class Menu
 	 		$data->idEstadoMenu  = (int)$data->idEstadoMenu > 0  	? (int)$data->idEstadoMenu : NULL;
 	 		$data->idDestinoMenu = (int)$data->idDestinoMenu > 0  	? (int)$data->idDestinoMenu : NULL;
 	 		$data->idTipoMenu    = (int)$data->idTipoMenu > 0 		? (int)$data->idTipoMenu : NULL;
-
 	 
 	 		// VALIDACIONES
 	 		if( $accion == 'update' ):
@@ -340,7 +385,7 @@ class Menu
 		 					if( $accion == 'insert' )
 		 						$idMenu = $this->data = (int)$row->id;
 		 					// INSERTAR PRECIOS
-		 					$this->consultaMenuPrecio( $accion, $idMenu, $data->lstPrecios );
+		 					$this->consultaMenuPrecio( 'insert', $idMenu, $data->lstPrecios );
 		 				}
 		 			}
 		 		}
@@ -371,8 +416,8 @@ class Menu
  		
  		foreach ( $lstPrecios AS $ixPrecio => $precio ) {
 
- 			// SETEO VARIABLES GENERALES
-			$precio->idTipoServicio = (int)$precio->idTipoServicio > 0 	? (int)$precio->idTipoServicio	: NULL;
+ 			// SETEO VARIABLES
+			$precio->idTipoServicio = (int)$precio->idTipoServicio > 0 ? (int)$precio->idTipoServicio : NULL;
 
 			$validar = new Validar();
 
@@ -400,9 +445,7 @@ class Menu
 		 			$this->mensaje   = 'Error al ejecutar la instrucción.';
 		 		}
 		 		
-	 		endif;
-
- 			
+	 		endif; 			
  		}
  	}
 

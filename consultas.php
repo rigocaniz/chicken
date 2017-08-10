@@ -303,6 +303,11 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** MENU
 	/////////////////////////
+	case 'actualizarLstReceta':		// ACCION RECETA: INSERT / UPDATE
+		$menu = new Menu();
+		echo json_encode( $menu->actualizarLstReceta( $data->accion, $data->datos ) );
+		break;
+
 	case 'consultaReceta':			// ACCION RECETA: INSERT / UPDATE
 		$menu = new Menu();
 		echo json_encode( $menu->consultaReceta( $data->accion, $data->datos ) );

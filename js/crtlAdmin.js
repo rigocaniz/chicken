@@ -11,6 +11,10 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	$scope.menu            = {};
 	$scope.combo           = {};
 
+	$scope.dialAdminMenu  = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialAdminCombo = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialRecetaMenu = $modal({scope: $scope,template:'dial.recetaMenu.html', show: false, backdrop: 'static', keyboard: false});
+
 	$scope.$on('cargarLista', function( event, data ){
 		console.log( ":::", event, ":::", data );
 		if( data == 'menu' )
@@ -34,6 +38,56 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 		orden: 'ASC'
 	};
 
+	$scope.actualizarLstReceta = function()
+	{
+		var objMenu = $scope.objMenu;
+
+		if( !(objMenu.lstRecetaMenu && objMenu.lstRecetaMenu.length > 0) )
+			alertify.notify( 'No hay productos ingresados en la lista de recetas', 'warning', 5 );
+		else
+		{
+			$http.post('consultas.php',{
+				opcion : 'actualizarLstReceta',
+				accion : 'update',
+				datos  : objMenu.lstRecetaMenu
+			})
+			.success(function(data){
+				console.log( data );
+				alertify.set('notifier','position', 'top-right');
+				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+
+				if ( data.respuesta == 'success' ) {
+					$scope.dialRecetaMenu.hide();
+				}
+			}).error(function(data){
+				console.log(data);
+			});
+		}
+		
+	}
+
+	$scope.eliminarProdReceta = function( idMenu, idProducto )
+	{
+		$http.post('consultas.php',{
+			opcion : 'consultaReceta',
+			accion : 'delete',
+			datos  : {
+				idMenu     : idMenu,
+				idProducto : idProducto
+			}
+		})
+		.success(function(data){
+			console.log(data);
+			alertify.set('notifier','position', 'top-right');
+			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+
+			if ( data.respuesta == 'success' ) {
+				$scope.lstRecetaMenu( $scope.objMenu.idMenu, false );
+			}
+		}).error(function(data){
+			console.log(data);
+		});
+	};
 	
 	// CARGAR RECETA MENU
 	$scope.objMenu = {};
@@ -50,12 +104,9 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	{
 		$http.post('consultas.php',{opcion: 'lstRecetaMenu', idMenu: idMenu})
 		.success(function(data){
-			//console.log('data::: ', data);
 			$scope.objMenu.lstRecetaMenu = data;
 			if( abrirModal )
 				$scope.dialRecetaMenu.show();
-		}).error(function(data){
-			console.log(data);
 		});
 	};
 
@@ -90,10 +141,10 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 				console.log(data);
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
-				if( data.respuesta == 'success' )
+				if( data.respuesta == 'success' ){
+					$scope.resetValores( 'producto' );
 					$scope.lstRecetaMenu( $scope.objMenu.idMenu, false );
-			}).error(function(data){
-				console.log(data);
+				}
 			});
 		}
 
@@ -194,10 +245,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 		$scope.inventario();
 	};
 
-	$scope.dialIngreso    = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static', keyboard: false});
-	$scope.dialAdminMenu  = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static', keyboard: false});
-	$scope.dialAdminCombo = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static', keyboard: false});
-	$scope.dialRecetaMenu = $modal({scope: $scope,template:'dial.recetaMenu.html', show: false, backdrop: 'static', keyboard: false});
 
 	($scope.inicio = function(){
         $http.post('consultas.php',{
@@ -243,6 +290,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 		})
 	};
 	
+
 	$scope.verListaMenu();
 	// VER LISTA DE COMBOS
 	$scope.verListaCombos = function(){
@@ -378,7 +426,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 		else{
 			for (var i = 0; i < menu.lstPrecios.length; i++) {
 				if( !( menu.lstPrecios[ i ].precio && menu.lstPrecios[ i ].precio >= 0 ) ){
-					alertify.notify( 'Ingrese un precio válido en el servicio ' + menu.lstPrecios[ i ].tipoServicio, 'warning', 4 );
+					alertify.notify( 'Ingrese un precio válido en el servicio ' + menu.lstPrecios[ i ].tipoServicio, 'warning', 4000 );
 					error = true;
 					break;
 				}
