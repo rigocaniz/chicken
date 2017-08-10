@@ -1,6 +1,15 @@
 app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
-	$scope.menuTab = 'menu';
+	$scope.menuTab         = 'menu';
+	$scope.accion          = 'insert';
+	$scope.lstDestinoMenu  = [];
+	$scope.lstTipoMenu     = [];
+	$scope.lstTipoServicio = [];
+	$scope.lstEstadosMenu  = [];
+	$scope.lstCombos       = [];
+	$scope.lstMenu         = [];
+	$scope.menu            = {};
+	$scope.combo           = {};
 
 	$scope.$on('cargarLista', function( event, data ){
 		console.log( ":::", event, ":::", data );
@@ -30,24 +39,147 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	$scope.objMenu = {};
 	$scope.cargarRecetaMenu = function( menu )
 	{
+		console.log( 'menu::: ', menu );
 		$scope.objMenu = menu;
 		if( $scope.objMenu.idMenu > 0 ){
-			$scope.lstRecetaMenu( $scope.objMenu.idMenu );
+			$scope.lstRecetaMenu( $scope.objMenu.idMenu, true );
 		}
 	};
 	
-	$scope.lstRecetaMenu = function( idMenu )
+	$scope.lstRecetaMenu = function( idMenu, abrirModal )
 	{
 		$http.post('consultas.php',{opcion: 'lstRecetaMenu', idMenu: idMenu})
 		.success(function(data){
-			console.log('data::: ', data);
+			//console.log('data::: ', data);
 			$scope.objMenu.lstRecetaMenu = data;
-			$scope.dialRecetaMenu.show();
+			if( abrirModal )
+				$scope.dialRecetaMenu.show();
 		}).error(function(data){
 			console.log(data);
 		});
 	};
 
+	
+	$scope.prod = {
+		idMenu         : null,
+		idProducto     : null,
+		nombreProducto : '',
+		medida         : '',
+		cantidad       : null,
+		observacion    : '',
+		seleccionado   : false
+	};
+	$scope.agregarIngresoProducto = function()
+	{
+		var prod = $scope.prod;
+
+		if( !(prod.idProducto && prod.idProducto > 0) )
+		{
+			alertify.notify( 'El código del Producto no es válido', 'danger', 5 );
+		}
+		else if( !(prod.cantidad && prod.cantidad > 0) ){
+			alertify.notify( 'La cantidad ingresada debe ser mayor a 0', 'danger', 5 );
+		}
+		else{
+			$http.post('consultas.php',{
+				opcion : 'consultaReceta',
+				accion : 'insert',
+				datos  : $scope.prod
+			})
+			.success(function(data){
+				console.log(data);
+				alertify.set('notifier','position', 'top-right');
+ 				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
+				if( data.respuesta == 'success' )
+					$scope.lstRecetaMenu( $scope.objMenu.idMenu, false );
+			}).error(function(data){
+				console.log(data);
+			});
+		}
+
+	};
+
+
+	$scope.idxProducto = -1;
+	$scope.seleccionKeyProducto = function( key ){
+		console.log( key, ":::", $scope.idxProducto );
+
+		// CODIGO ENTER
+		if( key == 13 ){
+
+			if( !$scope.lstProductos.length )
+				alertify.notify( 'No se encontro el producto ingresaoo', 'info', 5 );
+
+			else if( $scope.lstProductos.length == 1 )
+				$scope.seleccionarProducto( $scope.lstProductos[ 0 ] );
+
+			else if( $scope.idxProducto != -1 )
+				$scope.seleccionarProducto( $scope.lstProductos[ $scope.idxProducto ] );
+			
+		}
+
+		// CODIGO UP
+		else if( key == 38 ){
+
+			if( $scope.lstProductos.length && $scope.idxProducto > 0 )
+				$scope.idxProducto--;
+
+			else if( $scope.idxProducto == 0 )
+				$scope.idxProducto = $scope.lstProductos.length - 1;
+		}
+		
+		// CODIGO DOWN
+		else if( key == 40 ){
+
+			if( $scope.lstProductos.length && $scope.idxProducto + 1 < $scope.lstProductos.length )
+				$scope.idxProducto++;
+
+			else if( $scope.lstProductos.length && $scope.idxProducto + 1 )
+				$scope.idxProducto = 0;
+		}
+
+	};
+
+
+	$scope.seleccionarProducto = function( producto )
+	{
+		if( !(producto.idProducto && producto.idProducto > 0) )
+			alertify.notify( 'El código del Producto no es válido', 'danger', 5 );
+		else{
+			$scope.prod = {
+				idMenu       : $scope.objMenu.idMenu,
+				idProducto   : producto.idProducto,
+				producto     : producto.producto,
+				medida       : producto.medida,
+				observacion  : '',
+				cantidad     : null,
+				seleccionado : true
+			};
+
+			$('#cantidad').focus();
+
+			$scope.lstProductos = [];
+		}
+	};
+
+
+	// BUSCAR PRODUCTOS
+	$scope.lstProductos = [];
+	$scope.buscarProducto = function( nombreProducto ){
+		if( nombreProducto.length && !$scope.prod.seleccionado )
+		{
+			$http.post('consultas.php',{opcion: 'buscarProducto', nombreProducto: nombreProducto})
+			.success(function(data){
+				console.log('buscarProducto::: ',data);
+				$scope.lstProductos = data;
+			}).error(function(data){
+				console.log(data);
+			});
+		}
+		else
+			$scope.lstProductos = []
+
+	};
 
 
 	$scope.cargarPaginacion = function( pagina ){
@@ -66,24 +198,11 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	$scope.dialAdminMenu  = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static', keyboard: false});
 	$scope.dialAdminCombo = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static', keyboard: false});
 	$scope.dialRecetaMenu = $modal({scope: $scope,template:'dial.recetaMenu.html', show: false, backdrop: 'static', keyboard: false});
-	
-
-	$scope.lstDestinoMenu  = [];
-	$scope.lstTipoMenu     = [];
-	$scope.lstTipoServicio = [];
-	$scope.lstEstadosMenu  = [];
-
-	$scope.lstCombos       = [];
-	$scope.lstMenu         = [];
-	$scope.menu            = {};
-	$scope.combo           = {};
-	$scope.accion          = 'insert';
 
 	($scope.inicio = function(){
         $http.post('consultas.php',{
             opcion : 'inicioAdmin'
         }).success(function(data){
-            //console.log( 'inicioAdmin: ', data );
             $scope.lstDestinoMenu  = data.lstDestinoMenu || [];
             $scope.lstTipoMenu     = data.lsTipoMenu || [];
             $scope.lstTipoServicio = data.lstTiposServicio || [];
@@ -123,8 +242,8 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			$scope.generarPaginacion( data.totalPaginas );
 		})
 	};
+	
 	$scope.verListaMenu();
-
 	// VER LISTA DE COMBOS
 	$scope.verListaCombos = function(){
 		$http.post('consultas.php',{
@@ -286,9 +405,11 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 
 	$scope.resetValores = function( accion ){
+		console.log( accion );
 		$scope.accion == 'insert';
 
-		if( accion == 'menu' ){
+		if( accion == 'menu' )
+		{
 			$scope.menu = {
 				'idEstadoMenu'  : 1,
 				'menu'          : '',
@@ -300,7 +421,8 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 				'lstPrecios'    : []
 			};
 		}
-		else if( accion == 'combo' ){
+		else if( accion == 'combo' )
+		{
 			$scope.combo = {
 				'idEstadoMenu' : 1,
 				'combo'        : '',
@@ -309,6 +431,29 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 				'imagen'       : '',
 			}
 
+		}
+		else if( accion == 'producto' )
+		{
+			$scope.prod = {
+				idMenu         : null,
+				idProducto     : null,
+				nombreProducto : '',
+				medida         : '',
+				cantidad       : null,
+				observacion    : '',
+				seleccionado   : false
+			};
+
+			$timeout(function(){
+				$( '#producto' ).focus();
+			}, 100);
+		}
+
+		else if( accion == 'receta' )
+		{
+			$scope.objMenu      = {};
+			$scope.lstProductos = [];
+			$scope.resetValores( 'producto' );
 		}
 	};
 
@@ -346,7 +491,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 						$scope.$parent.asignarValorImagen( data.data, 'combo' );
 
 					$scope.resetValores( 'combo' );
-
 				}
 			})
 		}

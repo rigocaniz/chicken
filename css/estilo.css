@@ -301,3 +301,9 @@ input.ng-dirty.ng-invalid {
 .danger {
     background: #d0091c;
 }
+
+.ul-list{
+    position: absolute;
+    z-index: 999;
+    width: 92%;
+}

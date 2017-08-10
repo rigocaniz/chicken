@@ -460,12 +460,7 @@
 							</li>
 						</ul>
 
-						<legend class="text-center">
-							<small>
-								<span class="glyphicon glyphicon-file"></span> RECETA PARA EL MENU
-							</small>
-						</legend>
-						<form class="form-horizontal" role="form" name="formMenu">
+						<form class="form-horizontal" role="form" name="formMenu" autocomplete="off">
 							<!-- INGRESAR RECETA -->
 							<fieldset class="fieldset">
 								<legend class="legend">Ingresar Receta</legend>
@@ -474,10 +469,12 @@
 										<label class="control-label">Producto</label>
 										<div ng-show="!prod.seleccionado">
 											<input type="text" id="producto" class="form-control" ng-model="prod.producto" maxlength="35" placeholder="Ingrese producto" ng-change="buscarProducto( prod.producto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
-											<ul class="list-group" ng-show="lstProductos.length">
+											<ul class="list-group ul-list" ng-show="lstProductos.length">
 
 											    <li class="list-group-item" ng-class="{'active': $parent.idxProducto == ixProducto}" ng-repeat="(ixProducto, producto) in lstProductos" ng-click="seleccionarProducto( producto )" ng-mouseenter="$parent.idxProducto = ixProducto">
-											    	{{ producto.producto }}
+											    	<strong>{{ producto.producto | uppercase }}</strong> 
+											    	<small>({{ producto.medida }})</small><br>
+											    	<small>{{ producto.tipoProducto }}</small>
 											    </li>
 											</ul>
 										</div>
@@ -486,7 +483,7 @@
 										</div>
 									</div>
 									<div class="col-sm-4 col-md-3">
-										<label class="control-label">Cantidad</label>
+										<label class="control-label">Cantidad ({{ prod.medida }}) </label>
 										<input type="number" min="0.01" ng-keydown="$event.keyCode == 13 && agregarIngresoProducto();" ng-model="prod.cantidad" id="cantidad" class="form-control" placeholder="Cantidad" >
 									</div>
 								</div>
@@ -500,12 +497,18 @@
 										<button type="button" class="btn btn-sm btn-warning" ng-click="agregarIngresoProducto();">
 											<span class="glyphicon glyphicon-plus"></span> Agregar
 										</button>
-										<button type="button" class="btn btn-sm btn-default" ng-click="cancelarIngreso( 1 )">
+										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 'producto' )">
 											<span class="glyphicon glyphicon-remove"></span> Cancelar
 										</button>
 									</div>
 								</div>
 							</fieldset>
+							<br><br>
+							<legend class="text-center">
+								<small>
+									<span class="glyphicon glyphicon-file"></span> RECETA PARA EL MENU
+								</small>
+							</legend>
 							<div class="form-group">
 								<table class="table table-hover" ng-show="objMenu.lstRecetaMenu.length">
 									<thead>
@@ -558,7 +561,7 @@
 					<button class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMenu()">
 						<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 					</button>
-					<button type="button" class="btn btn-default" ng-click="resetValores( 1 ); $hide()">
+					<button type="button" class="btn btn-default" ng-click="resetValores( 'receta' ); $hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
 						<b>Salir</b>
 					</button>
