@@ -260,7 +260,7 @@ button,a{
 
 .badge-ticket{
     background-color: #098293;
-    border: solid 1px #006170;
+    border: solid 1px #007688;
     color: #ebebeb;
     padding: 1px 9px 1px 9px;
     border-radius: 6px;
@@ -307,3 +307,29 @@ input.ng-dirty.ng-invalid {
     z-index: 999;
     width: 92%;
 }
+
+
+div .etiqueta{
+    padding: 0 12px;
+    color: #2b2b2b;
+}
+
+div .valor{
+    padding: 2px 14px 3px;
+    font-weight: bold;
+    color: #0833af;
+    border-bottom: solid 1px #cfd5ea;
+    margin-bottom: 4px;
+    display: inline-block;
+}
+
+legend.legend{
+    color: #ffffff;
+    text-shadow: -1px 1px 2px rgba(0, 0, 0, 0.34);
+    background: #5a9c69;
+    width: 100%;
+    margin: 10px 0px;
+    text-align: center;
+    font-size: 16px;
+}
+

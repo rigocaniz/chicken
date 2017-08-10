@@ -338,8 +338,14 @@ switch ( $data->opcion )
 		break;
 
 	case 'lstOrdenCliente':	// ORDEN CLIENTE
+		if ( !isset( $data->limite ) )
+			$data->limite = NULL;
+
+		if ( !isset( $data->idOrdenCliente ) )
+			$data->idOrdenCliente = NULL;
+
 		$orden = new Orden();
-		echo json_encode( $orden->lstOrdenCliente( $data->idEstadoOrden ) );
+		echo json_encode( $orden->lstOrdenCliente( $data->idEstadoOrden, $data->limite, $data->idOrdenCliente ) );
 		break;
 
 	case 'consultaDetalleOrdenMenu':	// ACCION MENU: INSERT / MENU-CANTIDAD / ESTADO / RESPONSABLE / ETC

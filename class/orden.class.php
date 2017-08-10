@@ -294,7 +294,10 @@ class Orden
 		 	else
 		 		$this->con->query( "ROLLBACK" );
 
-		 	$this->data = $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo );
+		 	$this->data = array(
+				'ordenCliente'    => $this->lstOrdenCliente( 1, NULL, $idOrdenCliente ),
+				'lstMenuAgregado' => $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo ),
+		 	);
 
  		else:
 			$this->respuesta = 'danger';
@@ -302,15 +305,15 @@ class Orden
  		endif;
  	}
 
- 	public function lstMenuAgregado( $txtIdMenu, $txtIdOrden )
+ 	public function lstMenuAgregado( $txtIdMenu, $txtIdCombo )
  	{
  		$lst = array();
 
- 		if ( strlen( $txtIdMenu ) > 2 )
- 			$txtIdMenu = substr( str_replace("_", " OR idDetalleOrdenMenu = ", rtrim( $txtIdMenu, '_' ) ), 3 );
+ 		if ( strlen( $txtIdMenu ) > 0 )
+ 			$txtIdMenu = substr( str_replace("_", " OR idDetalleOrdenMenu = ", $txtIdMenu ), 3 );
 
- 		if ( strlen( $txtIdOrden ) > 2 )
- 			$txtIdOrden = substr( str_replace("_", " OR idDetalleOrdenCombo = ", rtrim( $txtIdOrden, '_' ) ), 3 );
+ 		if ( strlen( $txtIdCombo ) > 0 )
+ 			$txtIdCombo = substr( str_replace("_", " OR idDetalleOrdenCombo = ", $txtIdCombo ), 3 );
 
  		$sql = "SELECT 
 					idDetalleOrdenMenu,
@@ -349,8 +352,8 @@ class Orden
 		endif;
 
 		// SI SE AGREGO AL MENOS UN COMBO
-		if ( strlen( $txtIdOrden ) > 2 ):
-	 		if( $rs = $this->con->query( $sql . $txtIdOrden ) ){
+		if ( strlen( $txtIdCombo ) > 2 ):
+	 		if( $rs = $this->con->query( $sql . $txtIdCombo ) ){
 	 			while ( $row = $rs->fetch_object() ) {
 	 				$row->idDetalleOrdenMenu   = (int)$row->idDetalleOrdenMenu;
 					$row->idMenu               = (int)$row->idMenu;
@@ -368,22 +371,36 @@ class Orden
  		return $lst;
  	}
 
- 	public function lstOrdenCliente( $idEstadoOrden, $limite = 20 )
+ 	// CONSULTA INFORMACION DE ORDEN DE CLIENTE
+ 	public function lstOrdenCliente( $idEstadoOrden, $limite = 20, $idOrdenCliente = NULL )
  	{
-		$lst   = array();
-		$limit = "";
+		$lst            = NULL;
+		$limit          = "";
+		$limite         = (int)$limite;
+		$idOrdenCliente = (int)$idOrdenCliente;
 
 		// SI EL ESTADO ES DIFERENTE A PENDIENTE Y LIMITE ES MAYOR A CERO
  		if ( $limite > 0 AND $idEstadoOrden > 1 )
  			$limit = " LIMIT " . $limite;
 
+ 		if ( $idOrdenCliente > 0 )
+			$where = " WHERE idOrdenCliente = " . $idOrdenCliente;
+
+		else
+			$where = " WHERE idEstadoOrden = " . $idEstadoOrden;
+
  		$sql = "SELECT 
 					idOrdenCliente, numeroTicket, usuarioResponsable, idEstadoOrden, estadoOrden, fechaRegistro, numMenu
-				FROM vOrdenCliente WHERE idEstadoOrden = {$idEstadoOrden} ORDER BY idOrdenCliente DESC " . $limit;
+				FROM vOrdenCliente $where ORDER BY idOrdenCliente DESC " . $limit;
 
 		if( $rs = $this->con->query( $sql ) ) {
- 			while ( $row = $rs->fetch_object() )
- 				$lst[] = $row;
+ 			if ( $idOrdenCliente > 0 AND ( $row = $rs->fetch_object() ) ) {
+				$lst = $row;
+ 			}
+ 			else {
+				while ( $row = $rs->fetch_object() )
+ 					$lst[] = $row;
+ 			}
  		}
 
  		return $lst;

@@ -21,11 +21,12 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 	// DIALOGOS
-	$scope.dialOrden         = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialOrdenCliente  = $modal({scope: $scope,template:'dial.orden.cliente.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialOrdenMenu     = $modal({scope: $scope,template:'dial.orden-menu.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialMenuCantidad  = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialOrdenBusqueda = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialOrden            = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialOrdenCliente     = $modal({scope: $scope,template:'dial.orden.cliente.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialOrdenMenu        = $modal({scope: $scope,template:'dial.orden-menu.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialMenuCantidad     = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialOrdenInformacion = $modal({scope: $scope,template:'dial.orden-informacion.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialOrdenBusqueda    = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: false });
 
 	($scope.init = function () {
 		// CONSULTA TIPO DE SERVICIOS
@@ -47,12 +48,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		});
 	})();
 
-	$scope.modalBuscar = function () {
-		$scope.dialOrdenBusqueda.show();
-		$timeout(function () {
-			document.getElementById('inputSearch').focus();
-		},200);
-	};
 
 	// CONSULTA ORDENES
 	$scope.lstOrdenCliente = [];
@@ -71,10 +66,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			});
 		}
 	};
-
-	$scope.$watch('idEstadoOrden', function (_new) {
-		$scope.consultaOrdenCliente();
-	});
 
 
 	// #1 => MUESTRA DIALOGO INGRESO DE TICKET
@@ -272,7 +263,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		}
 	};
 
-	// #5 => AGREGAR MENU Y CANTIDAD A ORDEN A AGREGAR
+	// #5 =>=>=>=>=>=> GUARDA DETALLE DE ORDEN DE CLIENTE <=<=<=<=<=<=<=<=<=<=
 	$scope.guardarOrden = function () {
 		if ( $scope.$parent.loading )
 			return false;
@@ -324,8 +315,25 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 
+	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% DIALOGO PARA BUSQUEDA DE ORDEN %%%%%%%%%%%%%%%%%%%%%% */
+	$scope.modalBuscar = function () {
+		$scope.dialOrdenBusqueda.show();
+		$timeout(function () {
+			document.getElementById('inputSearch').focus();
+		},200);
+	};
+
+	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% DIALOGO PARA MAS INFORMACION DE ORDEN %%%%%%%%%%%%%%%%%%%%%% */
+	$scope.infoOrden = {};
+	$scope.modalInfo = function ( orden ) {
+		console.log( orden );
+		$scope.infoOrden = orden;
+		$scope.dialOrdenInformacion.show();
+	};
 
 
+
+	/* ++++++++++++++++++ AUXILIAR ++++++++++++++++ */
 	// SUMA O RESTA UNO A LA CANTIDAD DE UN MENU
 	$scope.ordenCantidad = function ( index, sumar, cantidad, precio ) {
 		if ( sumar ) {
@@ -343,7 +351,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		$scope.ordenActual.lstAgregar.splice( index, 1 );
 	};
 
-	// RETORNA LA DESCRIPCION DE UN ELEMENTO DE ACUEROD AL id DEL ARREGLO
+	/* ++++++++++++++++++ UTIL ++++++++++++++++ */
+	// ***RETORNA LA DESCRIPCION DE UN ELEMENTO DE ACUEROD AL id DEL ARREGLO
 	$scope.descripcion = function ( arr, id, _value, _return ) {
 		var descrip = '';
 		for (var i = 0; i < $scope[ arr ].length; i++) {
@@ -354,6 +363,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		return descrip;
 	};
 
+	// SI CAMBIA EL TIPO DE SERVICIO
 	$scope.watchPrecio = function () {
 		$scope.menuActual.precio = 0;
 
@@ -365,6 +375,11 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				}
 		}
 	};
+
+	// SI EL ESTADO DE ORDEN CAMBIA
+	$scope.$watch('idEstadoOrden', function (_new) {
+		$scope.consultaOrdenCliente();
+	});
 
 	// SI CAMBIA EL Tipo de Menú
 	$scope.$watch('idTipoMenu', function (_new) {
