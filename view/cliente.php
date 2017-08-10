@@ -81,7 +81,7 @@
 								<div class="row">
 									<label class="col-sm-1 col-md-2">Cliente</label>
 									<div class="col-sm-5">
-										<input type="text" class="form-control" ng-model="parent.txtCliente" placeholder="NIT / DPI / NOMBRE">
+										<input type="text" class="form-control" ng-model="$parent.txtCliente" placeholder="NIT / DPI / NOMBRE">
 									</div>
 									<div class="col-sm-4 col-md-3">
 										<button class="btn btn-sm btn-primary" ng-click="$parent.buscarCliente($parent.txtCliente,1)">
