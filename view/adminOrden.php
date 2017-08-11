@@ -34,9 +34,12 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr ng-repeat="item in lstOrdenes">
+						<tr ng-repeat="item in lstOrdenes" ng-click="item.selected=!item.selected;accionItems()" ng-class="{'success':item.selected}">
 							<td><img ng-src="{{item.imagen}}" style="height:35px"></td>
-							<td>{{item.menu}}</td>
+							<td>
+								<span class="glyphicon glyphicon-gift" ng-show="item.perteneceCombo"></span>
+								{{item.menu}}
+							</td>
 							<td>{{item.tipoServicio}}</td>
 							<td>
 								<span>{{tiempoTranscurrido( item.fechaRegistro )}}</span>
@@ -46,6 +49,13 @@
 				</table>
 			</div>
 		</div>
+	</div>
+	<div class="acciones" ng-show="seleccion.si">
+		<button type="button" class="btn btn-success">
+			<span class="glyphicon glyphicon-play"></span>
+			<b>Preparar</b>
+			<span class="badge">{{seleccion.count}}</span>
+		</button>
 	</div>
 </div>
 

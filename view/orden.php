@@ -263,7 +263,7 @@
                 <div class="modal-body">
                 	<div class="row">
                 		<div class="col-xs-6 text-center">
-                			<img ng-src="{{menuActual.imagen}}">
+                			<img ng-src="{{menuActual.imagen}}" style="height:100px">
                 			<h4>{{menuActual.menu}}</h4>
                 			<h3>Q. {{menuActual.precio | number:2}}</h3>
                 		</div>

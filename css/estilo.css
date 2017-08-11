@@ -331,7 +331,7 @@ div .valor{
 
 legend.legend2{
     color: #ffffff;
-    background: #b46241;
+    background: #58b976;
     width: 100%;
     margin: 10px 0px;
     text-align: center;
@@ -355,4 +355,18 @@ legend.legend2{
     box-shadow: -1px 1px 3px rgba(0, 0, 0, 0.22);
     -moz-box-shadow: -1px 1px 3px rgba(0, 0, 0, 0.22);
     -webkit-box-shadow: -1px 1px 3px rgba(0, 0, 0, 0.22);
+}
+
+.acciones{
+    position: fixed;
+    bottom: 0;
+    background: #f3f3f3;
+    border-top: solid 3px #cfcfcf;
+    border-radius: 19px 19px 0px 0px;
+    left: 0;
+    width: 100%;
+    padding: 7px 5px 22px 12px;
+    box-shadow: 0px 0px 20px 3px rgba(0, 0, 0, 0.17);
+    -moz-box-shadow: 0px 0px 20px 3px rgba(0, 0, 0, 0.17);
+    -webkit-box-shadow: 0px 0px 20px 3px rgba(0, 0, 0, 0.17);
 }

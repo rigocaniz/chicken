@@ -303,8 +303,6 @@ class Orden
 			 	// ENVIA LOS DATOS POR MEDIO DE REDIS
 			 	$red = new Redis();
 				$red->messageRedis( $this->data );
-
-				echo "----";
 			}
 		 	else
 		 		$this->con->query( "ROLLBACK" );

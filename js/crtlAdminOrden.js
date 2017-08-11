@@ -42,6 +42,22 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		$scope.$apply();
 	});
 
+	$scope.seleccion = {
+		si    : false,
+		count : 0
+	};
+	$scope.accionItems = function () {
+		$scope.seleccion.si    = false;
+		$scope.seleccion.count = 0;
+		
+		for (var i = 0; i < $scope.lstOrdenes.length; i++) {
+			if ( $scope.lstOrdenes[ i ].selected ) {
+				$scope.seleccion.si = true;
+				$scope.seleccion.count++;
+			}
+		}
+	};
+
 
 
 

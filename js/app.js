@@ -115,7 +115,7 @@ app.config(function($routeProvider) {
 });
 
 /* CONEXION A SERVIDOR DE NOTIFICACIONES */
-var socket = io.connect('http://localhost:8080', { 'forceNew': true });
+var socket = io.connect('http://192.168.0.125:8080', { 'forceNew': true });
 
 
 /****CONTROLADORES****/
