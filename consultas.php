@@ -355,6 +355,11 @@ switch ( $data->opcion )
 		echo json_encode( $orden->consultaDetalleOrdenMenu( $data->accion, $data->datos ) );
 		break;
 
+	case 'lstDetalleOrdenCliente':
+		$orden = new Orden();
+		echo json_encode( $orden->lstDetalleOrdenCliente( $data->idOrdenCliente ) );
+		break;
+
 
 	/////////////////////////
 	/////////////////////////

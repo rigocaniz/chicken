@@ -51,7 +51,7 @@
 								<td><kbd>{{item.usuarioResponsable}}</kbd></td>
 								<td>
 									<button type="button" class="btn btn-sm btn-default" ng-click="modalInfo( item )">
-										<span class="glyphicon glyphicon-th-large"></span>
+										<span class="glyphicon glyphicon-list"></span>
 									</button>
 								</td>
 							</tr>
@@ -395,6 +395,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-default">
                 <div class="modal-header panel-heading">
+                	<button type="button" class="close" ng-click="$hide()">&times;</button>
                 	<h4 style="margin:0">
 						<b>Orden # </b> {{infoOrden.idOrdenCliente}} » 
 		                <span class="badge-ticket">Ticket # {{infoOrden.numeroTicket}}</span>
@@ -421,42 +422,41 @@
                     		<span class="valor">{{infoOrden.usuarioResponsable}}</span>
                 		</div>
                 	</div>
-                	<legend class="legend">Menús Ordenados</legend>
+                	<legend class="legend2">Menús Ordenados</legend>
                 	<div class="row">
                 		<div class="col-xs-12">
-                			<table class="table table-condensed table-hover">
-                				<thead>
-                					<tr>
-                						<th>Cantidad</th>
-                						<th>Orden</th>
-                						<th>Subtotal</th>
-                						<th width="35px"></th>
-                					</tr>
-                				</thead>
-                				<tbody>
-                					<tr ng-repeat="item in ordenActual.lstAgregar">
-                						<td>
-                							<button type="button" class="btn btn-xs btn-default" ng-click="ordenCantidad( $index, 0, item.cantidad, item.precio )">
-                								<span class="glyphicon glyphicon-minus"></span>
-                							</button>
-                							<b style="font-size:17px">{{item.cantidad}}</b>
-                							<button type="button" class="btn btn-xs btn-info" ng-click="ordenCantidad( $index, 1, item.cantidad, item.precio )">
-                								<span class="glyphicon glyphicon-plus"></span>
-                							</button>
-                						</td>
-                						<td>
-                							<span class="glyphicon glyphicon-gift" ng-show="item.tipoMenu=='combo'"></span>
-                							<span>{{item.menu}} » {{item.tipoServicio}}</span>
-                						</td>
-                						<td>{{(item.precio*item.cantidad) | number:2}}</td>
-                						<td>
-                							<button type="button" class="btn btn-xs btn-danger" ng-click="quitarElemento( $index, item.cantidad, item.precio )">
-                								<span class="glyphicon glyphicon-remove"></span>
-                							</button>
-                						</td>
-                					</tr>
-                				</tbody>
-                			</table>
+                			<div class="table-responsive">
+	                			<table class="table table-hover">
+	                				<thead>
+	                					<tr>
+	                						<th></th>
+	                						<th>Cantidad</th>
+	                						<th>Orden</th>
+	                						<th>Subtotal</th>
+	                						<th width="35px"></th>
+	                					</tr>
+	                				</thead>
+	                				<tbody>
+	                					<tr ng-repeat="item in infoOrden.lstOrden">
+	                						<td><img ng-src="{{item.imagen}}" style="height:40px"></td>
+	                						<td>{{item.cantidad}}</td>
+	                						<td>
+	                							<span ng-show="item.idTipoServicio==2" class="label-border label-success">R</span>
+	                							<span ng-show="item.idTipoServicio==3" class="label-border label-default">D</span>
+	                							<span ng-show="item.idTipoServicio==1" class="label-border label-primary">L</span>
+	                							<span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
+	                							<span>{{item.descripcion}}</span>
+	                						</td>
+	                						<td>{{item.subTotal | number:2}}</td>
+	                						<td>
+	                							<button type="button" class="btn btn-xs btn-danger" ng-click="quitarElemento( $index, item.cantidad, item.precio )">
+	                								<span class="glyphicon glyphicon-remove"></span>
+	                							</button>
+	                						</td>
+	                					</tr>
+	                				</tbody>
+	                			</table>
+                			</div>
                 		</div>
                    </div>
                 </div>
