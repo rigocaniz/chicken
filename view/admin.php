@@ -393,10 +393,10 @@
 									<div class="col-sm-7 col-md-5">
 										<label class="control-label">Producto</label>
 										<div ng-show="!prod.seleccionado">
-											<input type="text" id="producto" class="form-control" ng-model="prod.producto" maxlength="35" placeholder="Ingrese producto" ng-change="buscarProducto( prod.producto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
-											<ul class="list-group ul-list" ng-show="lstProductos.length">
+											<input type="text" id="producto" class="form-control" ng-model="prod.producto" maxlength="35" placeholder="Ingrese producto" ng-change="buscarProducto( prod.producto )" ng-keydown="seleccionKeyElemento( $event.keyCode, 'producto' );">
+											<ul class="list-group ul-list" ng-show="lstBusqueda.length">
 
-											    <li class="list-group-item" ng-class="{'active': $parent.idxProducto == ixProducto}" ng-repeat="(ixProducto, producto) in lstProductos" ng-click="seleccionarProducto( producto )" ng-mouseenter="$parent.idxProducto = ixProducto">
+											    <li class="list-group-item" ng-class="{'active': $parent.idxElSeleccionado == ixProducto}" ng-repeat="(ixProducto, producto) in lstBusqueda" ng-click="seleccionarElemento( producto, 'producto' )" ng-mouseenter="$parent.idxElSeleccionado = ixProducto">
 											    	<strong>{{ producto.producto | uppercase }}</strong> 
 											    	<small>({{ producto.medida }})</small><br>
 											    	<small>{{ producto.tipoProducto }}</small>
@@ -513,7 +513,7 @@
 					<button type="button" class="close" ng-click="$hide()">&times;</button>
 					<h3 class="panel-title">
 						<span class="glyphicon glyphicon-book"></span>
-						RECETA DEL MENU
+						DETALLE DEL COMBO
 					</h3>
 				</div>
 				<div class="modal-body">
@@ -554,32 +554,31 @@
 								<div class="form-group">
 									<div class="col-sm-7 col-md-5">
 										<label class="control-label">MENU</label>
-										<div ng-show="!prod.seleccionado">
-											<input type="text" id="producto" class="form-control" ng-model="prod.producto" maxlength="35" placeholder="Ingresar Menu" ng-change="buscarProducto( prod.producto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
-											<ul class="list-group ul-list" ng-show="lstProductos.length">
+										<div ng-show="!menuD.seleccionado">
 
-											    <li class="list-group-item" ng-class="{'active': $parent.idxProducto == ixProducto}" ng-repeat="(ixProducto, producto) in lstProductos" ng-click="seleccionarProducto( producto )" ng-mouseenter="$parent.idxProducto = ixProducto">
-											    	<strong>{{ producto.producto | uppercase }}</strong> 
-											    	<small>({{ producto.medida }})</small><br>
-											    	<small>{{ producto.tipoProducto }}</small>
+											<input type="text" id="menu" class="form-control" ng-model="menuD.menu" maxlength="35" placeholder="Ingresar Menu" ng-change="buscarMenu( menuD.menu )" ng-keydown="seleccionKeyElemento( $event.keyCode, 'menu' );">
+											<ul class="list-group ul-list" ng-show="lstBusqueda.length">
+
+											    <li class="list-group-item" ng-class="{'active': $parent.idxElSeleccionado == ixMenu}" ng-repeat="(ixMenu, menu) in lstBusqueda" ng-click="seleccionarElemento( menu, 'menu' )" ng-mouseenter="$parent.idxElSeleccionado = ixMenu">
+											    	<strong>{{ menu.menu }}</strong> 
 											    </li>
 											</ul>
 										</div>
-										<div ng-show="prod.seleccionado">
-											<input type="text" class="form-control" ng-model="prod.producto" placeholder="Ingrese producto" disabled>
+										<div ng-show="menuD.seleccionado">
+											<input type="text" class="form-control" ng-model="menuD.menu" placeholder="Ingrese Menu" disabled>
 										</div>
 									</div>
 									<div class="col-sm-4 col-md-3">
-										<label class="control-label">Cantidad</label>
-										<input type="number" min="0.01" ng-keydown="$event.keyCode == 13 && agregarIngresoProducto();" ng-model="prod.cantidad" id="cantidad" class="form-control" placeholder="Cantidad" >
+										<label class="control-label">CANTIDAD</label>
+										<input type="number" min="0" ng-pattern="/^[0-9]+?$/" step="any" ng-keydown="$event.keyCode == 13 && agregarMenuDetalleCombo();" ng-model="menuD.cantidad" id="cantidad" class="form-control" placeholder="Cantidad" >
 									</div>
 								</div>
 								<div class="form-group">
 									<div class="col-sm-4">
-										<button type="button" class="btn btn-sm btn-warning" ng-click="agregarIngresoProducto();">
+										<button type="button" class="btn btn-sm btn-warning" ng-click="agregarMenuDetalleCombo();">
 											<span class="glyphicon glyphicon-plus"></span> Agregar
 										</button>
-										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 'producto' )">
+										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 'comboDetalle' )">
 											<span class="glyphicon glyphicon-remove"></span> Cancelar
 										</button>
 									</div>
@@ -624,7 +623,7 @@
 												</button>
 											</td>
 											<td class="text-center">
-												<button type="button" class="btn btn-danger btn-sm" ng-click="eliminarProdReceta( detalleCombo.idMenu, detalleCombo.idProducto )">
+												<button type="button" class="btn btn-danger btn-sm" ng-click="eliminarDetalleCombo( detalleCombo.idCombo, detalleCombo.idMenu )">
 													<span class="glyphicon glyphicon-trash"></span>
 												</button>
 											</td>
@@ -639,7 +638,7 @@
 					</fieldset>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-success" ng-click="actualizarLstReceta()">
+					<button class="btn btn-success" ng-click="actualizarLstDetalleCombo()">
 						<span class="glyphicon glyphicon-saved"></span> Guardar
 					</button>
 					<button type="button" class="btn btn-default" ng-click="resetValores( 'receta' ); $hide()">

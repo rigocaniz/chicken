@@ -255,8 +255,6 @@ class Combo
 		return $superComboPrecio;
 	}
 
-	
-
 
  	// CONSULTAR LISTA DE COMBOS
  	function lstCombo( $idEstadoMenu = NULL )
@@ -419,7 +417,7 @@ class Combo
 	 		endif;
 
 			$combo        = $validar->validarTexto( $data->combo, NULL, TRUE, 3, 45, 'el nombre del combo' );
-			$descripcion  = $validar->validarTexto( $data->descripcion, NULL, TRUE, 15, 1500, 'la descripcion' );
+			$descripcion  = $validar->validarTexto( $data->descripcion, NULL, TRUE, 10, 1500, 'la descripcion' );
 			$idEstadoMenu = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado combo no es válido, verifique.' );
 
 
@@ -465,6 +463,44 @@ class Combo
  		else{
  			$this->respuesta = 'info';
 		 	$this->mensaje   = 'No hay ingresado los precios del Menu';
+ 		}
+
+ 		return $this->getRespuesta();
+ 	}
+
+
+ 	// ACTUALIZAR LISTA DETALLE COMBO
+	function actualizarLstDetalleCombo( $accion, $lstDetalleCombo )
+ 	{
+ 		if( count( $lstDetalleCombo ) ) {
+
+ 			foreach ( $lstDetalleCombo AS $data ) {
+
+				// ASIGNACIÓN DE VARIABLES
+				$idCombo     = (int)$data->idCombo;
+				$idMenu      = (int)$data->idMenu;
+				$cantidad    = (double)$data->cantidad;
+
+		 		$sql = "CALL consultaComboDetalle( '{$accion}', {$idCombo}, {$idMenu}, {$cantidad} );";
+			 		
+		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+		 			$this->siguienteResultado();
+	 				
+	 				$this->respuesta = $row->respuesta;
+	 				$this->mensaje   = $row->mensaje;
+		 			if( $this->respuesta == 'danger' )
+		 				break;
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
+		 		}
+ 			}
+ 			
+ 		}
+ 		else{
+ 			$this->respuesta = 'warning';
+		 	$this->mensaje   = 'No hay menus ingresados en el combo';
  		}
 
  		return $this->getRespuesta();
@@ -532,7 +568,7 @@ class Combo
  		$cantidad = "NULL";
 		// ELIMINAR
 		if( $accion <> 'delete' ):
-			$data->cantidad = (double)$data->cantidad ? (double)$data->cantidad : NULL;
+			$data->cantidad = (int)$data->cantidad > 0 ? (int)$data->cantidad : NULL;
 			$cantidad       = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 2500, 'la cantidad' );
 		endif;
 

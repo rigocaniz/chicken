@@ -59,6 +59,7 @@ class Menu
  	}
 
 
+ 	// ACTUALIZAR LISTA RECETA MENU
  	function actualizarLstReceta( $accion, $lstRecetaProductos )
  	{
  		if( count( $lstRecetaProductos ) ) {
@@ -449,6 +450,45 @@ class Menu
  		}
  	}
 
+ 	
+ 	// BUSCAR MENU POR NOMBRE
+ 	function buscarMenu( $menu )
+	{
+
+		$lstMenus = array();
+
+		$sql = "SELECT 
+				    idMenu,
+				    menu,
+				    imagen,
+				    descripcion,
+				    idEstadoMenu,
+				    estadoMenu,
+				    idDestinoMenu,
+				    destinoMenu
+				FROM
+				    lstMenu WHERE menu LIKE '%{$menu}%' LIMIT 10;";
+		
+		if( $rs = $this->con->query( $sql ) ){
+			while( $row = $rs->fetch_object() ){
+				$menu = array(
+						'idMenu'        => (int)$row->idMenu,
+						'menu'          => $row->menu,
+						'imagen'        => $row->imagen,
+						'descripcion'   => $row->descripcion,
+						'idEstadoMenu'  => (int)$row->idEstadoMenu,
+						'estadoMenu'    => $row->estadoMenu,
+						'idDestinoMenu' => (int)$row->idDestinoMenu,
+						'destinoMenu'   => $row->destinoMenu
+					);
+
+				$lstMenus[] = $menu;
+			}
+		}
+
+		return $lstMenus;
+	}
+
 
  	// OBTENER ARREGLO RESPUESTA
  	private function getRespuesta()
@@ -470,45 +510,6 @@ class Menu
  	}
 
 
- 	// BUSCAR MENU POR NOMBRE
- 	function buscarMenu( $menu )
-	{
-
-		$lstMenus = array();
-
-		$sql = "SELECT 
-				    idMenu,
-				    menu,
-				    imagen,
-				    descripcion,
-				    idEstadoMenu,
-				    estadoMenu,
-				    idDestinoMenu,
-				    destinoMenu
-				FROM
-				    lstMenu LIKE '%{$menu}%' LIMIT 10;";
-		
-		if( $rs = $this->con->query( $sql ) ){
-			while( $row = $rs->fetch_object() ){
-				$menu = array(
-						'idMenu'        => (int)$row->idMenu,
-						'menu'          => $row->menu,
-						'imagen'        => $row->imagen,
-						'descripcion'   => $row->descripcion,
-						'idEstadoMenu'  => (int)$row->idEstadoMenu,
-						'estadoMenu'    => $row->estadoMenu,
-						'idDestinoMenu' => (int)$row->idDestinoMenu,
-						'destinoMenu'   => $row->destinoMenu,
-						'idTipoMenu'    => (int)$row->idTipoMenu,
-						'tipoMenu'      => $row->tipoMenu
-					);
-
-				$lstMenus[] = $menu;
-			}
-		}
-
-		return $lstMenus;
-	}
 
 }
 

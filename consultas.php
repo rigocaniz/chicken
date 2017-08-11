@@ -256,6 +256,11 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** COMBO
 	/////////////////////////
+	case 'actualizarLstDetalleCombo':		// ACCION DETALLE COMBO: UPDATE
+		$combo = new Combo();
+		echo json_encode( $combo->actualizarLstDetalleCombo( $data->accion, $data->datos ) );
+		break;
+
 	case 'getListaCombos':			// CONSULTAR LISTA DE PRODUCTOS
 		$combo = new Combo();
 		echo json_encode( $combo->getListaCombos( $data->filtro ) );
@@ -290,7 +295,12 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** MENU
 	/////////////////////////
-	case 'actualizarLstReceta':		// ACCION RECETA: INSERT / UPDATE
+	case 'buscarMenu':			// BUSCAR MENU(S) POR NOMBRE
+		$menu = new Menu();
+		echo json_encode( $menu->buscarMenu( $data->nombreMenu ) );
+		break;
+
+	case 'actualizarLstReceta':		// ACCION DETALLE RECETA: UPDATE
 		$menu = new Menu();
 		echo json_encode( $menu->actualizarLstReceta( $data->accion, $data->datos ) );
 		break;
