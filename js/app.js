@@ -114,10 +114,24 @@ app.config(function($routeProvider) {
 
 });
 
+/* CONEXION A SERVIDOR DE NOTIFICACIONES */
+var socket = io.connect('http://localhost:8080', { 'forceNew': true });
+
+
 /****CONTROLADORES****/
 
 // CONTROLADOR PRINCIPAL
 app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $modal ){
+
+    // LISTEN INFO NODE
+    socket.on('mensaje', function(data) {  
+        console.log(data);
+    });
+
+    socket.on('info', function(data) {  
+        console.log("INFO:::", data);
+    });
+
 
     $scope.difLocalServer = 0;
 

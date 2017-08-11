@@ -10,9 +10,12 @@
 <h1>Mi aplicación</h1>
 <script>
 	var socket = io.connect('http://localhost:8080', { 'forceNew': true });
-	console.log("hola hola");
 	socket.on('mensaje', function(data) {  
 	    console.log(data);
+	});
+
+	socket.on('info', function(data) {  
+	    console.log("INFO:::", data);
 	});
 </script>
 </body>

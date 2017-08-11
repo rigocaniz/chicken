@@ -110,6 +110,7 @@
 
 
 	<!-- jQuery -->
+    <script src="node-app/node_modules/socket.io-client/dist/socket.io.js"></script>
     <script src="js/libs/jquery-3.2.1.min.js"></script>
     <script src="js/libs/bootstrap.min.js"></script>
     <script src="js/libs/angular.min.js"></script>
