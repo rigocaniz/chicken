@@ -118,7 +118,6 @@ class Combo
 	}
 
 
-
 	// CONSULTAR DATOS COMBO DETALLE
 	function cargarComboDetalle( $idCombo, $idMenu )
 	{
@@ -142,6 +141,7 @@ class Combo
 
 		return $comboDetalle;
 	}
+
 
 	// CONSULTAR DATOS COMBO PRECIO
 	function cargarComboPrecio( $idCombo, $idTipoServicio = NULL )

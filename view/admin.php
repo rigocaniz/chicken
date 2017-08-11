@@ -519,7 +519,7 @@
 				</div>
 				<div class="modal-body">
 					<fieldset class="fieldset">
-						<legend class="legend">DATOS</legend>
+						<legend class="legend" ng-class="{'warning': accion == 'insert', 'info': accion == 'update'}">DATOS</legend>
 						<!-- FORMULARIO COMBO -->
 						<form class="form-horizontal" role="form" name="formCombo">
 							<div class="text-right" ng-show="accion == 'update'">

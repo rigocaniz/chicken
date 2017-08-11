@@ -132,7 +132,6 @@ class Menu
 	 		$this->mensaje   = $validar->getMsj();
  		else:
 	 		$sql = "CALL consultaReceta( '{$accion}', {$idMenu}, {$idProducto}, {$cantidad}, '{$observacion}' );";
-	 		//echo $sql;
 	 		
 	 		if( $rs = $this->con->query( $sql ) ){
 	 			@$this->con->next_result();
@@ -504,10 +503,6 @@ class Menu
 
 				$lstMenus[] = $producto;
 			}
-		}
-		else{
-			$this->respuesta = 'danger';
-			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
 		}
 
 		return $lstMenus;
