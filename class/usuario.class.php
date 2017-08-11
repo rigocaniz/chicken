@@ -19,11 +19,8 @@ class Usuario
 	{
 		$validar = new Validar();
 
-		$usuario = strlen( $usuario ) 	? $usuario 	: NULL;
-		$clave   = strlen( $clave )  	? $clave 	: NULL;
-
 		$usuario = $this->con->real_escape_string( $validar->validarTexto( $usuario, NULL, TRUE, 8, 16, "USUARIO" ) );
-		$clave   = $this->con->real_escape_string( $validar->validarTexto( $clave, NULL, TRUE, 8, 16, "CONTRASEÑA" ) );
+		$clave   = $this->con->real_escape_string( $validar->validarTexto( $clave, NULL, TRUE, 6, 16, "CONTRASEÑA" ) );
 
 		if( $validar->getIsError() ):
  			$this->respuesta = 'danger';
@@ -53,7 +50,6 @@ class Usuario
  		endif;
 
  		return $this->getRespuesta();
-
 	}
 
 

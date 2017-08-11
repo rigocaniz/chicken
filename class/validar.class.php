@@ -280,7 +280,7 @@ class Validar
 
 	
 	// VALIDAR TEXTO
-	function validarTexto( $valor = 0, $default = NULL, $required = TRUE, $minimo = 1, $maximo = 350, $msj = '' )
+	function validarTexto( $valor = 0, $default = NULL, $required = TRUE, $minimo = 1, $maximo = 350, $mensaje = '' )
 	{
 		if( $this->error )
 			return $valor;
@@ -289,17 +289,17 @@ class Validar
 		$valor   = (string)$valor;
 		$msj     = "";
 
-		if( !strlen( $valor ) AND $required ):
+		if( !strlen( $valor ) > 0 AND $required ):
 			$warning = TRUE;
-			$msj     = "No ha ingresado ningún texto en {$msj}, verifique.";
+			$msj     = "No ha ingresado ningún texto en {$mensaje}, verifique.";
 
 		elseif( strlen( $valor ) < $minimo ):
 			$warning = TRUE;
-			$msj     = "El contenido ingresado en {$msj} no puede ser menor a {$minimo} caracteres, verifique.";
+			$msj     = "El contenido ingresado en {$mensaje} no puede ser menor a {$minimo} caracteres, verifique.";
 
 		elseif( strlen( $valor ) > $maximo ):
 			$warning = TRUE;
-			$msj     = "El contenido ingresado en {$msj} no puede ser mayor a {$maximo} caracteres, verifique.";
+			$msj     = "El contenido ingresado en {$mensaje} no puede ser mayor a {$maximo} caracteres, verifique.";
 			
 		endif;
 

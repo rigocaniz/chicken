@@ -7,6 +7,7 @@ class Sesion
 	
 	private $sesion = null;
 
+/*
 	function __construct()
 	{
 		if( is_null( $this->sesion ) )
@@ -17,7 +18,7 @@ class Sesion
 	{
 		session_start();
 	}
-
+*/
 
 	function destruirSesion()
 	{
