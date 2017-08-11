@@ -49,7 +49,7 @@
 								    		ng-class="{'label-danger': m.idDestinoMenu == 1, 'label-warning': m.idDestinoMenu == 2}">
 								    		{{ m.destinoMenu }}
 								    	</span>
-								      	<img ng-src="{{ m.imagen }}" alt="{{ m.menu }}" 	ng-click="asignarValorImagen( m.idMenu, 'menu' )">
+								      	<img ng-src="{{ m.imagen }}" alt="{{ m.menu }}" 	ng-click="asignarValorImagen( m.idMenu, 'menu' )" style="height:90px">
 								      	<div class="caption">
 								      		<div class="text-right">
 								      			<label class="label" ng-class="{'label-success': m.idEstadoMenu == 1, 'label-default': m.idEstadoMenu == 2}">

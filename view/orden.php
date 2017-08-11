@@ -417,9 +417,7 @@
 	                						</td>
 	                						<td>{{item.subTotal | number:2}}</td>
 	                						<td>
-	                							<button type="button" class="btn btn-xs btn-danger" ng-click="quitarElemento( $index, item.cantidad, item.precio )">
-	                								<span class="glyphicon glyphicon-remove"></span>
-	                							</button>
+	                							
 	                						</td>
 	                					</tr>
 	                				</tbody>
