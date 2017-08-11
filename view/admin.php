@@ -6,7 +6,6 @@
 			<div class="pull-right">
 	            <img class="img-responsive" src="img/logo_churchil.png" style="height: 56px;">
 	        </div>
-
 			<ul class="nav nav-tabs tabs-title" role="tablist">
 				<li role="presentation" ng-class="{'active' : menuTab=='menu'}" ng-click="verListaMenu(); resetValores(); menuTab='menu'">
 					<a href="" role="tab" data-toggle="tab">
@@ -111,8 +110,8 @@
 							        			<span class="glyphicon glyphicon-edit"></span> Editar
 							        		</button>
 
-							        		<button type="button" class="btn btn-warning btn-sm" ng-click="cargarRecetaCombo( c )">
-							        			<span class="glyphicon glyphicon-list"></span> Receta
+							        		<button type="button" class="btn btn-primary btn-sm" ng-click="cargarDetalleCombo( c )">
+							        			<span class="glyphicon glyphicon-list"></span> Menu
 							        		</button>
 
 								      	</div>
@@ -485,6 +484,155 @@
 								</table>
 								<div class="alert alert-warning text-right" role="alert" ng-show="!objMenu.lstRecetaMenu.length">
 									<span class="glyphicon glyphicon-info-sign"></span> NO SE HA INGRESADO LA RECETA DEL MENÚ
+								</div>
+							</div>
+						</form>
+					</fieldset>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-success" ng-click="actualizarLstReceta()">
+						<span class="glyphicon glyphicon-saved"></span> Guardar
+					</button>
+					<button type="button" class="btn btn-default" ng-click="resetValores( 'receta' ); $hide()">
+						<span class="glyphicon glyphicon-log-out"></span>
+						<b>Salir</b>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+
+
+<!-- MODAL AGREGAR / EDITAR DETALLE COMBO -->
+<script type="text/ng-template" id="dial.detalleCombo.html">
+	<div class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content panel-danger">
+				<div class="modal-header panel-heading">
+					<button type="button" class="close" ng-click="$hide()">&times;</button>
+					<h3 class="panel-title">
+						<span class="glyphicon glyphicon-book"></span>
+						RECETA DEL MENU
+					</h3>
+				</div>
+				<div class="modal-body">
+					<fieldset class="fieldset">
+						<legend class="legend danger">DATOS</legend>
+						<!-- FORMULARIO MENU -->
+						<ul class="media-list">
+							<li class="media">
+								<div class="media-left text-center">
+									<img class="media-object" width="125px" height="125px" ng-src="{{ objCombo.imagen }}" alt="MENU">
+									<label class="label label-info">
+										<b>CÓDIGO #{{ objCombo.idCombo }}</b>
+									</label>
+								</div>
+								<div class="media-body">
+									<div class="pull-right">
+										<label class="label" ng-class="{'label-success': objCombo.idEstadoMenu == 1, 'label-default': objCombo.idEstadoMenu == 2}"> {{ objCombo.estadoMenu }} </label><br>
+									</div>
+									<h4 class="media-heading">
+										{{ objCombo.combo | uppercase }}
+									</h4>
+									<div class="pull-right">
+									</div>
+									<p>
+										<strong>DESCRIPCIÓN:</strong>
+									</p>
+									<p>
+										{{ objCombo.descripcion }}
+									</p>
+								</div>
+							</li>
+						</ul>
+
+						<form class="form-horizontal" role="form" name="formMenu" autocomplete="off">
+							<!-- INGRESAR RECETA -->
+							<fieldset class="fieldset">
+								<legend class="legend">Ingresar Receta</legend>
+								<div class="form-group">
+									<div class="col-sm-7 col-md-5">
+										<label class="control-label">MENU</label>
+										<div ng-show="!prod.seleccionado">
+											<input type="text" id="producto" class="form-control" ng-model="prod.producto" maxlength="35" placeholder="Ingrese producto" ng-change="buscarProducto( prod.producto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
+											<ul class="list-group ul-list" ng-show="lstProductos.length">
+
+											    <li class="list-group-item" ng-class="{'active': $parent.idxProducto == ixProducto}" ng-repeat="(ixProducto, producto) in lstProductos" ng-click="seleccionarProducto( producto )" ng-mouseenter="$parent.idxProducto = ixProducto">
+											    	<strong>{{ producto.producto | uppercase }}</strong> 
+											    	<small>({{ producto.medida }})</small><br>
+											    	<small>{{ producto.tipoProducto }}</small>
+											    </li>
+											</ul>
+										</div>
+										<div ng-show="prod.seleccionado">
+											<input type="text" class="form-control" ng-model="prod.producto" placeholder="Ingrese producto" disabled>
+										</div>
+									</div>
+									<div class="col-sm-4 col-md-3">
+										<label class="control-label">Cantidad</label>
+										<input type="number" min="0.01" ng-keydown="$event.keyCode == 13 && agregarIngresoProducto();" ng-model="prod.cantidad" id="cantidad" class="form-control" placeholder="Cantidad" >
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-4">
+										<button type="button" class="btn btn-sm btn-warning" ng-click="agregarIngresoProducto();">
+											<span class="glyphicon glyphicon-plus"></span> Agregar
+										</button>
+										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 'producto' )">
+											<span class="glyphicon glyphicon-remove"></span> Cancelar
+										</button>
+									</div>
+								</div>
+							</fieldset>
+							<br><br>
+							<legend class="text-center legend-red">
+								<span class="glyphicon glyphicon-file"></span> DETALLE DEL COMBO
+							</legend>
+							<div class="form-group">
+								<table class="table table-hover" ng-show="objCombo.lstDetalleCombo.length">
+									<thead>
+										<tr>
+											<th class="text-center col-sm-1">ID MENU</th>
+											<th class="text-center col-sm-3">MENU</th>
+											<th class="text-center col-sm-2">ESTADO MENU</th>
+											<th class="text-center col-sm-3">Cantidad</th>
+											<th class="text-center col-sm-1">Editar</th>
+											<th class="text-center col-sm-1">Eliminar</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="detalleCombo in objCombo.lstDetalleCombo">
+											<td class="text-center">
+												<img class="img-thumbnail" width="50px" height="50px" ng-src="{{ detalleCombo.imagen }}" alt="Menu">
+												<label class="label label-info">
+													MENU #{{ detalleCombo.idMenu }}
+												</label>
+											</td>
+											<td class="text-center">
+												{{ detalleCombo.menu }}
+											</td>
+											<td class="text-center" ng-class="{'warning': detalleCombo.idEstadoMenu==2}">
+												{{ detalleCombo.estadoMenu }}
+											</td>
+											<td class="text-right">
+												<input type="number" min="0" class="form-control" ng-model="detalleCombo.cantidad" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required ng-disabled="!detalleCombo.editar">
+											</td>
+											<td class="text-center">
+												<button type="button" class="btn btn-info btn-sm" ng-click="detalleCombo.editar=!detalleCombo.editar">
+													<span class="glyphicon glyphicon-pencil"></span>
+												</button>
+											</td>
+											<td class="text-center">
+												<button type="button" class="btn btn-danger btn-sm" ng-click="eliminarProdReceta( detalleCombo.idMenu, detalleCombo.idProducto )">
+													<span class="glyphicon glyphicon-trash"></span>
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<div class="alert alert-warning text-right" role="alert" ng-show="!objCombo.lstDetalleCombo.length">
+									<span class="glyphicon glyphicon-info-sign"></span> NO SE HA INGRESADO EL DETALLE DEL COMBO
 								</div>
 							</div>
 						</form>

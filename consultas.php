@@ -122,7 +122,7 @@ switch ( $data->opcion )
 
 	case 'lstComboDetalle':			// CARGAR LISTA DE COMBOS DETALLE
 		$combo = new Combo();
-		echo json_encode( $combo->lstComboDetalle() );
+		echo json_encode( $combo->lstComboDetalle( $data->idCombo ) );
 		break;
 
 	case 'lstComboPrecio':			// CARGAR LISTA DE COMBOS PRECIO

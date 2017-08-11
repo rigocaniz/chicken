@@ -11,9 +11,11 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	$scope.menu            = {};
 	$scope.combo           = {};
 
-	$scope.dialAdminMenu  = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static', keyboard: false});
-	$scope.dialAdminCombo = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static', keyboard: false});
-	$scope.dialRecetaMenu = $modal({scope: $scope,template:'dial.recetaMenu.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialAdminMenu    = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialRecetaMenu   = $modal({scope: $scope,template:'dial.recetaMenu.html', show: false, backdrop: 'static', keyboard: false});
+
+	$scope.dialAdminCombo   = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialDetalleCombo = $modal({scope: $scope,template:'dial.detalleCombo.html', show: false, backdrop: 'static', keyboard: false});
 
 	$scope.$on('cargarLista', function( event, data ){
 		console.log( ":::", event, ":::", data );
@@ -88,6 +90,32 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			console.log(data);
 		});
 	};
+
+	// CARGAR DETALLE COMBO
+	$scope.objCombo = {};
+	$scope.cargarDetalleCombo = function( combo )
+	{
+		//console.log( 'combo::: ', combo );
+		$scope.objCombo = combo;
+		if( $scope.objCombo.idCombo > 0 ){
+			$scope.lstComboDetalle( $scope.objCombo.idCombo, true );
+		}
+	};
+
+
+	// CONSULTAR DETALLE COMBO
+	$scope.lstComboDetalle = function( idCombo, abrirModal )
+	{
+		$http.post('consultas.php',{opcion: 'lstComboDetalle', idCombo: idCombo})
+		.success(function(data){
+			console.log( data );
+			$scope.objCombo.lstDetalleCombo = data;
+			if( abrirModal )
+				$scope.dialDetalleCombo.show();
+		});
+	};
+
+
 	
 	// CARGAR RECETA MENU
 	$scope.objMenu = {};
@@ -147,7 +175,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 				}
 			});
 		}
-
 	};
 
 
@@ -188,10 +215,10 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			else if( $scope.lstProductos.length && $scope.idxProducto + 1 )
 				$scope.idxProducto = 0;
 		}
-
 	};
 
 
+	// SELECCIONAR PRODUCTO
 	$scope.seleccionarProducto = function( producto )
 	{
 		if( !(producto.idProducto && producto.idProducto > 0) )
