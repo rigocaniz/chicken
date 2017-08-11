@@ -407,6 +407,96 @@ class Orden
  	}
 
 
+ 	public function lstDetalleOrdenCliente( $idOrdenCliente )
+ 	{
+ 		$lst = array();
+
+ 		$sql = "SELECT 
+				    idDetalleOrdenMenu,
+				    cantidad,
+				    idMenu,
+				    menu,
+				    perteneceCombo,
+				    imagen,
+				    precio,
+				    combo,
+				    imagenCombo,
+				    precioCombo,
+				    idEstadoDetalleOrden,
+				    estadoDetalleOrden,
+				    idTipoServicio,
+				    tipoServicio,
+				    idDetalleOrdenCombo,
+				    idCombo
+				FROM
+				    vOrdenes
+				WHERE
+				    idOrdenCliente = {$idOrdenCliente}
+				GROUP BY IF( perteneceCombo, idDetalleOrdenCombo, idDetalleOrdenMenu );";
+		if( $rs = $this->con->query( $sql ) ) {
+			while ( $row = $rs->fetch_object() ) {
+
+				$row->perteneceCombo = (int)$row->perteneceCombo;
+				$img = ( $row->perteneceCombo ? $row->imagenCombo : $row->imagen );
+
+				// SI PERTENECE A COMBO
+				if ( $row->perteneceCombo ) {
+					$row->idMenu             = 0;
+					$row->idDetalleOrdenMenu = 0;
+					$precioMenu              = $row->precioCombo;
+				}
+				else{
+					$row->idCombo             = 0;
+					$row->idDetalleOrdenCombo = 0;
+					$precioMenu               = $row->precio;
+				}
+
+				$index = -1;
+
+				// REVISA SI YA EXISTE MENU
+				foreach ( $lst as $ix => $item ):
+					if ( 	$row->idCombo == $item->idCombo 
+						AND $row->idMenu == $item->idMenu 
+						AND $row->idTipoServicio == $item->idTipoServicio ) 
+					{
+						$index = $ix;
+						break;
+					}
+				endforeach;
+
+				// SI NO EXISTE EN LISTADO
+				if ( $index == -1 ) {
+					$index = count( $lst );
+					// AGREGA UNA NUEVA ORDEN
+					$lst[ $index ] = (object)array(
+						'idCombo'        => $row->idCombo,
+						'idMenu'         => $row->idMenu,
+						'esCombo'        => $row->perteneceCombo,
+						'cantidad'       => 0,
+						'precio'         => $precioMenu,
+						'subTotal'       => 0,
+						'descripcion'    => ( $row->perteneceCombo ? $row->combo : $row->menu ),
+						'imagen'         => ( strlen( (string)$img ) ? $img : 'img-menu/notFound.png' ),
+						'idTipoServicio' => $row->idTipoServicio,
+						'tipoServicio'   => $row->tipoServicio,
+						'lstDetalle'     => array()
+					);
+				}
+
+				$lst[ $index ]->cantidad += $row->cantidad;
+				$lst[ $index ]->subTotal = ( $lst[ $index ]->cantidad * $precioMenu );
+
+				// AGREGA DETALLE DE ORDEN
+				$lst[ $index ]->lstDetalle[] = (object)array(
+					'idDetalleOrdenMenu' => $row->idDetalleOrdenMenu,
+					'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo,
+				);
+			}
+ 		}
+
+ 		return $lst;
+ 	}
+
  	function getRespuesta()
  	{
  		return $respuesta = array( 

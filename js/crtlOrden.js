@@ -62,7 +62,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			$http.post('consultas.php', { opcion : 'lstOrdenCliente', idEstadoOrden : $scope.idEstadoOrden })
 			.success(function (data) {
 				$scope.$parent.loading = false; // cargando...
-				$scope.lstOrdenCliente = data;
+
+				if ( Array.isArray( data ) )
+					$scope.lstOrdenCliente = data;
 			});
 		}
 	};
@@ -326,10 +328,15 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% DIALOGO PARA MAS INFORMACION DE ORDEN %%%%%%%%%%%%%%%%%%%%%% */
 	$scope.infoOrden = {};
 	$scope.modalInfo = function ( orden ) {
-		console.log( orden );
 		$scope.infoOrden = orden;
+		$http.post('consultas.php', { opcion : 'lstDetalleOrdenCliente', idOrdenCliente : orden.idOrdenCliente })
+		.success(function (data) {
+			console.log( data );
+			$scope.infoOrden.lstOrden = data;
+		});
 		$scope.dialOrdenInformacion.show();
 	};
+
 
 
 
