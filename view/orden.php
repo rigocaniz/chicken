@@ -47,7 +47,9 @@
 						<tbody>
 							<tr ng-repeat="item in lstOrdenCliente">
 								<td>{{item.numeroTicket}}</td>
-								<td>{{tiempoTranscurrido( item.fechaRegistro )}}</td>
+								<td>
+									<span>{{tiempoTranscurrido( item.fechaRegistro )}}</span>
+								</td>
 								<td><kbd>{{item.usuarioResponsable}}</kbd></td>
 								<td>
 									<button type="button" class="btn btn-sm btn-default" ng-click="modalInfo( item )">
@@ -338,41 +340,7 @@
                 		</div>
                 	</div>
                 	<div class="row">
-                		<div class="col-xs-12">
-                			<table class="table table-condensed table-hover">
-                				<thead>
-                					<tr>
-                						<th>Cantidad</th>
-                						<th>Orden</th>
-                						<th>Subtotal</th>
-                						<th width="35px"></th>
-                					</tr>
-                				</thead>
-                				<tbody>
-                					<tr ng-repeat="item in ordenActual.lstAgregar">
-                						<td>
-                							<button type="button" class="btn btn-xs btn-default" ng-click="ordenCantidad( $index, 0, item.cantidad, item.precio )">
-                								<span class="glyphicon glyphicon-minus"></span>
-                							</button>
-                							<b style="font-size:17px">{{item.cantidad}}</b>
-                							<button type="button" class="btn btn-xs btn-info" ng-click="ordenCantidad( $index, 1, item.cantidad, item.precio )">
-                								<span class="glyphicon glyphicon-plus"></span>
-                							</button>
-                						</td>
-                						<td>
-                							<span class="glyphicon glyphicon-gift" ng-show="item.tipoMenu=='combo'"></span>
-                							<span>{{item.menu}} » {{item.tipoServicio}}</span>
-                						</td>
-                						<td>{{(item.precio*item.cantidad) | number:2}}</td>
-                						<td>
-                							<button type="button" class="btn btn-xs btn-danger" ng-click="quitarElemento( $index, item.cantidad, item.precio )">
-                								<span class="glyphicon glyphicon-remove"></span>
-                							</button>
-                						</td>
-                					</tr>
-                				</tbody>
-                			</table>
-                		</div>
+                		
                    </div>
                 </div>
                 <div class="modal-footer">

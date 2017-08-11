@@ -125,6 +125,7 @@
     <script src="js/crtlInventario.js"></script>
     <script src="js/crtlNuevoEdita.js"></script>
     <script src="js/crtlAdmin.js"></script>
+    <script src="js/crtlAdminOrden.js"></script>
     <script src="js/crtlOrden.js"></script>
     <script src="js/crtlReporte.js"></script>
     <script src="js/crtlMantenimiento.js"></script>
