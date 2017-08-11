@@ -11,16 +11,16 @@
 						<div class="form-group">
 							<label class="col-sm-1">NIT</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control" ng-model="facturaCliente.nit">
+								<input type="text" class="form-control" ng-model="$parent.facturaCliente.nit">
 							</div>
 							<div class="col-sm-4">
-								<button type="button" class="btn btn-info" ng-click="$parent.buscarCliente(facturaCliente.nit,2);">
+								<button type="button" class="btn btn-info" ng-click="$parent.buscarCliente($parent.facturaCliente.nit,2);">
 									<span class="glyphicon glyphicon-search"></span>
 								</button>
-								<button type="button" class="btn btn-primary" ng-click="nuevoCliente();">
+								<button type="button" class="btn btn-primary" ng-click="nuevoCliente($parent.facturaCliente,1);">
 									<span class="glyphicon glyphicon-user"></span>
 								</button>
-								<button type="button" class="btn btn-warning" ng-click="nuevoCliente();">
+								<button type="button" class="btn btn-warning" ng-click="nuevoCliente($parent.facturaCliente.nit,2);">
 									<span class="glyphicon glyphicon-pencil"></span>
 								</button>
 							</div>
@@ -28,11 +28,11 @@
 						<div class="form-group">
 							<label class="col-sm-1">NOMBRE</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control" ng-model="facturaCliente.nombe">
+								<input type="text" class="form-control" ng-model="$parent.facturaCliente.nombre">
 							</div>
 							<label class="col-sm-2">DIRECCION</label>
 							<div class="col-sm-5">
-								<input type="text" class="form-control" ng-model="facturaCliente.direccion">
+								<input type="text" class="form-control" ng-model="$parent.facturaCliente.direccion">
 							</div>
 						</div>
 						<div class="form-group">
@@ -40,7 +40,7 @@
 							<div class="col-sm-4">
 								<input type="text" class="form-control" ng-model="ticket">
 							</div>
-							<button type="button" class="btn btn-primary">Agregar</button>
+							<button type="button" class="btn btn-primary" ng-click="detalleTicket(ticket)">Agregar</button>
 						</div>
 					</form>
 					<!-- tabla de datos según ticket -->
