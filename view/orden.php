@@ -38,7 +38,6 @@
 					<table class="table table-condensed table-hover">
 						<thead>
 							<tr>
-								<th># Orden</th>
 								<th>Ticket</th>
 								<th>Lapso</th>
 								<th>Responsable</th>
@@ -47,12 +46,11 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="item in lstOrdenCliente">
-								<td>{{item.idOrdenCliente}}</td>
 								<td>{{item.numeroTicket}}</td>
 								<td>{{tiempoTranscurrido( item.fechaRegistro )}}</td>
 								<td><kbd>{{item.usuarioResponsable}}</kbd></td>
 								<td>
-									<button type="button" class="btn btn-sm btn-default">
+									<button type="button" class="btn btn-sm btn-default" ng-click="modalInfo( item )">
 										<span class="glyphicon glyphicon-th-large"></span>
 									</button>
 								</td>
@@ -315,7 +313,10 @@
     </div>
 </script>
 
-<!-- LISTADO DE MENUS -->
+
+
+
+<!-- *********** BUSQUEDA DE ORDEN ********* -->
 <script type="text/ng-template" id="dial.orden-busqueda.html">
     <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_busqueda">
         <div class="modal-dialog modal-lg">
@@ -336,6 +337,91 @@
                 			</button>
                 		</div>
                 	</div>
+                	<div class="row">
+                		<div class="col-xs-12">
+                			<table class="table table-condensed table-hover">
+                				<thead>
+                					<tr>
+                						<th>Cantidad</th>
+                						<th>Orden</th>
+                						<th>Subtotal</th>
+                						<th width="35px"></th>
+                					</tr>
+                				</thead>
+                				<tbody>
+                					<tr ng-repeat="item in ordenActual.lstAgregar">
+                						<td>
+                							<button type="button" class="btn btn-xs btn-default" ng-click="ordenCantidad( $index, 0, item.cantidad, item.precio )">
+                								<span class="glyphicon glyphicon-minus"></span>
+                							</button>
+                							<b style="font-size:17px">{{item.cantidad}}</b>
+                							<button type="button" class="btn btn-xs btn-info" ng-click="ordenCantidad( $index, 1, item.cantidad, item.precio )">
+                								<span class="glyphicon glyphicon-plus"></span>
+                							</button>
+                						</td>
+                						<td>
+                							<span class="glyphicon glyphicon-gift" ng-show="item.tipoMenu=='combo'"></span>
+                							<span>{{item.menu}} » {{item.tipoServicio}}</span>
+                						</td>
+                						<td>{{(item.precio*item.cantidad) | number:2}}</td>
+                						<td>
+                							<button type="button" class="btn btn-xs btn-danger" ng-click="quitarElemento( $index, item.cantidad, item.precio )">
+                								<span class="glyphicon glyphicon-remove"></span>
+                							</button>
+                						</td>
+                					</tr>
+                				</tbody>
+                			</table>
+                		</div>
+                   </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" ng-click="$hide();">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <b>Salir</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script> 
+
+
+
+
+<!-- *********** INFORMACION DE ORDEN ********* -->
+<script type="text/ng-template" id="dial.orden-informacion.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_informacion">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-default">
+                <div class="modal-header panel-heading">
+                	<h4 style="margin:0">
+						<b>Orden # </b> {{infoOrden.idOrdenCliente}} » 
+		                <span class="badge-ticket">Ticket # {{infoOrden.numeroTicket}}</span>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                	<div class="row">
+                		<div class="col-sm-6 col-xs-12">
+                			<span class="etiqueta">Estado: </span>
+                    		<span class="valor">{{infoOrden.estadoOrden}}</span>
+                		</div>
+                		<div class="col-sm-6 col-xs-12">
+                			<span class="etiqueta">Lapso: </span>
+                    		<span class="valor">{{tiempoTranscurrido( infoOrden.fechaRegistro )}}</span>
+                		</div>
+                	</div>
+                	<div class="row">
+                		<div class="col-sm-6 col-xs-12">
+                			<span class="etiqueta"># Menús: </span>
+                    		<span class="valor">{{infoOrden.numMenu}}</span>
+                		</div>
+                		<div class="col-sm-6 col-xs-12">
+                			<span class="etiqueta">Responsable: </span>
+                    		<span class="valor">{{infoOrden.usuarioResponsable}}</span>
+                		</div>
+                	</div>
+                	<legend class="legend">Menús Ordenados</legend>
                 	<div class="row">
                 		<div class="col-xs-12">
                 			<table class="table table-condensed table-hover">

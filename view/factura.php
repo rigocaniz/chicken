@@ -9,30 +9,71 @@
 				<div class="panel-body">
 					<form class="form-horizontal" role="form">
 						<div class="form-group">
-							<lable class="col-sm-1">NIT</lable>
+							<label class="col-sm-1">NIT</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control">
+								<input type="text" class="form-control" ng-model="facturaCliente.nit">
 							</div>
 							<div class="col-sm-4">
-								<button type="button" class="btn btn-info" ng-click="$parent.buscarCliente(modelo,2);">
+								<button type="button" class="btn btn-info" ng-click="$parent.buscarCliente(facturaCliente.nit,2);">
 									<span class="glyphicon glyphicon-search"></span>
 								</button>
 								<button type="button" class="btn btn-primary" ng-click="nuevoCliente();">
 									<span class="glyphicon glyphicon-user"></span>
 								</button>
+								<button type="button" class="btn btn-warning" ng-click="nuevoCliente();">
+									<span class="glyphicon glyphicon-pencil"></span>
+								</button>
 							</div>
 						</div>
 						<div class="form-group">
-							<lable class="col-sm-1">NOMBRE</lable>
+							<label class="col-sm-1">NOMBRE</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control">
+								<input type="text" class="form-control" ng-model="facturaCliente.nombe">
 							</div>
-							<lable class="col-sm-2">DIRECCION</lable>
+							<label class="col-sm-2">DIRECCION</label>
 							<div class="col-sm-5">
-								<input type="text" class="form-control">
+								<input type="text" class="form-control" ng-model="facturaCliente.direccion">
 							</div>
 						</div>
+						<div class="form-group">
+							<label class="col-sm-1">Ticket</label>
+							<div class="col-sm-4">
+								<input type="text" class="form-control" ng-model="ticket">
+							</div>
+							<button type="button" class="btn btn-primary">Agregar</button>
+						</div>
 					</form>
+					<!-- tabla de datos según ticket -->
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td></td>
+							</tr>
+						</tbody>
+					</table>
+					<button type="button" class="btn btn-info">Descripción Personalizada</button>
+					<!-- tabla de descripción personalizada -->
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td></td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="text-center">
+						<button type="button" class="btn btn-success">Facturar</button>
+						<button type="button" class="btn btn-info">Cancelar</button>
+					</div>
 				</div>
 			</div>
 		</div>

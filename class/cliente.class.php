@@ -57,7 +57,8 @@ class Cliente
  			$this->tiempo    = $validar->getTiempo();
 
  		else:
- 			$sql = "CALL consultaCliente( '{$accion}','{$nit}', '{$nombre}', '{$cui}', {$correo}, '{$telefono}', '{$direccion}', {$idTipoCliente} )";
+ 			$sql = "CALL consultaCliente( '{$accion}',{$idCliente},'{$nit}', '{$nombre}', '{$cui}', '{$correo}', '{$telefono}', '{$direccion}', {$idTipoCliente} )";
+ 		
  			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
  				@$this->con->next_result();
 

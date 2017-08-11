@@ -282,6 +282,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
                 opcion:"consultarCliente",
                 valor: valor
             }).success(function(data){
+                console.log(data);
                 var encontrados = data.length;
                 if (encontrados == 1 ) {
                     if ( evento == 1) {//consulta desde clientes
@@ -290,7 +291,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
                         $scope.cliente.cui      = parseInt(data[0].cui);
                         $scope.cliente.telefono = parseInt(data[0].telefono);
                     }else{//consulta desde facturacioón
-                        console.log("cosulta desde facturas");
+                        $scope.facturaCliente = data[0];
                     }
                 }else if( encontrados > 1 ){
                     $scope.masEncontrados = 1;
