@@ -34,8 +34,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	$scope.lstProductosIngreso = [];
 	$scope.idxProducto = -1;
 	$scope.seleccionKeyProducto = function( key ){
-		console.log( key, ":::", $scope.idxProducto );
-
+//		console.log( key, ":::", $scope.idxProducto );
 		// CODIGO ENTER
 		if( key == 13 ){
 
@@ -132,12 +131,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 			};
 
 			$('#cantidad').focus();
-
 			$scope.lstProductos = [];
 		}
 	};
 
-	$scope.guardarLstProductosIngreso = function(){
+	$scope.guardarLstProductoIngreso = function(){
 		var error = false;
 
 		if( !($scope.lstProductosIngreso.length) ){
@@ -146,12 +144,14 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		}
 		else{
 			for (var i = 0; i < $scope.lstProductosIngreso.length; i++) {
-				if( $scope.lstProductosIngreso[i].idProducto ){
+				var prod = $scope.lstProductosIngreso[ i ];
+
+				if( !(prod.idProducto && prod.idProducto > 0) ){
 					error = true;
 					alertify.notify( 'El Código del producto no es válido, verifique', 'warning', 5 );
 					break;
 				}
-				else if( !($scope.lstProductosIngreso[i].cantidad && $scope.lstProductosIngreso[i].cantidad > 0 ) ){
+				else if( !(prod.cantidad && prod.cantidad > 0 ) ){
 					alertify.notify( 'La cantidad debe ser mayor a 0', 'warning', 5 );
 					error = true;
 					break;
@@ -160,11 +160,18 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		}
 
 		if( !error ){
-			$http.post('consultas.php',{opcion: 'guardarLstProductosIngreso', data: $scope.lstProductosIngreso})
+			$http.post('consultas.php',{
+				opcion : 'guardarLstProductoIngreso',
+				accion : 'insert',
+				data   : $scope.lstProductosIngreso
+			})
 			.success(function(data){
-				console.log(data);
-			}).error(function(data){
-				console.log(data);
+				console.log( data );
+				alertify.set('notifier','position', 'top-right');
+				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+
+				if( data.respuesta == 'success' )
+					$scope.lstProductosIngreso = [];
 			});
 		}
 	};
@@ -179,8 +186,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 			.success(function(data){
 				console.log('buscarProducto::: ',data);
 				$scope.lstProductos = data;
-			}).error(function(data){
-				console.log(data);
 			});
 		}
 		else
@@ -208,7 +213,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	};
 
 	
-	
+	// LISTA DE PAGINACION
 	$scope.lstPaginacion = [];
 	$scope.generarPaginacion = function( totalPaginas ){
 		$scope.lstPaginacion = [];
@@ -220,6 +225,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	};
 
 
+	// CARGAR PAGINACION
 	$scope.cargarPaginacion = function( pagina ){
 		$scope.filter.pagina = pagina;
 		$scope.inventario();
@@ -466,7 +472,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 				}
 			})
 		}
-	}
+	};
 
 
 	$scope.itemProducto = {
@@ -478,14 +484,13 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		esIncremento   : true
 	};
 
-
 	// OBTENER VALORES REAJUSTE
 	$scope.ingresarReajuste = function( idProducto, nombreProducto, disponibilidad ){
 		$scope.itemProducto.idProducto     = idProducto;
 		$scope.itemProducto.nombreProducto = nombreProducto;
 		$scope.itemProducto.disponibilidad = disponibilidad;
 		$scope.dialIngreso.show();
-	}
+	};
 
 
 	$scope.retornarTotal = function()
@@ -502,7 +507,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 			total = itemProducto.disponibilidad;
 
 		return total;
-	}
+	};
 
 
 	$scope.consultaReajusteInventario = function(){

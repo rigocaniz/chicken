@@ -124,70 +124,7 @@
 
 				<!-- SUPERCOMBO -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuTab=='superCombo'}" ng-show="menuTab=='superCombo'">
-					<div class="col-sm-offset-1 col-sm-10">
-						<div class="panel panel-primary">
-							<div class="panel-heading">
-								<h4 class="panel-title">MEDIDA DE PRODUCTO</h4>
-							</div>
-							<div class="panel-body">
-								<div class="row">
-									<label class="col-sm-1 col-md-2">Medida</label>
-									<div class="col-sm-6">
-										<input type="text" id="medida" ng-keyup="$event.keyCode == 13 && consultaMedida()" class="form-control" ng-model="medidaProd.medida" maxlength="45">
-									</div>
-									<div class="col-sm-5 col-md-4">
-										<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMedida()">
-											<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
-										</button>
-										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 6 )">
-											Cancelar
-										</button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="panel panel-default">
-							<div class="panel-body">
-								<h4 class="panel-title">
-									<span class="glyphicon glyphicon-sort-by-attributes"></span> MEDIDAS REGISTRADOS
-								</h4>
-								<br>
-								<div class="col-sm-4 col-md-6">
-								</div>
-								<div class="col-sm-8 col-md-6">
-									<div class="input-group">
-										<input type="text" class="form-control" ng-model="buscarMedida" placeholder="Buscar medida">
-										<span class="input-group-addon" id="basic-addon1">
-											<span class="glyphicon glyphicon-search"></span> BUSCAR
-										</span>
-									</div>
-								</div>
-								<table class="table table-hover">
-									<thead>
-										<tr>
-											<th class="text-center col-sm-1">No.</th>
-											<th class="text-center col-sm-8">Tipo de producto</th>
-											<th class="text-center col-sm-2">Editar</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-repeat="medida in lstResultMedida = (lstMedidas | filter: buscarMedida)">
-											<td class="text-center">{{ $index + 1 }}</td>
-											<td>{{ medida.medida }}</td>
-											<td class="text-center">
-												<button class="btn btn-info btn-sm" ng-click="editarMedida( medida )">
-													<span class="glyphicon glyphicon-pencil"></span>
-												</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-								<div class="alert alert-info text-right" role="alert" ng-show="!lstResultMedida.length">
-									<span class="glyphicon glyphicon-info-sign"></span> NO SE ENCONTRARON RESULTADOS
-								</div>
-							</div>
-						</div>
-					</div>
+					<h2>EN CONSTRUCCIÓN</h2>
 				</div>
 
 				<!-- PAGINADOR -->

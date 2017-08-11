@@ -326,7 +326,7 @@
 										</tbody>
 									</table>
 									<div class="form-group text-center">
-										<button type="button" class="btn btn-success" ng-click="guardarLstProductosIngreso()">
+										<button type="button" class="btn btn-success" ng-click="guardarLstProductoIngreso()">
 											<span class="glyphicon glyphicon-saved"></span> GUARDAR
 										</button>
 									</div>

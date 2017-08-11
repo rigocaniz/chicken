@@ -1,6 +1,6 @@
 app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
-	$scope.menuTab         = 'combo';
+	$scope.menuTab         = 'menu';
 	$scope.accion          = 'insert';
 	$scope.lstDestinoMenu  = [];
 	$scope.lstTipoMenu     = [];

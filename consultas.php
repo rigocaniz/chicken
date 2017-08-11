@@ -214,6 +214,11 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** PRODUCTO
 	/////////////////////////
+	case 'guardarLstProductoIngreso':			// INSERT / UPDATE LST PRODUCTOS INGRESO
+		$producto = new Producto();
+		echo json_encode( $producto->guardarLstProductoIngreso( $data->accion, $data->data ) );
+		break;
+		
 	case 'buscarProducto':			// BUSCAR PRODUCTO(S) POR NOMBRE
 		$producto = new Producto();
 		echo json_encode( $producto->buscarProducto( $data->nombreProducto ) );

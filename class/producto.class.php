@@ -20,7 +20,6 @@ class Producto
 	}
 
 
-
 	// GUARDAR // ACTUALIZAR => INGRESO
 	function consultaReajusteInventario( $accion, $data )
 	{
@@ -91,11 +90,45 @@ class Producto
 	}
 
 
+
+	function guardarLstProductoIngreso( $accion, $data )
+	{
+		//var_dump( $data );
+		if( count( $data ) )
+		{
+			// INICIALIZAR TRANSACCION
+	 		$this->con->query( 'START TRANSACTION' );
+
+			foreach ( $data AS $producto ) {
+				$this->consultaIngreso( $accion, $producto );
+
+				if( $this->respuesta == 'danger' )
+					break;
+			}
+
+			// FINALIZAR TRANSACCION
+	 		if( $this->respuesta == 'danger' )
+	 			$this->con->query( 'ROLLBACK' );
+	 		else
+	 			$this->con->query( 'COMMIT' );
+
+		}
+		else{
+ 			$this->respuesta = 'warning';
+		 	$this->mensaje   = 'No hay productos agregados al listado de ingresos';
+ 		}
+
+ 		return $this->getRespuesta();
+	}
+
+
 	// GUARDAR // ACTUALIZAR => INGRESO
 	function consultaIngreso( $accion, $data )
 	{
 
 		$validar = new Validar();
+
+		//var_dump( $data );
 
 		// INICIALIZACIÓN VAR
  		$idIngreso  = 'NULL';
@@ -103,16 +136,16 @@ class Producto
  		$idProducto = 'NULL';
 
 		// SETEO VARIABLES GENERALES
- 		$data->idProducto = (int)$data->idProducto > 0 AND !esNulo( $data->idProducto ) ? (int)$data->idProducto 	: NULL;
- 		$data->cantidad   = (double)$data->cantidad AND !esNulo( $data->cantidad )		? (double)$data->cantidad 	: NULL;
+ 		$data->idProducto = (int)$data->idProducto > 0 	? (int)$data->idProducto  : NULL;
+ 		$data->cantidad   = (double)$data->cantidad > 0 ? (double)$data->cantidad : NULL;
 
  		// VALIDACIONES
  		if( $accion == 'delete' ):
  			$data->idIngreso  = (int)$data->idIngreso > 0 AND !esNulo( $data->idIngreso ) ? (int)$data->idIngreso : NULL;
-			$idIngreso = $validar->validarEntero( $data->idIngreso, NULL, TRUE, 'El ID de Ingreso no es válido, verifique.' );
+			$idIngreso = $validar->validarEntero( $data->idIngreso, NULL, TRUE, 'El ID de Ingreso no es válido.' );
  		endif;
 
-		$idProducto = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido, verifique.' );
+		$idProducto = $validar->validarEntero( $data->idProducto, NULL, TRUE, "El ID del producto ({$data->producto}) no es válido." );
 		$cantidad   = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 5000, 'la cantidad' );
 
 		// OBTENER RESULTADO DE VALIDACIONES
