@@ -10,7 +10,6 @@ include 'class/medida.class.php';
 include 'class/menu.class.php';
 include 'class/orden.class.php';
 include 'class/producto.class.php';
-include 'class/receta.class.php';
 include 'class/sesion.class.php';
 include 'class/usuario.class.php';
 include 'class/validar.class.php';
@@ -74,11 +73,6 @@ switch ( $data->opcion )
 	case 'cargarMenuPrecio':		// DATOS MENU PRECIO
 		$menu = new Menu();
 		echo json_encode( $menu->cargarMenuPrecio( $data->idMenu ) );
-		break;		
-
-	case 'cargarReceta':			// DATOS RECETA
-		$receta = new Receta();
-		echo json_encode( $receta->cargarReceta( $data->idMenu, $data->idProducto ) );
 		break;
 
 	case 'cargarCombo':				// DATOS COMBO
@@ -153,11 +147,6 @@ switch ( $data->opcion )
 	case 'lstMenuPrecio':			// CARGAR LISTA PRECIOS MENU
 		$menu = new Menu();
 		echo json_encode( $menu->lstMenuPrecio( $data->idMenu ) );
-		break;
-	
-	case 'lstReceta':				// CARGAR LISTA RECETA
-		$receta = new Receta();
-		echo json_encode( $receta->lstReceta() );
 		break;
 
 
@@ -258,7 +247,7 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** MEDIDA
 	/////////////////////////
-	case 'consultaMedida':			// ACCION RECETA: INSERT / UPDATE
+	case 'consultaMedida':			// ACCION MEDIDA: INSERT / UPDATE
 		$medida = new Medida();
 		echo json_encode( $medida->consultaMedida( $data->accion, $data->datos ) );
 		break;

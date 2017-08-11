@@ -368,7 +368,7 @@
 								</div>
 								<div class="media-body">
 									<div class="pull-right">
-										<label class="label label-success"> {{ objMenu.estadoMenu }} </label><br>
+										<label class="label" ng-class="{'label-success': objMenu.idEstadoMenu == 1, 'label-default': objMenu.idEstadoMenu == 2}"> {{ objMenu.estadoMenu | uppercase }} </label><br>
 									</div>
 									<h4 class="media-heading">
 										{{ objMenu.menu | uppercase }}
@@ -530,7 +530,7 @@
 								</div>
 								<div class="media-body">
 									<div class="pull-right">
-										<label class="label" ng-class="{'label-success': objCombo.idEstadoMenu == 1, 'label-default': objCombo.idEstadoMenu == 2}"> {{ objCombo.estadoMenu }} </label><br>
+										<label class="label" ng-class="{'label-success': objCombo.idEstadoMenu == 1, 'label-default': objCombo.idEstadoMenu == 2}"> {{ objCombo.estadoMenu | uppercase }} </label><br>
 									</div>
 									<h4 class="media-heading">
 										{{ objCombo.combo | uppercase }}
@@ -550,12 +550,12 @@
 						<form class="form-horizontal" role="form" name="formMenu" autocomplete="off">
 							<!-- INGRESAR RECETA -->
 							<fieldset class="fieldset">
-								<legend class="legend">Ingresar Receta</legend>
+								<legend class="legend">Ingresar Menu</legend>
 								<div class="form-group">
 									<div class="col-sm-7 col-md-5">
 										<label class="control-label">MENU</label>
 										<div ng-show="!prod.seleccionado">
-											<input type="text" id="producto" class="form-control" ng-model="prod.producto" maxlength="35" placeholder="Ingrese producto" ng-change="buscarProducto( prod.producto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
+											<input type="text" id="producto" class="form-control" ng-model="prod.producto" maxlength="35" placeholder="Ingresar Menu" ng-change="buscarProducto( prod.producto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
 											<ul class="list-group ul-list" ng-show="lstProductos.length">
 
 											    <li class="list-group-item" ng-class="{'active': $parent.idxProducto == ixProducto}" ng-repeat="(ixProducto, producto) in lstProductos" ng-click="seleccionarProducto( producto )" ng-mouseenter="$parent.idxProducto = ixProducto">
