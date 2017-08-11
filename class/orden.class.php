@@ -288,16 +288,27 @@ class Orden
 
 			endforeach;
 
-			if ( $this->respuesta == 'success' )
+			if ( $this->respuesta == 'success' ) {
 		 		$this->con->query( "COMMIT" );
 
+			 	$this->data = array(
+					'ordenCliente'    => $this->lstOrdenCliente( 1, NULL, $idOrdenCliente ),
+					'lstMenuAgregado' => $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo ),
+			 	);
+
+			 	// SI LA CLASE NO EXISTE SE LLAMA
+			 	if ( !class_exists( "Redis" ) )
+			 		include 'redis.class.php';
+
+			 	// ENVIA LOS DATOS POR MEDIO DE REDIS
+			 	$red = new Redis();
+				$red->messageRedis( $this->data );
+
+				echo "----";
+			}
 		 	else
 		 		$this->con->query( "ROLLBACK" );
 
-		 	$this->data = array(
-				'ordenCliente'    => $this->lstOrdenCliente( 1, NULL, $idOrdenCliente ),
-				'lstMenuAgregado' => $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo ),
-		 	);
 
  		else:
 			$this->respuesta = 'danger';

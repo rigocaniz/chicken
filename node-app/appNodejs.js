@@ -14,7 +14,6 @@ io.on('connection', function (socket) {
 	socket.emit('mensaje', "mi mensaje");
 
 	client.on("message", function (channel, message) {
-	    console.log("sub channel " + channel + ": " + message);
 
 	    // VERIFICAR SI EXISTE UN MENSAJE VALIDO
 	    if ( message && message.length > 2 ) {

@@ -31,6 +31,4 @@ class Redis
  	}
 }
 
-$o = new Redis();
-$o->messageRedis( array( "hora" => date("Y-m-d H:i:s") ) );
 ?>

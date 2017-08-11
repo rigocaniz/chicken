@@ -27,23 +27,19 @@
 				<table class="table table-hover">
 					<thead>
 						<tr>
-							<th>Ticket</th>
-							<th>Lapso</th>
-							<th>Responsable</th>
 							<th></th>
+							<th>Menú</th>
+							<th>Tipo Servicio</th>
+							<th>Lapso</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr ng-repeat="item in lstOrdenCliente">
-							<td>{{item.numeroTicket}}</td>
+						<tr ng-repeat="item in lstOrdenes">
+							<td><img ng-src="{{item.imagen}}" style="height:35px"></td>
+							<td>{{item.menu}}</td>
+							<td>{{item.tipoServicio}}</td>
 							<td>
 								<span>{{tiempoTranscurrido( item.fechaRegistro )}}</span>
-							</td>
-							<td><kbd>{{item.usuarioResponsable}}</kbd></td>
-							<td>
-								<button type="button" class="btn btn-sm btn-default" ng-click="modalInfo( item )">
-									<span class="glyphicon glyphicon-list"></span>
-								</button>
 							</td>
 						</tr>
 					</tbody>

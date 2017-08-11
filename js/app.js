@@ -129,7 +129,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     });
 
     socket.on('info', function(data) {  
-        console.log("INFO:::", data);
+        $rootScope.$broadcast( 'infoNode', data );
     });
 
 

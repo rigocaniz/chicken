@@ -20,6 +20,32 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		lstPrecio : []
 	};
 
+
+
+
+
+
+	$scope.lstOrdenes = [];
+	// INFORMACION DE NODEJS
+	$scope.$on('infoNode', function( event, datos ) {
+		console.log( 'DTS::', datos );
+
+		if ( datos.data && Array.isArray( datos.data.lstMenuAgregado ) ) {
+
+			for (var i = 0; i < datos.data.lstMenuAgregado.length; i++) {
+				$scope.lstOrdenes.push(
+					datos.data.lstMenuAgregado[i]
+				);
+			}
+		}
+
+		$scope.$apply();
+	});
+
+
+
+
+
 	// DIALOGOS
 	$scope.dialOrden = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false, keyboard: false });
 
