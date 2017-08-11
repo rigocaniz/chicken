@@ -281,14 +281,27 @@ class Combo
 
 
  	// CONSULTAR LISTA DE COMBOS DETALLE
- 	function lstComboDetalle()
+ 	function lstComboDetalle( $idCombo )
  	{
  		$lstComboDetalle = array();
+ 		$idCombo = (int)$idCombo;
 
- 		$sql = "SELECT idCombo, cantidad, idMenu, menu, imagen, descripcion, idEstadoMenu, estadoMenu FROM lstComboDetalle;";
+ 		$sql = "SELECT 
+				    idCombo,
+				    cantidad,
+				    idMenu,
+				    menu,
+				    imagen,
+				    descripcion,
+				    idEstadoMenu,
+				    estadoMenu
+				FROM
+				    lstComboDetalle
+				WHERE idCombo = {$idCombo};";
  		
  		if( $rs = $this->con->query( $sql ) ){
  			while( $row = $rs->fetch_object() ){
+ 				$row->cantidad     = (double)$row->cantidad;
  				$lstComboDetalle[] = $row;
  			}
  		}

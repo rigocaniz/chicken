@@ -327,6 +327,7 @@ div .valor{
     border-bottom: solid 1px #cfd5ea;
     margin-bottom: 4px;
     display: inline-block;
+<<<<<<< HEAD
 }
 
 legend.legend2{
@@ -356,3 +357,6 @@ legend.legend2{
     -moz-box-shadow: -1px 1px 3px rgba(0, 0, 0, 0.22);
     -webkit-box-shadow: -1px 1px 3px rgba(0, 0, 0, 0.22);
 }
+=======
+}
+>>>>>>> 457f60ea53e4793ddc44d5cfa75fcf46c90742a0

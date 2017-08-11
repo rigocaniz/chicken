@@ -469,7 +469,9 @@ class Menu
  			);
  	}
 
- 	function consultarLstProductos()
+
+ 	// BUSCAR MENU POR NOMBRE
+ 	function buscarMenu( $menu )
 	{
 
 		$lstMenus = array();
@@ -484,11 +486,11 @@ class Menu
 				    idDestinoMenu,
 				    destinoMenu
 				FROM
-				    lstMenu;";
+				    lstMenu LIKE '%{$menu}%' LIMIT 10;";
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
-				$producto = array(
+				$menu = array(
 						'idMenu'        => (int)$row->idMenu,
 						'menu'          => $row->menu,
 						'imagen'        => $row->imagen,
@@ -501,7 +503,7 @@ class Menu
 						'tipoMenu'      => $row->tipoMenu
 					);
 
-				$lstMenus[] = $producto;
+				$lstMenus[] = $menu;
 			}
 		}
 

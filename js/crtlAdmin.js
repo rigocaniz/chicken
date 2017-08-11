@@ -11,9 +11,11 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	$scope.menu            = {};
 	$scope.combo           = {};
 
-	$scope.dialAdminMenu  = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static', keyboard: false});
-	$scope.dialAdminCombo = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static', keyboard: false});
-	$scope.dialRecetaMenu = $modal({scope: $scope,template:'dial.recetaMenu.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialAdminMenu    = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialRecetaMenu   = $modal({scope: $scope,template:'dial.recetaMenu.html', show: false, backdrop: 'static', keyboard: false});
+
+	$scope.dialAdminCombo   = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialDetalleCombo = $modal({scope: $scope,template:'dial.detalleCombo.html', show: false, backdrop: 'static', keyboard: false});
 
 	$scope.$on('cargarLista', function( event, data ){
 		console.log( ":::", event, ":::", data );
@@ -88,18 +90,80 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			console.log(data);
 		});
 	};
+
+
+	$scope.menuD = {
+		idMenu       : null,
+		nombreMenu   : '',
+		cantidad     : null,
+		seleccionado : false
+	};
+	$scope.agregarIngresoProducto = function()
+	{
+		var menuD = $scope.menuD;
+
+		if( !(menuD.idMenu && menuD.idMenu > 0) )
+		{
+			alertify.notify( 'El código del Menu no es válido', 'danger', 5 );
+		}
+		else if( !(menuD.cantidad && menuD.cantidad > 0) ){
+			alertify.notify( 'La cantidad ingresada debe ser mayor a 0', 'danger', 5 );
+		}
+		else{
+			$http.post('consultas.php',{
+				opcion : 'consultaReceta',
+				accion : 'insert',
+				datos  : $scope.menuD
+			})
+			.success(function(data){
+				console.log(data);
+				alertify.set('notifier','position', 'top-right');
+ 				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
+				if( data.respuesta == 'success' ){
+					$scope.resetValores( 'producto' );
+					$scope.lstRecetaMenu( $scope.objMenu.idMenu, false );
+				}
+			});
+		}
+	};
+
+	// CARGAR DETALLE COMBO
+	$scope.objCombo = {};
+	$scope.cargarDetalleCombo = function( combo )
+	{
+		//console.log( 'combo::: ', combo );
+		$scope.objCombo = combo;
+		if( $scope.objCombo.idCombo > 0 ){
+			$scope.lstComboDetalle( $scope.objCombo.idCombo, true );
+		}
+	};
+
+
+	// CONSULTAR DETALLE COMBO
+	$scope.lstComboDetalle = function( idCombo, abrirModal )
+	{
+		$http.post('consultas.php',{opcion: 'lstComboDetalle', idCombo: idCombo})
+		.success(function(data){
+			console.log( data );
+			$scope.objCombo.lstDetalleCombo = data;
+			if( abrirModal )
+				$scope.dialDetalleCombo.show();
+		});
+	};
+
+
 	
 	// CARGAR RECETA MENU
 	$scope.objMenu = {};
 	$scope.cargarRecetaMenu = function( menu )
 	{
-		console.log( 'menu::: ', menu );
 		$scope.objMenu = menu;
 		if( $scope.objMenu.idMenu > 0 ){
 			$scope.lstRecetaMenu( $scope.objMenu.idMenu, true );
 		}
 	};
 	
+	// CONSULTAR LISTA RECETA MENU
 	$scope.lstRecetaMenu = function( idMenu, abrirModal )
 	{
 		$http.post('consultas.php',{opcion: 'lstRecetaMenu', idMenu: idMenu})
@@ -147,7 +211,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 				}
 			});
 		}
-
 	};
 
 
@@ -188,10 +251,10 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			else if( $scope.lstProductos.length && $scope.idxProducto + 1 )
 				$scope.idxProducto = 0;
 		}
-
 	};
 
 
+	// SELECCIONAR PRODUCTO
 	$scope.seleccionarProducto = function( producto )
 	{
 		if( !(producto.idProducto && producto.idProducto > 0) )
@@ -431,9 +494,9 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			error = true;
 			alertify.notify( 'Seleccione el tipo de Menú', 'info', 5 );	
 		}
-		else if( !( menu.descripcion && menu.descripcion.length > 15 ) ){
+		else if( !( menu.descripcion && menu.descripcion.length > 10 ) ){
 			error = true;
-			alertify.notify( 'La descripción del menú debe ser mayor a 15 caracteres', 'info', 5 );		
+			alertify.notify( 'La descripción del menú debe ser mayor a 10 caracteres', 'info', 5 );		
 		}
 		else{
 			for (var i = 0; i < menu.lstPrecios.length; i++) {
