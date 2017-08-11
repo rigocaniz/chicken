@@ -331,11 +331,28 @@ div .valor{
 
 legend.legend2{
     color: #ffffff;
-    text-shadow: -1px 1px 2px rgba(0, 0, 0, 0.34);
-    background: #5a9c69;
+    background: #b46241;
     width: 100%;
     margin: 10px 0px;
     text-align: center;
     font-size: 16px;
+    text-shadow: -1px 1px 2px rgba(0, 0, 0, 0.34);
+    -moz-text-shadow: -1px 1px 2px rgba(0, 0, 0, 0.34);
+    -webkit-text-shadow: -1px 1px 2px rgba(0, 0, 0, 0.34);
+    border-radius: 25px 0px 25px 0px;
+    -moz-border-radius: 25px 0px 25px 0px;
+    -webkit-border-radius: 25px 0px 25px 0px;
 }
 
+.label-border{
+    width: 20px;
+    text-align: center;
+    display: inline-block;
+    color: #fff;
+    border-radius: 13px;
+    -moz-border-radius: 13px;
+    -webkit-border-radius: 13px;
+    box-shadow: -1px 1px 3px rgba(0, 0, 0, 0.22);
+    -moz-box-shadow: -1px 1px 3px rgba(0, 0, 0, 0.22);
+    -webkit-box-shadow: -1px 1px 3px rgba(0, 0, 0, 0.22);
+}
