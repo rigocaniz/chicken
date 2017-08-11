@@ -93,6 +93,10 @@ app.config(function($routeProvider) {
         templateUrl:'view/orden.php',
         controller:'crtlOrden'
     })
+    .when('/adminOrden',{
+        templateUrl:'view/adminOrden.php',
+        controller:'crtlAdminOrden'
+    })
     .when('/reporte',{
         templateUrl:'view/reporte.php',
         controller:'reporteCtrl'
