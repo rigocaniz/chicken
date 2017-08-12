@@ -152,7 +152,7 @@
 <!-- MODAL AGREGAR / EDITAR MENU -->
 <script type="text/ng-template" id="dial.adminMenu.html">
 	<div class="modal" tabindex="-1" role="dialog">
-		<div class="modal-dialog">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content" ng-class="{'panel-warning': accion == 'insert', 'panel-info': accion == 'update'}">
 				<div class="modal-header panel-heading">
 					<button type="button" class="close" ng-click="resetValores( 'menu' ); $hide();">&times;</button>
@@ -192,11 +192,11 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<div class="col-xs-7 col-sm-7 col-md-8">
+								<div class="col-xs-5 col-sm-6 col-md-5">
 									<label class="control-label">NOMBRE DEL MENU</label>
 									<input type="text" class="form-control" ng-model="menu.menu" maxlength="40" required>
 								</div>
-								<div class="col-xs-5 col-sm-5 col-md-4">
+								<div class="col-xs-4 col-sm-3 col-md-3">
 									<label class="control-label">DESTINO DEL MENU</label>
 									<div>
 										<div class="btn-group btn-group-sm" role="group">
@@ -207,9 +207,13 @@
 										</div>
 									</div>
 								</div>
+								<div class="col-xs-3 col-sm-3 col-md-3">
+									<label class="control-label">CÓDIGO DEL MENÚ</label>
+									<input type="text" class="form-control" ng-model="menu.codigo" maxlength="10" required>
+								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3">TIPO DE MENU: </label>
+								<label class="col-sm-3 col-md-2">TIPO DE MENU</label>
 								<div class="col-sm-7">
 									<div class="btn-group btn-group-sm" role="group">
 									  	<button type="button" class="btn btn-default" ng-class="{'btn-info': tipoMenu.idTipoMenu == menu.idTipoMenu}" ng-click="menu.idTipoMenu = tipoMenu.idTipoMenu" ng-repeat="tipoMenu in lstTipoMenu">
@@ -631,12 +635,14 @@
 									</div>
 								</div>
 							</div>
-
-
 							<div class="form-group">
-								<div class="col-sm-12">
+								<div class="col-sm-8 col-md-7">
 									<label class="control-label">NOMBRE DEL COMBO</label>
 									<input type="text" class="form-control" ng-model="combo.combo" maxlength="45" required>
+								</div>
+								<div class="col-sm-4 col-md-5">
+									<label class="control-label">CÓDIGO DEL COMBO</label>
+									<input type="text" class="form-control" ng-model="combo.codigo" maxlength="10" required>
 								</div>
 							</div>
 							<div class="form-group">

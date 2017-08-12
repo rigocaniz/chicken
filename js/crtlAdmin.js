@@ -13,7 +13,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 	$scope.dialAdminMenu    = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static', keyboard: false});
 	$scope.dialRecetaMenu   = $modal({scope: $scope,template:'dial.recetaMenu.html', show: false, backdrop: 'static', keyboard: false});
-
 	$scope.dialAdminCombo   = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static', keyboard: false});
 	$scope.dialDetalleCombo = $modal({scope: $scope,template:'dial.detalleCombo.html', show: false, backdrop: 'static', keyboard: false});
 
@@ -563,26 +562,30 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	// REGISTRAR MENU
 	$scope.consultaMenu = function(){
 		var menu = $scope.menu, error = false;
-			console.log($scope.menu);
+		
 		if( $scope.accion == 'update' && !(menu.idMenu && menu.idMenu > 0) ){
 			error = true;
-			alertify.notify( 'No. de menú no válido', 'info', 5 );
+			alertify.notify( 'No. de menú no válido', 'info', 3 );
 		}
-		else if( !( menu.idEstadoMenu && menu.idEstadoMenu > 0 )  ){
+		else if( !( menu.idEstadoMenu && menu.idEstadoMenu > 0 ) ){
 			error = true;
-			alertify.notify( 'Seleccione el estado del Menú', 'info', 5 );	
+			alertify.notify( 'Seleccione el estado del Menú', 'info', 4 );
 		}
 		else if( !( menu.menu && menu.menu.length > 3 ) ){
 			error = true;
-			alertify.notify( 'El nombre del menú debe ser mayor a 3 caracteres', 'info', 5 );		
+			alertify.notify( 'El nombre del menú debe ser mayor a 3 caracteres', 'info', 5 );
+		}
+		else if( !( menu.codigo && menu.codigo > 0 ) ){
+			error = true;
+			alertify.notify( 'Ingrese el código del Menu', 'info', 3 );
 		}
 		else if( !( menu.idDestinoMenu && menu.idDestinoMenu > 0 ) ){
 			error = true;
-			alertify.notify( 'Seleccione el destino del Menú', 'info', 5 );	
+			alertify.notify( 'Seleccione el destino del Menú', 'info', 4 );
 		}
 		else if( !( menu.idTipoMenu && menu.idTipoMenu > 0 ) ){
 			error = true;
-			alertify.notify( 'Seleccione el tipo de Menú', 'info', 5 );	
+			alertify.notify( 'Seleccione el tipo de Menú', 'info', 3 );
 		}
 		else if( !( menu.descripcion && menu.descripcion.length > 10 ) ){
 			error = true;
@@ -694,15 +697,19 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 		if( $scope.accion == 'update' && !(combo.idCombo && combo.idCombo > 0) ){
 			error = true;
-			alertify.notify( 'No. de combo no válido, vuelve a seleccionarlo', 'info', 5 );
+			alertify.notify( 'No. de combo no válido, vuelve a seleccionarlo', 'info', 4 );
 		}
 		else if( !( combo.idEstadoMenu && combo.idEstadoMenu > 0 )  ){
 			error = true;
-			alertify.notify( 'Seleccione el estado del combo', 'info', 5 );	
+			alertify.notify( 'Seleccione el estado del combo', 'info', 4 );	
 		}
 		else if( !( combo.combo && combo.combo.length > 3 ) ){
 			error = true;
 			alertify.notify( 'El nombre del combo debe ser mayor a 3 caracteres', 'info', 5 );		
+		}
+		else if( !( combo.codigo && combo.codigo > 0 ) ){
+			error = true;
+			alertify.notify( 'Ingrese el código del combo', 'info', 4 );		
 		}
 		else if( !( combo.descripcion && combo.descripcion.length > 10 ) ){
 			error = true;

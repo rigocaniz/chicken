@@ -406,19 +406,21 @@ class Combo
 			$idEstadoMenu = NULL;
 
 			// SETEO VARIABLES GENERALES
-	 		$data->combo        = strlen( $data->combo ) 		? (string)$data->combo 			: NULL;
-	 		$data->descripcion  = strlen( $data->descripcion ) 	? (string)$data->descripcion 	: NULL;
-	 		$data->idEstadoMenu = (int)$data->idEstadoMenu > 0 	? (int)$data->idEstadoMenu 		: NULL;
+	 		$data->combo        = isset( $data->combo ) 		? (string)$data->combo 			: NULL;
+	 		$data->codigo       = isset( $data->codigo ) 		? (string)$data->codigo 		: NULL;
+	 		$data->descripcion  = isset( $data->descripcion ) 	? (string)$data->descripcion 	: NULL;
+	 		$data->idEstadoMenu = isset( $data->idEstadoMenu ) 	? (int)$data->idEstadoMenu 		: NULL;
 	 
 	 		// VALIDACIONES
 	 		if( $accion == 'update' ):
-	 			$data->idCombo = (int)$data->idCombo > 0 ? (int)$data->idCombo : NULL;
-	 			$idCombo       = $validar->validarEntero( $data->idCombo, NULL, TRUE, 'El ID del COMBO no es válido, verifique.' );
+	 			$data->idCombo = isset( $data->idCombo ) ? (int)$data->idCombo : NULL;
+	 			$idCombo       = $validar->validarEntero( $data->idCombo, NULL, TRUE, 'El ID del COMBO no es válido' );
 	 		endif;
 
 			$combo        = $validar->validarTexto( $data->combo, NULL, TRUE, 3, 45, 'el nombre del combo' );
+			$codigo       = $validar->validarEntero( $data->codigo, NULL, TRUE, 'El código del combo no es válido' );
 			$descripcion  = $validar->validarTexto( $data->descripcion, NULL, TRUE, 10, 1500, 'la descripcion' );
-			$idEstadoMenu = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado combo no es válido, verifique.' );
+			$idEstadoMenu = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado combo no es válido' );
 
 
 			// OBTENER RESULTADO DE VALIDACIONES

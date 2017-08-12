@@ -345,23 +345,25 @@ class Menu
 			$idDestinoMenu = NULL;
 
 			// SETEO VARIABLES GENERALES
-	 		$data->menu          = strlen( $data->menu ) > 0 		? (string)$data->menu : NULL;
-	 		$data->descripcion   = strlen( $data->descripcion ) > 0 ? (string)$data->descripcion : NULL;
-	 		$data->idEstadoMenu  = (int)$data->idEstadoMenu > 0  	? (int)$data->idEstadoMenu : NULL;
-	 		$data->idDestinoMenu = (int)$data->idDestinoMenu > 0  	? (int)$data->idDestinoMenu : NULL;
-	 		$data->idTipoMenu    = (int)$data->idTipoMenu > 0 		? (int)$data->idTipoMenu : NULL;
+	 		$data->menu          = isset( $data->menu ) 			? (string)$data->menu 			: NULL;
+	 		$data->codigo        = isset( $data->codigo ) 			? (string)$data->codigo 		: NULL;
+	 		$data->descripcion   = isset( $data->descripcion ) 		? (string)$data->descripcion 	: NULL;
+	 		$data->idEstadoMenu  = isset( $data->idEstadoMenu ) 	? (int)$data->idEstadoMenu 		: NULL;
+	 		$data->idDestinoMenu = isset( $data->idDestinoMenu ) 	? (int)$data->idDestinoMenu 	: NULL;
+	 		$data->idTipoMenu    = isset( $data->idTipoMenu )		? (int)$data->idTipoMenu 		: NULL;
 	 
 	 		// VALIDACIONES
 	 		if( $accion == 'update' ):
-	 			$data->idMenu = (int)$data->idMenu > 0 ? (int)$data->idMenu : NULL;
-	 			$idMenu = $validar->validarEntero( $data->idMenu, NULL, TRUE, 'El ID del Menú no es válido, verifique.' );
+	 			$data->idMenu = isset( $data->idMenu ) ? (int)$data->idMenu : NULL;
+	 			$idMenu       = $validar->validarEntero( $data->idMenu, NULL, TRUE, 'El ID del Menú no es válido' );
 	 		endif;
 
 			$menu          = $validar->validarTexto( $data->menu, NULL, TRUE, 3, 45, 'el nombre del menu' );
+			$codigo        = $validar->validarEntero( $data->codigo, NULL, TRUE, 'El código del Menu no es válido' );
 			$descripcion   = $validar->validarTexto( $data->descripcion, NULL, TRUE, 3, 1500, 'en la descripcion' );
-			$idEstadoMenu  = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado Menú no es válido, verifique.' );
-			$idDestinoMenu = $validar->validarEntero( $data->idDestinoMenu, NULL, TRUE, 'El ID del tipo de medida no es válido, verifique.' );
-			$idTipoMenu    = $validar->validarEntero( $data->idTipoMenu, NULL, TRUE, 'El ID del tipo de menú no es válido, verifique.' );
+			$idEstadoMenu  = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado Menú no es válido' );
+			$idDestinoMenu = $validar->validarEntero( $data->idDestinoMenu, NULL, TRUE, 'El ID del tipo de medida no es válido	' );
+			$idTipoMenu    = $validar->validarEntero( $data->idTipoMenu, NULL, TRUE, 'El ID del tipo de menú no es válido' );
 
 
 			// OBTENER RESULTADO DE VALIDACIONES

@@ -291,7 +291,7 @@ class Validar
 
 		if( !strlen( $valor ) > 0 AND $required ):
 			$warning = TRUE;
-			$msj     = "No ha ingresado ningún texto en {$mensaje}, verifique.";
+			$msj     = "No ha ingresado {$mensaje}, verifique.";
 
 		elseif( strlen( $valor ) < $minimo ):
 			$warning = TRUE;
