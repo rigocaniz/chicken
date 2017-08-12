@@ -7,24 +7,24 @@
 
 			<!-- MENU TABS -->
 			<ul class="nav nav-tabs tabs-title" role="tablist">
-				<li role="presentation" ng-class="{'active' : inventarioMenu==1}" ng-click="resetValores(); inventarioMenu=1">
+				<li role="presentation" ng-class="{'active' : inventarioMenu=='inventario'}" ng-click="resetValores(); inventarioMenu='inventario'">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-list"></span> INVENTARIO
 					</a>
 				</li>
-				<li role="presentation" ng-class="{'active' : inventarioMenu==2}" ng-click="resetValores(); inventarioMenu=2">
+				<li role="presentation" ng-class="{'active' : inventarioMenu=='tipoProducto'}" ng-click="resetValores(); inventarioMenu='tipoProducto'">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-share-alt"></span> TIPO PRODUCTO
 					</a>
 				</li>
-				<li role="presentation" ng-class="{'active' : inventarioMenu==3}" ng-click="resetValores(); inventarioMenu=3">
+				<li role="presentation" ng-class="{'active' : inventarioMenu=='medidas'}" ng-click="resetValores(); inventarioMenu='medidas'">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-scale"></span> MEDIDAS
 					</a>
 				</li>
-				<li role="presentation" ng-class="{'active' : inventarioMenu==4}" ng-click="resetValores(); inventarioMenu=4">
+				<li role="presentation" ng-class="{'active' : inventarioMenu=='compras'}" ng-click="resetValores(); inventarioMenu='compras'">
 					<a href="" role="tab" data-toggle="tab">
-						<span class="glyphicon glyphicon-shopping-cart"></span> INGRESO
+						<span class="glyphicon glyphicon-shopping-cart"></span> INGRESAR COMPRAS
 					</a>
 				</li>
 			</ul>
@@ -40,12 +40,16 @@
 				</div>
 
 				<!--  PRODUCTOS DEL INVENTARIO -->
-				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==1}" ng-show="inventarioMenu==1">
+				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu=='inventario'}" ng-show="inventarioMenu=='inventario'">
 					<div class="panel panel-primary">
 						<div class="panel-heading">
 							<h3 class="panel-title">INVENTARIO DE PRODUCTOS</h3>
 						</div>
 						<div class="panel-body">
+
+							<button class="btn btn-sm btn-warning">
+								<span class="glyphicon glyphicon-pencil"></span> Editar Disponibilidad
+							</button>
 							<!-- TABLA -->
 							<table class="table table-hover">
 								<thead>
@@ -114,7 +118,7 @@
 				</div>
 
 				<!-- TIPOS DE PRODUCTO -->
-				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==2}" ng-show="inventarioMenu==2">
+				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu=='tipoProducto'}" ng-show="inventarioMenu=='tipoProducto'">
 					<div class="col-sm-offset-1 col-sm-10">
 						<div class="panel panel-primary">
 							<div class="panel-heading">
@@ -182,7 +186,7 @@
 				</div>
 
 				<!-- MEDIDA DE PRODUCTO -->
-				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==3}" ng-show="inventarioMenu==3">
+				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu=='medidas'}" ng-show="inventarioMenu=='medidas'">
 					<div class="col-sm-offset-1 col-sm-10">
 						<div class="panel panel-primary">
 							<div class="panel-heading">
@@ -250,85 +254,152 @@
 				</div>
 
 				<!-- INGRESO DE PRODUCTOS A INVENTARIO -->
-				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu==4}" ng-show="inventarioMenu==4">
-					<div class="col-md-offset-1 col-md-10 col-sm-12">
+				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu=='compras'}" ng-show="inventarioMenu=='compras'">
+					<div class="col-sm-12">
 						<div class="panel panel-warning">
 							<div class="panel-heading">
-								<h4 class="panel-title">INGRESAR DE PRODUCTOS</h4>
+								<h4 class="panel-title">INGRESAR PRODUCTOS</h4>
 							</div>
 							<div class="panel-body">
-								<form class="form-horizontal" role="form">
+								<div class="text-right">
+									<h3>
+										TOTAL: Q.{{ subTotalQuetzales() | number: 2 }} 
+									</h3>
+								</div>
+								<!-- COMPRAS -->
+								<form class="form-horizontal" novalidate autocomplete="off">
 									<div class="form-group">
-										<div class="col-sm-5 col-md-5">
-											<label class="control-label">Producto</label>
-											<div ng-show="!prod.seleccionado">
-												<input type="text" id="producto" class="form-control" ng-model="prod.producto" maxlength="35" placeholder="Ingrese producto" ng-change="buscarProducto( prod.producto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
-												<ul class="list-group" ng-show="lstProductos.length">
-
-												    <li class="list-group-item" ng-class="{'active': $parent.idxProducto == ixProducto}" ng-repeat="(ixProducto, producto) in lstProductos" ng-click="seleccionarProducto( producto )" ng-mouseenter="$parent.idxProducto = ixProducto">
-												    	{{ producto.producto }}
-												    </li>
-												</ul>
-											</div>
-											<div ng-show="prod.seleccionado">
-												<input type="text" class="form-control" ng-model="prod.producto" placeholder="Ingrese producto" disabled>
+										<div class="col-sm-3">
+											<label class="control-label">NO. FACTURA</label>
+											<input type="number" class="form-control" id="numeroFactura" ng-model="compras.noFactura">
+										</div>	
+										<div class="col-sm-3">
+											<label class="control-label">FECHA DE COMPRA</label>
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="glyphicon glyphicon-calendar"></i>
+												</span>
+												<input type="text" class="form-control" ng-model="compras.fechaIngreso" data-date-format="dd/MM/yyyy" data-date-type="number"  data-max-date="today" data-autoclose="1" bs-datepicker>
 											</div>
 										</div>
-										<div class="col-sm-3 col-md-3">
-											<label class="control-label">Cantidad</label>
-											<input type="number" min="0.01" ng-keydown="$event.keyCode == 13 && agregarIngresoProducto();" ng-model="prod.cantidad" id="cantidad" class="form-control" placeholder="Cantidad" >
-										</div>
-										<div class="col-sm-4">
-											<br>
-											<button type="button" class="btn btn-sm btn-warning" ng-click="agregarIngresoProducto();">
-												<span class="glyphicon glyphicon-plus"></span>
-												Agregar
-											</button>
-											<button type="button" class="btn btn-sm btn-default" ng-click="cancelarIngreso( 1 )">
-												Cancelar
-											</button>
+										<div class="col-sm-5">
+											<label class="control-label">PROVEEDOR</label>
+											<input type="text" class="form-control" ng-model="compras.proveedor">
 										</div>
 									</div>
-									<!-- LISTA DE PRODUCTOS -->
+									<!-- SELECCIONAR PRODUCTOS -->
+									<div class="form-group">
+										<label class="label label-default">Agregar compras</label>
+										<table class="table table-condensed">
+											<thead>
+												<tr>
+													<th class="col-sm-5 text-center">PRODUCTO</th>
+													<th class="col-sm-3 text-center">CANTIDAD</th>
+													<th class="col-sm-3 text-center">PRECIO UNITARIO</th>
+													<th class="text-center">AGREGAR</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>
+														<div ng-show="!prod.seleccionado">
+															<input type="text" id="producto" class="form-control" ng-model="prod.producto" maxlength="35" placeholder="Ingrese producto" ng-change="buscarProducto( prod.producto )" ng-keydown="seleccionKeyProducto( $event.keyCode );">
+															<ul class="list-group ul-list" ng-show="lstProductos.length">
+
+															    <li class="list-group-item" ng-class="{'active': $parent.idxProducto == ixProducto}" ng-repeat="(ixProducto, producto) in lstProductos" ng-click="seleccionarProducto( producto )" ng-mouseenter="$parent.idxProducto = ixProducto">
+															    	{{ producto.producto }}
+															    </li>
+															</ul>
+														</div>
+														<div ng-show="prod.seleccionado">
+															<input type="text" class="form-control" ng-model="prod.producto" placeholder="Ingrese producto" disabled>
+														</div>
+													</td>
+													<td class="text-center">
+														<input type="number" min="0.01" ng-model="prod.cantidad" id="cantidad" class="form-control" ng-keydown="$event.keyCode == 27 && cancelarIngreso( 1 );" placeholder="Cantidad" >
+													</td>
+													<td class="text-left">
+														<input type="number" class="form-control" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" ng-keydown="( $event.keyCode == 13 && agregarIngresoProducto() ) || ( $event.keyCode == 27 && cancelarIngreso( 1 ) )" step="0.01" ng-model="prod.precioUnitario" placeholder="Precio Unitario">
+													</td>
+													<td class="text-center">
+														<button type="button" class="btn btn-sm btn-warning" ng-click="agregarIngresoProducto();">
+															<span class="glyphicon glyphicon-plus"></span> AGREGAR
+														</button>
+													</td>
+												</tr>
+												<tr>
+													<td colspan="5" class="text-right">
+														<button type="button" class="btn btn-sm btn-danger" ng-click="cancelarIngreso( 1 )">
+															<span class="glyphicon glyphicon-remove"></span> CANCELAR
+														</button>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
 									<legend class="text-center">
-										<small>PRODUCTOS AGREGADOS</small>
+										LISTADO DE PRODUCTOS
 									</legend>
-									<table class="table table-hover">
-										<thead>
-											<tr>
-												<th class="text-center col-sm-1">Cod. Producto</th>
-												<th class="text-center col-sm-4">Producto</th>
-												<th class="text-center col-sm-3">Cantidad</th>
-												<th></th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr ng-repeat="(ixProdIngreso, prodIngreso) in lstProductosIngreso">
-												<td class="text-center">
-													{{ prodIngreso.idProducto }}
-												</td>
-												<td>
-													{{ prodIngreso.producto }}
-												</td>
-												<td class="text-center">
-													<input type="number" min="0.01" ng-model="prodIngreso.cantidad" class="form-control" placeholder="Cantidad" ng-disabled="!prodIngreso.editar" required>
-												</td>
-												<td class="text-center">
-													<button type="button" class="btn btn-xs btn-info" ng-click="prodIngreso.editar=!prodIngreso.editar">
-														<span class="glyphicon glyphicon-pencil"></span> Editar
-													</button>
-													<button type="button" class="btn btn-xs btn-danger" ng-click="quitarProdIngreso( ixProdIngreso );">
-														<span class="glyphicon glyphicon-remove"></span> Quitar
-													</button>
-													
-												</td>
-											</tr>
-										</tbody>
-									</table>
-									<div class="form-group text-center">
-										<button type="button" class="btn btn-success" ng-click="guardarLstProductoIngreso()">
-											<span class="glyphicon glyphicon-saved"></span> GUARDAR
-										</button>
+									<div class="form-group">
+										<table class="table table-hover">
+											<thead>
+												<tr>
+													<th class="text-center">No.</th>
+													<th class="col-sm-4 text-center">Producto</th>
+													<th class="col-sm-2 text-center">Cantidad</th>
+													<th class="col-sm-2 text-center">Precio Unitario</th>
+													<th class="text-center">Total</th>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody>
+												<!-- QUETZALES -->
+												<tr ng-repeat="(ixProd, prod) in compras.lstProductos" ng-show="compras.lstProductos.length > 0">
+													<td>
+														{{ prod.idProducto }}
+													</td>
+													<td>
+														{{ prod.producto }}
+													</td>
+													<td class="text-center">
+														<input type="number" class="form-control" ng-model="prod.cantidad" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" min="0.01" placeholder="cantidad" ng-disabled="!prod.editar">
+													</td>
+													<td class="text-right">
+														<input type="number" class="form-control" min="0.01" ng-model="prod.precioUnitario" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" placeholder="Cantidad" step="0.01" ng-disabled="!prod.editar">
+													</td>
+													<td class="text-right">
+														{{ prod.cantidad * prod.precioUnitario | number: 2 }}
+													</td>
+													<td class="text-center">
+														<!-- OPCIONES -->
+														<div class="menu-opciones">
+															<button type="button" class="btn btn-xs btn-info" ng-click="prod.editar=!prod.editar" ng-show="prod.editar">
+																<span class="glyphicon glyphicon-ok"></span>
+															</button>
+															<button type="button" class="btn btn-xs btn-success" ng-click="prod.editar=!prod.editar" ng-show="!prod.editar">
+																<span class="glyphicon glyphicon-pencil"></span>
+															</button>
+															<button type="button" class="btn btn-xs btn-danger" ng-click="quitarProdIngreso( ixProd )">
+																<span class="glyphicon glyphicon-remove"></span>
+															</button>
+														</div>
+													</td>
+												</tr>
+												<tr id="tb-title" ng-show="compras.lstProductos.length">
+													<td colspan="5" class="text-right">
+														<strong> TOTAL {{ subTotalQuetzales() | number: 2 }}</strong>
+													</td>
+													<td></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<div class="form-group" style="margin-top: 15px">
+										<div class="col-sm-12 text-center">
+											<button type="button" class="btn btn-success btn-lg noBorder" ng-click="guardarLstProductoIngreso()">
+												<span class="glyphicon glyphicon-saved"></span> Guardar
+											</button>
+										</div>
 									</div>
 								</form>
 							</div>

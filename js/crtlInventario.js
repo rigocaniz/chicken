@@ -2,12 +2,12 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 	// LISTA EL INVENTARIO GENERAL DE PRODUCTOS
 	$scope.lstInventario  = [];
-	$scope.inventarioMenu = 4;
+	$scope.inventarioMenu = 'compras';
 	$scope.accion         = 'insert';
 
 	$scope.$watch('inventarioMenu', function( _old, _new){
 		console.log( _old, _new );
-		if( $scope.inventarioMenu == 1 )
+		if( $scope.inventarioMenu == 'inventario' )
 			$scope.inventario();
 	});
 
@@ -23,15 +23,35 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		$scope.dialAdministrar.hide();
 	};
 
+
+	$scope.subTotalQuetzales = function(){
+
+		var subTotalQuetzales = 0;
+		for (var i = 0; i < $scope.compras.lstProductos.length; i++) {
+			subTotalQuetzales += ($scope.compras.lstProductos[ i ].cantidad * parseFloat( $scope.compras.lstProductos[ i ].precioUnitario ) );
+		}
+		return subTotalQuetzales;
+
+	};
+
 	// OBJ PRODUCTO
 	$scope.prod = {
 		idProducto     : null,
 		nombreProducto : '',
 		cantidad       : null,
+		precioUnitario : null,
 		seleccionado   : false
 	};
+
+	$scope.compras = {
+		noFactura    : 123,
+		fechaCompra  : null,
+		idProveedor  : 1,
+		proveedor    : 'PROVEEDOR 1',
+		lstProductos : []
+	};
 	
-	$scope.lstProductosIngreso = [];
+	//$scope.compras.lstProductos = [];
 	$scope.idxProducto = -1;
 	$scope.seleccionKeyProducto = function( key ){
 //		console.log( key, ":::", $scope.idxProducto );
@@ -80,6 +100,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 				idProducto     : null,
 				nombreProducto : '',
 				cantidad       : null,
+				precioUnitario : null,
 				seleccionado   : false
 			};
 			$timeout(function(){
@@ -90,7 +111,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 
 	$scope.quitarProdIngreso = function( index ){
-		$scope.lstProductosIngreso.splice( index, 1 );
+		$scope.compras.lstProductos.splice( index, 1 );
 	};
 
 	$scope.agregarIngresoProducto = function(){
@@ -104,11 +125,15 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		else if( !(prod.cantidad && prod.cantidad > 0) ){
 			alertify.notify( 'La cantidad ingresada debe ser mayor a 0', 'danger', 5 );
 		}
+		else if( !(prod.precioUnitario && prod.precioUnitario > 0) ){
+			alertify.notify( 'Ingrese el precio Unitario del producto', 'danger', 5 );
+		}
 		else{
-			$scope.lstProductosIngreso.push({
-				idProducto : prod.idProducto,
-				producto   : prod.producto,
-				cantidad   : prod.cantidad
+			$scope.compras.lstProductos.push({
+				idProducto     : prod.idProducto,
+				producto       : prod.producto,
+				cantidad       : prod.cantidad,
+				precioUnitario : prod.precioUnitario
 			});
 
 			$scope.cancelarIngreso( 1 );
@@ -124,10 +149,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		}
 		else{
 			$scope.prod = {
-				idProducto   : producto.idProducto,
-				producto     : producto.producto,
-				cantidad     : null,
-				seleccionado : true
+				idProducto     : producto.idProducto,
+				producto       : producto.producto,
+				cantidad       : null,
+				precioUnitario : null,
+				seleccionado   : true
 			};
 
 			$('#cantidad').focus();
@@ -138,13 +164,13 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	$scope.guardarLstProductoIngreso = function(){
 		var error = false;
 
-		if( !($scope.lstProductosIngreso.length) ){
+		if( !($scope.compras.lstProductos.length) ){
 			error = true;
 			alertify.notify( 'No ha ingrado ningun producto, verifique', 'info', 5 );
 		}
 		else{
-			for (var i = 0; i < $scope.lstProductosIngreso.length; i++) {
-				var prod = $scope.lstProductosIngreso[ i ];
+			for (var i = 0; i < $scope.compras.lstProductos.length; i++) {
+				var prod = $scope.compras.lstProductos[ i ];
 
 				if( !(prod.idProducto && prod.idProducto > 0) ){
 					error = true;
@@ -163,7 +189,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 			$http.post('consultas.php',{
 				opcion : 'guardarLstProductoIngreso',
 				accion : 'insert',
-				data   : $scope.lstProductosIngreso
+				data   : $scope.compras.lstProductos
 			})
 			.success(function(data){
 				console.log( data );
@@ -171,7 +197,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 
 				if( data.respuesta == 'success' )
-					$scope.lstProductosIngreso = [];
+					$scope.compras.lstProductos = [];
 			});
 		}
 	};
