@@ -20,6 +20,14 @@ class Medida
  		$this->sess = $sesion;
  	}
 
+ 	
+ 	// LIBERAR SIGUIENTE RESULTADO
+ 	private function siguienteResultado()
+ 	{
+ 		if( $this->con->more_results() )
+ 			$this->con->next_result();
+ 	}
+
 
  	// CONSULTAMEDIDA // INSERT // UPDATE
 	function consultaMedida( $accion, $data )
@@ -31,11 +39,11 @@ class Medida
 		$medida   = NULL;
 
 		// SETEO VARIABLES GENERALES
- 		$data->medida = strlen( $data->medida ) > 0 ? (string)$data->medida : NULL;
+ 		$data->medida = isset( $data->medida ) ? (string)$data->medida : NULL;
 
  		// VALIDACIONES
  		if( $accion == 'update' ):
- 			$data->idMedida = (int)$data->idMedida > 0 ? (int)$data->idMedida : NULL;
+ 			$data->idMedida = isset( $data->idMedida ) ? (int)$data->idMedida : NULL;
  			$idMedida       = $validar->validarEntero( $data->idMedida, NULL, TRUE, 'El ID del Menú no es válido, verifique.' );
  		endif;
 
@@ -50,10 +58,12 @@ class Medida
 	 		$sql = "CALL consultaMedida( '{$accion}', {$idMedida}, '{$medida}' );";
 
 	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
+	 			$this->siguienteResultado();
+
 	 			if( $row = $rs->fetch_object() ){
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
+
 	 				if( $accion == 'insert' AND $this->respuesta == 'success' )
 	 					$this->data = (int)$row->id;
 	 			}
@@ -78,9 +88,8 @@ class Medida
 		$sql = "SELECT idMedida, medida FROM medida WHERE idMedida = {$idMedida};";
 		
 		if( $rs = $this->con->query( $sql ) ){
-			while( $row = $rs->fetch_object() ){
+			while( $row = $rs->fetch_object() )
 				$medida = $row;
-			}
 		}
 
 		return $medida;
@@ -96,7 +105,7 @@ class Medida
  		elseif( $this->respuesta == 'warning')
  			$this->tiempo = 5;
  		elseif( $this->respuesta == 'danger')
- 			$this->tiempo = 7;
+ 			$this->tiempo = 6;
 
  		return $respuesta = array( 
  				'respuesta' => $this->respuesta,
