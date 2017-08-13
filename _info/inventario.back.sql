@@ -168,3 +168,35 @@ SELECT
 	fechaReajuste
 FROM lstReajusteProducto;
 
+SELECT
+	idCierreDiario,
+    fechaCierre,
+    comentario,
+    usuario,
+    fechaRegistroCierre
+FROM vCierreDiario;
+
+
+
+SELECT 
+	idCierreDiario,
+    fechaCierre,
+    comentario,
+    usuario,
+    fechaRegistroCierre,
+    cantidadCierre,
+	idProducto,
+	producto,
+	idMedida,
+	medida,
+	idTipoProducto,
+	tipoProducto,
+	perecedero,
+	cantidadMinima,
+	cantidadMaxima,
+	disponibilidad,
+	importante,
+	usuarioProducto,
+	fechaProducto
+FROM vCierreDiarioProducto;
+
