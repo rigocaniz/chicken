@@ -46,73 +46,110 @@
 							<h3 class="panel-title">INVENTARIO DE PRODUCTOS</h3>
 						</div>
 						<div class="panel-body">
+							<div class="text-right">
+								<div class="btn-group btn-group-sm" role="group">
+									<button type="button" class="btn btn-default" ng-click="groupBy='sinFiltro'">
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='sinFiltro', 'glyphicon-unchecked': groupBy!='sinFiltro'}"></span> Sin Filtro
+								  	</button>
+								  	<button type="button" class="btn btn-default" ng-click="groupBy='tipoProducto'">
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='tipoProducto', 'glyphicon-unchecked': groupBy!='tipoProducto'}"></span> Tipo de Producto
+								  	</button>
+								  	<button type="button" class="btn btn-default" ng-click="groupBy='medida'">
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='medida', 'glyphicon-unchecked': groupBy!='medida'}"></span> Medidas
+								  	</button>
+								</div>
+							</div>
 
 							<button class="btn btn-sm btn-warning">
 								<span class="glyphicon glyphicon-pencil"></span> Editar Disponibilidad
 							</button>
-							<!-- TABLA -->
-							<table class="table table-hover">
-								<thead>
-									<tr>
-										<th class="text-center">No.</th>
-										<th class="col-sm-3 text-center">Producto</th>
-										<th class="col-sm-2 text-center">Tipo Producto</th>
-										<th class="col-sm-1 text-center">Medida</th>
-										<th class="col-sm-1 text-center">Perecedero</th>
-										<th class="col-sm-2 text-center">Disponibilidad</th>
-										<th class="text-center">Reajustar Cantidad</th>
-										<th class="text-center">Editar</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="inv in lstInventario" ng-class="{'danger': !inv.disponibilidad, 'warning':  inv.disponibilidad <= (inv.cantidadMinima + 5) }">
-										<td class="text-right">
-											{{ inv.idProducto }}
-										</td>
-										<td>
-											{{ inv.producto }}
-										</td>
-										<td class="text-center">
-											{{ inv.tipoProducto }}
-										</td>
-										<td class="text-center">
-											{{ inv.medida }}
-										</td>
-										<td class="text-center">
-											{{ inv.esPerecedero }}
-										</td>
-										<td class="text-center">
-											{{ inv.disponibilidad }}
-										</td>
-										<td class="text-center">
-											<button type="button" ng-click="ingresarReajuste( inv.idProducto, inv.producto, inv.disponibilidad )" class="btn btn-primary btn-sm">
-												<span class="glyphicon glyphicon-plus"></span>
-											</button>
-										</td>
-										<td class="text-center">
-											<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( inv.idProducto, 'update', producto )">
-												<span class="glyphicon glyphicon-pencil"></span>
-											</button>
-											<span class="label label-warning" ng-show="inv.disponibilidad==inv.cantidadMninima">Pronto a agotarse</span>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-							<!-- PAGINADOR -->
-							<nav>
-								<ul class="pagination" ng-show="lstPaginacion.length > 1">
-									<li ng-class="{disabled: filter.pagina == 1 }">
-										<a href="" ng-click="cargarPaginacion( 1 );" aria-label="Previous">
-											<span aria-hidden="true">&laquo;</span>
-										</a>
-									</li>
-									<li ng-repeat="(ixPagina, pagina) in lstPaginacion" ng-class="{'active': filter.pagina == pagina.noPagina}">
-										<a href="" ng-click="cargarPaginacion( pagina.noPagina );">
-											{{ pagina.noPagina }}
-										</a>
-									</li>
-								</ul>
-							</nav>
+
+
+
+							<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+								<div class="panel panel-default" ng-repeat="(ixInventario, inventario) in lstInventario">
+									<div class="panel-heading" role="tab">
+										<div class="pull-right">
+											<span class="badge"> TOTAL {{ inventario.totalProductos }} </span>	
+										</div>
+										<h4 class="panel-title">
+											<span ng-show="groupBy=='sinFiltro'">{{ inventario.listado }}</span>
+											<span ng-show="groupBy=='tipoProducto'">{{ inventario.tipoProducto }}</span>
+											<span ng-show="groupBy=='medida'">{{ inventario.medida }}</span>
+										</h4>
+									</div>
+									<div class="panel-body">
+										<div class="text-right">
+											<div class="btn-group btn-group-xs" role="group">
+												<button type="button" class="btn btn-sm btn-success">
+													Stock Alto
+													<span class="badge">
+														{{ inventario.totalStockAlto }}
+													</span>
+												</button>										
+												<button type="button" class="btn btn-sm btn-warning">
+													Alerta Stock
+													<span class="badge">
+														{{ inventario.totalAlertas }}
+													</span>
+												</button>
+												<button type="button" class="btn btn-sm btn-danger">
+													Stock Vacio
+													<span class="badge">{{ inventario.totalStockVacio }}</span>
+												</button>
+											</div>
+										</div>
+										<!-- TABLA -->
+										<table class="table table-hover">
+											<thead>
+												<tr>
+													<th class="text-center">No.</th>
+													<th class="col-sm-3 text-center">Producto</th>
+													<th class="col-sm-2 text-center">Tipo Producto</th>
+													<th class="col-sm-1 text-center">Medida</th>
+													<th class="col-sm-1 text-center">Perecedero</th>
+													<th class="col-sm-2 text-center">Disponible</th>
+													<th class="text-center">Reajustar Cantidad</th>
+													<th class="text-center">Editar</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-repeat="inv in inventario.lstProductos" ng-class="{'danger border-danger': !inv.disponibilidad, 'warning border-warning':  inv.disponibilidad <= (inv.cantidadMinima + 5) }">
+													<td class="text-right">
+														{{ $index + 1 }}
+													</td>
+													<td>
+														{{ inv.producto }}
+													</td>
+													<td class="text-center">
+														{{ inv.tipoProducto }}
+													</td>
+													<td class="text-center">
+														{{ inv.medida }}
+													</td>
+													<td class="text-center">
+														{{ inv.esPerecedero }}
+													</td>
+													<td class="text-center">
+														{{ inv.disponibilidad }}
+													</td>
+													<td class="text-center">
+														<button type="button" ng-click="ingresarReajuste( inv.idProducto, inv.producto, inv.disponibilidad )" class="btn btn-primary btn-sm">
+															<span class="glyphicon glyphicon-plus"></span>
+														</button>
+													</td>
+													<td class="text-center">
+														<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( inv.idProducto, 'update', producto )">
+															<span class="glyphicon glyphicon-pencil"></span>
+														</button>
+														<span class="label label-warning" ng-show="inv.disponibilidad==inv.cantidadMninima">Pronto a agotarse</span>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

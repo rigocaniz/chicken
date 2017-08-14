@@ -231,7 +231,7 @@ switch ( $data->opcion )
 
 	case 'lstProductos':				// CONSULTAR LISTA DE PRODUCTOS
 		$producto = new Producto();
-		echo json_encode( $producto->lstProductos( $data->filter ) );
+		echo json_encode( $producto->lstProductos( $data->groupBy ) );
 		break;
 
 	case 'consultaTipoProducto':		// ACCION PRODUCTO: INSERT / UPDATE

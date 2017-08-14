@@ -142,6 +142,86 @@ BEGIN
 END$$
 
 
+/* --- CIERRE INVENTARIO --- */
+CREATE PROCEDURE consultaCierreDiario( _action VARCHAR(20), _idCierreDiario INT, _fechaCierre DATE, _comentario TEXT )
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
+
+	IF !sesionValida() THEN # SI LA SESION ES INVALIDA
+		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
+
+	ELSEIF _action = 'insert' THEN
+		INSERT INTO cierreDiario ( fechaCierre, comentario, usuario, fechaRegistro) 
+			VALUES ( _fechaCierre, _comentario, @usuario, NOW() );
+		
+		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
+
+	ELSEIF _action = 'update' THEN
+		UPDATE cierreDiario SET 
+			fechaCierre = _fechaCierre,
+			comentario  = _comentario
+		WHERE idCierreDiario = _idCierreDiario;
+		
+		SELECT 'success' AS 'respuesta', 'Actualizado correctamente' AS 'mensaje';
+
+	ELSE
+		SELECT 'danger' AS 'respuesta', 'Acción no válida' AS 'mensaje';
+	END IF;
+END$$
+
+
+CREATE PROCEDURE consultaCierreDiarioProducto( _action VARCHAR(20), _idCierreDiario INT, _idProducto INT, _cantidad DOUBLE( 10, 2 ), _actualizarDisponibilidad BOOLEAN )
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
+
+	IF !sesionValida() THEN # SI LA SESION ES INVALIDA
+		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
+
+	ELSEIF _action = 'insert' THEN
+		INSERT INTO cierreDiarioProducto ( idCierreDiario, idProducto, cantidad ) 
+			VALUES ( _idCierreDiario, _idProducto, _cantidad );
+
+		# SI ACTUALIZA DISPONIBILIDAD DE PRODUCTO
+		IF _actualizarDisponibilidad THEN
+			UPDATE producto SET disponibilidad = _cantidad
+				WHERE idProducto = _idProducto;
+		END IF;
+		
+		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
+
+	ELSE
+		SELECT 'danger' AS 'respuesta', 'Acción no válida' AS 'mensaje';
+	END IF;
+END$$
+
+
+CREATE VIEW vCierreDiario AS
+SELECT 
+	idCierreDiario,
+    fechaCierre,
+    comentario,
+    usuario,
+    fechaRegistro AS 'fechaRegistroCierre'
+FROM cierreDiario;
+
+
+CREATE VIEW vCierreDiarioProducto AS
+SELECT 
+	cd.idCierreDiario,
+    cd.fechaCierre,
+    cd.comentario,
+    cd.usuario,
+    cd.fechaRegistroCierre,
+    cdp.cantidad AS 'cantidadCierre',
+	p.*
+FROM vCierreDiario AS cd
+	JOIN cierreDiarioProducto AS cdp
+		ON cd.idCierreDiario = cdp.idCierreDiario
+	JOIN lstProducto AS p
+		ON cdp.idProducto = p.idProducto;
+
 
 
 CREATE VIEW lstProducto AS

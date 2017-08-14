@@ -33,13 +33,13 @@ class Cliente
  		endif; 		
 
  		// SET
- 		$cliente->nit           = strlen( (int)$cliente->nit ) > 0 		? (string)$cliente->nit 		: NULL;
- 		$cliente->nombre        = strlen( $cliente->nombre ) > 0 		? (string)$cliente->nombre 		: NULL;
- 		$cliente->cui           = strlen( $cliente->cui ) > 0 			? (double)$cliente->cui 		: NULL;
- 		$cliente->correo        = strlen( $cliente->correo ) > 0 		? (string)$cliente->correo 		: NULL;
- 		$cliente->telefono      = strlen( $cliente->telefono ) > 0 		? (int)$cliente->telefono 		: NULL;
- 		$cliente->direccion     = strlen( $cliente->direccion ) > 0 	? (string)$cliente->direccion 	: NULL;
- 		$cliente->idTipoCliente = (int)$cliente->idTipoCliente > 0 		? (int)$cliente->idTipoCliente 	: NULL;
+ 		$cliente->nit           = isset( $cliente->nit )  			? (string)$cliente->nit 		: NULL;
+ 		$cliente->nombre        = isset( $cliente->nombre ) 		? (string)$cliente->nombre 		: NULL;
+ 		$cliente->cui           = isset( $cliente->cui ) > 			? (double)$cliente->cui 		: NULL;
+ 		$cliente->correo        = isset( $cliente->correo ) 		? (string)$cliente->correo 		: NULL;
+ 		$cliente->telefono      = isset( $cliente->telefono ) 		? (int)$cliente->telefono 		: NULL;
+ 		$cliente->direccion     = isset( $cliente->direccion ) 		? (string)$cliente->direccion 	: NULL;
+ 		$cliente->idTipoCliente = isset( $cliente->idTipoCliente ) 	? (int)$cliente->idTipoCliente 	: NULL;
 
  		// VALIDAR
 		$nit           = $validar->validarNit( $cliente->nit, NULL, !esNulo( $cliente->nit ) );

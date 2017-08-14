@@ -2,12 +2,18 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 	// LISTA EL INVENTARIO GENERAL DE PRODUCTOS
 	$scope.lstInventario  = [];
-	$scope.inventarioMenu = 'compras';
+	$scope.inventarioMenu = 'inventario';
 	$scope.accion         = 'insert';
+	$scope.groupBy          = 'sinFiltro';
 
 	$scope.$watch('inventarioMenu', function( _old, _new){
 		console.log( _old, _new );
 		if( $scope.inventarioMenu == 'inventario' )
+			$scope.inventario();
+	});
+
+	$scope.$watch('groupBy', function( _old, _new ){
+		if( _old != _new && $scope.inventarioMenu == 'inventario' )
 			$scope.inventario();
 	});
 
@@ -24,8 +30,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	};
 
 
-	$scope.subTotalQuetzales = function(){
-
+	$scope.subTotalQuetzales = function()
+	{
 		var subTotalQuetzales = 0;
 		for (var i = 0; i < $scope.compras.lstProductos.length; i++) {
 			subTotalQuetzales += ($scope.compras.lstProductos[ i ].cantidad * parseFloat( $scope.compras.lstProductos[ i ].precioUnitario ) );
@@ -51,7 +57,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		lstProductos : []
 	};
 	
-	//$scope.compras.lstProductos = [];
+	
 	$scope.idxProducto = -1;
 	$scope.seleccionKeyProducto = function( key ){
 //		console.log( key, ":::", $scope.idxProducto );
@@ -238,24 +244,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		})
 	};
 
-	
-	// LISTA DE PAGINACION
-	$scope.lstPaginacion = [];
-	$scope.generarPaginacion = function( totalPaginas ){
-		$scope.lstPaginacion = [];
-		for (var i = 1; i <= totalPaginas; i++) {
-			$scope.lstPaginacion.push({
-				noPagina : i
-			});
-		}
-	};
-
-
-	// CARGAR PAGINACION
-	$scope.cargarPaginacion = function( pagina ){
-		$scope.filter.pagina = pagina;
-		$scope.inventario();
-	};
 
 	$scope.filter = {
 		pagina: 1,
@@ -412,12 +400,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 	$scope.inventario = function(){
 		$http.post('consultas.php',{
-			opcion : 'lstProductos',
-			filter : $scope.filter
+			opcion  : 'lstProductos',
+			groupBy : $scope.groupBy
 		}).success(function(data){
 			console.log( "::::", data );
-			$scope.lstInventario = data.lstProductos;
-			$scope.generarPaginacion( data.totalPaginas );
+			$scope.lstInventario = data;
 		})
 	};
 

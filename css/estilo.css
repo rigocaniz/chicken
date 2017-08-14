@@ -370,3 +370,15 @@ legend.legend2{
     -moz-box-shadow: 0px 0px 20px 3px rgba(0, 0, 0, 0.17);
     -webkit-box-shadow: 0px 0px 20px 3px rgba(0, 0, 0, 0.17);
 }
+
+.border-success{
+    border-left: 3px solid #4caf50;
+}
+
+.border-warning{
+    border-left: 3px solid #ff9800;
+}
+
+.border-danger{
+    border-left: 3px solid #da0017;
+}

@@ -54,7 +54,7 @@ else
     $extension              = $info->getExtension();
     $nombreArchivo          = uniqid() . '_' . $id . "." . $extension;
     list( $width, $height ) = getimagesize( $imagenTemporal );
-    $imagenNueva            = imagecreatetruecolor( 300, 300 );
+    $imagenNueva            = imagecreatetruecolor( 250, 250 );
     $thumbnail              = $carpeta.$nombreArchivo;
 
     switch( $tipoArchivo ){
@@ -72,7 +72,7 @@ else
             break;
      }
 
-    @imagecopyresized( $imagenNueva, $source, 0, 0, 0, 0, 300, 300, $width, $height );
+    @imagecopyresized( $imagenNueva, $source, 0, 0, 0, 0, 250, 250, $width, $height );
 
     switch( $tipoArchivo ){
         case 'image/png':

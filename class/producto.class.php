@@ -377,19 +377,9 @@ class Producto
 	}
 
 
-	function lstProductos( $filter )
+	function lstProductos( $groupBy )
 	{
-
-		$pagina = $filter->pagina > 0 		? (int)$filter->pagina 	: 1;
-		$limite = $filter->limite > 0 		? (int)$filter->limite 	: 25;
-		$orden  = strlen( $filter->orden ) 	? $filter->orden 		: 'ASC';
-
-		$productos = (object)array(
-				'totalPaginas' => 0,
-				'lstProductos' => array()
-			);
-
-		$inicio = ($pagina - 1) * $limite;
+		$lstProductos = array();
 
 		$sql = "SELECT 
 				    idProducto,
@@ -407,35 +397,134 @@ class Producto
 				    DATE_FORMAT( fechaProducto, '%d/%m/%Y %h:%i %p' ) AS fechaProducto
 				FROM
 				    lstProducto
-				ORDER BY idProducto $orden LIMIT $inicio, $limite;";
+				ORDER BY idProducto;";
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
-				$producto = array(
-					 	'idProducto'      => (int)$row->idProducto,
-					 	'producto'        => $row->producto,
-					 	'idMedida'        => (int)$row->idMedida,
-					 	'medida'          => $row->medida,
-					 	'idTipoProducto'  => (int)$row->idTipoProducto,
-					 	'tipoProducto'    => $row->tipoProducto,
-					 	'perecedero'      => $row->perecedero,
-					 	'esPerecedero'    => (int)$row->perecedero ? 'SI' : 'NO',
-					 	'cantidadMinima'  => (double)$row->cantidadMinima,
-					 	'cantidadMaxima'  => (double)$row->cantidadMaxima,
-					 	'disponibilidad'  => (double)$row->disponibilidad,
-					 	'importante'      => $row->importante,
-					 	'esImportante'    => (int)$row->importante ? 'SI' : 'NO',
-					 	'usuarioProducto' => $row->usuarioProducto,
-					 	'fechaProducto'   => $row->fechaProducto
-					);
 
-				$productos->lstProductos[] = $producto;
+				$iMedida        = -1;
+				$iTipoProducto  = -1;
+				$indexProducto = -1;
+				$iProducto      = -1;
+
+				// VER TIPO DE AGRUPACIÓN
+				if( $groupBy == 'sinFiltro' ): 		// SIN FILTRO
+					foreach ($lstProductos AS $ixProducto => $indexProd) {
+						if( $indexProd['indexProd'] == 1 ){
+							$indexProducto = $ixProducto;
+							break;
+						}
+					}
+
+				elseif( $groupBy == 'tipoProducto' ): 	// TIPOPRODUCTO
+					foreach ( $lstProductos AS $ixTipoProducto => $tipoProducto ) {
+						if( $tipoProducto[ 'idTipoProducto' ] == $row->idTipoProducto ){
+							$iTipoProducto = $ixTipoProducto;
+							break;
+						}
+					}
+
+				elseif( $groupBy == 'medida' ):	// MEDIDAS
+					foreach ($lstProductos AS $ixMedida => $medida) {
+						if( $medida['idMedida'] == $row->idMedida ){
+							$iMedida = $ixMedida;
+							break;
+						}
+					}
+
+				endif;
+
+
+				// SI NO EXISTE LO AGREGA
+				if( $iTipoProducto == -1 AND $indexProducto == -1 AND $iMedida == -1 ){
+
+					if( $groupBy == 'sinFiltro' ):			// SIN FILTRO
+						$indexProducto = count( $lstProductos );
+
+					elseif( $groupBy == 'tipoProducto' ):		// TIPOPRODUCTO
+						$iTipoProducto = count( $lstProductos );
+
+					elseif( $groupBy == 'medida' ):			// CLASIFICACION
+						$iMedida = count( $lstProductos );
+
+					endif;
+
+					$lstProductos[] = array(
+						'indexProd'       => 1,
+						'listado'         => 'LISTADO DE PRODUCTOS',
+						'idTipoProducto'  => (int) $row->idTipoProducto,
+						'tipoProducto'    => $row->tipoProducto,
+						'idMedida'        => (int) $row->idMedida,
+						'medida'          => strtoupper( $row->medida ),
+						'totalProductos'  => 0,
+						'totalStockVacio' => 0,
+						'totalAlertas'    => 0,
+						'totalStockAlto'  => 0,
+						'lstProductos'    => array()
+					);
+				}
+
+
+				// SI NO EXISTE EL DONANTE
+					if( $groupBy == 'sinFiltro' ):			// SIN FILTRO
+						$ixSolicitud = $indexProducto;
+
+					elseif( $groupBy == 'tipoProducto' ):			// TIPO PRODUCTO
+						$ixSolicitud = $iTipoProducto;
+
+					elseif( $groupBy == 'medida' ):		// CLASIFICACION
+						$ixSolicitud = $iMedida;
+					endif;
+
+					$alertaStock = 0;
+					// GENERAR ALERTA STOCK BAJO / ALTO / VACIO
+					if( $row->disponibilidad < $row->cantidadMinima ):
+						$alertaStock = 1;
+					
+					elseif( $row->disponibilidad <= $row->cantidadMinima + 15 ):
+						$alertaStock = 2;
+					
+					elseif( $row->disponibilidad + 50 >= $row->cantidadMaxima ):
+						$alertaStock = 3;
+					
+					endif;
+
+					$producto = array(
+						 	'idProducto'      => (int)$row->idProducto,
+						 	'producto'        => $row->producto,
+						 	'idMedida'        => (int)$row->idMedida,
+						 	'medida'          => $row->medida,
+						 	'idTipoProducto'  => (int)$row->idTipoProducto,
+						 	'tipoProducto'    => $row->tipoProducto,
+						 	'perecedero'      => $row->perecedero,
+						 	'esPerecedero'    => (int)$row->perecedero ? 'SI' : 'NO',
+						 	'cantidadMinima'  => (double)$row->cantidadMinima,
+						 	'cantidadMaxima'  => (double)$row->cantidadMaxima,
+						 	'disponibilidad'  => (double)$row->disponibilidad,
+						 	'importante'      => $row->importante,
+						 	'esImportante'    => (int)$row->importante ? 'SI' : 'NO',
+						 	'usuarioProducto' => $row->usuarioProducto,
+						 	'fechaProducto'   => $row->fechaProducto,
+						 	'alertaStock'	  => $alertaStock
+						);
+
+					$lstProductos[ $ixSolicitud ][ 'lstProductos' ][] = $producto;
+
+					if( $alertaStock == 1 )
+						$lstProductos[ $ixSolicitud ]['totalStockVacio'] ++;
+
+					if( $alertaStock == 2 )
+						$lstProductos[ $ixSolicitud ]['totalAlertas'] ++;
+
+					if( $alertaStock == 3 )
+						$lstProductos[ $ixSolicitud ]['totalStockAlto'] ++;
+
+
+					$lstProductos[ $ixSolicitud ]['totalProductos'] ++;
 			}
 		}
-		
-		$productos->totalPaginas = $this->getTotalProductos( $limite );
 
-		return $productos;
+		return $lstProductos;
 	}
 
 
