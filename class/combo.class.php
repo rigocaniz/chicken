@@ -67,7 +67,8 @@ class Combo
 					    imagen,
 					    descripcion,
 					    idEstadoMenu,
-					    estadoMenu
+					    estadoMenu,
+					    codigoCombo
 					FROM
 					    lstCombo ORDER BY idCombo $orden LIMIT $inicio, $limite;";
 		
@@ -79,7 +80,8 @@ class Combo
 						'imagen'       => $row->imagen == '' ? 'img-menu/notFound.png' : $row->imagen,
 						'descripcion'  => $row->descripcion,
 						'idEstadoMenu' => (int)$row->idEstadoMenu,
-						'estadoMenu'   => $row->estadoMenu
+						'estadoMenu'   => $row->estadoMenu,
+						'codigo'       => $row->codigoCombo
 				);
 
 				$combos->lstCombos[] = $combo;
@@ -448,7 +450,7 @@ class Combo
 	 			// INICIALIZAR TRANSACCION
 	 			$this->con->query( 'START TRANSACTION' );
 
-		 		$sql = "CALL consultaCombo( '{$accion}', {$idCombo}, '{$combo}', {$imagen}, '{$descripcion}', {$idEstadoMenu} );";
+		 		$sql = "CALL consultaCombo( '{$accion}', {$idCombo}, '{$combo}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$codigo} );";
 
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 			$this->siguienteResultado();

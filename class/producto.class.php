@@ -20,6 +20,128 @@ class Producto
 	}
 
 
+	private function siguienteResultado()
+ 	{
+ 		if( $this->con->more_results() )
+ 			$this->con->next_result();
+ 	}
+
+
+//	CREATE PROCEDURE consultaCierreDiario( _action VARCHAR(20), _idCierreDiario INT, _fechaCierre DATE, _comentario TEXT )
+	function consultaCierreDiario( $accion, $data )
+	{
+ 		if( count( $data->lstProductos ) ){
+
+		 	$action         = "NULL";
+		 	$idCierreDiario = "NULL";
+		 	$fechaCierre    = "NULL";
+		 	$comentario	    = "NULL";
+
+		 	$data->fechaCierre = isset( $data->fechaCierre ) 	? $data->fechaCierre 			: NULL;
+		 	$data->comentario  = isset( $data->comentario ) 	? (string)$data->comentario 	: NULL;
+
+		 	$validar = new Validar();
+		 	if( $accion == 'update' )
+		 	{
+		 		$data->idCierreDiario = isset( $data->idCierreDiario ) ? $data->idCierreDiario : NULL;
+		 		$idCierreDiario = $validar->validarEntero( $data->idCierreDiario, NULL, TRUE, 'El ID del Cierre Diario no es válido' );
+		 	}
+
+		 	$fechaCierre = $data->fechaCierre;
+		 	$comentario  = $this->con->real_escape_string( $data->comentario );
+
+		 	// OBTENER RESULTADO DE VALIDACIONES
+	 		if( $validar->getIsError() ):
+		 		$this->respuesta = 'danger';
+		 		$this->mensaje   = $validar->getMsj();
+
+	 		else:
+
+	 			// INICIALIZAR TRANSACCIÓN
+				$this->con->query( "START TRANSACTION" );
+
+				$sql = "CALL consultaCierreDiario( '{$accion}', {$idCierreDiario}, '{$fechaCierre}', '{$comentario}' );";
+
+		 		if( $rs = $this->con->query( $sql ) ){
+		 			
+		 			$this->siguienteResultado();
+		 			if( $row = $rs->fetch_object() ){
+		 				$this->respuesta = $row->respuesta;
+		 				$this->mensaje   = $row->mensaje;
+
+		 				if( ( $accion == 'insert' OR $accion == 'update' ) AND $this->respuesta == 'success' ){
+		 					if( $accion == 'insert' )
+		 					 	$idCierreDiario = $this->data = (int)$row->id;
+
+		 					// REALIZAR CIERRA POR PRODUCTO
+		 					if( $this->respuesta <> 'danger' )
+		 						$this->consultaCierreDiarioProducto( $accion, $idCierreDiario, $data->lstProductos );
+		 				}
+		 			}
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la instrucción de  Cierre.';
+		 		}
+
+
+		 		if( $this->respuesta == 'success' )
+		 			$this->con->query( "COMMIT" );
+		 		else
+		 			$this->con->query( "ROLLBACK" );
+
+	 		endif;
+
+ 		}
+ 		else{
+ 			$this->respuesta = 'info';
+		 	$this->mensaje   = 'No hay ingresado productos en la lista de cierre';
+ 		}
+
+ 		return $this->getRespuesta();
+	}
+
+
+	// consultaCierreDiarioProducto
+	function consultaCierreDiarioProducto( $accion, $idCierreDiario, $lstProductos )
+	{
+		if( count( $lstProductos ) ) {
+
+			foreach ( $lstProductos AS $producto ) {
+
+				$idProducto               = (int)$producto->idProducto;
+				$cantidad                 = (double)$producto->disponibilidad;
+				$actualizarDisponibilidad = 1; # (int)$data->actualizarDisponibilidad;
+
+		 		// REALIZAR CONSULTA
+				$sql = "CALL consultaCierreDiarioProducto( '{$accion}', {$idCierreDiario}, {$idProducto}, {$cantidad}, {$actualizarDisponibilidad} );";
+
+				//echo $sql;
+		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+		 			$this->siguienteResultado();
+
+	 				$this->respuesta = $row->respuesta;
+	 				$this->mensaje   = $row->mensaje;
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+		 		}
+
+		 		// DETENER SI HAY ERROR
+		 		if( $this->respuesta == 'danger' )
+		 			break;
+			}
+		}
+		else {
+ 			$this->respuesta = 'warning';
+		 	$this->mensaje   = 'No hay productos ingresados en la lista de ciere';
+ 		}
+
+ 		return $this->getRespuesta();
+	}
+
+
 	// GUARDAR // ACTUALIZAR => INGRESO
 	function consultaReajusteInventario( $accion, $data )
 	{
@@ -31,12 +153,12 @@ class Producto
  		$observacion = 'NULL';
 
 		// SETEO VARIABLES GENERALES
- 		$data->idProducto  = (int)$data->idProducto > 0  		? (int)$data->idProducto 		: NULL;
- 		$data->cantidad    = (double)$data->cantidad 			? (double)$data->cantidad 		: NULL;
- 		$data->observacion = strlen( $data->observacion ) > 0 	? (string)$data->observacion 	: NULL;
+ 		$data->idProducto  = isset( $data->idProducto )  	? (int)$data->idProducto 		: NULL;
+ 		$data->cantidad    = isset( $data->cantidad )		? (double)$data->cantidad 		: NULL;
+ 		$data->observacion = isset( $data->observacion )	? (string)$data->observacion 	: NULL;
 
  		// VALIDACIONES
-		$idProducto   = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido, verifique.' );
+		$idProducto   = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido' );
 		$cantidad     = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 50000, 'la cantidad' );
 		$observacion  = $this->con->real_escape_string( $validar->validarTexto( $data->observacion, NULL, TRUE, 20, 1500, 'la observación' ) );
 		$esIncremento = (int)$data->esIncremento;
@@ -49,14 +171,14 @@ class Producto
  		else:
 			$sql = "CALL consultaReajusteInventario( '{$accion}', {$idProducto}, {$cantidad}, '{$observacion}', {$esIncremento} );";
 
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
-	 			if( $row = $rs->fetch_object() ){
-	 				$this->respuesta = $row->respuesta;
-	 				$this->mensaje   = $row->mensaje;
-	 				if( $accion == 'insert' AND $this->respuesta == 'success' )
-	 					$this->data = (int)$row->id;
-	 			}
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+	 			$this->siguienteResultado();
+	 			
+ 				$this->respuesta = $row->respuesta;
+ 				$this->mensaje   = $row->mensaje;
+
+ 				if( $accion == 'insert' AND $this->respuesta == 'success' )
+ 					$this->data = (int)$row->id;
 	 		}
 	 		else{
 	 			$this->respuesta = 'danger';
@@ -93,7 +215,6 @@ class Producto
 
 	function guardarLstProductoIngreso( $accion, $data )
 	{
-		//var_dump( $data );
 		if( count( $data ) )
 		{
 			// INICIALIZAR TRANSACCION
@@ -128,20 +249,18 @@ class Producto
 
 		$validar = new Validar();
 
-		//var_dump( $data );
-
 		// INICIALIZACIÓN VAR
  		$idIngreso  = 'NULL';
  		$cantidad   = 'NULL';
  		$idProducto = 'NULL';
 
 		// SETEO VARIABLES GENERALES
- 		$data->idProducto = (int)$data->idProducto > 0 	? (int)$data->idProducto  : NULL;
- 		$data->cantidad   = (double)$data->cantidad > 0 ? (double)$data->cantidad : NULL;
+ 		$data->idProducto = isset( $data->idProducto ) 	? (int)$data->idProducto  : NULL;
+ 		$data->cantidad   = isset( $data->cantidad ) 	? (double)$data->cantidad : NULL;
 
  		// VALIDACIONES
  		if( $accion == 'delete' ):
- 			$data->idIngreso  = (int)$data->idIngreso > 0 AND !esNulo( $data->idIngreso ) ? (int)$data->idIngreso : NULL;
+ 			$data->idIngreso = isset( $data->idIngreso ) ? (int)$data->idIngreso : NULL;
 			$idIngreso = $validar->validarEntero( $data->idIngreso, NULL, TRUE, 'El ID de Ingreso no es válido.' );
  		endif;
 
@@ -156,14 +275,13 @@ class Producto
  		else:
 			$sql = "CALL consultaIngreso( '{$accion}', {$idIngreso}, {$cantidad}, {$idProducto} );";
 
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
-	 			if( $row = $rs->fetch_object() ){
-	 				$this->respuesta = $row->respuesta;
-	 				$this->mensaje   = $row->mensaje;
-	 				if( $accion == 'insert' AND $this->respuesta == 'success' )
-	 					$this->data = (int)$row->id;
-	 			}
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+	 			$this->siguienteResultado();
+
+ 				$this->respuesta = $row->respuesta;
+ 				$this->mensaje   = $row->mensaje;
+ 				if( $accion == 'insert' AND $this->respuesta == 'success' )
+ 					$this->data = (int)$row->id;
 	 		}
 	 		else{
 	 			$this->respuesta = 'danger';
@@ -182,12 +300,12 @@ class Producto
 		$validar = new Validar();
 
 		// SETEO VARIABLES GENERALES
- 		$data->tipoProducto = strlen( $data->tipoProducto ) > 0 ? (string)$data->tipoProducto : NULL;
+ 		$data->tipoProducto = isset( $data->tipoProducto ) ? (string)$data->tipoProducto : NULL;
 
  		// VALIDACIONES
  		$idTipoProducto = 'NULL';
  		if( $accion == 'update' ):
- 			$data->idTipoProducto = (int)$data->idTipoProducto > 0 ? (int)$data->idTipoProducto : NULL;
+ 			$data->idTipoProducto = isset( $data->idTipoProducto ) ? (int)$data->idTipoProducto : NULL;
  			$idTipoProducto       = $validar->validarEntero( $data->idTipoProducto, NULL, TRUE, 'El ID del Tipo de Producto no es válido' );
  		endif;
 
@@ -201,14 +319,14 @@ class Producto
  		else:
 	 		$sql = "CALL consultaTipoProducto( '{$accion}', {$idTipoProducto}, '{$tipoProducto}' );";
 
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
-	 			if( $row = $rs->fetch_object() ){
-	 				$this->respuesta = $row->respuesta;
-	 				$this->mensaje   = $row->mensaje;
-	 				if( $accion == 'insert' AND $this->respuesta == 'success' )
-	 					$this->data = (int)$row->id;
-	 			}
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+	 			$this->siguienteResultado();
+
+ 				$this->respuesta = $row->respuesta;
+ 				$this->mensaje   = $row->mensaje;
+ 				if( $accion == 'insert' AND $this->respuesta == 'success' )
+ 					$this->data = (int)$row->id;
+ 			
 	 		}
 	 		else{
 	 			$this->respuesta = 'danger';
@@ -235,12 +353,12 @@ class Producto
  		$disponibilidad = NULL;
 
 		// SETEO VARIABLES GENERALES
- 		$data->producto       = strlen( $data->producto ) > 0 	? (string)$data->producto 		: NULL;
- 		$data->idTipoProducto = (int)$data->idTipoProducto > 0 	? (int)$data->idTipoProducto 	: NULL;
- 		$data->idMedida       = (int)$data->idMedida > 0 		? (int)$data->idMedida 			: NULL;
- 		$data->cantidadMinima = (double)$data->cantidadMinima 	? (double)$data->cantidadMinima : NULL;
- 		$data->cantidadMaxima = (double)$data->cantidadMaxima 	? (double)$data->cantidadMaxima : NULL;
- 		$data->disponibilidad = (double)$data->disponibilidad 	? (double)$data->disponibilidad : NULL;
+ 		$data->producto       = isset( $data->producto ) 	 	? (string)$data->producto 		: NULL;
+ 		$data->idTipoProducto = isset( $data->idTipoProducto ) 	? (int)$data->idTipoProducto 	: NULL;
+ 		$data->idMedida       = isset( $data->idMedida )		? (int)$data->idMedida 			: NULL;
+ 		$data->cantidadMinima = isset( $data->cantidadMinima ) 	? (double)$data->cantidadMinima : NULL;
+ 		$data->cantidadMaxima = isset( $data->cantidadMaxima )	? (double)$data->cantidadMaxima : NULL;
+ 		$data->disponibilidad = isset( $data->disponibilidad )	? (double)$data->disponibilidad : NULL;
  		$perecedero           = (int)$data->perecedero;
  		$importante           = (int)$data->importante;
 
@@ -248,7 +366,7 @@ class Producto
  		$idProducto = 'NULL';
  		if( $accion == 'update' ):
  			$disponibilidad   = "NULL";
- 			$data->idProducto = (int)$data->idProducto > 0 ? (int)$data->idProducto : NULL;
+ 			$data->idProducto = isset( $data->idProducto ) ? (int)$data->idProducto : NULL;
  			$idProducto       = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido, verifique.' );
  		endif;
 
@@ -272,14 +390,13 @@ class Producto
  		else:
 	 		$sql = "CALL consultaProducto( '{$accion}', {$idProducto}, '{$producto}', {$idTipoProducto}, {$idMedida}, {$perecedero}, {$cantidadMinima}, {$cantidadMaxima}, {$disponibilidad}, {$importante} );";
 
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
-	 			if( $row = $rs->fetch_object() ){
-	 				$this->respuesta = $row->respuesta;
-	 				$this->mensaje   = $row->mensaje;
-	 				if( $accion == 'insert' AND $this->respuesta == 'success' )
-	 					$this->data = (int)$row->id;
-	 			}
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){	 			
+	 			$this->siguienteResultado();
+
+ 				$this->respuesta = $row->respuesta;
+ 				$this->mensaje   = $row->mensaje;
+ 				if( $accion == 'insert' AND $this->respuesta == 'success' )
+ 					$this->data = (int)$row->id;
 	 		}
 	 		else{
 	 			$this->respuesta = 'danger';
@@ -376,6 +493,45 @@ class Producto
 		return $lstProductos;
 	}
 
+	// BUSCAR PRODUCTO(S)
+	function getListaProductos()
+	{
+		$lstProductos = array();
+
+		$sql = "SELECT 
+		    idProducto,
+		    producto,
+		    idMedida,
+		    medida,
+		    idTipoProducto,
+		    tipoProducto,
+		    perecedero,
+		    cantidadMinima,
+		    cantidadMaxima,
+		    disponibilidad,
+		    importante
+		FROM
+		    lstProducto;";
+		
+		if( $rs = $this->con->query( $sql ) ){
+			while( $row = $rs->fetch_object() ){
+					$producto = array(
+					 	'idProducto'     => (int)$row->idProducto,
+					 	'producto'       => $row->producto,
+					 	'medida'         => $row->medida,
+					 	'esPerecedero'   => (int)$row->perecedero ? 'SI' : 'NO',
+					 	'disponibilidad' => (double)$row->disponibilidad,
+					 	'disponible'     => (double)$row->disponibilidad,
+					 	'esImportante'   => (int)$row->importante ? 'SI' : 'NO'
+					);
+
+				$lstProductos[] = $producto;
+			}
+		}
+
+		return $lstProductos;
+	}
+
 
 	function lstProductos( $groupBy )
 	{
@@ -465,62 +621,62 @@ class Producto
 				}
 
 
-				// SI NO EXISTE EL DONANTE
-					if( $groupBy == 'sinFiltro' ):			// SIN FILTRO
-						$ixSolicitud = $indexProducto;
+				// SI NO EXISTE INGRESA
+				if( $groupBy == 'sinFiltro' ):			// SIN FILTRO
+					$ixSolicitud = $indexProducto;
 
-					elseif( $groupBy == 'tipoProducto' ):			// TIPO PRODUCTO
-						$ixSolicitud = $iTipoProducto;
+				elseif( $groupBy == 'tipoProducto' ):	// TIPO PRODUCTO
+					$ixSolicitud = $iTipoProducto;
 
-					elseif( $groupBy == 'medida' ):		// CLASIFICACION
-						$ixSolicitud = $iMedida;
-					endif;
+				elseif( $groupBy == 'medida' ):			// CLASIFICACION
+					$ixSolicitud = $iMedida;
+				endif;
 
-					$alertaStock = 0;
-					// GENERAR ALERTA STOCK BAJO / ALTO / VACIO
-					if( $row->disponibilidad < $row->cantidadMinima ):
-						$alertaStock = 1;
-					
-					elseif( $row->disponibilidad <= $row->cantidadMinima + 15 ):
-						$alertaStock = 2;
-					
-					elseif( $row->disponibilidad + 50 >= $row->cantidadMaxima ):
-						$alertaStock = 3;
-					
-					endif;
+				$alertaStock = 0;
+				// GENERAR ALERTA STOCK BAJO / ALTO / VACIO
+				if( $row->disponibilidad < $row->cantidadMinima ):
+					$alertaStock = 1;
+				
+				elseif( $row->disponibilidad <= $row->cantidadMinima + 15 ):
+					$alertaStock = 2;
+				
+				elseif( $row->disponibilidad + 50 >= $row->cantidadMaxima ):
+					$alertaStock = 3;
+				
+				endif;
 
-					$producto = array(
-						 	'idProducto'      => (int)$row->idProducto,
-						 	'producto'        => $row->producto,
-						 	'idMedida'        => (int)$row->idMedida,
-						 	'medida'          => $row->medida,
-						 	'idTipoProducto'  => (int)$row->idTipoProducto,
-						 	'tipoProducto'    => $row->tipoProducto,
-						 	'perecedero'      => $row->perecedero,
-						 	'esPerecedero'    => (int)$row->perecedero ? 'SI' : 'NO',
-						 	'cantidadMinima'  => (double)$row->cantidadMinima,
-						 	'cantidadMaxima'  => (double)$row->cantidadMaxima,
-						 	'disponibilidad'  => (double)$row->disponibilidad,
-						 	'importante'      => $row->importante,
-						 	'esImportante'    => (int)$row->importante ? 'SI' : 'NO',
-						 	'usuarioProducto' => $row->usuarioProducto,
-						 	'fechaProducto'   => $row->fechaProducto,
-						 	'alertaStock'	  => $alertaStock
-						);
+				$producto = array(
+					 	'idProducto'      => (int)$row->idProducto,
+					 	'producto'        => $row->producto,
+					 	'idMedida'        => (int)$row->idMedida,
+					 	'medida'          => $row->medida,
+					 	'idTipoProducto'  => (int)$row->idTipoProducto,
+					 	'tipoProducto'    => $row->tipoProducto,
+					 	'perecedero'      => $row->perecedero,
+					 	'esPerecedero'    => (int)$row->perecedero ? 'SI' : 'NO',
+					 	'cantidadMinima'  => (double)$row->cantidadMinima,
+					 	'cantidadMaxima'  => (double)$row->cantidadMaxima,
+					 	'disponibilidad'  => (double)$row->disponibilidad,
+					 	'importante'      => $row->importante,
+					 	'esImportante'    => (int)$row->importante ? 'SI' : 'NO',
+					 	'usuarioProducto' => $row->usuarioProducto,
+					 	'fechaProducto'   => $row->fechaProducto,
+					 	'alertaStock'	  => $alertaStock
+					);
 
-					$lstProductos[ $ixSolicitud ][ 'lstProductos' ][] = $producto;
+				$lstProductos[ $ixSolicitud ][ 'lstProductos' ][] = $producto;
 
-					if( $alertaStock == 1 )
-						$lstProductos[ $ixSolicitud ]['totalStockVacio'] ++;
+				if( $alertaStock == 1 )
+					$lstProductos[ $ixSolicitud ]['totalStockVacio'] ++;
 
-					if( $alertaStock == 2 )
-						$lstProductos[ $ixSolicitud ]['totalAlertas'] ++;
+				if( $alertaStock == 2 )
+					$lstProductos[ $ixSolicitud ]['totalAlertas'] ++;
 
-					if( $alertaStock == 3 )
-						$lstProductos[ $ixSolicitud ]['totalStockAlto'] ++;
+				if( $alertaStock == 3 )
+					$lstProductos[ $ixSolicitud ]['totalStockAlto'] ++;
 
 
-					$lstProductos[ $ixSolicitud ]['totalProductos'] ++;
+				$lstProductos[ $ixSolicitud ]['totalProductos'] ++;
 			}
 		}
 

@@ -18,8 +18,10 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	});
 
 
-	$scope.dialIngreso     = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
-	$scope.dialAdministrar = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
+	$scope.dialIngreso      = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
+	$scope.dialAdministrar  = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
+	$scope.dialCierreDiario = $modal({scope: $scope,template:'dial.cierreDiario.html', show: false, backdrop: 'static'});
+	
 
 	$scope.dialAdministrarAbrir = function(){
 		$scope.dialAdministrar.show();
@@ -57,7 +59,52 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		lstProductos : []
 	};
 	
-	
+	$scope.cierreDiario = {
+		idCierreDiario : null,
+		fechaCierre    : null,
+		comentario     : '',
+		lstProductos   : []
+	};
+
+	$scope.getListaProductos = function(){
+		$http.post('consultas.php',{
+			opcion : "getListaProductos",
+		}).success(function(data){
+			console.log( data );
+			$scope.cierreDiario.lstProductos = data;
+		})
+	};
+
+	$scope.consultaCierreDiario = function(){
+		var cierreDiario = $scope.cierreDiario;
+
+		if( $scope.accion == 'update' && !(cierreDiario.idCierreDiario && cierreDiario.idCierreDiario > 0) )
+			alertify.notify( 'El código del cierra no es válido', 'warning', 4 );
+		
+		else if( !(cierreDiario.fechaCierre) )
+			alertify.notify( 'Ingrese la fecha de cierre', 'warning', 3 );
+		
+		else{
+
+			$http.post('consultas.php',{
+				opcion : "consultaCierreDiario",
+				accion : 'insert',
+				data   : $scope.cierreDiario
+			}).success(function(data){
+				console.log( data );
+				alertify.set('notifier','position', 'top-right');
+				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+			});
+			
+		}
+	};
+
+
+	$scope.realizarCierre = function(){
+		$scope.getListaProductos();
+		$scope.dialCierreDiario.show();
+	};	
+
 	$scope.idxProducto = -1;
 	$scope.seleccionKeyProducto = function( key ){
 //		console.log( key, ":::", $scope.idxProducto );
@@ -125,15 +172,14 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		var prod = $scope.prod;
 
 		if( !(prod.idProducto && prod.idProducto > 0) )
-		{
 			alertify.notify( 'El código del Producto no es válido', 'danger', 5 );
-		}
-		else if( !(prod.cantidad && prod.cantidad > 0) ){
+
+		else if( !(prod.cantidad && prod.cantidad > 0) )
 			alertify.notify( 'La cantidad ingresada debe ser mayor a 0', 'danger', 5 );
-		}
-		else if( !(prod.precioUnitario && prod.precioUnitario > 0) ){
+
+		else if( !(prod.precioUnitario && prod.precioUnitario > 0) )
 			alertify.notify( 'Ingrese el precio Unitario del producto', 'danger', 5 );
-		}
+
 		else{
 			$scope.compras.lstProductos.push({
 				idProducto     : prod.idProducto,

@@ -110,8 +110,8 @@ class Menu
 		$observacion = "NULL";
 
 		// SETEO VARIABLES GENERALES
- 		$data->idMenu      = (int)$data->idMenu > 0 		? (int)$data->idMenu 			: NULL;
- 		$data->idProducto  = (int)$data->idProducto > 0  	? (int)$data->idProducto 		: NULL;
+ 		$data->idMenu      = isset( $data->idMenu )		? (int)$data->idMenu 		: NULL;
+ 		$data->idProducto  = isset( $data->idProducto )	? (int)$data->idProducto 	: NULL;
 
  		// VALIDACIONES
  		$idMenu      = $validar->validarEntero( $data->idMenu, NULL, TRUE, 'El ID del Menú no es válido, verifique.' );
@@ -119,27 +119,27 @@ class Menu
 
  		if( $accion == 'insert' OR $accion == 'update' )
  		{
- 			$data->cantidad    = (double)$data->cantidad > 0  	? (int)$data->cantidad 			: NULL;
- 			$data->observacion = strlen( $data->observacion )	? (string)$data->observacion 	: NULL;
+ 			$data->cantidad    = isset( $data->cantidad )		? (int)$data->cantidad 			: NULL;
+ 			$data->observacion = isset( $data->observacion )	? (string)$data->observacion	: NULL;
 
 	 		// VALIDACIONES
 			$cantidad    = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 2500, 'la cantidad' );
 			$observacion = $validar->validarTexto( $data->observacion, NULL, !esNulo( $data->observacion ), 15, 1500, 'la observación' );
  		}
 
-
+ 		// OBTENER RESULTADOS
  		if( $validar->getIsError() ):
 	 		$this->respuesta = 'danger';
 	 		$this->mensaje   = $validar->getMsj();
+
  		else:
 	 		$sql = "CALL consultaReceta( '{$accion}', {$idMenu}, {$idProducto}, {$cantidad}, '{$observacion}' );";
 	 		
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
-	 			if( $row = $rs->fetch_object() ){
-	 				$this->respuesta = $row->respuesta;
-	 				$this->mensaje   = $row->mensaje;
-	 			}
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+	 			$this->siguienteResultado();
+	 			
+ 				$this->respuesta = $row->respuesta;
+ 				$this->mensaje   = $row->mensaje;
 	 		}
 	 		else{
 	 			$this->respuesta = 'danger';
@@ -164,7 +164,8 @@ class Menu
 				    imagen,
 				    descripcion,
 				    idEstadoMenu,
-				    idDestinoMenu
+				    idDestinoMenu,
+				    codigoMenu AS codigo
 				FROM
 				    lstMenu
 				WHERE
@@ -251,7 +252,8 @@ class Menu
 					idDestinoMenu,
 					destinoMenu,
 					idTipoMenu,
-					tipoMenu
+					tipoMenu,
+					codigoMenu
 				FROM
 					lstMenu WHERE idEstadoMenu <> 3 ORDER BY idMenu $orden LIMIT $inicio, $limite;";
 		
@@ -267,7 +269,8 @@ class Menu
 						'idDestinoMenu' => (int)$row->idDestinoMenu,
 						'destinoMenu'   => $row->destinoMenu,
 						'idTipoMenu'    => (int)$row->idTipoMenu,
-						'tipoMenu'      => $row->tipoMenu
+						'tipoMenu'      => $row->tipoMenu,
+						'codigo'        => $row->codigoMenu
 				);
 
 				$menus->lstMenus[] = $menu;
@@ -390,7 +393,7 @@ class Menu
 	 			// INICIALIZAR TRANSACCION
 	 			$this->con->query( 'START TRANSACTION' );
 
-		 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu}, {$idTipoMenu} );";
+		 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu}, {$idTipoMenu}, {$codigo} );";
 
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 			$this->siguienteResultado();

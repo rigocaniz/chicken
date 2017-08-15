@@ -214,6 +214,17 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** PRODUCTO
 	/////////////////////////
+	case 'consultaCierreDiario':			// INSERT / UPDATE CIERRE DEL DIA
+		//var_dump( $data );
+		$producto = new Producto();
+		echo json_encode( $producto->consultaCierreDiario( $data->accion, $data->data ) );
+		break;
+
+	case 'getListaProductos':			// INSERT / UPDATE LST PRODUCTOS INGRESO
+		$producto = new Producto();
+		echo json_encode( $producto->getListaProductos() );
+		break;
+		
 	case 'guardarLstProductoIngreso':			// INSERT / UPDATE LST PRODUCTOS INGRESO
 		$producto = new Producto();
 		echo json_encode( $producto->guardarLstProductoIngreso( $data->accion, $data->data ) );

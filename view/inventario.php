@@ -60,11 +60,9 @@
 								</div>
 							</div>
 
-							<button class="btn btn-sm btn-warning">
-								<span class="glyphicon glyphicon-pencil"></span> Editar Disponibilidad
+							<button class="btn btn-sm btn-warning" ng-click="realizarCierre()">
+								<span class="glyphicon glyphicon-pencil"></span> Realizar Cierre
 							</button>
-
-
 
 							<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 								<div class="panel panel-default" ng-repeat="(ixInventario, inventario) in lstInventario">
@@ -448,6 +446,94 @@
 		</div>
 	</div>
 </div>
+
+
+<!-- DIALOGO CIERRE DIARIO -->
+<script type="text/ng-template" id="dial.cierreDiario.html">
+	<div class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content panel-danger">
+				<div class="modal-header panel-heading text-center">
+					<button type="button" class="close" ng-click="$hide()">&times;</button>
+					<span class="glyphicon glyphicon-list-alt"></span>
+					CIERRE DIARIO DE INVENTARIO
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form" name="$parent.formCierre">
+						<div class="form-group">
+							<div class="col-sm-4">
+								<label class="control-label">NO. DE CIERRE</label>
+								<input type="text" class="form-control" ng-model="cierreDiario.idCierreDiario" readonly>
+							</div>	
+							<div class="col-sm-4">
+								<label class="control-label">FECHA DEL CIERRE</label>
+								<div class="input-group">
+								  	<span class="input-group-addon">
+    									<span class="fa fa-calendar"></span>
+								  	</span>
+    								<input type="text" class="form-control" ng-model="cierreDiario.fechaCierre" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker>
+								</div>
+							</div>
+						</div>
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th class="text-center">No.</th>
+									<th class="col-sm-3 text-center">Producto</th>
+									<th class="col-sm-1 text-center">Perecedero</th>
+									<th class="col-sm-2 text-center">Disponible <br>Sistema</th>
+									<th class="col-sm-2 text-center">Disponible <br>Fisico</th>
+									<th class="col-sm-2 text-center">Medida</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="inv in cierreDiario.lstProductos">
+									<td class="text-right">
+										{{ $index + 1 }}
+									</td>
+									<td>
+										{{ inv.producto }}
+									</td>
+									<td class="text-center">
+										{{ inv.esPerecedero }}
+									</td>
+									<td class="text-center">
+										{{ inv.disponible }}
+									</td>
+									<td class="text-center">
+										<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.disponibilidad" required>
+									</td>
+									<td class="text-center">
+										{{ inv.medida }}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="form-group">
+							<div class="col-sm-12">
+								<label class="control-label">INGRESAR COMENTARIO</label>
+								<textarea rows="3" class="form-control" ng-model="cierreDiario.comentario" placeholder="Ingresar comentario del cierre"></textarea>
+								<label class="label label-info">
+									Caracteres <span class="badge">{{ cierreDiario.comentario.length }}</span>
+								</label>
+							</div>
+						</div>
+					</form>
+			
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-warning" ng-click="consultaCierreDiario()">
+						<span class="glyphicon glyphicon-saved"></span> GUARDAR CIERRE
+					</button>
+					<button type="button" class="btn btn-default" ng-click="$hide()">
+						<span class="glyphicon glyphicon-log-out"></span>
+						<b>Salir</b>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
 
 	
 <!-- DIALOGO INGRESO EXISTENCIA -->
