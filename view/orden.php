@@ -82,27 +82,54 @@
                 		</div>
                 		<div class="col-xs-7">
 							<div class="input-group">
-								<input type="text" class="form-control input-lg input-focus" ng-model="$parent.noTicket" id="noTicket" ng-keypress="$event.keyCode==13 && agregarOrden()">
+								<input type="number" class="form-control input-lg input-focus" ng-model="$parent.noTicket" id="noTicket">
 								<span class="input-group-btn">
-									<button class="btn btn-lg btn-danger" type="button" ng-click="$parent.noTicket=''">
+									<button class="btn btn-lg btn-danger" type="button" ng-click="auxKeyTicket( 'supr' )">
 										<span class="glyphicon glyphicon-remove"></span>
 									</button>
 								</span>
 							</div>
                 		</div>
-                		<div class="col-xs-12 text-center" style="margin-top:4px">
-                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'0'">0</button>
-                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'1'">1</button>
-                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'2'">2</button>
-                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'3'">3</button>
-                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'4'">4</button>
-                		</div>
-                		<div class="col-xs-12 text-center" style="margin-top:4px">
-                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'5'">5</button>
-                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'6'">6</button>
-                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'7'">7</button>
-                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'8'">8</button>
-                			<button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="$parent.noTicket=$parent.noTicket+'9'">9</button>
+                        <div class="col-xs-12 text-center" style="margin-top:4px">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 7 )">
+                                <u>7</u>
+                            </button>
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 8 )">
+                                <u>8</u>
+                            </button>
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 9 )">
+                                <u>9</u>
+                            </button>
+                        </div>
+                        <div class="col-xs-12 text-center" style="margin-top:4px">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 4 )">
+                                <u>4</u>
+                            </button>
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 5 )">
+                                <u>5</u>
+                            </button>
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 6 )">
+                                <u>6</u>
+                            </button>
+                        </div>
+                        <div class="col-xs-12 text-center" style="margin-top:4px">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 1 )">
+                                <u>1</u>
+                            </button>
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 2 )">
+                                <u>2</u>
+                            </button>
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 3 )">
+                                <u>3</u>
+                            </button>
+                        </div>
+                        <div class="col-xs-12 text-center" style="margin-top:4px">
+                            <button class="btn btn-lg btn-default" style="padding:10px 36px" ng-click="auxKeyTicket( 'number', 0 )">
+                                <u>0</u>
+                            </button>
+                            <button class="btn btn-lg btn-danger" style="margin-bottom:4px" ng-click="auxKeyTicket( 'back' )">
+                                <span class="glyphicon glyphicon-arrow-left"></span>
+                            </button>
                 		</div>
                    </div>
                 </div>
