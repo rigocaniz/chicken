@@ -35,7 +35,7 @@ class Cliente
  		// SET
  		$cliente->nit           = isset( $cliente->nit )  			? (string)$cliente->nit 		: NULL;
  		$cliente->nombre        = isset( $cliente->nombre ) 		? (string)$cliente->nombre 		: NULL;
- 		$cliente->cui           = isset( $cliente->cui ) > 			? (double)$cliente->cui 		: NULL;
+ 		$cliente->cui           = isset( $cliente->cui )			? (double)$cliente->cui 		: NULL;
  		$cliente->correo        = isset( $cliente->correo ) 		? (string)$cliente->correo 		: NULL;
  		$cliente->telefono      = isset( $cliente->telefono ) 		? (int)$cliente->telefono 		: NULL;
  		$cliente->direccion     = isset( $cliente->direccion ) 		? (string)$cliente->direccion 	: NULL;
