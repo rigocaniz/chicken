@@ -111,7 +111,7 @@ switch ( $data->opcion )
 	////////////////////////
 	case 'lstCombo':				// CARGAR LISTA DE COMBOS
 		$combo = new Combo();
-		echo json_encode( $combo->lstCombo( @$data->idEstadoMenu ) );
+		echo json_encode( $combo->lstCombo( @$data->idEstadoMenu, @$data->idCombo ) );
 		break;
 
 	case 'lstComboDetalle':			// CARGAR LISTA DE COMBOS DETALLE
@@ -141,7 +141,7 @@ switch ( $data->opcion )
 
 	case 'lstMenu':					// CARGAR LISTA DE MENU
 		$menu = new Menu();
-		echo json_encode( $menu->lstMenu( $data->idTipoMenu, @$data->idEstadoMenu ) );
+		echo json_encode( $menu->lstMenu( $data->idTipoMenu, @$data->idEstadoMenu, @$data->idMenu ) );
 		break;
 
 	case 'lstMenuPrecio':			// CARGAR LISTA PRECIOS MENU
@@ -363,6 +363,11 @@ switch ( $data->opcion )
 	case 'lstDetalleOrdenCliente':
 		$orden = new Orden();
 		echo json_encode( $orden->lstDetalleOrdenCliente( $data->idOrdenCliente ) );
+		break;
+
+	case 'menuPorCodigo':
+		$orden = new Orden();
+		echo json_encode( $orden->menuPorCodigo( $data->codigoRapido ) );
 		break;
 
 

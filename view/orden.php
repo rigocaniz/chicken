@@ -84,50 +84,50 @@
 							<div class="input-group">
 								<input type="number" class="form-control input-lg input-focus" ng-model="$parent.noTicket" id="noTicket">
 								<span class="input-group-btn">
-									<button class="btn btn-lg btn-danger" type="button" ng-click="auxKeyTicket( 'supr' )">
+									<button class="btn btn-lg btn-danger" type="button" ng-click="auxKeyTicket( 'supr', 0, 'noTicket' )">
 										<span class="glyphicon glyphicon-remove"></span>
 									</button>
 								</span>
 							</div>
                 		</div>
                         <div class="col-xs-12 text-center" style="margin-top:4px">
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 7 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 7, 'noTicket' )">
                                 <u>7</u>
                             </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 8 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 8, 'noTicket' )">
                                 <u>8</u>
                             </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 9 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 9, 'noTicket' )">
                                 <u>9</u>
                             </button>
                         </div>
                         <div class="col-xs-12 text-center" style="margin-top:4px">
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 4 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 4, 'noTicket' )">
                                 <u>4</u>
                             </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 5 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 5, 'noTicket' )">
                                 <u>5</u>
                             </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 6 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 6, 'noTicket' )">
                                 <u>6</u>
                             </button>
                         </div>
                         <div class="col-xs-12 text-center" style="margin-top:4px">
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 1 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 1, 'noTicket' )">
                                 <u>1</u>
                             </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 2 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 2, 'noTicket' )">
                                 <u>2</u>
                             </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 3 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 3, 'noTicket' )">
                                 <u>3</u>
                             </button>
                         </div>
                         <div class="col-xs-12 text-center" style="margin-top:4px">
-                            <button class="btn btn-lg btn-default" style="padding:10px 36px" ng-click="auxKeyTicket( 'number', 0 )">
+                            <button class="btn btn-lg btn-default" style="padding:10px 36px" ng-click="auxKeyTicket( 'number', 0, 'noTicket' )">
                                 <u>0</u>
                             </button>
-                            <button class="btn btn-lg btn-danger" style="margin-bottom:4px" ng-click="auxKeyTicket( 'back' )">
+                            <button class="btn btn-lg btn-danger" style="margin-bottom:4px" ng-click="auxKeyTicket( 'back', 0, 'noTicket' )">
                                 <span class="glyphicon glyphicon-arrow-left"></span>
                             </button>
                 		</div>
@@ -140,7 +140,7 @@
                     </button>
                     <button type="button" class="btn btn-default" ng-click="$hide()">
                         <span class="glyphicon glyphicon-log-out"></span>
-                        <b>Salir</b>
+                        <b><u>S</u>alir</b>
                     </button>
                 </div>
             </div>
@@ -161,7 +161,7 @@
                 </div>
                 <div class="modal-body">
                 	<div class="row">
-                		<div class="col-xs-12">
+                		<div class="col-xs-12 col-sm-6">
                 			<button class="btn btn-primary" ng-click="mostrarMenus( 'menu' )">
                 				<span class="glyphicon glyphicon-plus"></span>
                 				<b><u>M</u>enú</b>
@@ -171,6 +171,12 @@
                 				<b><u>C</u>ombo</b>
                 			</button>
                 		</div>
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="codigoRapido" ng-class="{'ok':(codigoRapido>0)}">
+                                <span ng-show="(codigoRapido>0)">{{codigoRapido}}</span>
+                                <span ng-hide="(codigoRapido>0)">Ingrese Código</span>
+                            </div>
+                        </div>
                    </div>
                    <div class="row">
                 		<div class="col-xs-12">
@@ -291,7 +297,7 @@
                 	<div class="row">
                 		<div class="col-xs-6 text-center">
                 			<img ng-src="{{menuActual.imagen}}" style="height:100px">
-                			<h4>{{menuActual.menu}}</h4>
+                			<h4>{{menuActual.menu}} <kbd>{{tipoMenu}}</kbd></h4>
                 			<h3>Q. {{menuActual.precio | number:2}}</h3>
                 		</div>
                 		<div class="col-xs-6">

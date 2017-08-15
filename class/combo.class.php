@@ -257,7 +257,7 @@ class Combo
 
 
  	// CONSULTAR LISTA DE COMBOS
- 	function lstCombo( $idEstadoMenu = NULL )
+ 	function lstCombo( $idEstadoMenu = NULL, $idCombo = NULL )
  	{
  		$lstCombo = array();
 
@@ -265,12 +265,27 @@ class Combo
  		if ( !IS_NULL( $idEstadoMenu ) )
  			$where = " WHERE idEstadoMenu = $idEstadoMenu ";
 
+ 		if ( !IS_NULL( $idCombo ) AND $idCombo > 0 )
+ 			$where = " WHERE idCombo = $idCombo ";
+
  		$sql = "SELECT idCombo, combo, imagen, descripcion, idEstadoMenu, estadoMenu FROM lstCombo " . $where;
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() ){
- 				$row->imagen = $row->imagen == '' ? 'img-menu/notFound.png' : $row->imagen;
- 				$lstCombo[] = $row;
+
+ 			// SI ES UN UNICO COMBO
+ 			if ( !IS_NULL( $idCombo ) AND $idCombo > 0 ) {
+	 			if( $row = $rs->fetch_object() ) {
+					$row->imagen = $row->imagen == '' ? 'img-menu/notFound.png' : $row->imagen;
+					$lstCombo    = $row;
+ 				}
+ 			}
+ 			
+ 			// SI ES UN LISTADO COMBO
+ 			else{
+	 			while( $row = $rs->fetch_object() ){
+	 				$row->imagen = $row->imagen == '' ? 'img-menu/notFound.png' : $row->imagen;
+	 				$lstCombo[] = $row;
+	 			}
  			}
  		}
 
