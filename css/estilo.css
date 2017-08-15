@@ -393,3 +393,28 @@ legend.legend2{
 .border-danger{
     border-left: 3px solid #da0017;
 }
+
+.codigoRapido{
+    border: solid 1px #d7d7d7;
+    display: inline-block;
+    padding: 2px 17px;
+    background-color: #fff;
+    color: #5b5b5b;
+    font-size: 19px;
+    font-weight: bold;
+    float: right;
+    border-radius: 19px;
+}
+
+.codigoRapido.ok{
+    border-color: #3674ec;
+    color: #1b60e6;
+    background: #f2f6ff;
+}
+
+
+
+
+
+
+
