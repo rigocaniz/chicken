@@ -30,61 +30,73 @@ class Producto
 //	CREATE PROCEDURE consultaCierreDiario( _action VARCHAR(20), _idCierreDiario INT, _fechaCierre DATE, _comentario TEXT )
 	function consultaCierreDiario( $accion, $data )
 	{
+ 		if( count( $data->lstProductos ) ){
 
-	 	$action         = "NULL";
-	 	$idCierreDiario = "NULL";
-	 	$fechaCierre    = "NULL";
-	 	$comentario	    = "NULL";
+		 	$action         = "NULL";
+		 	$idCierreDiario = "NULL";
+		 	$fechaCierre    = "NULL";
+		 	$comentario	    = "NULL";
 
-	 	$data->fechaCierre = isset( $data->fechaCierre ) 	? $data->fechaCierre 	: NULL;
-	 	$data->comentario  = isset( $data->comentario ) 	? $data->comentario 	: NULL;
+		 	$data->fechaCierre = isset( $data->fechaCierre ) 	? $data->fechaCierre 			: NULL;
+		 	$data->comentario  = isset( $data->comentario ) 	? (string)$data->comentario 	: NULL;
 
-	 	if( $accion == 'update' )
-	 	{
-	 		$data->idCierreDiario = isset( $data->idCierreDiario ) ? $data->idCierreDiario : NULL;
-	 		$idProducto   = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del Cierre Diario no es válido' );
-	 	}
+		 	$validar = new Validar();
+		 	if( $accion == 'update' )
+		 	{
+		 		$data->idCierreDiario = isset( $data->idCierreDiario ) ? $data->idCierreDiario : NULL;
+		 		$idCierreDiario = $validar->validarEntero( $data->idCierreDiario, NULL, TRUE, 'El ID del Cierre Diario no es válido' );
+		 	}
 
-	 	#fechaCierre
-	 	$comentario  = $this->con->real_escape_string( $validar->validarTexto( $data->comentario, NULL, !esNulo( $data->comentario ), 20, 1500, 'la observación' ) );
+		 	$fechaCierre = $data->fechaCierre;
+		 	$comentario  = $this->con->real_escape_string( $data->comentario );
+
+		 	// OBTENER RESULTADO DE VALIDACIONES
+	 		if( $validar->getIsError() ):
+		 		$this->respuesta = 'danger';
+		 		$this->mensaje   = $validar->getMsj();
+
+	 		else:
+
+	 			// INICIALIZAR TRANSACCIÓN
+				$this->con->query( "START TRANSACTION" );
+
+				$sql = "CALL consultaCierreDiario( '{$accion}', {$idCierreDiario}, '{$fechaCierre}', '{$comentario}' );";
+
+		 		if( $rs = $this->con->query( $sql ) ){
+		 			
+		 			$this->siguienteResultado();
+		 			if( $row = $rs->fetch_object() ){
+		 				$this->respuesta = $row->respuesta;
+		 				$this->mensaje   = $row->mensaje;
+
+		 				if( ( $accion == 'insert' OR $accion == 'update' ) AND $this->respuesta == 'success' ){
+		 					if( $accion == 'insert' )
+		 					 	$idCierreDiario = $this->data = (int)$row->id;
+
+		 					// REALIZAR CIERRA POR PRODUCTO
+		 					if( $this->respuesta <> 'danger' )
+		 						$this->consultaCierreDiarioProducto( $accion, $idCierreDiario, $data->lstProductos );
+		 				}
+		 			}
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la instrucción de  Cierre.';
+		 		}
 
 
-	 	// OBTENER RESULTADO DE VALIDACIONES
- 		if( $validar->getIsError() ):
-	 		$this->respuesta = 'danger';
-	 		$this->mensaje   = $validar->getMsj();
+		 		if( $this->respuesta == 'success' )
+		 			$this->con->query( "COMMIT" );
+		 		else
+		 			$this->con->query( "ROLLBACK" );
 
- 		else:
+	 		endif;
 
- 			// INICIALIZAR TRANSACCIÓN
-			$this->con->query( "START TRANSACTION" );
-
-			$sql = "CALL consultaCierreDiario( '{$accion}', {$idProducto}, {$cantidad}, '{$observacion}', {$esIncremento} );";
-
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			
-	 			$this->siguienteResultado();
-	 			if( $row = $rs->fetch_object() ){
-	 				$this->respuesta = $row->respuesta;
-	 				$this->mensaje   = $row->mensaje;
-	 				if( $accion == 'insert' AND $this->respuesta == 'success' ){
-	 					$this->data = (int)$row->id;
-	 					$this->consultaCierreDiarioProducto( $accion, $data->lstProductos );
-	 				}
-	 			}
-	 		}
-	 		else{
-	 			$this->respuesta = 'danger';
-	 			$this->mensaje   = 'Error al ejecutar la instrucción.';
-	 		}
-
-
-	 		if( $this->respuesta == 'danger' )
-	 			$this->con->query( "ROLLBACK" );
-	 		else
-	 			$this->con->query( "COMMIT" );
-
- 		endif;
+ 		}
+ 		else{
+ 			$this->respuesta = 'info';
+		 	$this->mensaje   = 'No hay ingresado productos en la lista de cierre';
+ 		}
 
  		return $this->getRespuesta();
 	}
@@ -93,18 +105,18 @@ class Producto
 	// consultaCierreDiarioProducto
 	function consultaCierreDiarioProducto( $accion, $idCierreDiario, $lstProductos )
 	{
-		
-		if( count( $lstRecetaProductos ) ) {
+		if( count( $lstProductos ) ) {
 
 			foreach ( $lstProductos AS $producto ) {
 
 				$idProducto               = (int)$producto->idProducto;
-				$cantidad                 = (double)$data->cantidad;
-				$actualizarDisponibilidad = (int)$data->actualizarDisponibilidad;
+				$cantidad                 = (double)$producto->disponibilidad;
+				$actualizarDisponibilidad = 1; # (int)$data->actualizarDisponibilidad;
 
 		 		// REALIZAR CONSULTA
 				$sql = "CALL consultaCierreDiarioProducto( '{$accion}', {$idCierreDiario}, {$idProducto}, {$cantidad}, {$actualizarDisponibilidad} );";
 
+				//echo $sql;
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 			$this->siguienteResultado();
 
@@ -125,7 +137,6 @@ class Producto
  			$this->respuesta = 'warning';
 		 	$this->mensaje   = 'No hay productos ingresados en la lista de ciere';
  		}
-
 
  		return $this->getRespuesta();
 	}
@@ -476,6 +487,45 @@ class Producto
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
 				$lstProductos[] = $row;
+			}
+		}
+
+		return $lstProductos;
+	}
+
+	// BUSCAR PRODUCTO(S)
+	function getListaProductos()
+	{
+		$lstProductos = array();
+
+		$sql = "SELECT 
+		    idProducto,
+		    producto,
+		    idMedida,
+		    medida,
+		    idTipoProducto,
+		    tipoProducto,
+		    perecedero,
+		    cantidadMinima,
+		    cantidadMaxima,
+		    disponibilidad,
+		    importante
+		FROM
+		    lstProducto;";
+		
+		if( $rs = $this->con->query( $sql ) ){
+			while( $row = $rs->fetch_object() ){
+					$producto = array(
+					 	'idProducto'     => (int)$row->idProducto,
+					 	'producto'       => $row->producto,
+					 	'medida'         => $row->medida,
+					 	'esPerecedero'   => (int)$row->perecedero ? 'SI' : 'NO',
+					 	'disponibilidad' => (double)$row->disponibilidad,
+					 	'disponible'     => (double)$row->disponibilidad,
+					 	'esImportante'   => (int)$row->importante ? 'SI' : 'NO'
+					);
+
+				$lstProductos[] = $producto;
 			}
 		}
 
