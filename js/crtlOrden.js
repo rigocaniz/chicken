@@ -2,7 +2,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.lstTipoServicio = [];
 	$scope.lstTipoMenu     = [];
 	$scope.lstMenu         = [];
-	$scope.noTicket        = '';
+	$scope.noTicket        = 0;
 	$scope.idTipoServicio  = '';
 	$scope.idTipoMenu      = '';
 	$scope.accionOrden     = 'nuevo';
@@ -72,11 +72,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 	// #1 => MUESTRA DIALOGO INGRESO DE TICKET
 	$scope.nuevaOrden = function () {
-		$scope.noTicket = '';
+		$scope.noTicket = 0;
 		$scope.dialOrden.show();
-		$timeout(function () {
-			document.getElementById('noTicket').focus();
-		},100);
 	};
 
 	// #2 => CREA UNA NUEVA ORDEN
@@ -403,6 +400,23 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		$scope.watchPrecio();
 	});
 
+	$scope.auxKeyTicket = function ( accion, numero ) {
+		if ( accion == 'number' ) {
+			var numeroTxt   = numero.toString();
+			var noTicketTxt = parseInt( $scope.noTicket || 0 ).toString();
+			$scope.noTicket = parseInt( noTicketTxt + numeroTxt );
+		}
+
+		if ( accion == 'supr' )
+			$scope.noTicket = 0;
+		
+		if ( accion == 'back' ) {
+			var noTicketTxt = parseInt( $scope.noTicket ).toString();
+			noTicketTxt     = noTicketTxt.substr( 0, ( noTicketTxt.length - 1 ) );
+			$scope.noTicket = parseInt( noTicketTxt );
+		}
+	};
+
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key ) {
 
@@ -418,7 +432,23 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 		// CUANDO ESTE ABIERTO ALGUN CUADRO DE DIALOGO
 		else{
-			// CUANDO EL DIALOGO DE NUEVA ORDEN ESTE ABIERTA
+			// CUANDO EL DIALOGO DE INGRESO DE TICKET
+			if ( $scope.modalOpen( 'dial_orden_nueva' ) ) {
+				if ( key == 13 ) // {ENTER}
+					$scope.agregarOrden();
+
+				if ( key == 46 ) // {SUPR}
+					$scope.auxKeyTicket( 'supr' );
+
+				if ( key == 8 && !$("#noTicket").is(":focus") ) // {BACK}
+					$scope.auxKeyTicket( 'back' );
+
+				if ( key >= 48 && key <= 57 && !$("#noTicket").is(":focus") ) // {0-9}
+					$scope.auxKeyTicket( 'number', ( key - 48 ) );
+			}
+
+
+			// CUANDO EL DIALOGO DE ORDEN DEL CLIENTE ESTE ABIERTA
 			if ( $scope.modalOpen( 'dial_orden_cliente' ) ) {
 				if ( key == 77 ) // {M}
 					$scope.mostrarMenus('menu');
