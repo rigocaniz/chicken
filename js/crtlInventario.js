@@ -57,7 +57,12 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		lstProductos : []
 	};
 	
-	
+	$scope.cierreProducto = {
+		idCierreDiario : null,
+		fechaCierre    : null,
+		comentario     : '',
+		lstProductos   : []
+	};
 	$scope.idxProducto = -1;
 	$scope.seleccionKeyProducto = function( key ){
 //		console.log( key, ":::", $scope.idxProducto );
