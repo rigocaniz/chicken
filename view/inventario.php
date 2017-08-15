@@ -60,11 +60,9 @@
 								</div>
 							</div>
 
-							<button class="btn btn-sm btn-warning">
-								<span class="glyphicon glyphicon-pencil"></span> Editar Disponibilidad
+							<button class="btn btn-sm btn-warning" ng-click="realizarCierre=!realizarCierre">
+								<span class="glyphicon glyphicon-pencil"></span> Realizar Cierre
 							</button>
-
-
 
 							<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 								<div class="panel panel-default" ng-repeat="(ixInventario, inventario) in lstInventario">
@@ -131,7 +129,7 @@
 														{{ inv.esPerecedero }}
 													</td>
 													<td class="text-center">
-														{{ inv.disponibilidad }}
+														<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.disponibilidad" ng-disabled="!realizarCierre" required>
 													</td>
 													<td class="text-center">
 														<button type="button" ng-click="ingresarReajuste( inv.idProducto, inv.producto, inv.disponibilidad )" class="btn btn-primary btn-sm">
