@@ -15,6 +15,21 @@ class Consulta
  		$this->sess = $sesion;
  	}
 
+
+ 	// LST CATALOGo ESTADOS FACTURA
+ 	function catEstadosFactura()
+ 	{
+ 		$lstEstadosFactura = array();
+ 		$sql = "SELECT idEstadoFactura, estadoFactura FROM estadoFactura;";
+ 		
+ 		if( $rs = $this->con->query( $sql ) ){
+ 			while ( $row = $rs->fetch_object() )
+ 				$lstEstadosFactura[] = $row;
+ 		}
+
+ 		return $lstEstadosFactura;
+ 	}
+
  	
  	// LST CATALOGO TIPOS DE SERVICIO
  	function catTiposServicio()

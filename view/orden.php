@@ -348,9 +348,6 @@
     </div>
 </script>
 
-
-
-
 <!-- *********** BUSQUEDA DE ORDEN ********* -->
 <script type="text/ng-template" id="dial.orden-busqueda.html">
     <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_busqueda">
@@ -388,84 +385,72 @@
 </script> 
 
 
-
-
 <!-- *********** INFORMACION DE ORDEN ********* -->
-<script type="text/ng-template" id="dial.orden-informacion.html">
-    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_informacion">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content panel-default">
-                <div class="modal-header panel-heading">
-                	<button type="button" class="close" ng-click="$hide()">&times;</button>
-                	<h4 style="margin:0">
-						<b>Orden # </b> {{infoOrden.idOrdenCliente}} » 
-		                <span class="badge-ticket">Ticket # {{infoOrden.numeroTicket}}</span>
-                    </h4>
-                </div>
-                <div class="modal-body">
-                	<div class="row">
-                		<div class="col-sm-6 col-xs-12">
-                			<span class="etiqueta">Estado: </span>
-                    		<span class="valor">{{infoOrden.estadoOrden}}</span>
-                		</div>
-                		<div class="col-sm-6 col-xs-12">
-                			<span class="etiqueta">Lapso: </span>
-                    		<span class="valor">{{tiempoTranscurrido( infoOrden.fechaRegistro )}}</span>
-                		</div>
-                	</div>
-                	<div class="row">
-                		<div class="col-sm-6 col-xs-12">
-                			<span class="etiqueta"># Menús: </span>
-                    		<span class="valor">{{infoOrden.numMenu}}</span>
-                		</div>
-                		<div class="col-sm-6 col-xs-12">
-                			<span class="etiqueta">Responsable: </span>
-                    		<span class="valor">{{infoOrden.usuarioResponsable}}</span>
-                		</div>
-                	</div>
-                	<legend class="legend2">Menús Ordenados</legend>
-                	<div class="row">
-                		<div class="col-xs-12">
-                			<div class="table-responsive">
-	                			<table class="table table-hover">
-	                				<thead>
-	                					<tr>
-	                						<th></th>
-	                						<th>Cantidad</th>
-	                						<th>Orden</th>
-	                						<th>Subtotal</th>
-	                						<th width="35px"></th>
-	                					</tr>
-	                				</thead>
-	                				<tbody>
-	                					<tr ng-repeat="item in infoOrden.lstOrden">
-	                						<td><img ng-src="{{item.imagen}}" style="height:40px"></td>
-	                						<td>{{item.cantidad}}</td>
-	                						<td>
-	                							<span ng-show="item.idTipoServicio==2" class="label-border label-success">R</span>
-	                							<span ng-show="item.idTipoServicio==3" class="label-border label-default">D</span>
-	                							<span ng-show="item.idTipoServicio==1" class="label-border label-primary">L</span>
-	                							<span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
-	                							<span>{{item.descripcion}}</span>
-	                						</td>
-	                						<td>{{item.subTotal | number:2}}</td>
-	                						<td>
-	                							
-	                						</td>
-	                					</tr>
-	                				</tbody>
-	                			</table>
-                			</div>
-                		</div>
-                   </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" ng-click="$hide();">
-                        <span class="glyphicon glyphicon-chevron-left"></span>
-                        <b>Salir</b>
-                    </button>
-                </div>
+<div class="contenedor-hover">
+    <div class="contenido">
+        <div class="row">
+            <div class="col-sm-6 col-xs-12">
+            	<h4>
+        			<b>Orden # </b> {{infoOrden.idOrdenCliente}} » 
+                    <span class="badge-ticket">Ticket # {{infoOrden.numeroTicket}}</span>
+                </h4>
             </div>
         </div>
+    	<div class="row">
+    		<div class="col-sm-6 col-xs-12">
+    			<span class="etiqueta">Estado: </span>
+        		<span class="valor">{{infoOrden.estadoOrden}}</span>
+    		</div>
+    		<div class="col-sm-6 col-xs-12">
+    			<span class="etiqueta">Lapso: </span>
+        		<span class="valor">{{tiempoTranscurrido( infoOrden.fechaRegistro )}}</span>
+    		</div>
+    	</div>
+    	<div class="row">
+    		<div class="col-sm-6 col-xs-12">
+    			<span class="etiqueta"># Menús: </span>
+        		<span class="valor">{{infoOrden.numMenu}}</span>
+    		</div>
+    		<div class="col-sm-6 col-xs-12">
+    			<span class="etiqueta">Responsable: </span>
+        		<span class="valor">{{infoOrden.usuarioResponsable}}</span>
+    		</div>
+    	</div>
+    	<legend class="legend2">Menús Ordenados</legend>
+    	<div class="row">
+    		<div class="col-xs-12">
+    			<div class="table-responsive">
+        			<table class="table table-hover">
+        				<thead>
+        					<tr>
+        						<th></th>
+        						<th>Cantidad</th>
+        						<th>Orden</th>
+        						<th>Subtotal</th>
+        						<th width="35px"></th>
+        					</tr>
+        				</thead>
+        				<tbody>
+        					<tr ng-repeat="item in infoOrden.lstOrden">
+        						<td><img ng-src="{{item.imagen}}" style="height:40px"></td>
+        						<td>{{item.cantidad}}</td>
+        						<td>
+        							<span ng-show="item.idTipoServicio==2" class="label-border label-success">R</span>
+        							<span ng-show="item.idTipoServicio==3" class="label-border label-default">D</span>
+        							<span ng-show="item.idTipoServicio==1" class="label-border label-primary">L</span>
+        							<span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
+        							<span>{{item.descripcion}}</span>
+        						</td>
+        						<td>{{item.subTotal | number:2}}</td>
+        						<td>
+        							
+        						</td>
+        					</tr>
+        				</tbody>
+        			</table>
+    			</div>
+    		</div>
+       </div>
     </div>
-</script> 
+</div>
+

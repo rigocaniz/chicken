@@ -412,8 +412,26 @@ legend.legend2{
     background: #f2f6ff;
 }
 
+.contenedor-hover{
+    background: #ffffff;
+    border: solid 1px rgb(148, 148, 148);
+    position: fixed;
+    width: 800px;
+    height: 400px;
+    left: 69px;
+    top: 90px;
+    padding: 16px;
+    box-shadow: -2px 3px 30px rgba(0, 0, 0, 0.38);
+    -moz-box-shadow: -2px 3px 30px rgba(0, 0, 0, 0.38);
+    -webkit-box-shadow: -2px 3px 30px rgba(0, 0, 0, 0.38);
+    border-radius: 7px 7px 7px 7px;
+    -moz-border-radius: 7px 7px 7px 7px;
+    -webkit-border-radius: 7px 7px 7px 7px;
+}
 
-
+.contenedor-hover .contenido{
+    position: relative;
+}
 
 
 

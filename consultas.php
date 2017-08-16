@@ -153,6 +153,11 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** CONSULTA CATALOGOS
 	////////////////////////
+	case 'catEstadosFactura':			// CARGAR CATALOGO TIPOS DE SERVICIOS
+		$consulta = new Consulta();
+		echo json_encode( $consulta->catEstadosFactura() );
+		break;
+
 	case 'catTiposServicio':			// CARGAR CATALOGO TIPOS DE SERVICIOS
 		$consulta = new Consulta();
 		echo json_encode( $consulta->catTiposServicio() );
@@ -215,7 +220,6 @@ switch ( $data->opcion )
 	//***** PRODUCTO
 	/////////////////////////
 	case 'consultaCierreDiario':			// INSERT / UPDATE CIERRE DEL DIA
-		//var_dump( $data );
 		$producto = new Producto();
 		echo json_encode( $producto->consultaCierreDiario( $data->accion, $data->data ) );
 		break;

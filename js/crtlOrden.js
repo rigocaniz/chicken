@@ -65,6 +65,10 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 				if ( Array.isArray( data ) )
 					$scope.lstOrdenCliente = data;
+
+				$timeout(function () {
+					$scope.modalInfo( $scope.lstOrdenCliente[ 0 ] );
+				});
 			});
 		}
 	};
@@ -464,6 +468,14 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		if ( !$scope.modalOpen() ) {
 			if ( key == 78 ) // {N}
 				$scope.nuevaOrden();
+
+			/*
+			if ( key == 38 ) // {UP}
+				$scope.modalInfo( $scope.lstOrdenCliente[ 0 ] );
+
+			if ( key == 40 ) // {DOWN}
+				$scope.modalInfo( $scope.lstOrdenCliente[ 0 ] );
+			*/
 		}
 
 		// CUANDO ESTE ABIERTO ALGUN CUADRO DE DIALOGO
