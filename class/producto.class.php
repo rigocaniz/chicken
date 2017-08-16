@@ -27,6 +27,8 @@ class Producto
  	}
 
 
+
+
 //	CREATE PROCEDURE consultaCierreDiario( _action VARCHAR(20), _idCierreDiario INT, _fechaCierre DATE, _comentario TEXT )
 	function consultaCierreDiario( $accion, $data )
 	{
@@ -215,12 +217,13 @@ class Producto
 
 	function guardarLstProductoIngreso( $accion, $data )
 	{
-		if( count( $data ) )
+		if( count( $data->lstProductos ) )
 		{
 			// INICIALIZAR TRANSACCION
 	 		$this->con->query( 'START TRANSACTION' );
 
-			foreach ( $data AS $producto ) {
+			foreach ( $data->lstProductos AS $producto ) {
+
 				$this->consultaIngreso( $accion, $producto );
 
 				if( $this->respuesta == 'danger' )
@@ -236,7 +239,7 @@ class Producto
 		}
 		else{
  			$this->respuesta = 'warning';
-		 	$this->mensaje   = 'No hay productos agregados al listado de ingresos';
+		 	$this->mensaje   = 'No hay productos agregados al listado de compras';
  		}
 
  		return $this->getRespuesta();
@@ -247,6 +250,7 @@ class Producto
 	function consultaIngreso( $accion, $data )
 	{
 
+		var_dump( $data );
 		$validar = new Validar();
 
 		// INICIALIZACIÓN VAR
@@ -274,6 +278,8 @@ class Producto
 
  		else:
 			$sql = "CALL consultaIngreso( '{$accion}', {$idIngreso}, {$cantidad}, {$idProducto} );";
+
+		echo $sql;
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 	 			$this->siguienteResultado();

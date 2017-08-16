@@ -2,7 +2,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 	// LISTA EL INVENTARIO GENERAL DE PRODUCTOS
 	$scope.lstInventario  = [];
-	$scope.inventarioMenu = 'inventario';
+	$scope.inventarioMenu = 'compras';
 	$scope.accion         = 'insert';
 	$scope.groupBy          = 'sinFiltro';
 
@@ -36,7 +36,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	{
 		var subTotalQuetzales = 0;
 		for (var i = 0; i < $scope.compras.lstProductos.length; i++) {
-			subTotalQuetzales += ($scope.compras.lstProductos[ i ].cantidad * parseFloat( $scope.compras.lstProductos[ i ].precioUnitario ) );
+			subTotalQuetzales += parseFloat( $scope.compras.lstProductos[ i ].costo );
 		}
 		return subTotalQuetzales;
 
@@ -46,16 +46,18 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	$scope.prod = {
 		idProducto     : null,
 		nombreProducto : '',
+		medida         : '',
 		cantidad       : null,
-		precioUnitario : null,
+		costo          : null,
 		seleccionado   : false
 	};
 
 	$scope.compras = {
 		noFactura    : 123,
-		fechaCompra  : null,
+		fechaFactura : null,
 		idProveedor  : 1,
 		proveedor    : 'PROVEEDOR 1',
+		comentario   : '',
 		lstProductos : []
 	};
 	
@@ -94,6 +96,13 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 				console.log( data );
 				alertify.set('notifier','position', 'top-right');
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+				if( data.respuesta == 'success' )
+				{
+					$scope.resetValores( 'cierreDiario' );
+					$scope.dialCierreDiario.hide();
+					$scope.inventario();
+				}
+
 			});
 			
 		}
@@ -106,8 +115,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	};	
 
 	$scope.idxProducto = -1;
-	$scope.seleccionKeyProducto = function( key ){
-//		console.log( key, ":::", $scope.idxProducto );
+	$scope.seleccionKeyProducto = function( key )
+	{
 		// CODIGO ENTER
 		if( key == 13 ){
 
@@ -153,7 +162,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 				idProducto     : null,
 				nombreProducto : '',
 				cantidad       : null,
-				precioUnitario : null,
+				costo : null,
 				seleccionado   : false
 			};
 			$timeout(function(){
@@ -177,7 +186,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		else if( !(prod.cantidad && prod.cantidad > 0) )
 			alertify.notify( 'La cantidad ingresada debe ser mayor a 0', 'danger', 5 );
 
-		else if( !(prod.precioUnitario && prod.precioUnitario > 0) )
+		else if( !(prod.costo && prod.costo > 0) )
 			alertify.notify( 'Ingrese el precio Unitario del producto', 'danger', 5 );
 
 		else{
@@ -185,7 +194,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 				idProducto     : prod.idProducto,
 				producto       : prod.producto,
 				cantidad       : prod.cantidad,
-				precioUnitario : prod.precioUnitario
+				costo : prod.costo
 			});
 
 			$scope.cancelarIngreso( 1 );
@@ -201,11 +210,12 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		}
 		else{
 			$scope.prod = {
-				idProducto     : producto.idProducto,
-				producto       : producto.producto,
-				cantidad       : null,
-				precioUnitario : null,
-				seleccionado   : true
+				idProducto   : producto.idProducto,
+				producto     : producto.producto,
+				medida       : producto.medida,
+				cantidad     : null,
+				costo        : null,
+				seleccionado : true
 			};
 
 			$('#cantidad').focus();
@@ -241,7 +251,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 			$http.post('consultas.php',{
 				opcion : 'guardarLstProductoIngreso',
 				accion : 'insert',
-				data   : $scope.compras.lstProductos
+				data   : $scope.compras
 			})
 			.success(function(data){
 				console.log( data );
@@ -277,6 +287,16 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 			opcion:'catTipoProducto'
 		}).success(function(data){
 			$scope.lstTipoProducto = data;
+		})
+	};
+
+
+	$scope.lstEstadosFactura = [];
+	$scope.catEstadosFactura = function(){
+		$http.post('consultas.php',{
+			opcion:'catEstadosFactura'
+		}).success(function(data){
+			$scope.lstEstadosFactura = data;
 		})
 	};
 
@@ -341,11 +361,22 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 			};
 		}
 
+		else if( 'cierreDiario' )
+		{
+			$scope.cierreDiario = {
+				idCierreDiario : null,
+				fechaCierre    : null,
+				comentario     : '',
+				lstProductos   : []
+			};
+		}
+
 	};
 
 	($scope.cargarInicio = function(){
 		$scope.catMedidas();
 		$scope.catTipoProducto();
+		$scope.catEstadosFactura();
 		$scope.resetValores( 1 );
 	})();
 
