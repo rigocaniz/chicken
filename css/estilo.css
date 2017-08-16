@@ -416,9 +416,9 @@ legend.legend2{
     background: #ffffff;
     border: solid 1px rgb(148, 148, 148);
     position: fixed;
-    width: 800px;
+    width: 750px;
     height: 400px;
-    left: 69px;
+    left: 85px;
     top: 90px;
     padding: 16px;
     box-shadow: -2px 3px 30px rgba(0, 0, 0, 0.38);
@@ -427,12 +427,20 @@ legend.legend2{
     border-radius: 7px 7px 7px 7px;
     -moz-border-radius: 7px 7px 7px 7px;
     -webkit-border-radius: 7px 7px 7px 7px;
+    display: none;
 }
 
 .contenedor-hover .contenido{
     position: relative;
 }
 
+.ticket-hover-triangulo{
+    position: absolute;
+    margin-left: 31px;
+    display: block;
+    font-size: 25px;
+    color: #abb0ca;
+}
 
 
 

@@ -1,32 +1,31 @@
 <div class="col-xs-12" style="margin-top:5px">
 	<div class="row">
-		<div class="col-sm-12" style="margin-bottom:4px">
-			<button type="button" class="btn btn-success" ng-click="nuevaOrden()">
-				<span class="glyphicon glyphicon-plus"></span>
-				<u>N</u>ueva Orden
-			</button>
-			<button type="button" class="btn btn-info" ng-click="modalBuscar()">
-				<span class="glyphicon glyphicon-search"></span>
-				Buscar Orden
-			</button>
+        <div class="col-sm-4 col-xs-12" style="margin-bottom:9px">
+            <button type="button" class="btn btn-success" ng-click="nuevaOrden()">
+                <span class="glyphicon glyphicon-plus"></span>
+                <u>N</u>ueva Orden
+            </button>
+        </div>
+		<div class="col-sm-7 hidden-xs">
+            <input type="text" class="form-control" placeholder="Buscar por Ticket">
 		</div>
 		<div class="col-sm-12">
 			<div class="btn-orden">
 				<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="idEstadoOrden=1">
 					<span class="glyphicon glyphicon-time"></span>
-					<span class="hidden-xs">Pendientes</span>
+					<span class="hidden-xs"><u>P</u>endientes</span>
 				</button>
 				<button class="bt-success" ng-class="{'active':idEstadoOrden==2}" ng-click="idEstadoOrden=2">
 					<span class="glyphicon glyphicon-play"></span>
-					<span class="hidden-xs">En Progreso</span>
+					<span class="hidden-xs"><u>E</u>n Progreso</span>
 				</button>
 				<button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="idEstadoOrden=3">
 					<span class="glyphicon glyphicon-flag"></span>
-					<span class="hidden-xs">Finalizados</span>
+					<span class="hidden-xs"><u>F</u>inalizados</span>
 				</button>
 				<button class="bt-danger" ng-class="{'active':idEstadoOrden==10}" ng-click="idEstadoOrden=10">
 					<span class="glyphicon glyphicon-remove"></span>
-					<span class="hidden-xs">Cancelados</span>
+					<span class="hidden-xs"><u>C</u>ancelados</span>
 				</button>
 			</div>
 		</div>
@@ -45,8 +44,13 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="item in lstOrdenCliente">
-								<td>{{item.numeroTicket}}</td>
+							<tr ng-repeat="item in lstOrdenCliente" ng-class="{'success':$index==miIndex}">
+								<td>
+                                    <span ng-show="$index==miIndex">
+                                        <span class="glyphicon glyphicon-triangle-left"></span>
+                                    </span>
+                                    <b>{{item.numeroTicket}}</b>
+                                </td>
 								<td>
 									<span>{{tiempoTranscurrido( item.fechaRegistro )}}</span>
 								</td>

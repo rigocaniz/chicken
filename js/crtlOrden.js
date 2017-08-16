@@ -25,7 +25,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.dialOrdenCliente     = $modal({scope: $scope,template:'dial.orden.cliente.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenMenu        = $modal({scope: $scope,template:'dial.orden-menu.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialMenuCantidad     = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialOrdenInformacion = $modal({scope: $scope,template:'dial.orden-informacion.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenBusqueda    = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: false });
 
 	($scope.init = function () {
@@ -67,7 +66,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 					$scope.lstOrdenCliente = data;
 
 				$timeout(function () {
+					$scope.miIndex = 0;
 					$scope.modalInfo( $scope.lstOrdenCliente[ 0 ] );
+
 				});
 			});
 		}
@@ -371,7 +372,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			console.log( data );
 			$scope.infoOrden.lstOrden = data;
 		});
-		$scope.dialOrdenInformacion.show();
+//		$scope.dialOrdenInformacion.show();
 	};
 
 
