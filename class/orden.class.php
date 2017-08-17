@@ -557,6 +557,33 @@ class Orden
  		return $datos;
  	}
 
+ 	public function busquedaTicket( $ticket )
+ 	{
+ 		$lst = array();
+
+ 		$sql = "SELECT
+					idOrdenCliente,
+				    numeroTicket,
+				    usuarioResponsable,
+				    usuarioPropietario,
+				    idEstadoOrden,
+				    estadoOrden,
+				    fechaRegistro,
+				    numMenu
+				FROM vOrdenCliente 
+				WHERE DATE( fechaRegistro ) = '2017-08-16' AND numeroTicket = {$ticket}
+				ORDER BY idOrdenCliente DESC;";
+
+		if ( $rs = $this->con->query( $sql ) ) {
+
+			while( $row = $rs->fetch_object() ) {
+				$lst[] = $row;
+			}
+		}
+
+		return $lst;
+ 	}
+
  	function getRespuesta()
  	{
  		return $respuesta = array( 

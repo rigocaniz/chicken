@@ -418,19 +418,31 @@
                 </div>
                 <div class="modal-body">
                 	<div class="row">
-                		<div class="col-xs-7">
-                			<input type="text" class="form-control" id="inputSearch">
-                		</div>
-                		<div class="col-xs-5">
-                			<button type="button" class="btn btn-primary">
-                				<span class="glyphicon glyphicon-search"></span>
-                				<span class="hidden-xs">Buscar</span>
-                			</button>
+                		<div class="col-xs-12">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th># Orden</th>
+                                            <th>Ticket</th>
+                                            <th>Responsable</th>
+                                            <th>Estado Orden</th>
+                                            <th>Lapso</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in lstTicketBusqueda">
+                                            <td>{{item.idOrdenCliente}}</td>
+                                            <td>{{item.numeroTicket}}</td>
+                                            <td>{{item.usuarioResponsable}}</td>
+                                            <td>{{item.estadoOrden}}</td>
+                                            <td>{{ tiempoTranscurrido( item.fechaRegistro ) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                 		</div>
                 	</div>
-                	<div class="row">
-                		
-                   </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" ng-click="$hide();">

@@ -385,6 +385,11 @@ switch ( $data->opcion )
 		echo json_encode( $orden->menuPorCodigo( $data->codigoRapido ) );
 		break;
 
+	case 'busquedaTicket':
+		$orden = new Orden();
+		echo json_encode( $orden->busquedaTicket( $data->ticket ) );
+		break;
+
 
 	/////////////////////////
 	/////////////////////////

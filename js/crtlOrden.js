@@ -26,7 +26,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.dialOrdenCliente     = $modal({scope: $scope,template:'dial.orden.cliente.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenMenu        = $modal({scope: $scope,template:'dial.orden-menu.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialMenuCantidad     = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialOrdenBusqueda    = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialOrdenBusqueda    = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
 
 	($scope.init = function () {
 		// CONSULTA TIPO DE SERVICIOS
@@ -47,6 +47,33 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			}
 		});
 	})();
+
+
+	$scope.lstTicketBusqueda = [];
+	$scope.buscarOrdenTicket = function () {
+		if ( $scope.$parent.loading )
+			return false;
+
+		if ( $scope.buscarTicket > 0 ) {
+			$scope.lstTicketBusqueda = [];
+			$scope.$parent.loading = true; // cargando...
+			
+			// CONSULTA TIPO DE SERVICIOS
+			$http.post('consultas.php', { opcion : 'busquedaTicket', ticket : $scope.buscarTicket })
+			.success(function (data) {
+				$scope.$parent.loading = false; // cargando...
+
+				if ( Array.isArray( data ) && data.length ) {
+					$scope.lstTicketBusqueda = data;
+					$scope.dialOrdenBusqueda.show();
+				}
+				else{
+					alertify.set('notifier','position', 'top-right');
+					alertify.notify( "No se encontro información", 'info', 2 );
+				}
+			});
+		}
+	};
 
 
 	// CONSULTA ORDENES
@@ -356,8 +383,13 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%% INFORMACION DE NODEJS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	$scope.$on('infoNode', function( event, datos ) {
 		// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
-		if ( datos.data && datos.data.ordenCliente && $scope.idEstadoOrden == 1 )
+		if ( datos.data && datos.data.ordenCliente && $scope.idEstadoOrden == 1 ) {
 			$scope.lstOrdenCliente.push( datos.data.ordenCliente );
+
+			// SELECCIONAR LA ORDEN AGREGADA SI ES LA UNICA
+			if ( $scope.lstOrdenCliente.length ==1 )
+				$scope.miIndex = 0;
+		}
 
 		$scope.$apply();
 	});
@@ -547,8 +579,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			$scope.auxKeyTicket( 'back', 0, 'buscarTicket' );
 
 		if ( key == 13 ) // {ENTER}
-			console.log( "Aqui tiene que hacer algo", $scope.buscarTicket );
-			//$scope.agregarOrden();
+			$scope.buscarOrdenTicket();
 	};
 
 	// ATAJOS DIALOGO INGRESO DE TICKET
