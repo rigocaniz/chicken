@@ -6,8 +6,16 @@
                 <u>N</u>ueva Orden
             </button>
         </div>
-		<div class="col-sm-7 hidden-xs">
-            <input type="text" class="form-control" placeholder="Buscar por Ticket">
+		<div class="col-sm-offset-2 col-sm-5 hidden-xs">
+            <div class="input-group">
+                <input type="number" class="form-control" ng-model="buscarTicket" id="buscarTicket" ng-class="{'input-focus':buscarTicket>0}"
+                    placeholder="Ingrese # Ticket + ENTER" style="font-size:19px;padding: 1px 14px;font-weight:normal">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button" ng-click="auxKeyTicket( 'supr', 0, 'buscarTicket' )">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                </span>
+            </div>
 		</div>
 		<div class="col-sm-12">
 			<div class="btn-orden">
@@ -135,7 +143,7 @@
 							<div class="input-group">
 								<input type="number" class="form-control input-lg input-focus" ng-model="$parent.noTicket" id="noTicket">
 								<span class="input-group-btn">
-									<button class="btn btn-lg btn-danger" type="button" ng-click="auxKeyTicket( 'supr', 0, 'noTicket' )">
+									<button class="btn btn-lg btn-info" type="button" ng-click="auxKeyTicket( 'supr', 0, 'noTicket' )">
 										<span class="glyphicon glyphicon-remove"></span>
 									</button>
 								</span>
