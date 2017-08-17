@@ -30,42 +30,89 @@
 			</div>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-sm-12">
-			<div class="panel panel-info" style="margin-top: 4px">
-				<div class="panel-body">
-					<table class="table table-condensed table-hover">
-						<thead>
-							<tr>
-								<th>Ticket</th>
-								<th>Lapso</th>
-								<th>Responsable</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr ng-repeat="item in lstOrdenCliente" ng-class="{'success':$index==miIndex}">
-								<td>
-                                    <span ng-show="$index==miIndex">
-                                        <span class="glyphicon glyphicon-triangle-left"></span>
-                                    </span>
-                                    <b>{{item.numeroTicket}}</b>
-                                </td>
-								<td>
-									<span>{{tiempoTranscurrido( item.fechaRegistro )}}</span>
-								</td>
-								<td><kbd>{{item.usuarioResponsable}}</kbd></td>
-								<td>
-									<button type="button" class="btn btn-sm btn-default" ng-click="modalInfo( item )">
-										<span class="glyphicon glyphicon-list"></span>
-									</button>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
+	<div class="row contenedor-tickets">
+        <!-- *********** LISTA DE TICKETS ********* -->
+        <div class="col-xs-12 col-sm-2">
+            <div class="list-group">
+                <button type="button" class="list-group-item" ng-repeat="item in lstOrdenCliente" ng-class="{'active':$index==miIndex}"
+                    ng-click="seleccionarTicket( item.idOrdenCliente )">
+                    <span class="tkt-active"></span>
+                    <span class="glyphicon glyphicon-bookmark"></span>
+                    {{item.numeroTicket}}
+                </button>
+            </div>
+        </div>
+        
+        <div class="col-xs-12" ng-hide="lstOrdenCliente.length">
+            <div class="alert alert-info" role="alert">No existen ordenes</div>
+        </div>
+
+        <!-- *********** INFORMACION DE ORDEN ********* -->
+        <div class="col-xs-12 col-sm-10 info-orden-ticket" ng-show="lstOrdenCliente.length">
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    <h4>
+                        <b>Orden # </b> {{infoOrden.idOrdenCliente}} » 
+                        <span class="badge-ticket">Ticket # {{infoOrden.numeroTicket}}</span>
+                    </h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    <span class="etiqueta">Estado: </span>
+                    <span class="valor">{{infoOrden.estadoOrden}}</span>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <span class="etiqueta">Lapso: </span>
+                    <span class="valor">{{tiempoTranscurrido( infoOrden.fechaRegistro )}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    <span class="etiqueta"># Menús: </span>
+                    <span class="valor">{{infoOrden.numMenu}}</span>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <span class="etiqueta">Responsable: </span>
+                    <span class="valor">{{infoOrden.usuarioResponsable}}</span>
+                </div>
+            </div>
+            <legend class="legend2">Menús Ordenados</legend>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Cantidad</th>
+                                    <th>Orden</th>
+                                    <th>Subtotal</th>
+                                    <th width="35px"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in infoOrden.lstOrden">
+                                    <td><img ng-src="{{item.imagen}}" style="height:40px"></td>
+                                    <td>{{item.cantidad}}</td>
+                                    <td>
+                                        <span ng-show="item.idTipoServicio==2" class="label-border label-success">R</span>
+                                        <span ng-show="item.idTipoServicio==3" class="label-border label-default">D</span>
+                                        <span ng-show="item.idTipoServicio==1" class="label-border label-primary">L</span>
+                                        <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
+                                        <span>{{item.descripcion}}</span>
+                                    </td>
+                                    <td>{{item.subTotal | number:2}}</td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+           </div>
+        </div>
 	</div>
 </div>
 
@@ -388,73 +435,4 @@
     </div>
 </script> 
 
-
-<!-- *********** INFORMACION DE ORDEN ********* -->
-<div class="contenedor-hover">
-    <div class="contenido">
-        <div class="row">
-            <div class="col-sm-6 col-xs-12">
-            	<h4>
-        			<b>Orden # </b> {{infoOrden.idOrdenCliente}} » 
-                    <span class="badge-ticket">Ticket # {{infoOrden.numeroTicket}}</span>
-                </h4>
-            </div>
-        </div>
-    	<div class="row">
-    		<div class="col-sm-6 col-xs-12">
-    			<span class="etiqueta">Estado: </span>
-        		<span class="valor">{{infoOrden.estadoOrden}}</span>
-    		</div>
-    		<div class="col-sm-6 col-xs-12">
-    			<span class="etiqueta">Lapso: </span>
-        		<span class="valor">{{tiempoTranscurrido( infoOrden.fechaRegistro )}}</span>
-    		</div>
-    	</div>
-    	<div class="row">
-    		<div class="col-sm-6 col-xs-12">
-    			<span class="etiqueta"># Menús: </span>
-        		<span class="valor">{{infoOrden.numMenu}}</span>
-    		</div>
-    		<div class="col-sm-6 col-xs-12">
-    			<span class="etiqueta">Responsable: </span>
-        		<span class="valor">{{infoOrden.usuarioResponsable}}</span>
-    		</div>
-    	</div>
-    	<legend class="legend2">Menús Ordenados</legend>
-    	<div class="row">
-    		<div class="col-xs-12">
-    			<div class="table-responsive">
-        			<table class="table table-hover">
-        				<thead>
-        					<tr>
-        						<th></th>
-        						<th>Cantidad</th>
-        						<th>Orden</th>
-        						<th>Subtotal</th>
-        						<th width="35px"></th>
-        					</tr>
-        				</thead>
-        				<tbody>
-        					<tr ng-repeat="item in infoOrden.lstOrden">
-        						<td><img ng-src="{{item.imagen}}" style="height:40px"></td>
-        						<td>{{item.cantidad}}</td>
-        						<td>
-        							<span ng-show="item.idTipoServicio==2" class="label-border label-success">R</span>
-        							<span ng-show="item.idTipoServicio==3" class="label-border label-default">D</span>
-        							<span ng-show="item.idTipoServicio==1" class="label-border label-primary">L</span>
-        							<span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
-        							<span>{{item.descripcion}}</span>
-        						</td>
-        						<td>{{item.subTotal | number:2}}</td>
-        						<td>
-        							
-        						</td>
-        					</tr>
-        				</tbody>
-        			</table>
-    			</div>
-    		</div>
-       </div>
-    </div>
-</div>
 
