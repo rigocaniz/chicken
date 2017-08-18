@@ -112,7 +112,7 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr ng-repeat="inv in inventario.lstProductos" ng-class="{'danger border-danger': !inv.disponibilidad, 'warning border-warning':  inv.disponibilidad <= (inv.cantidadMinima + 5) }">
+												<tr ng-repeat="inv in inventario.lstProductos" ng-class="{'danger border-danger': inv.alertaStock == 1, 'warning border-warning':  inv.alertaStock == 2, 'border-success':  inv.alertaStock == 3' }">
 													<td class="text-right">
 														{{ $index + 1 }}
 													</td>
@@ -129,7 +129,7 @@
 														{{ inv.esPerecedero }}
 													</td>
 													<td class="text-center">
-														<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.disponibilidad" ng-disabled="!realizarCierre" required>
+														{{ inv.disponibilidad }}
 													</td>
 													<td class="text-center">
 														<button type="button" ng-click="ingresarReajuste( inv.idProducto, inv.producto, inv.disponibilidad )" class="btn btn-primary btn-sm">
@@ -140,7 +140,7 @@
 														<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( inv.idProducto, 'update', producto )">
 															<span class="glyphicon glyphicon-pencil"></span>
 														</button>
-														<span class="label label-warning" ng-show="inv.disponibilidad==inv.cantidadMninima">Pronto a agotarse</span>
+														<span class="label label-warning" ng-show="inv.disponibilidad==inv.cantidadMinima">Pronto a agotarse</span>
 													</td>
 												</tr>
 											</tbody>

@@ -590,7 +590,7 @@ class Producto
 				elseif( $row->disponibilidad <= $row->cantidadMinima + 15 ):
 					$alertaStock = 2;
 				
-				elseif( $row->disponibilidad + 50 >= $row->cantidadMaxima ):
+				elseif( $row->disponibilidad + 100 >= $row->cantidadMaxima ):
 					$alertaStock = 3;
 				
 				endif;
