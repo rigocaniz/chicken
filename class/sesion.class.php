@@ -5,9 +5,6 @@
 class Sesion
 {
 	
-	private $sesion = null;
-
-
 	function destruirSesion()
 	{
 		session_start();
@@ -25,7 +22,7 @@ class Sesion
 	// OBTENER VARIABEL
 	private function getVariable( $var )
 	{
-		return $_SESSION[ $var ];
+		return @$_SESSION[ $var ];
 	}
 	
 

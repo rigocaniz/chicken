@@ -141,6 +141,20 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		$scope.dialOrden.show();
 	};
 
+	// 2. CONSULTA ORDEN YA CREADA
+	$scope.consultaOrden = function ( orden ) {
+		$scope.dialOrden.hide();
+		$scope.dialOrdenCliente.show();
+
+		$scope.ordenActual = {
+			idOrdenCliente : orden.idOrdenCliente,
+			noTicket       : orden.numeroTicket,
+			totalAgregar   : 0,
+			lstAgregar     : [],
+			lstPedidos     : []
+		};
+	};
+
 	// #2 => CREA UNA NUEVA ORDEN
 	$scope.agregarOrden = function () {
 		if ( $scope.$parent.loading )

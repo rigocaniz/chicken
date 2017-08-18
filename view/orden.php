@@ -92,6 +92,14 @@
                     <span class="valor">{{infoOrden.usuarioResponsable}}</span>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xs-12 text-center" ng-show="infoOrden.idEstadoOrden==1 || infoOrden.idEstadoOrden==2">
+                    <button type="button" class="btn btn-info" ng-click="consultaOrden( infoOrden )">
+                        <span class="glyphicon glyphicon-bookmark"></span>
+                        <b>Consultar <u>O</u>rden</b>
+                    </button>
+                </div>
+            </div>
             <legend class="legend2">Menús Ordenados</legend>
             <div class="row">
                 <div class="col-xs-12">
