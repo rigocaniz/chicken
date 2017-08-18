@@ -400,7 +400,7 @@ class Orden
 
  		$sql = "SELECT 
 					idOrdenCliente, numeroTicket, usuarioResponsable, idEstadoOrden, estadoOrden, fechaRegistro, numMenu
-				FROM vOrdenCliente $where ORDER BY idOrdenCliente DESC " . $limit;
+				FROM vOrdenCliente $where ORDER BY idOrdenCliente ASC " . $limit;
 
 		if( $rs = $this->con->query( $sql ) ) {
  			if ( $idOrdenCliente > 0 AND ( $row = $rs->fetch_object() ) ) {
@@ -418,7 +418,8 @@ class Orden
 
  	public function lstDetalleOrdenCliente( $idOrdenCliente )
  	{
- 		$lst = array();
+		$lst   = array();
+		$total = 0;
 
  		$sql = "SELECT 
 				    idDetalleOrdenMenu,
@@ -495,6 +496,9 @@ class Orden
 				$lst[ $index ]->cantidad += $row->cantidad;
 				$lst[ $index ]->subTotal = ( $lst[ $index ]->cantidad * $precioMenu );
 
+				// SUMA EL TOTAL DE LA ORDEN
+				$total += (double)$precioMenu;
+
 				// AGREGA DETALLE DE ORDEN
 				$lst[ $index ]->lstDetalle[] = (object)array(
 					'idDetalleOrdenMenu' => $row->idDetalleOrdenMenu,
@@ -503,7 +507,10 @@ class Orden
 			}
  		}
 
- 		return $lst;
+ 		return array(
+			'lst'   => $lst,
+			'total' => $total
+ 		);
  	}
 
  	public function menuPorCodigo( $codigoRapido )
@@ -571,7 +578,7 @@ class Orden
 				    fechaRegistro,
 				    numMenu
 				FROM vOrdenCliente 
-				WHERE DATE( fechaRegistro ) = '2017-08-16' AND numeroTicket = {$ticket}
+				WHERE ( DATE( fechaRegistro ) = CURDATE() OR idEstadoOrden = 1 ) AND numeroTicket = {$ticket}
 				ORDER BY idOrdenCliente DESC;";
 
 		if ( $rs = $this->con->query( $sql ) ) {
