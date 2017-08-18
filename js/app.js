@@ -123,17 +123,16 @@ var socket = io.connect('http://127.0.0.1:8080', { 'forceNew': true });
 
 // CONTROLADOR PRINCIPAL
 app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $modal ){
-/*
     // LISTEN INFO NODE
     socket.on('mensaje', function(data) {  
         console.log(data);
     });
 
     socket.on('info', function(data) {  
+        console.log( data );
         $rootScope.$broadcast( 'infoNode', data );
     });
 
-*/
     $scope.difLocalServer = 0;
 
     // DIFERENCIA DE TIEMPO RESPECTO AL SERVIDOR
