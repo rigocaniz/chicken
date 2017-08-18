@@ -2,7 +2,9 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="pull-right">
-	            <img class="img-responsive" src="img/logo_churchil.png" style="height: 56px;">
+				<a href="#/" >
+	            	<img class="img-responsive" src="img/logo_churchil.png" style="height: 56px;">
+	            </a>
 	        </div>
 
 			<!-- MENU TABS -->

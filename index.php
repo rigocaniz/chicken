@@ -1,19 +1,23 @@
+<?php
+    session_start();
+    if( isset( $_SESSION[ 'idNivel' ] ) AND isset( $_SESSION[ 'idPerfil' ] ) ):
+?>
+
 <!DOCTYPE html>
 <html lang="es-GT" ng-app="restaurante">
 <head>
 	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Restaurante Churchil</title>
-	<!-- CSS -->
-	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
-	<link href="css/stylish-portfolio.css" rel="stylesheet">
+    <title>Restaurante Churchil</title>
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link href="css/stylish-portfolio.css" rel="stylesheet">
     <link rel="stylesheet" href="css/alertify.css">
     <link rel="stylesheet" href="css/themes/semantic.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/estilo.css">
     <link rel="stylesheet" href="css/fileinput.css">
-    
 </head>
 <body ng-controller="inicioCtrl" ng-keyup="pressKey( $event.keyCode );">
     <div class="cargando" id="cargando" ng-show="loading">
@@ -25,11 +29,13 @@
         </div>
     </div>
 
-	<!-- Navegacion-->
+    <!-- Navegacion-->
     <a id="menu-toggle" href="#" class="btn btn-dark btn-md toggle"><span class="glyphicon glyphicon-list"></span></a>
     <nav id="sidebar-wrapper">
         <ul class="sidebar-nav">
-            <a id="menu-close" href="#" class="btn btn-light btn-lg pull-right toggle"><span class="glyphicon glyphicon-list"></span></a>
+            <a id="menu-close" href="#" class="btn btn-light btn-lg pull-right toggle">
+                <span class="glyphicon glyphicon-list"></span>
+            </a>
             <li class="sidebar-brand">
                 <a href="#/" onclick='$("#menu-close").click()'>INICIO</a>
             </li>
@@ -48,30 +54,31 @@
             <li>
                 <a href="#/caja" onclick='$("#menu-close").click()'>Caja</a>
             </li>
-             <li>
+            <li>
                 <a href="#/inventario" onclick='$("#menu-close").click()'>Inventario</a>
             </li>
-             <li>
+            <li>
                 <a href="#/promocion" onclick='$("#menu-close").click()'>Promociones</a>
             </li>
-             <li>
+            <li>
                 <a href="#/admin" onclick='$("#menu-close").click()'>Administración</a>
             </li>
-             <li>
+            <li>
                 <a href="#/mantenimiento" onclick='$("#menu-close").click()'>Mantenimiento</a>
             </li>
-             <li>
+            <li>
                 <a href="#/tendencia" onclick='$("#menu-close").click()'>Tendencias</a>
             </li>
             <li>
                 <a href="#/reporte" onclick='$("#menu-close").click()'>Reportes</a>
             </li>
-             <li>
-                <a href="logOut.php">Salir</a>
+            <li>
+                <a href="logout.php">Salir</a>
             </li>
         </ul>
     </nav>
-   <div ng-view></div>
+
+    <div ng-view></div>
 
     <!-- MODAL SUBIR IMAGEN -->
     <div class="modal fade" tabindex="-1" id="subirImagen" role="dialog" data-backdrop="static">
@@ -108,13 +115,12 @@
         </div>
     </div>
 
-
-	<!-- jQuery -->
+    <!-- jQuery -->
     <script src="node-app/node_modules/socket.io-client/dist/socket.io.js"></script>
     <script src="js/libs/jquery-3.2.1.min.js"></script>
     <script src="js/libs/bootstrap.min.js"></script>
     <script src="js/libs/angular.min.js"></script>
-	<script src="js/libs/angular-route.min.js"></script>
+    <script src="js/libs/angular-route.min.js"></script>
     <script src="js/libs/ngstrap.js"></script>
     <script src="js/libs/dirPagination.js"></script>
     <script src="js/libs/fileinput.js"></script>
@@ -134,17 +140,22 @@
     <script src="js/alertify.js"></script>
 
     <script>
-    // Closes the sidebar menu
-    $("#menu-close").click(function(e) {
-        e.preventDefault();
-        $("#sidebar-wrapper").toggleClass("active");
-    });
-    // Opens the sidebar menu
-    $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#sidebar-wrapper").toggleClass("active");
-    });
-    
+        // Closes the sidebar menu
+        $("#menu-close").click(function(e) {
+            e.preventDefault();
+            $("#sidebar-wrapper").toggleClass("active");
+        });
+        // Opens the sidebar menu
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#sidebar-wrapper").toggleClass("active");
+        });
+        
     </script>
 </body>
 </html>
+<?php 
+else:
+    header( "Location: login.php" );
+endif;
+?>

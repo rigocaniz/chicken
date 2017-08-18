@@ -14,12 +14,8 @@ if( !isset( $_SESSION['idPerfil'] ) AND !isset( $_SESSION['idNivel'] ) ) {
 
         $username = $conexion->real_escape_string( $_POST[ 'usuario' ] );
         $clave    = $conexion->real_escape_string( $_POST[ 'clave' ] );
-
         $usuario = new Usuario();
-        
-        var_dump( $usuario->login( $username, $clave ) );
-
-        //header("location: ./");
+        $data = $usuario->login( $username, $clave );
     }
 
 ?>
@@ -33,44 +29,82 @@ if( !isset( $_SESSION['idPerfil'] ) AND !isset( $_SESSION['idNivel'] ) ) {
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/estilo.css">
+
+    <style type="text/css" media="screen">
+
+        body{
+            background: url('img/ejemplo.jpg') no-repeat fixed center center;
+            background-size: cover;
+        }
+
+    
+
+    .login-block {
+        width: 350px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 5px;
+        border-top: 6px solid #ff5722;
+        border-bottom: 3px solid #ff5722;
+        margin: 35px auto;
+    }
+
+    .login-block h3 {
+        text-align: center;
+        color: #000;
+        font-size: 18px;
+        text-transform: uppercase;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+    .container{
+        background-color: rgba(255, 152, 0, 0.29);
+        width: 100%;
+        height: 100% !important;
+        position: fixed;
+    }
+        
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="row">
-            <div class="col-sm-12 col-md-4 col-md-offset-4">
-                <div class="panel panel-danger">
-                    <div class="panel-heading">
-                        <div class="text-center">
-                            <img src="img/Logo_Churchil.png">
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <h3 class="text-center">ACCESO</h3>
-                        <form autocomplete="off" action="login.php" method="POST">
-                            <div class="form-group input-group has-success has-feedback">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
-
-                                <input class="form-control" type="text" name="usuario" ng-model="user" maxlength="12" placeholder="usuario" id="inputSuccess3" aria-describedby="inputSuccess3Status"/> 
-
-                                <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true" ></span>
-                            </div>
-
-                            <div class="form-group input-group has-success has-feedback">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                <input class="form-control" type="password" maxlength="30" name="clave" ng-model="pass" ng-disabled="user.length < 5"  placeholder="contraseña"/>     
-                                <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-                            </div>
-
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-warning btn-block" ng-disabled="user.length < 6">
-                                    <b>iniciar sesion</b>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+        <div class="login-block">
+            <img class="text-center" src="img/Logo_Churchil.png">
+            <div class="text-center">
+                <h4>INGRESAR</h4>
             </div>
-        </div>  
+            <p>
+                <form action="login.php" method="POST" novalidate autocomplete="off">
+                    <div class="form-group input-group" ng-class="{'has-success has-feedback': user && user.length >=8}">
+                        <span class="input-group-addon">
+                            <i class="glyphicon glyphicon-user"></i>
+                        </span>
+                        <input class="form-control" type="text" name="usuario" ng-model="user" maxlength="12" placeholder="Usuario" required />
+                        <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true" ng-show="user && user.length >=8"></span>
+                    </div>
+                    <div class="form-group input-group" ng-class="{'has-success has-feedback': pass && pass.length >=6}" ">
+                        <span class="input-group-addon">
+                            <i class="glyphicon glyphicon-lock"></i>
+                        </span>
+                        <input class="form-control" type="password" maxlength="30" name="clave" ng-model="pass" ng-disabled="user.length < 5" placeholder="Contraseña" required />     
+                        <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true" ng-show="pass && pass.length >=6"></span>
+                    </div>
+                    <?php
+                        if( isset( $data[ 'respuesta' ] ) AND $data[ 'respuesta' ] == 'danger'  ):
+                    ?>
+                    <div class="alert alert-danger" role="alert"><?= $data[ 'mensaje' ]; ?></div>
+                    <?php
+                        endif;
+                    ?>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-warning btn-block" ng-disabled="user.length < 6">
+                            <b>ACCEDER</b>
+                        </button>
+                    </div>
+                </form>
+            </p>
+        </div>
     </div>
 
     <script src="js/libs/jquery-3.2.1.min.js"></script>
@@ -81,7 +115,8 @@ if( !isset( $_SESSION['idPerfil'] ) AND !isset( $_SESSION['idNivel'] ) ) {
 </html>
 
 <?php
-}else{
+}
+else{
     header('Location: ./');
 }
 ?>
