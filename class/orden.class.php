@@ -31,7 +31,7 @@ class Orden
 		$idEstadoOrden      = "NULL";
 
 		// SETEO DE VARIABLES
-		$data->numeroTicket = (int)$data->numeroTicket > 0 ? (int)$data->numeroTicket	 : "NULL";
+		$data->numeroTicket = isset( $data->numeroTicket ) ? (int)$data->numeroTicket	 : "NULL";
 
 		$validar = new Validar();
 
@@ -48,7 +48,7 @@ class Orden
 
 			// SETEO DE VARIABLES
 			$data->idOrdenCliente = (int)$data->idOrdenCliente > 0	? (int)$data->idOrdenCliente : "NULL";
-			$data->idEstadoOrden  = (int)$data->idEstadoOrden > 0	? (int)$data->idEstadoOrden	 : "NULL";
+			$data->idEstadoOrden  = isset( $data->idEstadoOrden )	? (int)$data->idEstadoOrden	 : "NULL";
 
 			// OBLIGATORIOS
 			$idOrdenCliente = $validar->validarEntero( $data->idOrdenCliente, NULL, TRUE, 'El No. de Orden no es válido' );
@@ -56,9 +56,6 @@ class Orden
 			if( $accion == 'update' ):
 				$numeroTicket = $validar->validarEntero( $data->numeroTicket, NULL, TRUE, 'El No. de Ticket es válido' );
 			
-			elseif( $accion == 'status' ):
-				$idEstadoOrden = $validar->validarEntero( $data->idEstadoOrden, NULL, TRUE, 'El ID del estado de Orden no es válido' );
-
 			endif;
 
 		endif;
@@ -70,15 +67,24 @@ class Orden
 	 		$this->mensaje   = $validar->getMsj();
 	 		$this->tiempo    = $validar->getTiempo();
  		else:
+		 	$this->con->query( "START TRANSACTION" );
+
 	 		$sql = "CALL consultaOrdenCliente( '{$accion}', {$idOrdenCliente}, {$numeroTicket}, {$usuarioResponsable}, {$idEstadoOrden} )";
 	 		
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+		 		@$this->con->next_result();
+		 		$this->con->query( "COMMIT" );// CONFIRMA TRANSACCION
+
 	 			$this->respuesta = $row->respuesta;
 	 			$this->mensaje   = $row->mensaje;
 	 			if( $accion == 'insert' AND $row->respuesta == 'success' )
 	 				$this->data = (int)$row->id;
+
+	 			if ( $accion == 'cancel' AND $row->respuesta == 'success' )
+	 				$this->ordenPrincipalCancelada( $idOrdenCliente );
 	 		}
 	 		else{
+		 		$this->con->query( "ROLLBACK" );
 	 			$this->respuesta = 'danger';
 	 			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
 	 		}
@@ -302,7 +308,12 @@ class Orden
 
 			 	// ENVIA LOS DATOS POR MEDIO DE REDIS
 			 	$red = new Redis();
-				$red->messageRedis( $this->data );
+				$red->messageRedis( 
+					(object)array(
+						'accion' => 'ordenNueva',
+						'data'   => $this->data,
+					) 
+				);
 			}
 		 	else
 		 		$this->con->query( "ROLLBACK" );
@@ -314,7 +325,7 @@ class Orden
  		endif;
  	}
 
- 	public function lstMenuAgregado( $txtIdMenu, $txtIdCombo )
+ 	public function lstMenuAgregado( $txtIdMenu, $txtIdCombo, $idOrdenCliente = 0 )
  	{
  		$lst = array();
 
@@ -339,12 +350,31 @@ class Orden
 				    usuarioResponsable,
 				    fechaRegistro,
 				    perteneceCombo,
-    				idDetalleOrdenCombo
+    				idDetalleOrdenCombo,
+    				idOrdenCliente
 				FROM vOrdenes
 				WHERE ";
 
+		// SI CONSULTA TODO DETALLE DE ORDEN PRINCIPAL
+		if ( $idOrdenCliente > 0 ):
+			if( $rs = $this->con->query( $sql . " idOrdenCliente = " . $idOrdenCliente ) ){
+	 			while ( $row = $rs->fetch_object() ) {
+					$row->idDetalleOrdenMenu   = (int)$row->idDetalleOrdenMenu;
+					$row->idMenu               = (int)$row->idMenu;
+					$row->precio               = (double)$row->precio;
+					$row->idEstadoDetalleOrden = (int)$row->idEstadoDetalleOrden;
+					$row->idTipoServicio       = (int)$row->idTipoServicio;
+					$row->idDestinoMenu        = (int)$row->idDestinoMenu;
+					$row->perteneceCombo       = (int)$row->perteneceCombo;
+					$row->idDetalleOrdenCombo  = (int)$row->idDetalleOrdenCombo;
+	 				$lst[] = $row;
+	 			}
+	 		}
+		endif;
+
+
 		// SI SE AGREGO AL MENOS UN MENU
-		if ( strlen( $txtIdMenu ) > 2 ):
+		if ( strlen( $txtIdMenu ) > 2 AND $idOrdenCliente === 0 ):
 	 		if( $rs = $this->con->query( $sql . $txtIdMenu ) ){
 	 			while ( $row = $rs->fetch_object() ) {
 					$row->idDetalleOrdenMenu   = (int)$row->idDetalleOrdenMenu;
@@ -361,7 +391,7 @@ class Orden
 		endif;
 
 		// SI SE AGREGO AL MENOS UN COMBO
-		if ( strlen( $txtIdCombo ) > 2 ):
+		if ( strlen( $txtIdCombo ) > 2 AND $idOrdenCliente === 0 ):
 	 		if( $rs = $this->con->query( $sql . $txtIdCombo ) ){
 	 			while ( $row = $rs->fetch_object() ) {
 	 				$row->idDetalleOrdenMenu   = (int)$row->idDetalleOrdenMenu;
@@ -589,6 +619,23 @@ class Orden
 		}
 
 		return $lst;
+ 	}
+
+ 	// SI SE CANCELA LA ORDEN PRINCIPAL
+ 	public function ordenPrincipalCancelada( $idOrdenCliente )
+ 	{
+	 	// SI LA CLASE NO EXISTE SE LLAMA
+	 	if ( !class_exists( "Redis" ) )
+	 		include 'redis.class.php';
+
+	 	// ENVIA LOS DATOS POR MEDIO DE REDIS
+	 	$red = new Redis();
+		$red->messageRedis( 
+			(object)array(
+				'accion'         => 'ordenPrincipalCancelada',
+				'idOrdenCliente' => $idOrdenCliente,
+			) 
+		);
  	}
 
  	function getRespuesta()

@@ -65,6 +65,12 @@
                         <span class="badge-ticket">Ticket # {{infoOrden.numeroTicket}}</span>
                     </h4>
                 </div>
+                <div class="col-sm-6 col-xs-12 text-right" ng-show="infoOrden.idEstadoOrden==1">
+                    <button type="button" class="btn btn-sm btn-danger" ng-click="dialOrdenCancelar.show()">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        <b>Cancelar Orden</b>
+                    </button>
+                </div>
             </div>
             <div class="row">
                 <div class="col-sm-6 col-xs-12">
@@ -84,14 +90,6 @@
                 <div class="col-sm-6 col-xs-12">
                     <span class="etiqueta">Responsable: </span>
                     <span class="valor">{{infoOrden.usuarioResponsable}}</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 text-right">
-                    <button type="button" class="btn btn-sm btn-danger">
-                        <span class="glyphicon glyphicon-remove"></span>
-                        <b>Cancelar Orden</b>
-                    </button>
                 </div>
             </div>
             <legend class="legend2">Menús Ordenados</legend>
@@ -472,3 +470,31 @@
 </script> 
 
 
+
+<!-- CANCELAR ORDEN -->
+<script type="text/ng-template" id="dial.orden.cancelar.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-danger">
+                <div class="modal-header panel-heading">
+                    <button type="button" class="close" ng-click="$hide()">&times;</button>
+                    <span class="glyphicon glyphicon-remove"></span>
+                    CANCELAR ORDEN
+                </div>
+                <div class="modal-body">
+                    <h3>¿Está seguro de cancelar la Orden con Ticket # <kbd>{{infoOrden.numeroTicket}}</kbd>?</h3>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" ng-click="cancelarOrdenPrincipal( infoOrden.idOrdenCliente )">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        <b>CANCELAR ORDEN COMPLETA</b>
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="$hide()">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        <b>Salir sin Cancelar</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script> 
