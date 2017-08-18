@@ -423,6 +423,7 @@ legend.legend2{
 }
 
 .info-orden-ticket{
+    padding-top: 7px;
     border: solid 1px #e1e1e1;
     border-radius: 9px;
     -moz-border-radius: 9px;

@@ -27,6 +27,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.dialOrdenMenu        = $modal({scope: $scope,template:'dial.orden-menu.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialMenuCantidad     = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenBusqueda    = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialOrdenCancelar    = $modal({scope: $scope,template:'dial.orden.cancelar.html', show: false, backdrop:false, keyboard: true });
 
 	($scope.init = function () {
 		// CONSULTA TIPO DE SERVICIOS
@@ -381,21 +382,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		}
 	};
 
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%% INFORMACION DE NODEJS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	$scope.$on('infoNode', function( event, datos ) {
-		// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
-		if ( datos.data && datos.data.ordenCliente && $scope.idEstadoOrden == 1 ) {
-			$scope.lstOrdenCliente.push( datos.data.ordenCliente );
-
-			// SELECCIONAR LA ORDEN AGREGADA SI ES LA UNICA
-			if ( $scope.lstOrdenCliente.length ==1 )
-				$scope.miIndex = 0;
-		}
-
-		$scope.$apply();
-	});
-
-
 	// CONSULTA MENU POR CODIGO
 	$scope.consultaMenuPorCodigo = function () {
 		if ( $scope.$parent.loading )
@@ -423,6 +409,37 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 					alertify.notify('Código no válido', 'danger', 2);
 				}
 			});
+		}
+	};
+
+
+	// => CANCELAR ORDEN PRINCIPAL
+	$scope.cancelarOrdenPrincipal = function ( idOrdenCliente ) {
+		if ( $scope.$parent.loading )
+			return false;
+
+		if ( idOrdenCliente > 0 ) {
+
+			$scope.$parent.loading = true; // cargando...
+
+			// CONSULTA PRECIOS DEL MENU
+			$http.post('consultas.php', { 
+				opcion : 'consultaOrdenCliente',
+				accion : 'cancel',
+				datos : { idOrdenCliente : idOrdenCliente }
+			})
+			.success(function (data) {
+				$scope.$parent.loading = false; // cargando...
+
+				alertify.set('notifier','position', 'top-right');
+				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+
+				if ( data.respuesta == 'success' )
+					$scope.dialOrdenCancelar.hide();
+			});
+		} else {
+			alertify.set('notifier','position', 'top-right');
+			alertify.notify('Orden de Cliente no válida', 'danger', 4);
 		}
 	};
 
@@ -457,8 +474,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 
-
-
 	/* ++++++++++++++++++ AUXILIAR ++++++++++++++++ */
 	// SUMA O RESTA UNO A LA CANTIDAD DE UN MENU
 	$scope.ordenCantidad = function ( index, sumar, cantidad, precio ) {
@@ -477,19 +492,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		$scope.ordenActual.lstAgregar.splice( index, 1 );
 	};
 
-	/* ++++++++++++++++++ UTIL ++++++++++++++++ */
-	// ***RETORNA LA DESCRIPCION DE UN ELEMENTO DE ACUEROD AL id DEL ARREGLO
-	$scope.descripcion = function ( arr, id, _value, _return ) {
-		var descrip = '';
-		for (var i = 0; i < $scope[ arr ].length; i++) {
-			if ( $scope[ arr ][ i ][ id ] == _value )
-				descrip = $scope[ arr ][ i ][ _return ];
-		}
-
-		return descrip;
-	};
-
-	// SI CAMBIA EL TIPO DE SERVICIO
+		// SI CAMBIA EL TIPO DE SERVICIO
 	$scope.watchPrecio = function () {
 		$scope.menuActual.precio = 0;
 
@@ -723,5 +726,83 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			return $("body>div").hasClass('modal') && $("body>div").hasClass('top');
 		else
 			return !!( $( '#' + _name ).data() && $( '#' + _name ).data().$scope.$isShown );
+	};
+
+
+	/* 
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%% INFORMACION DE NODEJS %%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	*/
+	$scope.$on('infoNode', function( event, datos ) {
+		console.log( 'NODE>>', datos );
+		// SI SE AGREGO UNA ORDEN NUEVA
+		if ( datos.accion == 'ordenNueva' ) {
+
+			// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
+			if ( datos.data && datos.data.ordenCliente && $scope.idEstadoOrden == 1 ) {
+				$scope.lstOrdenCliente.push( datos.data.ordenCliente );
+
+				// SELECCIONAR LA ORDEN AGREGADA SI ES LA UNICA
+				if ( $scope.lstOrdenCliente.length ==1 )
+					$scope.miIndex = 0;
+			}
+		}
+
+		// ORDEN PRINCIPAL CANCELADA
+		else if ( datos.accion == 'ordenPrincipalCancelada' ) {
+
+			// SI SON ORDENES PENDIENTES
+			if ( $scope.idEstadoOrden == 1 ) {
+
+				// OBTIENE INDEX DE ORDEN
+				var index = $scope.indexArray( 'lstOrdenCliente', 'idOrdenCliente', datos.idOrdenCliente );
+
+				if ( index >= 0 ) {
+					// ELIMINA LA ORDEN CANCELADA EN PENDIENTES
+					$scope.lstOrdenCliente.splice( index, 1 );
+
+					// SI EXISTEN ELEMENTOS SELECCIONA EL PRIMERO
+					if ( $scope.lstOrdenCliente.length )
+						$scope.miIndex = 0;
+
+					// SI NO EXISTEN DEJA EN -1
+					else
+						$scope.miIndex = -1;
+				}
+			}
+		}
+
+
+		$scope.$apply();
+	});
+	/* 
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%% INFORMACION DE NODEJS %%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	*/
+
+	/* ++++++++++++++++++ UTIL ++++++++++++++++ */
+
+	// ***RETORNA LA DESCRIPCION DE UN ELEMENTO DE ACUEROD AL id DEL ARREGLO
+	$scope.descripcion = function ( arr, id, _value, _return ) {
+		var descrip = '';
+		for (var i = 0; i < $scope[ arr ].length; i++) {
+			if ( $scope[ arr ][ i ][ id ] == _value ) {
+				descrip = $scope[ arr ][ i ][ _return ];
+				break;
+			}
+		}
+
+		return descrip;
+	};
+
+	// *** RETORNA INDEX DE ARREGLO
+	$scope.indexArray = function ( arr, cmp, _value ) {
+		var index = -1;
+		for (var i = 0; i < $scope[ arr ].length; i++) {
+			if ( $scope[ arr ][ i ][ cmp ] == _value ) {
+				index = i;
+				break;
+			}
+		}
+
+		return index;
 	};
 });

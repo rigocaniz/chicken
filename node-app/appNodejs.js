@@ -18,7 +18,7 @@ io.on('connection', function (socket) {
 	    // VERIFICAR SI EXISTE UN MENSAJE VALIDO
 	    if ( message && message.length > 2 ) {
 	    	var data = JSON.parse( message );
-	    	socket.emit('info', { 'accion' : 'ordenNueva', 'data' : data });
+	    	socket.emit('info', data );
 	    }
 	});
 });
