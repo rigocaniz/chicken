@@ -95,8 +95,8 @@
             <div class="row">
                 <div class="col-xs-12 text-center" ng-show="infoOrden.idEstadoOrden==1 || infoOrden.idEstadoOrden==2">
                     <button type="button" class="btn btn-info" ng-click="consultaOrden( infoOrden )">
-                        <span class="glyphicon glyphicon-bookmark"></span>
-                        <b>Consultar <u>O</u>rden</b>
+                        <span class="glyphicon glyphicon-plus"></span>
+                        <b>Agregar <u>O</u>rden</b>
                     </button>
                 </div>
             </div>
@@ -238,6 +238,8 @@
                     <h4>
                     	<span ng-show="ordenActual.idOrdenCliente>0">Orden # <span class="badge-orden">{{ordenActual.idOrdenCliente}}</span></span> - 
                     	<span ng-show="ordenActual.noTicket>0">Ticket: <span class="badge-ticket">{{ordenActual.noTicket}}</span></span>
+                        <span class="label label-default" style="float:right" ng-show="accionOrden=='nuevo'">Nuevo</span>
+                        <span class="label label-info" style="float:right" ng-show="accionOrden=='modificar'">Agregar</span>
                     </h4>
                 </div>
                 <div class="modal-body">

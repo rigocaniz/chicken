@@ -145,6 +145,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.consultaOrden = function ( orden ) {
 		$scope.dialOrden.hide();
 		$scope.dialOrdenCliente.show();
+		$scope.accionOrden = 'modificar';
 
 		$scope.ordenActual = {
 			idOrdenCliente : orden.idOrdenCliente,
@@ -367,7 +368,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			$http.post('consultas.php', { 
 				opcion         : 'guardarDetalleOrden',
 				idOrdenCliente : $scope.ordenActual.idOrdenCliente,
-				lstAgregar     : lstAgregar
+				lstAgregar     : lstAgregar,
+				accionOrden    : $scope.accionOrden
 			})
 			.success(function (data) {
 				console.log( data );
@@ -747,7 +749,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%% INFORMACION DE NODEJS %%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 	*/
 	$scope.$on('infoNode', function( event, datos ) {
-		console.log( 'NODE>>', datos );
 		// SI SE AGREGO UNA ORDEN NUEVA
 		if ( datos.accion == 'ordenNueva' ) {
 
@@ -758,6 +759,35 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				// SELECCIONAR LA ORDEN AGREGADA SI ES LA UNICA
 				if ( $scope.lstOrdenCliente.length ==1 )
 					$scope.miIndex = 0;
+			}
+		}
+
+		// SI SE AGREGA OTROS MENUS A ORDEN EXISTENTE
+		else if ( datos.accion == 'ordenAgregar' ) {
+			// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
+			if ( datos.data && datos.data.ordenCliente && ( $scope.idEstadoOrden == 1 || $scope.idEstadoOrden == 2 ) ) {
+				console.log( datos.data );
+
+				var orden = datos.data.ordenCliente;
+
+				// OBTIENE INDEX DE ORDEN
+				var index = $scope.indexArray( 'lstOrdenCliente', 'idOrdenCliente', orden.idOrdenCliente );
+
+				// SI EXISTE LA ORDEN
+				if ( index >= 0 ) {
+					$scope.lstOrdenCliente[ index ].numeroTicket       = orden.numeroTicket;
+					$scope.lstOrdenCliente[ index ].usuarioResponsable = orden.usuarioResponsable;
+					$scope.lstOrdenCliente[ index ].numMenu            = orden.numMenu;
+
+					// SI ES LA ORDEN ACTUAL
+					if ( index == $scope.miIndex && datos.data.detalleOrdenCliente ) {
+						$scope.infoOrden.numeroTicket       = orden.numeroTicket;
+						$scope.infoOrden.usuarioResponsable = orden.usuarioResponsable;
+						$scope.infoOrden.numMenu            = orden.numMenu;
+						$scope.infoOrden.lstOrden           = datos.data.detalleOrdenCliente.lst;
+						$scope.infoOrden.total              = datos.data.detalleOrdenCliente.total;
+					}
+				}
 			}
 		}
 

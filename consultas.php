@@ -395,7 +395,7 @@ switch ( $data->opcion )
 	/////////////////////////
 	case 'guardarDetalleOrden':
 		$orden = new Orden();
-		$orden->guardarDetalleOrden( $data->idOrdenCliente, $data->lstAgregar ) ;
+		$orden->guardarDetalleOrden( $data->idOrdenCliente, $data->lstAgregar, $data->accionOrden ) ;
 		echo json_encode( $orden->getRespuesta() );
 		break;
 	

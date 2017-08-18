@@ -245,7 +245,7 @@ class Orden
 
 
  	// GUARDAR DETALLE ORDEN
- 	function guardarDetalleOrden( $idOrdenCliente, $lstDetalleOrden )
+ 	function guardarDetalleOrden( $idOrdenCliente, $lstDetalleOrden, $accionOrden )
  	{
  		// SI EL ARREGLO ES MAYOR A CERO
  		if( is_array( $lstDetalleOrden ) AND count( $lstDetalleOrden ) ):
@@ -297,10 +297,27 @@ class Orden
 			if ( $this->respuesta == 'success' ) {
 		 		$this->con->query( "COMMIT" );
 
-			 	$this->data = array(
-					'ordenCliente'    => $this->lstOrdenCliente( 1, NULL, $idOrdenCliente ),
-					'lstMenuAgregado' => $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo ),
-			 	);
+		 		// SI ES NUEVO
+			 	if ( $accionOrden == 'nuevo' ) {
+				 	$infoNode = (object)array(
+						'accion' => 'ordenNueva',
+						'data'   => array(
+							'ordenCliente'    => $this->lstOrdenCliente( 1, NULL, $idOrdenCliente ),
+							'lstMenuAgregado' => $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo ),
+					 	),
+					);
+			 	}
+			 	// SI ES AGREGAR
+			 	else{
+			 		$infoNode = (object)array(
+						'accion' => 'ordenAgregar',
+						'data'   => array(
+							'ordenCliente'        => $this->lstOrdenCliente( 1, NULL, $idOrdenCliente ),
+							'detalleOrdenCliente' => $this->lstDetalleOrdenCliente( $idOrdenCliente ),
+							'lstMenuAgregado'     => $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo ),
+					 	),
+					);
+			 	}
 
 			 	// SI LA CLASE NO EXISTE SE LLAMA
 			 	if ( !class_exists( "Redis" ) )
@@ -308,12 +325,7 @@ class Orden
 
 			 	// ENVIA LOS DATOS POR MEDIO DE REDIS
 			 	$red = new Redis();
-				$red->messageRedis( 
-					(object)array(
-						'accion' => 'ordenNueva',
-						'data'   => $this->data,
-					) 
-				);
+				$red->messageRedis( $infoNode );
 			}
 		 	else
 		 		$this->con->query( "ROLLBACK" );
@@ -472,7 +484,7 @@ class Orden
 				    vOrdenes
 				WHERE
 				    idOrdenCliente = {$idOrdenCliente}
-				GROUP BY IF( perteneceCombo, idDetalleOrdenCombo, idDetalleOrdenMenu );";
+				GROUP BY IF( perteneceCombo, idDetalleOrdenCombo, idDetalleOrdenMenu ), perteneceCombo;";
 		if( $rs = $this->con->query( $sql ) ) {
 			while ( $row = $rs->fetch_object() ) {
 
