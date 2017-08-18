@@ -51,11 +51,13 @@ if( !isset( $_SESSION['idPerfil'] ) AND !isset( $_SESSION['idNivel'] ) ) {
 
     .login-block h3 {
         text-align: center;
-        color: #000;
-        font-size: 18px;
+        font-size: 20px;
         text-transform: uppercase;
         margin-top: 0;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
+        color: #ff3d00;
+        text-shadow: 2px 2px 2px #cccccc;
+        font-weight: bold;
     }
 
     .container{
@@ -72,7 +74,7 @@ if( !isset( $_SESSION['idPerfil'] ) AND !isset( $_SESSION['idNivel'] ) ) {
         <div class="login-block">
             <img class="text-center" src="img/Logo_Churchil.png">
             <div class="text-center">
-                <h4>INGRESAR</h4>
+                <h3>INGRESAR</h3>
             </div>
             <p>
                 <form action="login.php" method="POST" novalidate autocomplete="off">

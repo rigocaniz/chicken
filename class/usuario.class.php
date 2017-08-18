@@ -40,6 +40,7 @@ class Usuario
 						$sesion->setVariable( 'nombre', $row->nombre );
 						$sesion->setVariable( 'idNivel', (int)$row->idNivel );
 						$sesion->setVariable( 'idPerfil', (int)$row->idPerfil );
+						$sesion->setVariable( 'usuario', $usuario );
 						header( "Location: index.php" );
 					}
 				}

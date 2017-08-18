@@ -1,7 +1,8 @@
 <?php 
+session_start();
+
 $data = json_decode( file_get_contents("php://input") );
 
-//var_dump( $data );
 include 'class/conexion.class.php';
 include 'class/cliente.class.php';
 include 'class/combo.class.php';
@@ -16,7 +17,6 @@ include 'class/validar.class.php';
 include 'class/funciones.php';
 
 // DEFINIR SESION USUARIO
-$sesion->setVariable( 'usuario', 'restaurante' );
 $sql = "CALL definirSesion( '{$sesion->getUsuario()}' );";
 $conexion->query( $sql );
 

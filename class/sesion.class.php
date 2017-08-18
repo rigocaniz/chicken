@@ -7,18 +7,6 @@ class Sesion
 	
 	private $sesion = null;
 
-/*
-	function __construct()
-	{
-		if( is_null( $this->sesion ) )
-			$this->iniciarSesion();
-	}
-
-	private function iniciarSesion()
-	{
-		session_start();
-	}
-*/
 
 	function destruirSesion()
 	{
@@ -27,13 +15,14 @@ class Sesion
 		header("Location: login.php");
 	}
 
-	
+	// SETEAR VARIABLE
 	function setVariable( $var, $valor )
 	{
 		return $_SESSION[ $var ] = $valor;
 	}
 
 
+	// OBTENER VARIABEL
 	private function getVariable( $var )
 	{
 		return $_SESSION[ $var ];
@@ -43,6 +32,18 @@ class Sesion
 	function getUsuario()
 	{
 		return $this->getVariable( 'usuario' );
+	}
+
+
+	function getIdNivel()
+	{
+		return (int)$this->getVariable( 'idNivel' );
+	}
+
+
+	function getIdPerfil()
+	{
+		return (int)$this->getVariable( 'idPerfil' );
 	}
 
 }
