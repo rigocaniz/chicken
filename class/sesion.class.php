@@ -25,7 +25,7 @@ class Sesion
 	// OBTENER VARIABEL
 	private function getVariable( $var )
 	{
-		return $_SESSION[ $var ];
+		return isset( $_SESSION[ $var ] ) AND $_SESSION[ $var ];
 	}
 	
 
