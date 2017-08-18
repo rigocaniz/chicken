@@ -111,7 +111,7 @@ switch ( $data->opcion )
 	////////////////////////
 	case 'lstCombo':				// CARGAR LISTA DE COMBOS
 		$combo = new Combo();
-		echo json_encode( $combo->lstCombo( @$data->idEstadoMenu ) );
+		echo json_encode( $combo->lstCombo( @$data->idEstadoMenu, @$data->idCombo ) );
 		break;
 
 	case 'lstComboDetalle':			// CARGAR LISTA DE COMBOS DETALLE
@@ -141,7 +141,7 @@ switch ( $data->opcion )
 
 	case 'lstMenu':					// CARGAR LISTA DE MENU
 		$menu = new Menu();
-		echo json_encode( $menu->lstMenu( $data->idTipoMenu, @$data->idEstadoMenu ) );
+		echo json_encode( $menu->lstMenu( $data->idTipoMenu, @$data->idEstadoMenu, @$data->idMenu ) );
 		break;
 
 	case 'lstMenuPrecio':			// CARGAR LISTA PRECIOS MENU
@@ -153,6 +153,11 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** CONSULTA CATALOGOS
 	////////////////////////
+	case 'catEstadosFactura':			// CARGAR CATALOGO TIPOS DE SERVICIOS
+		$consulta = new Consulta();
+		echo json_encode( $consulta->catEstadosFactura() );
+		break;
+
 	case 'catTiposServicio':			// CARGAR CATALOGO TIPOS DE SERVICIOS
 		$consulta = new Consulta();
 		echo json_encode( $consulta->catTiposServicio() );
@@ -214,6 +219,16 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** PRODUCTO
 	/////////////////////////
+	case 'consultaCierreDiario':			// INSERT / UPDATE CIERRE DEL DIA
+		$producto = new Producto();
+		echo json_encode( $producto->consultaCierreDiario( $data->accion, $data->data ) );
+		break;
+
+	case 'getListaProductos':			// INSERT / UPDATE LST PRODUCTOS INGRESO
+		$producto = new Producto();
+		echo json_encode( $producto->getListaProductos() );
+		break;
+		
 	case 'guardarLstProductoIngreso':			// INSERT / UPDATE LST PRODUCTOS INGRESO
 		$producto = new Producto();
 		echo json_encode( $producto->guardarLstProductoIngreso( $data->accion, $data->data ) );
@@ -363,6 +378,16 @@ switch ( $data->opcion )
 	case 'lstDetalleOrdenCliente':
 		$orden = new Orden();
 		echo json_encode( $orden->lstDetalleOrdenCliente( $data->idOrdenCliente ) );
+		break;
+
+	case 'menuPorCodigo':
+		$orden = new Orden();
+		echo json_encode( $orden->menuPorCodigo( $data->codigoRapido ) );
+		break;
+
+	case 'busquedaTicket':
+		$orden = new Orden();
+		echo json_encode( $orden->busquedaTicket( $data->ticket ) );
 		break;
 
 

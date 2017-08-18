@@ -82,7 +82,39 @@ BEGIN
 	END IF;
 END$$
 
-CREATE PROCEDURE consultaIngreso( _action VARCHAR(20), _idIngreso INT, _cantidad DOUBLE(10,2), _idProducto INT )
+/* --- FACTURA --- */
+CREATE PROCEDURE consultaFactura( _action VARCHAR(20), _idFacturaCompra INT, _idEstadoFactura INT, _noFactura VARCHAR(15), _proveedor VARCHAR(45), _fechaFactura DATE, _comentario TEXT )
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
+
+	IF !sesionValida() THEN # SI LA SESION ES INVALIDA
+		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
+
+	ELSEIF _action = 'insert' THEN
+		INSERT INTO facturaCompra( idEstadoFactura, noFactura, proveedor, fechaFactura, comentario )
+			VALUES ( _idEstadoFactura, _noFactura, _proveedor, _fechaFactura, _comentario );
+		
+		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
+
+	ELSEIF _action = 'update' THEN
+		UPDATE facturaCompra SET
+			idEstadoFactura = _idEstadoFactura,
+			noFactura       = _noFactura,
+			proveedor       = _proveedor,
+			fechaFactura    = _fechaFactura,
+			comentario      = _comentario
+		WHERE idFacturaCompra = _idFacturaCompra;
+		
+		SELECT 'success' AS 'respuesta', 'Actualizado correctamente' AS 'mensaje';
+
+	ELSE
+		SELECT 'danger' AS 'respuesta', 'Acción no válida' AS 'mensaje';
+	END IF;
+END$$
+
+# INGRESO DE PRODUCTO
+CREATE PROCEDURE consultaIngreso( _action VARCHAR(20), _idIngreso INT, _cantidad DOUBLE(10,2), _costo DOUBLE(12,2), _idProducto INT, _idFacturaCompra INT )
 BEGIN
 
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
@@ -93,9 +125,9 @@ BEGIN
 		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
 
 	ELSEIF _action = 'insert' THEN
-		INSERT INTO ingreso ( idProducto, cantidad, usuario, fechaRegistro ) 
-			VALUES ( _idProducto, _cantidad, @usuario, NOW() );
-		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
+		INSERT INTO ingreso ( idFacturaCompra, idProducto, cantidad, costo, usuario, fechaRegistro ) 
+			VALUES ( _idFacturaCompra, _idProducto, _cantidad, _costo, @usuario, NOW() );
+		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
 
 	ELSEIF _action = 'delete' THEN
 		DELETE FROM ingreso WHERE idIngreso = _idIngreso;
@@ -197,6 +229,8 @@ BEGIN
 END$$
 
 
+
+
 CREATE VIEW vCierreDiario AS
 SELECT 
 	idCierreDiario,
@@ -264,6 +298,26 @@ SELECT
 	i.fechaRegistro AS 'fechaIngreso'
 FROM lstProducto AS p
 	JOIN ingreso AS i ON i.idProducto = p.idProducto;
+
+
+CREATE VIEW lstFacturaCompra AS
+SELECT
+	fc.idFacturaCompra,
+	fc.noFactura,
+	fc.proveedor,
+	fc.fechaFactura,
+	fc.comentario,
+	ef.idEstadoFactura,
+	ef.estadoFactura,
+	fce.usuario,
+	fce.fechaRegistro
+FROM facturaCompra AS fc
+	JOIN facturaCompraEstado AS fce
+		ON fc.idFacturaCompra = fce.idFacturaCompra AND fc.idEstadoFactura = fce.idEstadoFactura
+	JOIN estadoFactura AS ef 
+		ON fc.idEstadoFactura = ef.idEstadoFactura;
+
+
 
 CREATE VIEW lstReajusteProducto AS
 SELECT

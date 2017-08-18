@@ -75,8 +75,8 @@ ERRORES:
 /* ########## +++++++++++++ consultaIngreso +++++++++++++########*/
 # >>> ACTION <<<
 insert
-	CALL consultaIngreso( 'insert', NULL, _cantidad DOUBLE(10,2), _idProducto INT );
-	RETORNA: SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
+	CALL consultaIngreso( 'insert', NULL, _cantidad DOUBLE(10,2), _costo DOUBLE(12,2), _idProducto INT, _idFacturaCompra INT );
+	RETORNA: SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
 delete
 	CALL consultaIngreso( 'delete', _idIngreso INT, NULL, NULL );
 	RETORNA: SELECT 'success' AS 'respuesta', 'Eliminado correctamente' AS 'mensaje';
@@ -132,6 +132,7 @@ FROM lstProducto;
 
 SELECT
 	idIngreso,
+	idFacturaCompra,
 	idProducto,
 	producto,
 	idMedida,
@@ -144,6 +145,7 @@ SELECT
 	disponibilidad,
 	importante,
 	cantidad,
+	costo,
 	usuarioIngreso,
 	fechaIngreso
 FROM lstIngresoProducto;
@@ -200,3 +202,16 @@ SELECT
 	fechaProducto
 FROM vCierreDiarioProducto;
 
+
+
+SELECT
+	idFacturaCompra,
+	noFactura,
+	proveedor,
+	fechaFactura,
+	comentario,
+	idEstadoFactura,
+	estadoFactura,
+	usuario,
+	fechaRegistro
+FROM lstFacturaCompra;

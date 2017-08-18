@@ -1,67 +1,126 @@
 <div class="col-xs-12" style="margin-top:5px">
 	<div class="row">
-		<div class="col-sm-12" style="margin-bottom:4px">
-			<button type="button" class="btn btn-success" ng-click="nuevaOrden()">
-				<span class="glyphicon glyphicon-plus"></span>
-				<u>N</u>ueva Orden
-			</button>
-			<button type="button" class="btn btn-info" ng-click="modalBuscar()">
-				<span class="glyphicon glyphicon-search"></span>
-				Buscar Orden
-			</button>
+        <div class="col-sm-4 col-xs-12" style="margin-bottom:9px">
+            <button type="button" class="btn btn-success" ng-click="nuevaOrden()">
+                <span class="glyphicon glyphicon-plus"></span>
+                <u>N</u>ueva Orden
+            </button>
+        </div>
+		<div class="col-sm-offset-2 col-sm-5 hidden-xs">
+            <div class="input-group">
+                <input type="number" class="form-control" ng-model="buscarTicket" id="buscarTicket" ng-class="{'input-focus':buscarTicket>0}"
+                    placeholder="Ingrese # Ticket + ENTER" style="font-size:19px;padding: 1px 14px;font-weight:normal">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button" ng-click="auxKeyTicket( 'supr', 0, 'buscarTicket' )">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                </span>
+            </div>
 		</div>
 		<div class="col-sm-12">
 			<div class="btn-orden">
 				<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="idEstadoOrden=1">
 					<span class="glyphicon glyphicon-time"></span>
-					<span class="hidden-xs">Pendientes</span>
+					<span class="hidden-xs"><u>P</u>endientes</span>
 				</button>
 				<button class="bt-success" ng-class="{'active':idEstadoOrden==2}" ng-click="idEstadoOrden=2">
 					<span class="glyphicon glyphicon-play"></span>
-					<span class="hidden-xs">En Progreso</span>
+					<span class="hidden-xs"><u>E</u>n Progreso</span>
 				</button>
 				<button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="idEstadoOrden=3">
 					<span class="glyphicon glyphicon-flag"></span>
-					<span class="hidden-xs">Finalizados</span>
+					<span class="hidden-xs"><u>F</u>inalizados</span>
 				</button>
 				<button class="bt-danger" ng-class="{'active':idEstadoOrden==10}" ng-click="idEstadoOrden=10">
 					<span class="glyphicon glyphicon-remove"></span>
-					<span class="hidden-xs">Cancelados</span>
+					<span class="hidden-xs"><u>C</u>ancelados</span>
 				</button>
 			</div>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-sm-12">
-			<div class="panel panel-info" style="margin-top: 4px">
-				<div class="panel-body">
-					<table class="table table-condensed table-hover">
-						<thead>
-							<tr>
-								<th>Ticket</th>
-								<th>Lapso</th>
-								<th>Responsable</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr ng-repeat="item in lstOrdenCliente">
-								<td>{{item.numeroTicket}}</td>
-								<td>
-									<span>{{tiempoTranscurrido( item.fechaRegistro )}}</span>
-								</td>
-								<td><kbd>{{item.usuarioResponsable}}</kbd></td>
-								<td>
-									<button type="button" class="btn btn-sm btn-default" ng-click="modalInfo( item )">
-										<span class="glyphicon glyphicon-list"></span>
-									</button>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
+	<div class="row contenedor-tickets">
+        <!-- *********** LISTA DE TICKETS ********* -->
+        <div class="col-xs-12 col-sm-2">
+            <div class="list-group">
+                <button type="button" class="list-group-item" ng-repeat="item in lstOrdenCliente" ng-class="{'active':$index==miIndex}"
+                    ng-click="seleccionarTicket( item.idOrdenCliente )">
+                    <span class="tkt-active"></span>
+                    <span class="glyphicon glyphicon-bookmark"></span>
+                    {{item.numeroTicket}}
+                </button>
+            </div>
+        </div>
+        
+        <div class="col-xs-12" ng-hide="lstOrdenCliente.length">
+            <div class="alert alert-info" role="alert">No existen ordenes</div>
+        </div>
+
+        <!-- *********** INFORMACION DE ORDEN ********* -->
+        <div class="col-xs-12 col-sm-10 info-orden-ticket" ng-show="lstOrdenCliente.length">
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    <h4>
+                        <b>Orden # </b> {{infoOrden.idOrdenCliente}} » 
+                        <span class="badge-ticket">Ticket # {{infoOrden.numeroTicket}}</span>
+                    </h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    <span class="etiqueta">Estado: </span>
+                    <span class="valor">{{infoOrden.estadoOrden}}</span>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <span class="etiqueta">Lapso: </span>
+                    <span class="valor">{{tiempoTranscurrido( infoOrden.fechaRegistro )}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    <span class="etiqueta"># Menús: </span>
+                    <span class="valor">{{infoOrden.numMenu}}</span>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <span class="etiqueta">Responsable: </span>
+                    <span class="valor">{{infoOrden.usuarioResponsable}}</span>
+                </div>
+            </div>
+            <legend class="legend2">Menús Ordenados</legend>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Cantidad</th>
+                                    <th>Orden</th>
+                                    <th>Subtotal</th>
+                                    <th width="35px"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in infoOrden.lstOrden">
+                                    <td><img ng-src="{{item.imagen}}" style="height:40px"></td>
+                                    <td>{{item.cantidad}}</td>
+                                    <td>
+                                        <span ng-show="item.idTipoServicio==2" class="label-border label-success">R</span>
+                                        <span ng-show="item.idTipoServicio==3" class="label-border label-default">D</span>
+                                        <span ng-show="item.idTipoServicio==1" class="label-border label-primary">L</span>
+                                        <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
+                                        <span>{{item.descripcion}}</span>
+                                    </td>
+                                    <td>{{item.subTotal | number:2}}</td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+           </div>
+        </div>
 	</div>
 </div>
 
@@ -84,50 +143,50 @@
 							<div class="input-group">
 								<input type="number" class="form-control input-lg input-focus" ng-model="$parent.noTicket" id="noTicket">
 								<span class="input-group-btn">
-									<button class="btn btn-lg btn-danger" type="button" ng-click="auxKeyTicket( 'supr' )">
+									<button class="btn btn-lg btn-info" type="button" ng-click="auxKeyTicket( 'supr', 0, 'noTicket' )">
 										<span class="glyphicon glyphicon-remove"></span>
 									</button>
 								</span>
 							</div>
                 		</div>
                         <div class="col-xs-12 text-center" style="margin-top:4px">
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 7 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 7, 'noTicket' )">
                                 <u>7</u>
                             </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 8 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 8, 'noTicket' )">
                                 <u>8</u>
                             </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 9 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 9, 'noTicket' )">
                                 <u>9</u>
                             </button>
                         </div>
                         <div class="col-xs-12 text-center" style="margin-top:4px">
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 4 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 4, 'noTicket' )">
                                 <u>4</u>
                             </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 5 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 5, 'noTicket' )">
                                 <u>5</u>
                             </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 6 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 6, 'noTicket' )">
                                 <u>6</u>
                             </button>
                         </div>
                         <div class="col-xs-12 text-center" style="margin-top:4px">
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 1 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 1, 'noTicket' )">
                                 <u>1</u>
                             </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 2 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 2, 'noTicket' )">
                                 <u>2</u>
                             </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 3 )">
+                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 3, 'noTicket' )">
                                 <u>3</u>
                             </button>
                         </div>
                         <div class="col-xs-12 text-center" style="margin-top:4px">
-                            <button class="btn btn-lg btn-default" style="padding:10px 36px" ng-click="auxKeyTicket( 'number', 0 )">
+                            <button class="btn btn-lg btn-default" style="padding:10px 36px" ng-click="auxKeyTicket( 'number', 0, 'noTicket' )">
                                 <u>0</u>
                             </button>
-                            <button class="btn btn-lg btn-danger" style="margin-bottom:4px" ng-click="auxKeyTicket( 'back' )">
+                            <button class="btn btn-lg btn-danger" style="margin-bottom:4px" ng-click="auxKeyTicket( 'back', 0, 'noTicket' )">
                                 <span class="glyphicon glyphicon-arrow-left"></span>
                             </button>
                 		</div>
@@ -140,7 +199,7 @@
                     </button>
                     <button type="button" class="btn btn-default" ng-click="$hide()">
                         <span class="glyphicon glyphicon-log-out"></span>
-                        <b>Salir</b>
+                        <b><u>S</u>alir</b>
                     </button>
                 </div>
             </div>
@@ -161,7 +220,7 @@
                 </div>
                 <div class="modal-body">
                 	<div class="row">
-                		<div class="col-xs-12">
+                		<div class="col-xs-12 col-sm-6">
                 			<button class="btn btn-primary" ng-click="mostrarMenus( 'menu' )">
                 				<span class="glyphicon glyphicon-plus"></span>
                 				<b><u>M</u>enú</b>
@@ -171,6 +230,12 @@
                 				<b><u>C</u>ombo</b>
                 			</button>
                 		</div>
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="codigoRapido" ng-class="{'ok':(codigoRapido>0)}">
+                                <span ng-show="(codigoRapido>0)">{{codigoRapido}}</span>
+                                <span ng-hide="(codigoRapido>0)">Ingrese Código</span>
+                            </div>
+                        </div>
                    </div>
                    <div class="row">
                 		<div class="col-xs-12">
@@ -291,7 +356,7 @@
                 	<div class="row">
                 		<div class="col-xs-6 text-center">
                 			<img ng-src="{{menuActual.imagen}}" style="height:100px">
-                			<h4>{{menuActual.menu}}</h4>
+                			<h4>{{menuActual.menu}} <kbd>{{tipoMenu}}</kbd></h4>
                 			<h3>Q. {{menuActual.precio | number:2}}</h3>
                 		</div>
                 		<div class="col-xs-6">
@@ -342,9 +407,6 @@
     </div>
 </script>
 
-
-
-
 <!-- *********** BUSQUEDA DE ORDEN ********* -->
 <script type="text/ng-template" id="dial.orden-busqueda.html">
     <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_busqueda">
@@ -356,102 +418,31 @@
                 </div>
                 <div class="modal-body">
                 	<div class="row">
-                		<div class="col-xs-7">
-                			<input type="text" class="form-control" id="inputSearch">
-                		</div>
-                		<div class="col-xs-5">
-                			<button type="button" class="btn btn-primary">
-                				<span class="glyphicon glyphicon-search"></span>
-                				<span class="hidden-xs">Buscar</span>
-                			</button>
-                		</div>
-                	</div>
-                	<div class="row">
-                		
-                   </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" ng-click="$hide();">
-                        <span class="glyphicon glyphicon-chevron-left"></span>
-                        <b>Salir</b>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</script> 
-
-
-
-
-<!-- *********** INFORMACION DE ORDEN ********* -->
-<script type="text/ng-template" id="dial.orden-informacion.html">
-    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_informacion">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content panel-default">
-                <div class="modal-header panel-heading">
-                	<button type="button" class="close" ng-click="$hide()">&times;</button>
-                	<h4 style="margin:0">
-						<b>Orden # </b> {{infoOrden.idOrdenCliente}} » 
-		                <span class="badge-ticket">Ticket # {{infoOrden.numeroTicket}}</span>
-                    </h4>
-                </div>
-                <div class="modal-body">
-                	<div class="row">
-                		<div class="col-sm-6 col-xs-12">
-                			<span class="etiqueta">Estado: </span>
-                    		<span class="valor">{{infoOrden.estadoOrden}}</span>
-                		</div>
-                		<div class="col-sm-6 col-xs-12">
-                			<span class="etiqueta">Lapso: </span>
-                    		<span class="valor">{{tiempoTranscurrido( infoOrden.fechaRegistro )}}</span>
-                		</div>
-                	</div>
-                	<div class="row">
-                		<div class="col-sm-6 col-xs-12">
-                			<span class="etiqueta"># Menús: </span>
-                    		<span class="valor">{{infoOrden.numMenu}}</span>
-                		</div>
-                		<div class="col-sm-6 col-xs-12">
-                			<span class="etiqueta">Responsable: </span>
-                    		<span class="valor">{{infoOrden.usuarioResponsable}}</span>
-                		</div>
-                	</div>
-                	<legend class="legend2">Menús Ordenados</legend>
-                	<div class="row">
                 		<div class="col-xs-12">
-                			<div class="table-responsive">
-	                			<table class="table table-hover">
-	                				<thead>
-	                					<tr>
-	                						<th></th>
-	                						<th>Cantidad</th>
-	                						<th>Orden</th>
-	                						<th>Subtotal</th>
-	                						<th width="35px"></th>
-	                					</tr>
-	                				</thead>
-	                				<tbody>
-	                					<tr ng-repeat="item in infoOrden.lstOrden">
-	                						<td><img ng-src="{{item.imagen}}" style="height:40px"></td>
-	                						<td>{{item.cantidad}}</td>
-	                						<td>
-	                							<span ng-show="item.idTipoServicio==2" class="label-border label-success">R</span>
-	                							<span ng-show="item.idTipoServicio==3" class="label-border label-default">D</span>
-	                							<span ng-show="item.idTipoServicio==1" class="label-border label-primary">L</span>
-	                							<span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
-	                							<span>{{item.descripcion}}</span>
-	                						</td>
-	                						<td>{{item.subTotal | number:2}}</td>
-	                						<td>
-	                							
-	                						</td>
-	                					</tr>
-	                				</tbody>
-	                			</table>
-                			</div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th># Orden</th>
+                                            <th>Ticket</th>
+                                            <th>Responsable</th>
+                                            <th>Estado Orden</th>
+                                            <th>Lapso</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in lstTicketBusqueda">
+                                            <td>{{item.idOrdenCliente}}</td>
+                                            <td>{{item.numeroTicket}}</td>
+                                            <td>{{item.usuarioResponsable}}</td>
+                                            <td>{{item.estadoOrden}}</td>
+                                            <td>{{ tiempoTranscurrido( item.fechaRegistro ) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                 		</div>
-                   </div>
+                	</div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" ng-click="$hide();">
@@ -463,3 +454,5 @@
         </div>
     </div>
 </script> 
+
+

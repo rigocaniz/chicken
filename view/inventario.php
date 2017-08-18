@@ -60,8 +60,8 @@
 								</div>
 							</div>
 
-							<button class="btn btn-sm btn-warning" ng-click="realizarCierre=!realizarCierre">
-								<span class="glyphicon glyphicon-pencil"></span> Realizar Cierre
+							<button class="btn btn-sm btn-danger" ng-click="realizarCierre()">
+								<span class="glyphicon glyphicon-list-alt"></span> REALIZAR CIERRE
 							</button>
 
 							<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -308,7 +308,7 @@
 											<label class="control-label">NO. FACTURA</label>
 											<input type="number" class="form-control" id="numeroFactura" ng-model="compras.noFactura">
 										</div>	
-										<div class="col-sm-3">
+										<div class="col-sm-4 col-md-3">
 											<label class="control-label">FECHA DE COMPRA</label>
 											<div class="input-group">
 												<span class="input-group-addon">
@@ -322,15 +322,29 @@
 											<input type="text" class="form-control" ng-model="compras.proveedor">
 										</div>
 									</div>
+									<div class="form-group">
+										<div class="col-sm-6">
+											<label class="control-label">ESTADO DE LA FACTURA</label>
+											<div class="btn-group" role="group" aria-label="...">
+		  										<button type="button" class="btn btn-default" ng-repeat="estadoFactura in lstEstadosFactura">
+		  											{{ estadoFactura.estadoFactura }}
+		  										</button>
+											</div>
+										</div>	
+										<div class="col-sm-6 col-md-5">
+											<label class="control-label">COMENTARIO</label>
+											<textarea class="form-control" ng-model="compras.comentario"></textarea>
+										</div>
+									</div>
+									<hr>
 									<!-- SELECCIONAR PRODUCTOS -->
 									<div class="form-group">
-										<label class="label label-default">Agregar compras</label>
 										<table class="table table-condensed">
 											<thead>
 												<tr>
 													<th class="col-sm-5 text-center">PRODUCTO</th>
-													<th class="col-sm-3 text-center">CANTIDAD</th>
-													<th class="col-sm-3 text-center">PRECIO UNITARIO</th>
+													<th class="col-sm-3 text-center">CANTIDAD ({{prod.medida}})</th>
+													<th class="col-sm-3 text-center">TOTAL</th>
 													<th class="text-center">AGREGAR</th>
 												</tr>
 											</thead>
@@ -342,7 +356,7 @@
 															<ul class="list-group ul-list" ng-show="lstProductos.length">
 
 															    <li class="list-group-item" ng-class="{'active': $parent.idxProducto == ixProducto}" ng-repeat="(ixProducto, producto) in lstProductos" ng-click="seleccionarProducto( producto )" ng-mouseenter="$parent.idxProducto = ixProducto">
-															    	{{ producto.producto }}
+															    	{{ producto.producto }} <small>(<b>{{ producto.medida }})</b></small>
 															    </li>
 															</ul>
 														</div>
@@ -351,10 +365,10 @@
 														</div>
 													</td>
 													<td class="text-center">
-														<input type="number" min="0.01" ng-model="prod.cantidad" id="cantidad" class="form-control" ng-keydown="$event.keyCode == 27 && cancelarIngreso( 1 );" placeholder="Cantidad" >
+														<input type="number" min="0.01" ng-model="prod.cantidad" id="cantidad" class="form-control" ng-keydown="$event.keyCode == 27 && cancelarIngreso( 1 );" placeholder="Cantidad">
 													</td>
 													<td class="text-left">
-														<input type="number" class="form-control" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" ng-keydown="( $event.keyCode == 13 && agregarIngresoProducto() ) || ( $event.keyCode == 27 && cancelarIngreso( 1 ) )" step="0.01" ng-model="prod.precioUnitario" placeholder="Precio Unitario">
+														<input type="number" class="form-control" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" ng-keydown="( $event.keyCode == 13 && agregarIngresoProducto() ) || ( $event.keyCode == 27 && cancelarIngreso( 1 ) )" step="0.01" ng-model="prod.costo" placeholder="Total">
 													</td>
 													<td class="text-center">
 														<button type="button" class="btn btn-sm btn-warning" ng-click="agregarIngresoProducto();">
@@ -372,17 +386,13 @@
 											</tbody>
 										</table>
 									</div>
-									<legend class="text-center">
-										LISTADO DE PRODUCTOS
-									</legend>
 									<div class="form-group">
 										<table class="table table-hover">
 											<thead>
 												<tr>
 													<th class="text-center">No.</th>
 													<th class="col-sm-4 text-center">Producto</th>
-													<th class="col-sm-2 text-center">Cantidad</th>
-													<th class="col-sm-2 text-center">Precio Unitario</th>
+													<th class="col-sm-3 text-center">Cantidad</th>
 													<th class="text-center">Total</th>
 													<th></th>
 												</tr>
@@ -400,10 +410,7 @@
 														<input type="number" class="form-control" ng-model="prod.cantidad" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" min="0.01" placeholder="cantidad" ng-disabled="!prod.editar">
 													</td>
 													<td class="text-right">
-														<input type="number" class="form-control" min="0.01" ng-model="prod.precioUnitario" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" placeholder="Cantidad" step="0.01" ng-disabled="!prod.editar">
-													</td>
-													<td class="text-right">
-														{{ prod.cantidad * prod.precioUnitario | number: 2 }}
+														<input type="number" class="form-control" min="0.01" ng-model="prod.costo" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" placeholder="Cantidad" step="0.01" ng-disabled="!prod.editar">
 													</td>
 													<td class="text-center">
 														<!-- OPCIONES -->
@@ -421,7 +428,7 @@
 													</td>
 												</tr>
 												<tr id="tb-title" ng-show="compras.lstProductos.length">
-													<td colspan="5" class="text-right">
+													<td colspan="4" class="text-right">
 														<strong> TOTAL {{ subTotalQuetzales() | number: 2 }}</strong>
 													</td>
 													<td></td>
@@ -446,6 +453,94 @@
 		</div>
 	</div>
 </div>
+
+
+<!-- DIALOGO CIERRE DIARIO -->
+<script type="text/ng-template" id="dial.cierreDiario.html">
+	<div class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content panel-danger">
+				<div class="modal-header panel-heading text-center">
+					<button type="button" class="close" ng-click="$hide()">&times;</button>
+					<span class="glyphicon glyphicon-list-alt"></span>
+					CIERRE DIARIO DE INVENTARIO
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form" name="$parent.formCierre">
+						<div class="form-group">
+							<div class="col-sm-4">
+								<label class="control-label">NO. DE CIERRE</label>
+								<input type="text" class="form-control" ng-model="cierreDiario.idCierreDiario" readonly>
+							</div>	
+							<div class="col-sm-4">
+								<label class="control-label">FECHA DEL CIERRE</label>
+								<div class="input-group">
+								  	<span class="input-group-addon">
+    									<span class="fa fa-calendar"></span>
+								  	</span>
+    								<input type="text" class="form-control" ng-model="cierreDiario.fechaCierre" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker>
+								</div>
+							</div>
+						</div>
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th class="text-center">No.</th>
+									<th class="col-sm-3 text-center">Producto</th>
+									<th class="col-sm-1 text-center">Perecedero</th>
+									<th class="col-sm-2 text-center">Disponible <br>Sistema</th>
+									<th class="col-sm-2 text-center">Disponible <br>Fisico</th>
+									<th class="col-sm-2 text-center">Medida</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="inv in cierreDiario.lstProductos">
+									<td class="text-right">
+										{{ $index + 1 }}
+									</td>
+									<td>
+										{{ inv.producto }}
+									</td>
+									<td class="text-center">
+										{{ inv.esPerecedero }}
+									</td>
+									<td class="text-center">
+										{{ inv.disponible }}
+									</td>
+									<td class="text-center">
+										<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.disponibilidad" required>
+									</td>
+									<td class="text-center">
+										{{ inv.medida }}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="form-group">
+							<div class="col-sm-12">
+								<label class="control-label">INGRESAR COMENTARIO</label>
+								<textarea rows="3" class="form-control" ng-model="cierreDiario.comentario" placeholder="Ingresar comentario del cierre"></textarea>
+								<label class="label label-info">
+									Caracteres <span class="badge">{{ cierreDiario.comentario.length }}</span>
+								</label>
+							</div>
+						</div>
+					</form>
+			
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-warning" ng-click="consultaCierreDiario()">
+						<span class="glyphicon glyphicon-saved"></span> GUARDAR CIERRE
+					</button>
+					<button type="button" class="btn btn-default" ng-click="$hide()">
+						<span class="glyphicon glyphicon-log-out"></span>
+						<b>Salir</b>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
 
 	
 <!-- DIALOGO INGRESO EXISTENCIA -->

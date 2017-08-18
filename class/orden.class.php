@@ -506,6 +506,84 @@ class Orden
  		return $lst;
  	}
 
+ 	public function menuPorCodigo( $codigoRapido )
+ 	{
+		$datos        = (object)array( "menu" => NULL, "tipoMenu" => NULL );
+		$codigoRapido = (int)$codigoRapido;
+
+ 		$sql = "SELECT idMenu, codigo, 'menu' AS 'tipoMenu'
+					FROM menu WHERE codigo = {$codigoRapido}
+				UNION 
+				SELECT idCombo AS 'idMenu', codigo, 'combo' AS 'tipoMenu'
+					FROM combo WHERE codigo = {$codigoRapido} ";
+		if ( $rs = $this->con->query( $sql ) ) {
+			if ( $row = $rs->fetch_object() ) {
+
+				// SI ES MENU
+				if ( $row->tipoMenu == 'menu' ) {
+					$menu = new Menu();
+					$info = $menu->lstMenu( 0, NULL, $row->idMenu );
+
+					$datos->tipoMenu = 'menu';
+					$datos->menu     = (object)array(
+						'idMenu'    => $info->idMenu,
+						'menu'      => $info->menu,
+						'imagen'    => $info->imagen,
+						'cantidad'  => 1,
+						'precio'    => 0.00,
+						'lstPrecio' => $menu->cargarMenuPrecio( $row->idMenu )
+					);
+				}
+
+				// SI ES COMBO
+				else if ( $row->tipoMenu == 'combo' ) {
+					$combo = new Combo();
+					$info  = $combo->lstCombo( 0, $row->idMenu );
+
+					$datos->tipoMenu = 'combo';
+					$datos->menu     = (object)array(
+						'idMenu'    => $info->idCombo,
+						'menu'      => $info->combo,
+						'imagen'    => $info->imagen,
+						'cantidad'  => 1,
+						'precio'    => 0.00,
+						'lstPrecio' => $combo->cargarComboPrecio( $row->idMenu )
+					);
+				}
+
+			}
+		}
+
+ 		return $datos;
+ 	}
+
+ 	public function busquedaTicket( $ticket )
+ 	{
+ 		$lst = array();
+
+ 		$sql = "SELECT
+					idOrdenCliente,
+				    numeroTicket,
+				    usuarioResponsable,
+				    usuarioPropietario,
+				    idEstadoOrden,
+				    estadoOrden,
+				    fechaRegistro,
+				    numMenu
+				FROM vOrdenCliente 
+				WHERE DATE( fechaRegistro ) = '2017-08-16' AND numeroTicket = {$ticket}
+				ORDER BY idOrdenCliente DESC;";
+
+		if ( $rs = $this->con->query( $sql ) ) {
+
+			while( $row = $rs->fetch_object() ) {
+				$lst[] = $row;
+			}
+		}
+
+		return $lst;
+ 	}
+
  	function getRespuesta()
  	{
  		return $respuesta = array( 
