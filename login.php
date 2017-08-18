@@ -32,45 +32,15 @@ if( !isset( $_SESSION['idPerfil'] ) AND !isset( $_SESSION['idNivel'] ) ) {
 
     <style type="text/css" media="screen">
 
-        body{
-            background: url('img/ejemplo.jpg') no-repeat fixed center center;
-            background-size: cover;
-        }
-
-    
-
-    .login-block {
-        width: 350px;
-        padding: 20px;
-        background: #fff;
-        border-radius: 5px;
-        border-top: 6px solid #ff5722;
-        border-bottom: 3px solid #ff5722;
-        margin: 35px auto;
-    }
-
-    .login-block h3 {
-        text-align: center;
-        font-size: 20px;
-        text-transform: uppercase;
-        margin-top: 0;
-        margin-bottom: 15px;
-        color: #ff3d00;
-        text-shadow: 2px 2px 2px #cccccc;
-        font-weight: bold;
-    }
-
-    .container{
-        background-color: rgba(255, 152, 0, 0.29);
-        width: 100%;
-        height: 100% !important;
-        position: fixed;
+    body{
+        background: url('img/ejemplo.jpg') no-repeat fixed center center;
+        background-size: cover;
     }
         
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="back-login">
         <div class="login-block">
             <img class="text-center" src="img/Logo_Churchil.png">
             <div class="text-center">
@@ -82,7 +52,7 @@ if( !isset( $_SESSION['idPerfil'] ) AND !isset( $_SESSION['idNivel'] ) ) {
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-user"></i>
                         </span>
-                        <input class="form-control" type="text" name="usuario" ng-model="user" maxlength="12" placeholder="Usuario" required />
+                        <input class="form-control" type="text" name="usuario" ng-model="user" maxlength="12" placeholder="Usuario" required autofocus />
                         <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true" ng-show="user && user.length >=8"></span>
                     </div>
                     <div class="form-group input-group" ng-class="{'has-success has-feedback': pass && pass.length >=6}" ">
@@ -102,6 +72,7 @@ if( !isset( $_SESSION['idPerfil'] ) AND !isset( $_SESSION['idNivel'] ) ) {
                     <div class="form-group">
                         <button type="submit" class="btn btn-warning btn-block" ng-disabled="user.length < 6">
                             <b>ACCEDER</b>
+                            <span class="glyphicon glyphicon-chevron-right"></span>
                         </button>
                     </div>
                 </form>

@@ -21,16 +21,61 @@ button,a{
     outline: 0 !important;
 }
 
-.datepicker.dropdown-menu{width:250px;height:270px}
-.datepicker.dropdown-menu button{outline:0;border:0}
-.datepicker.dropdown-menu tbody{height:180px}
-.datepicker.dropdown-menu tbody button{padding:6px}
-.datepicker.dropdown-menu.datepicker-mode-1 tbody button,.datepicker.dropdown-menu.datepicker-mode-2 tbody button{height:65px}
-.timepicker.dropdown-menu{padding:0 4px}
-.timepicker.dropdown-menu button{outline:0;border:0}
-.timepicker.dropdown-menu tbody button{padding:6px}
+.datepicker.dropdown-menu{
+    width: 250px;
+    height: 270px
+}
+.datepicker.dropdown-menu button{
+    outline: 0;
+    border: 0;
+}
+.datepicker.dropdown-menu tbody{
+    height: 180px;
+}
+.datepicker.dropdown-menu tbody button{
+    padding: 6px;
+}
+.datepicker.dropdown-menu.datepicker-mode-1 tbody button,.datepicker.dropdown-menu.datepicker-mode-2 tbody button{
+    height: 65px;
+}
+.timepicker.dropdown-menu{
+    padding: 0 4px;
+}
+.timepicker.dropdown-menu button{
+    outline: 0;
+    border: 0;
+}
+.timepicker.dropdown-menu tbody button{
+    padding: 6px;
+}
 
+.login-block {
+    width: 350px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 5px;
+    border-top: 6px solid #ff5722;
+    border-bottom: 3px solid #ff5722;
+    margin: 35px auto;
+}
 
+.login-block h3 {
+    text-align: center;
+    font-size: 20px;
+    text-transform: uppercase;
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #ff3d00;
+    text-shadow: 2px 2px 2px #cccccc;
+    font-weight: bold;
+}
+
+.back-login{
+    background-color: rgba(255, 155, 0, 0.25);
+    width: 100%;
+    height: 100% !important;
+    position: fixed;
+}
 
 .contenedor{
     margin: 0 15px;
