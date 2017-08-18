@@ -71,12 +71,15 @@
 											<span class="badge"> TOTAL {{ inventario.totalProductos }} </span>	
 										</div>
 										<h4 class="panel-title">
+											<button type="button" class="btn btn-default btn-sm" ng-click="inventario.mostrar=!inventario.mostrar">
+												<span class="glyphicon" ng-class="{'glyphicon-chevron-down': !inventario.mostrar, 'glyphicon-chevron-right' : inventario.mostrar}"></span>
+											</button>
 											<span ng-show="groupBy=='sinFiltro'">{{ inventario.listado }}</span>
 											<span ng-show="groupBy=='tipoProducto'">{{ inventario.tipoProducto }}</span>
 											<span ng-show="groupBy=='medida'">{{ inventario.medida }}</span>
 										</h4>
 									</div>
-									<div class="panel-body">
+									<div class="panel-body" ng-show="inventario.mostrar">
 										<div class="text-right">
 											<div class="btn-group btn-group-xs" role="group">
 												<button type="button" class="btn btn-sm btn-success">
@@ -84,7 +87,7 @@
 													<span class="badge">
 														{{ inventario.totalStockAlto }}
 													</span>
-												</button>										
+												</button>
 												<button type="button" class="btn btn-sm btn-warning">
 													Alerta Stock
 													<span class="badge">
@@ -112,12 +115,16 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr ng-repeat="inv in inventario.lstProductos" ng-class="{'danger border-danger': inv.alertaStock == 1, 'warning border-warning':  inv.alertaStock == 2, 'border-success':  inv.alertaStock == 3' }">
+												<tr ng-repeat="inv in inventario.lstProductos" ng-class="{'danger border-danger': inv.alertaStock == 1, 'warning border-warning':  inv.alertaStock == 2, 'border-success':  inv.alertaStock == 3}">
 													<td class="text-right">
 														{{ $index + 1 }}
 													</td>
 													<td>
 														{{ inv.producto }}
+														<br>
+														<span class="label label-warning" ng-show="inv.disponibilidad==inv.cantidadMinima">
+															Pronto a agotarse
+														</span>
 													</td>
 													<td class="text-center">
 														{{ inv.tipoProducto }}
@@ -140,7 +147,6 @@
 														<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( inv.idProducto, 'update', producto )">
 															<span class="glyphicon glyphicon-pencil"></span>
 														</button>
-														<span class="label label-warning" ng-show="inv.disponibilidad==inv.cantidadMinima">Pronto a agotarse</span>
 													</td>
 												</tr>
 											</tbody>
@@ -314,7 +320,7 @@
 												<span class="input-group-addon">
 													<i class="glyphicon glyphicon-calendar"></i>
 												</span>
-												<input type="text" class="form-control" ng-model="compras.fechaIngreso" data-date-format="dd/MM/yyyy" data-date-type="number"  data-max-date="today" data-autoclose="1" bs-datepicker>
+												<input type="text" class="form-control" ng-model="compras.fechaFactura" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker>
 											</div>
 										</div>
 										<div class="col-sm-5">
@@ -323,17 +329,19 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<div class="col-sm-6">
+										<div class="col-sm-6 col-md-5">
 											<label class="control-label">ESTADO DE LA FACTURA</label>
 											<div class="btn-group" role="group" aria-label="...">
-		  										<button type="button" class="btn btn-default" ng-repeat="estadoFactura in lstEstadosFactura">
+		  										<button type="button" class="btn btn-default btn-sm" ng-repeat="estadoFactura in lstEstadosFactura" ng-click="compras.idEstadoFactura = estadoFactura.idEstadoFactura">
+		  											<span class="glyphicon" ng-class="{'glyphicon-check': compras.idEstadoFactura == estadoFactura.idEstadoFactura, 'glyphicon-unchecked': compras.idEstadoFactura != estadoFactura.idEstadoFactura}"></span>
+
 		  											{{ estadoFactura.estadoFactura }}
 		  										</button>
 											</div>
-										</div>	
-										<div class="col-sm-6 col-md-5">
+										</div>
+										<div class="col-sm-6 col-md-6">
 											<label class="control-label">COMENTARIO</label>
-											<textarea class="form-control" ng-model="compras.comentario"></textarea>
+											<textarea class="form-control" ng-model="compras.comentario" placeholder="Ingresar comentario (Opcional)"></textarea>
 										</div>
 									</div>
 									<hr>
@@ -438,7 +446,7 @@
 									</div>
 									<div class="form-group" style="margin-top: 15px">
 										<div class="col-sm-12 text-center">
-											<button type="button" class="btn btn-success btn-lg noBorder" ng-click="guardarLstProductoIngreso()">
+											<button type="button" class="btn btn-success btn-lg noBorder" ng-click="consultaFactura()">
 												<span class="glyphicon glyphicon-saved"></span> Guardar
 											</button>
 										</div>
@@ -458,7 +466,7 @@
 <!-- DIALOGO CIERRE DIARIO -->
 <script type="text/ng-template" id="dial.cierreDiario.html">
 	<div class="modal" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-xl">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content panel-danger">
 				<div class="modal-header panel-heading text-center">
 					<button type="button" class="close" ng-click="$hide()">&times;</button>

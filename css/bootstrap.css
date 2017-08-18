@@ -4947,7 +4947,7 @@ a.badge:focus {
 }
 .list-group-item.active > .badge,
 .nav-pills > .active > a > .badge {
-  color: #337ab7;
+  color: #a5300b;
   background-color: #ffffff;
 }
 .list-group-item > .badge {

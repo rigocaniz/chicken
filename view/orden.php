@@ -47,6 +47,7 @@
                     <span class="tkt-active"></span>
                     <span class="glyphicon glyphicon-bookmark"></span>
                     {{item.numeroTicket}}
+                    <span class="badge">{{item.numMenu}}</span>
                 </button>
             </div>
         </div>
@@ -85,6 +86,14 @@
                     <span class="valor">{{infoOrden.usuarioResponsable}}</span>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xs-12 text-right">
+                    <button type="button" class="btn btn-sm btn-danger">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        <b>Cancelar Orden</b>
+                    </button>
+                </div>
+            </div>
             <legend class="legend2">Menús Ordenados</legend>
             <div class="row">
                 <div class="col-xs-12">
@@ -111,6 +120,13 @@
                                         <span>{{item.descripcion}}</span>
                                     </td>
                                     <td>{{item.subTotal | number:2}}</td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td><td></td><td>TOTAL</td>
+                                    <td><b>Q. {{infoOrden.total | number:2}}</b></td>
                                     <td>
                                         
                                     </td>
@@ -362,7 +378,7 @@
                 		<div class="col-xs-6">
                 			<div class="col-xs-12">
 	                			<label>Cantidad</label>
-	                			<input type="number" class="form-control input-lg input-focus" ng-model="menuActual.cantidad" min="1">
+	                			<input type="number" class="form-control input-lg input-focus" ng-model="menuActual.cantidad" id="cantidad_menu" min="1">
                 			</div>
                 			<div class="col-xs-12" style="margin-top:5px">
                 				<button type="button" class="btn btn-default" ng-click="menuActual.cantidad=( menuActual.cantidad>1 ? menuActual.cantidad-1 : menuActual.cantidad)">

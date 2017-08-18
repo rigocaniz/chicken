@@ -215,20 +215,84 @@ class Producto
 
 
 
-	function guardarLstProductoIngreso( $accion, $data )
+	function consultaFactura( $accion, $data )
 	{
+
 		if( count( $data->lstProductos ) )
 		{
-			// INICIALIZAR TRANSACCION
-	 		$this->con->query( 'START TRANSACTION' );
+			$validar = new Validar();
 
-			foreach ( $data->lstProductos AS $producto ) {
+			// INICIALIZACIÓN VAR
+	 		$idFacturaCompra = 'NULL';
+	 		$idEstadoFactura = 'NULL';
+	 		$noFactura       = 'NULL';
+	 		$proveedor       = "NULL";
+	 		$fechaFactura    = "NULL";
+	 		$comentario      = "NULL";
 
-				$this->consultaIngreso( $accion, $producto );
+			// SETEO VARIABLES GENERALES
+	 		$data->noFactura       = isset( $data->noFactura )		  ? (string)$data->noFactura 	: NULL;
+	 		$data->fechaFactura    = isset( $data->fechaFactura )	  ? $data->fechaFactura 		: NULL;
+	 		$data->proveedor       = isset( $data->proveedor )		  ? (string)$data->proveedor 	: NULL;
+	 		$data->idEstadoFactura = isset( $data->idEstadoFactura )  ? (int)$data->idEstadoFactura : NULL;
+	 		$data->comentario      = isset( $data->comentario )		  ? (string)$data->comentario 	: NULL;
+	 		
+	 		
+	 		// VALIDACIONES
+			$idEstadoFactura = $validar->validarEntero( $data->idEstadoFactura, NULL, TRUE, 'El ID del estado de factura no es válido' );
+			$noFactura       = $validar->validarTexto( $data->noFactura, NULL, TRUE, 'El No. de factura no es válido' );
 
-				if( $this->respuesta == 'danger' )
-					break;
-			}
+	 		if( $accion == 'update' )
+	 		{
+	 			$data->idFacturaCompra = isset( $data->idFacturaCompra )  ? (int)$data->idFacturaCompra : NULL;
+	 			$idFacturaCompra       = $validar->validarEntero( $data->idFacturaCompra, NULL, TRUE, 'El ID de la factura no es válida' );
+	 		}
+
+			$comentario   = $this->con->real_escape_string( $data->comentario );
+			$fechaFactura = substr( $data->fechaFactura, 0, -14);;
+			
+
+			// OBTENER RESULTADO DE VALIDACIONES
+	 		if( $validar->getIsError() ):
+		 		$this->respuesta = 'danger';
+		 		$this->mensaje   = $validar->getMsj();
+
+	 		else:
+
+	 			// INICIALIZAR TRANSACCION
+	 			$this->con->query( 'START TRANSACTION' );
+
+				$sql = "CALL consultaFactura( '{$accion}', {$idFacturaCompra}, {$idEstadoFactura}, '{$noFactura}', '{$proveedor}', '{$fechaFactura}', '{$comentario}' );";
+
+		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+		 			$this->siguienteResultado();
+		 			
+	 				$this->respuesta = $row->respuesta;
+	 				$this->mensaje   = $row->mensaje;
+
+	 				if( ( $accion == 'insert' OR $accion == 'update' ) AND $this->respuesta == 'success' ){
+
+	 					if( $accion == 'insert' )
+	 						$this->data = (int)$row->id;
+	 					else
+	 						$this->data = $idFacturaCompra;
+
+						foreach ( $data->lstProductos AS $producto ) {
+
+							$this->consultaIngreso( $accion, $this->data, $producto );
+
+							if( $this->respuesta == 'danger' )
+								break;
+						}
+
+	 				}
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la instrucción (Factura).';
+		 		}			
+		 		
+	 		endif;
 
 			// FINALIZAR TRANSACCION
 	 		if( $this->respuesta == 'danger' )
@@ -246,11 +310,10 @@ class Producto
 	}
 
 
-	// GUARDAR // ACTUALIZAR => INGRESO
-	function consultaIngreso( $accion, $data )
+	// GUARDAR // ELIMINAR => INGRESO
+	function consultaIngreso( $accion, $idFacturaCompra, $data )
 	{
 
-		var_dump( $data );
 		$validar = new Validar();
 
 		// INICIALIZACIÓN VAR
@@ -259,17 +322,21 @@ class Producto
  		$idProducto = 'NULL';
 
 		// SETEO VARIABLES GENERALES
- 		$data->idProducto = isset( $data->idProducto ) 	? (int)$data->idProducto  : NULL;
- 		$data->cantidad   = isset( $data->cantidad ) 	? (double)$data->cantidad : NULL;
+ 		$data->idProducto = isset( $data->idProducto ) 	? (int)$data->idProducto  	: NULL;
+ 		$data->cantidad   = isset( $data->cantidad ) 	? (double)$data->cantidad 	: NULL;
+ 		$data->costo      = isset( $data->costo ) 		? (double)$data->costo 		: NULL;
 
  		// VALIDACIONES
  		if( $accion == 'delete' ):
  			$data->idIngreso = isset( $data->idIngreso ) ? (int)$data->idIngreso : NULL;
 			$idIngreso = $validar->validarEntero( $data->idIngreso, NULL, TRUE, 'El ID de Ingreso no es válido.' );
- 		endif;
+		
+		else:
+			$cantidad   = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 500000, 'la cantidad' );
+			$idProducto = $validar->validarEntero( $data->idProducto, NULL, TRUE, "El ID del producto ({$data->producto}) no es válido." );
+			$costo      = (double)$data->costo;
 
-		$idProducto = $validar->validarEntero( $data->idProducto, NULL, TRUE, "El ID del producto ({$data->producto}) no es válido." );
-		$cantidad   = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 5000, 'la cantidad' );
+ 		endif;
 
 		// OBTENER RESULTADO DE VALIDACIONES
  		if( $validar->getIsError() ):
@@ -277,17 +344,13 @@ class Producto
 	 		$this->mensaje   = $validar->getMsj();
 
  		else:
-			$sql = "CALL consultaIngreso( '{$accion}', {$idIngreso}, {$cantidad}, {$idProducto} );";
-
-		echo $sql;
+			$sql = "CALL consultaIngreso( '{$accion}', {$idIngreso}, {$cantidad}, {$costo}, {$idProducto}, {$idFacturaCompra} );";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 	 			$this->siguienteResultado();
 
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;
- 				if( $accion == 'insert' AND $this->respuesta == 'success' )
- 					$this->data = (int)$row->id;
 	 		}
 	 		else{
 	 			$this->respuesta = 'danger';
@@ -379,12 +442,12 @@ class Producto
 		$producto       = $validar->validarTexto( $data->producto, NULL, TRUE, 3, 45, 'el nombre del producto' );
 		$idTipoProducto = $validar->validarEntero( $data->idTipoProducto, NULL, TRUE, 'El ID del tipo de producto no es válido, verifique.' );
 		$idMedida       = $validar->validarEntero( $data->idMedida, NULL, TRUE, 'El ID del tipo de medida no es válido, verifique.' );
-		$cantidadMinima = $validar->validarCantidad( $data->cantidadMinima, NULL, TRUE, 1, 2500, 'la cantidad Minima' );
-		$cantidadMaxima = $validar->validarCantidad( $data->cantidadMaxima, NULL, TRUE, 1, 2500, 'la cantidad Maxima' );
+		$cantidadMinima = $validar->validarCantidad( $data->cantidadMinima, NULL, TRUE, 1, 50000, 'la cantidad Minima' );
+		$cantidadMaxima = $validar->validarCantidad( $data->cantidadMaxima, NULL, TRUE, 1, 50000, 'la cantidad Maxima' );
 		
 		// DISPONIBILIDAD
 		if( $accion == 'insert' )
-			$disponibilidad = $validar->validarCantidad( $data->disponibilidad, NULL, TRUE, 1, 2500, 'la disponibilidad' );
+			$disponibilidad = $validar->validarCantidad( $data->disponibilidad, NULL, TRUE, 1, 50000, 'la disponibilidad' );
 
 		$validar->compararValores( $cantidadMinima, $cantidadMaxima, 'la cantidad Mínima', 'la cantidad máxima', 2 );
 
@@ -622,6 +685,7 @@ class Producto
 						'totalStockVacio' => 0,
 						'totalAlertas'    => 0,
 						'totalStockAlto'  => 0,
+						'mostrar'         => TRUE,
 						'lstProductos'    => array()
 					);
 				}

@@ -53,12 +53,13 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	};
 
 	$scope.compras = {
-		noFactura    : 123,
-		fechaFactura : null,
-		idProveedor  : 1,
-		proveedor    : 'PROVEEDOR 1',
-		comentario   : '',
-		lstProductos : []
+		noFactura       : 123,
+		fechaFactura    : null,
+		idProveedor     : 1,
+		proveedor       : 'PROVEEDOR 1',
+		idEstadoFactura : 1,
+		comentario      : '',
+		lstProductos    : []
 	};
 	
 	$scope.cierreDiario = {
@@ -177,7 +178,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	};
 
 	$scope.agregarIngresoProducto = function(){
-		console.log( "carga" );
 		var prod = $scope.prod;
 
 		if( !(prod.idProducto && prod.idProducto > 0) )
@@ -191,10 +191,10 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 		else{
 			$scope.compras.lstProductos.push({
-				idProducto     : prod.idProducto,
-				producto       : prod.producto,
-				cantidad       : prod.cantidad,
-				costo : prod.costo
+				idProducto : prod.idProducto,
+				producto   : prod.producto,
+				cantidad   : prod.cantidad,
+				costo      : prod.costo
 			});
 
 			$scope.cancelarIngreso( 1 );
@@ -223,9 +223,10 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		}
 	};
 
-	$scope.guardarLstProductoIngreso = function(){
+	$scope.consultaFactura = function(){
 		var error = false;
 
+		console.log( $scope.compras );
 		if( !($scope.compras.lstProductos.length) ){
 			error = true;
 			alertify.notify( 'No ha ingrado ningun producto, verifique', 'info', 5 );
@@ -249,7 +250,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 		if( !error ){
 			$http.post('consultas.php',{
-				opcion : 'guardarLstProductoIngreso',
+				opcion : 'consultaFactura',
 				accion : 'insert',
 				data   : $scope.compras
 			})
@@ -259,7 +260,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 
 				if( data.respuesta == 'success' )
-					$scope.compras.lstProductos = [];
+					$scope.resetValores( 'compras' );
 			});
 		}
 	};
@@ -319,7 +320,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 
 	$scope.buscarTipoProducto = '';
-	$scope.resetValores = function( accion ){
+	$scope.resetValores = function( accion )
+	{
+
 		$scope.accion             = 'insert';
 		$scope.buscarTipoProducto = '';
 		$scope.buscarMedida       = '';
@@ -361,13 +364,26 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 			};
 		}
 
-		else if( 'cierreDiario' )
+		else if( accion == 'cierreDiario' )
 		{
 			$scope.cierreDiario = {
 				idCierreDiario : null,
 				fechaCierre    : null,
 				comentario     : '',
 				lstProductos   : []
+			};
+		}
+
+		else if( accion == 'compras' )
+		{
+			$scope.compras = {
+				noFactura       : null,
+				fechaFactura    : null,
+				idProveedor     : null,
+				proveedor       : null,
+				idEstadoFactura : 1,
+				comentario      : '',
+				lstProductos    : []
 			};
 		}
 

@@ -229,9 +229,9 @@ switch ( $data->opcion )
 		echo json_encode( $producto->getListaProductos() );
 		break;
 		
-	case 'guardarLstProductoIngreso':			// INSERT / UPDATE LST PRODUCTOS INGRESO
+	case 'consultaFactura':			// INSERT / UPDATE LST PRODUCTOS INGRESO
 		$producto = new Producto();
-		echo json_encode( $producto->guardarLstProductoIngreso( $data->accion, $data->data ) );
+		echo json_encode( $producto->consultaFactura( $data->accion, $data->data ) );
 		break;
 		
 	case 'buscarProducto':			// BUSCAR PRODUCTO(S) POR NOMBRE
