@@ -621,6 +621,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 		if ( key == 13 ) // {ENTER}
 			$scope.buscarOrdenTicket();
+
+		if ( key == 65 && $scope.infoOrden.idOrdenCliente > 0 ) // {O}
+			$scope.consultaOrden( $scope.infoOrden );
 	};
 
 	// ATAJOS DIALOGO INGRESO DE TICKET
@@ -658,6 +661,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 		if ( key == 13 || key == 65 ) // {ENTER}
 			$scope.consultaMenuPorCodigo();
+
+		if ( key == 27 && $scope.accionOrden == 'modificar' ) // {ESC}
+			$scope.dialOrdenCliente.hide();
 	};
 
 	$scope._keyDialMenuCantidad = function ( key ) {

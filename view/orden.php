@@ -96,7 +96,7 @@
                 <div class="col-xs-12 text-center" ng-show="infoOrden.idEstadoOrden==1 || infoOrden.idEstadoOrden==2">
                     <button type="button" class="btn btn-info" ng-click="consultaOrden( infoOrden )">
                         <span class="glyphicon glyphicon-plus"></span>
-                        <b>Agregar <u>O</u>rden</b>
+                        <b><u>A</u>gregar Orden</b>
                     </button>
                 </div>
             </div>
