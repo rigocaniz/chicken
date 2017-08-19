@@ -232,7 +232,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		console.log( $scope.compras );
 		if( !($scope.compras.lstProductos.length) && $scope.accion == 'insert' ){
 			error = true;
-			alertify.notify( 'No ha ingrado ningun producto, verifique', 'info', 5 );
+			alertify.notify( 'No ha ingresado ningun producto, verifique', 'info', 5 );
 		}
 		else if( $scope.accion == 'insert' ){
 			for (var i = 0; i < $scope.compras.lstProductos.length; i++) {
@@ -263,7 +263,15 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 
 				if( data.respuesta == 'success' )
-					$scope.resetValores( 'compras' );
+				{
+					if( $scope.accion == 'insert' )
+						$scope.resetValores( 'compras' );
+					else if( $scope.accion == 'update' )
+					{
+						$scope.dialEditarFacturaCompra.hide();
+						$scope.cargarLstFacturaCompra();
+					}
+				}
 			});
 		}
 	};
@@ -288,7 +296,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	$scope.editarFacturaCompra = function( facturaCompra )
 	{
 		console.log( facturaCompra ) ;
-		$scope.accion = 'update';
 		$scope.facturaCompra = angular.copy( facturaCompra );
 		$scope.facturaCompra.fechaFactura = moment( facturaCompra.fechaFactura );
 		$scope.dialLstFacturaCompra.hide();

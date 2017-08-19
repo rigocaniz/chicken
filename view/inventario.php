@@ -484,7 +484,6 @@
 					EDITAR FACTURA / COMPRA
 				</div>
 				<div class="modal-body">
-					{{ facturaCompra | json }}
 					<form class="form-horizontal" novalidate autocomplete="off">
 						<div class="form-group">
 							<div class="col-sm-3">
@@ -521,15 +520,21 @@
 								<textarea class="form-control" ng-model="facturaCompra.comentario" placeholder="Ingresar comentario (Opcional)"></textarea>
 							</div>
 						</div>
+						<div class="form-group">
+							<div class="col-sm-6 col-md-5">
+								<small>
+									<kbd>Usuario: {{ facturaCompra.usuario }}</kbd>
+								</small>
+							</div>
+						</div>
 					</form>
-				
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-success" ng-click="consultaFactura( 'update' )">
 						<span class="glyphicon glyphicon-saved"></span> Guardar
 					</button>
 
-					<button type="button" class="btn btn-default" ng-click="$hide()">
+					<button type="button" class="btn btn-default" ng-click="facturaCompra={};$hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
 						<b>Salir</b>
 					</button>
@@ -538,7 +543,6 @@
 		</div>
 	</div>
 </script>
-
 
 
 
@@ -557,7 +561,7 @@
 						<thead>
 							<tr>
 								<th class="text-center">No.</th>
-								<th class="col-sm-2 text-center">Factura</th>
+								<th class="col-sm-3 text-center">Factura</th>
 								<th class="col-sm-3 text-center">Proveedor</th>
 								<th class="col-sm-2 text-center">Fecha Factura</th>
 								<th class="col-sm-2 text-center">Estado Factura</th>
@@ -577,10 +581,10 @@
 										<span class="glyphicon glyphicon-eye-open"></span>
 									</button>
 									<div ng-show="facturaCompra.mostrar">
-										{{ facturaCompra  | json }}
+										{{ facturaCompra.comentario }}
 									</div>
 								</td>
-								<td>
+								<td class="text-center">
 									{{ facturaCompra.proveedor }}
 								</td>
 								<td class="text-center">
