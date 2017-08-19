@@ -390,6 +390,12 @@ switch ( $data->opcion )
 		echo json_encode( $orden->busquedaTicket( $data->ticket ) );
 		break;
 
+	// CAMBIA SERVICIO DE ORDEN
+	case 'cambiarServicio':
+		$orden = new Orden();
+		echo json_encode( $orden->cambiarServicio( $data->idOrdenCliente, $data->lstDetalle, $data->idTipoServicio ) );
+		break;
+
 
 	/////////////////////////
 	/////////////////////////

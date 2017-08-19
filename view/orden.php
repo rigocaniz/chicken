@@ -119,9 +119,19 @@
                                     <td><img ng-src="{{item.imagen}}" style="height:40px"></td>
                                     <td>{{item.cantidad}}</td>
                                     <td>
-                                        <span ng-show="item.idTipoServicio==2" class="label-border label-success">R</span>
-                                        <span ng-show="item.idTipoServicio==3" class="label-border label-default">D</span>
-                                        <span ng-show="item.idTipoServicio==1" class="label-border label-primary">L</span>
+                                        <button type="button" class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}"
+                                            ng-click="item.showTipoServicio=!item.showTipoServicio">
+                                            <span ng-show="item.idTipoServicio==2">R</span>
+                                            <span ng-show="item.idTipoServicio==3">D</span>
+                                            <span ng-show="item.idTipoServicio==1">L</span>
+                                            <span class="lst_servicio" ng-show="item.showTipoServicio">
+                                                <ul>
+                                                    <li class="list-group-item" ng-hide="item.idTipoServicio==2" ng-click="cambiarServicio( infoOrden.idOrdenCliente, item.lstDetalle, 2 )">Restaurante</li>
+                                                    <li class="list-group-item" ng-hide="item.idTipoServicio==3" ng-click="cambiarServicio( infoOrden.idOrdenCliente, item.lstDetalle, 3 )">A Domicilio</li>
+                                                    <li class="list-group-item" ng-hide="item.idTipoServicio==1" ng-click="cambiarServicio( infoOrden.idOrdenCliente, item.lstDetalle, 1 )">Para Llevar</li>
+                                                </ul>
+                                            </span>
+                                        </button>
                                         <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
                                         <span>{{item.descripcion}}</span>
                                     </td>

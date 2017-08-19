@@ -633,6 +633,74 @@ class Orden
 		return $lst;
  	}
 
+ 	// CAMBIA TIPO SERVICIO ORDEN
+ 	public function cambiarServicio( $idOrdenCliente, $lstDetalle, $idTipoServicio )
+ 	{
+
+ 		if ( count( $lstDetalle ) AND $idOrdenCliente > 0 AND $idTipoServicio > 0 ):
+ 			$validar = new Validar();
+
+		 	$this->con->query( "START TRANSACTION" );
+
+			foreach ( $lstDetalle as $ix => $item ):
+
+				$item->idDetalleOrdenCombo = (int)$item->idDetalleOrdenCombo;
+				$item->idDetalleOrdenMenu  = (int)$item->idDetalleOrdenMenu;
+
+				if ( $item->idDetalleOrdenMenu > 0 )
+					$sql = "CALL consultaDetalleOrdenMenu( 'tipoServicio', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, NULL, {$idTipoServicio}, NULL, NULL );";
+				
+				else if ( $item->idDetalleOrdenCombo > 0 )
+					$sql = "CALL consultaDetalleOrdenCombo( 'tipoServicio', {$item->idDetalleOrdenCombo}, NULL, NULL, NULL, NULL, {$idTipoServicio}, NULL, NULL );";
+
+		 		if( $rs = $this->con->query( $sql ) ) {
+		 			@$this->con->next_result();
+		 			if( $row = $rs->fetch_object() ) {
+						$this->respuesta = $row->respuesta;
+						$this->mensaje   = $row->mensaje;
+		 			}
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la consulta.';
+		 			break;
+		 		}
+		 		
+		 		if ( $this->respuesta == 'danger' )
+		 			break;
+
+			endforeach;
+
+			// SI SE GUARDO CORRECTAMENTE
+			if ( $this->respuesta == 'success' ) {
+		 		$this->con->query( "COMMIT" );
+
+			 	$infoNode = (object)array(
+					'accion' => 'cambioTipoServicio',
+					'data'   => array(
+						'idOrdenCliente'      => $idOrdenCliente,
+						'detalleOrdenCliente' => $this->lstDetalleOrdenCliente( $idOrdenCliente ),
+				 	),
+				);
+			 	
+			 	// SI LA CLASE NO EXISTE SE LLAMA
+			 	if ( !class_exists( "Redis" ) )
+			 		include 'redis.class.php';
+
+			 	// ENVIA LOS DATOS POR MEDIO DE REDIS
+			 	$red = new Redis();
+				$red->messageRedis( $infoNode );
+			}
+			
+			// SI OCURRIO ALGUN ERROR
+		 	else
+		 		$this->con->query( "ROLLBACK" );
+
+ 		endif;
+
+ 		return $this->getRespuesta();
+ 	}
+
  	// SI SE CANCELA LA ORDEN PRINCIPAL
  	public function ordenPrincipalCancelada( $idOrdenCliente )
  	{

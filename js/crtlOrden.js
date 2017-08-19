@@ -459,6 +459,32 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		}
 	};
 
+	// => CAMBIAR SERVICIO DE ORDEN
+	$scope.cambiarServicio = function ( idOrdenCliente, lstDetalle, idTipoServicio ) {
+		console.log( idOrdenCliente, lstDetalle, idTipoServicio );
+		if ( $scope.$parent.loading )
+			return false;
+
+		$scope.$parent.loading = true; // cargando...
+
+		// CONSULTA PRECIOS DEL MENU
+		$http.post('consultas.php', { 
+			opcion         : 'cambiarServicio',
+			idOrdenCliente : idOrdenCliente,
+			lstDetalle     : lstDetalle,
+			idTipoServicio : idTipoServicio
+		})
+		.success(function (data) {
+			console.log( data );
+
+			$scope.$parent.loading = false; // cargando...
+
+			if ( data.mensaje != undefined ) {
+				alertify.set('notifier','position', 'top-right');
+				alertify.notify( data.mensaje, data.respuesta, 3 );
+			}
+		});
+	};
 
 
 
@@ -755,72 +781,84 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%% INFORMACION DE NODEJS %%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 	*/
 	$scope.$on('infoNode', function( event, datos ) {
-		// SI SE AGREGO UNA ORDEN NUEVA
-		if ( datos.accion == 'ordenNueva' ) {
 
-			// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
-			if ( datos.data && datos.data.ordenCliente && $scope.idEstadoOrden == 1 ) {
-				$scope.lstOrdenCliente.push( datos.data.ordenCliente );
+		switch ( datos.accion ) {
+			// SI SE AGREGO UNA ORDEN NUEVA
+			case 'ordenNueva':
 
-				// SELECCIONAR LA ORDEN AGREGADA SI ES LA UNICA
-				if ( $scope.lstOrdenCliente.length ==1 )
-					$scope.miIndex = 0;
-			}
-		}
+				// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
+				if ( datos.data && datos.data.ordenCliente && $scope.idEstadoOrden == 1 ) {
+					$scope.lstOrdenCliente.push( datos.data.ordenCliente );
 
-		// SI SE AGREGA OTROS MENUS A ORDEN EXISTENTE
-		else if ( datos.accion == 'ordenAgregar' ) {
-			// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
-			if ( datos.data && datos.data.ordenCliente && ( $scope.idEstadoOrden == 1 || $scope.idEstadoOrden == 2 ) ) {
-				console.log( datos.data );
+					// SELECCIONAR LA ORDEN AGREGADA SI ES LA UNICA
+					if ( $scope.lstOrdenCliente.length ==1 )
+						$scope.miIndex = 0;
+				}
+			break;
 
-				var orden = datos.data.ordenCliente;
+			// SI SE AGREGA OTROS MENUS A ORDEN EXISTENTE
+			case 'ordenAgregar':
 
-				// OBTIENE INDEX DE ORDEN
-				var index = $scope.indexArray( 'lstOrdenCliente', 'idOrdenCliente', orden.idOrdenCliente );
+				// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
+				if ( datos.data && datos.data.ordenCliente && ( $scope.idEstadoOrden == 1 || $scope.idEstadoOrden == 2 ) ) {
 
-				// SI EXISTE LA ORDEN
-				if ( index >= 0 ) {
-					$scope.lstOrdenCliente[ index ].numeroTicket       = orden.numeroTicket;
-					$scope.lstOrdenCliente[ index ].usuarioResponsable = orden.usuarioResponsable;
-					$scope.lstOrdenCliente[ index ].numMenu            = orden.numMenu;
+					var orden = datos.data.ordenCliente;
 
-					// SI ES LA ORDEN ACTUAL
-					if ( index == $scope.miIndex && datos.data.detalleOrdenCliente ) {
-						$scope.infoOrden.numeroTicket       = orden.numeroTicket;
-						$scope.infoOrden.usuarioResponsable = orden.usuarioResponsable;
-						$scope.infoOrden.numMenu            = orden.numMenu;
-						$scope.infoOrden.lstOrden           = datos.data.detalleOrdenCliente.lst;
-						$scope.infoOrden.total              = datos.data.detalleOrdenCliente.total;
+					// OBTIENE INDEX DE ORDEN
+					var index = $scope.indexArray( 'lstOrdenCliente', 'idOrdenCliente', orden.idOrdenCliente );
+
+					// SI EXISTE LA ORDEN
+					if ( index >= 0 ) {
+						$scope.lstOrdenCliente[ index ].numeroTicket       = orden.numeroTicket;
+						$scope.lstOrdenCliente[ index ].usuarioResponsable = orden.usuarioResponsable;
+						$scope.lstOrdenCliente[ index ].numMenu            = orden.numMenu;
+
+						// SI ES LA ORDEN ACTUAL
+						if ( index == $scope.miIndex && datos.data.detalleOrdenCliente ) {
+							$scope.infoOrden.numeroTicket       = orden.numeroTicket;
+							$scope.infoOrden.usuarioResponsable = orden.usuarioResponsable;
+							$scope.infoOrden.numMenu            = orden.numMenu;
+							$scope.infoOrden.lstOrden           = datos.data.detalleOrdenCliente.lst;
+							$scope.infoOrden.total              = datos.data.detalleOrdenCliente.total;
+						}
 					}
 				}
-			}
-		}
+			break;
 
-		// ORDEN PRINCIPAL CANCELADA
-		else if ( datos.accion == 'ordenPrincipalCancelada' ) {
+			// SI SE CAMBIO TIPO DE SERVICIO
+			case 'cambioTipoServicio':
+			
+				// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
+				if ( datos.data && datos.data.idOrdenCliente == $scope.infoOrden.idOrdenCliente )
+					$scope.infoOrden.lstOrden = datos.data.detalleOrdenCliente.lst;
+					$scope.infoOrden.total    = datos.data.detalleOrdenCliente.total;
 
-			// SI SON ORDENES PENDIENTES
-			if ( $scope.idEstadoOrden == 1 ) {
+			break;
 
-				// OBTIENE INDEX DE ORDEN
-				var index = $scope.indexArray( 'lstOrdenCliente', 'idOrdenCliente', datos.idOrdenCliente );
+			// ORDEN PRINCIPAL CANCELADA
+			case 'ordenPrincipalCancelada':
 
-				if ( index >= 0 ) {
-					// ELIMINA LA ORDEN CANCELADA EN PENDIENTES
-					$scope.lstOrdenCliente.splice( index, 1 );
+				// SI SON ORDENES PENDIENTES
+				if ( $scope.idEstadoOrden == 1 ) {
 
-					// SI EXISTEN ELEMENTOS SELECCIONA EL PRIMERO
-					if ( $scope.lstOrdenCliente.length )
-						$scope.miIndex = 0;
+					// OBTIENE INDEX DE ORDEN
+					var index = $scope.indexArray( 'lstOrdenCliente', 'idOrdenCliente', datos.idOrdenCliente );
 
-					// SI NO EXISTEN DEJA EN -1
-					else
-						$scope.miIndex = -1;
+					if ( index >= 0 ) {
+						// ELIMINA LA ORDEN CANCELADA EN PENDIENTES
+						$scope.lstOrdenCliente.splice( index, 1 );
+
+						// SI EXISTEN ELEMENTOS SELECCIONA EL PRIMERO
+						if ( $scope.lstOrdenCliente.length )
+							$scope.miIndex = 0;
+
+						// SI NO EXISTEN DEJA EN -1
+						else
+							$scope.miIndex = -1;
+					}
 				}
-			}
+			break;
 		}
-
 
 		$scope.$apply();
 	});
