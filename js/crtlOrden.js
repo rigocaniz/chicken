@@ -861,20 +861,29 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				if ( $scope.idEstadoOrden == 1 ) {
 
 					// OBTIENE INDEX DE ORDEN
-					var index = $scope.indexArray( 'lstOrdenCliente', 'idOrdenCliente', datos.idOrdenCliente );
+					var index    = $scope.indexArray( 'lstOrdenCliente', 'idOrdenCliente', datos.idOrdenCliente );
+					var newIndex = 0;
+					
+					// SI EL INDEX ES EL ELIMINADO
+					if ( $scope.miIndex == index )
+						$scope.miIndex = -1;
 
-					if ( index >= 0 ) {
-						// ELIMINA LA ORDEN CANCELADA EN PENDIENTES
+					// SI ES EL ULTIMO ELEMENTO ACTUAL
+					if ( ( $scope.miIndex + 1 ) == $scope.lstOrdenCliente.length ) {
+						newIndex       = ( $scope.miIndex - 1 );
+						$scope.miIndex = -1;
+					}
+
+					// SI ENCUENTRA LA ORDEN CANCELADA EN PENDIENTES
+					if ( index >= 0 )
 						$scope.lstOrdenCliente.splice( index, 1 );
 
-						// SI EXISTEN ELEMENTOS SELECCIONA EL PRIMERO
-						if ( $scope.lstOrdenCliente.length )
-							$scope.miIndex = 0;
+					console.log( $scope.miIndex );
 
-						// SI NO EXISTEN DEJA EN -1
-						else
-							$scope.miIndex = -1;
-					}
+					$timeout(function () {
+						if ( $scope.lstOrdenCliente.length && $scope.miIndex == -1 )
+							$scope.miIndex = newIndex;
+					});
 				}
 			break;
 		}

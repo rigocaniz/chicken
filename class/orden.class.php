@@ -423,11 +423,11 @@ class Orden
  	}
 
  	// CONSULTA INFORMACION DE ORDEN DE CLIENTE
- 	public function lstOrdenCliente( $idEstadoOrden, $limite = 20, $idOrdenCliente = NULL )
+ 	public function lstOrdenCliente( $idEstadoOrden, $limite = NULL, $idOrdenCliente = NULL )
  	{
 		$lst            = NULL;
 		$limit          = "";
-		$limite         = (int)$limite;
+		$limite         = is_null( $limite ) ? 15 : (int)$limite;
 		$idOrdenCliente = (int)$idOrdenCliente;
 
 		// SI EL ESTADO ES DIFERENTE A PENDIENTE Y LIMITE ES MAYOR A CERO

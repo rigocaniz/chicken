@@ -58,25 +58,27 @@
 
         <!-- *********** INFORMACION DE ORDEN ********* -->
         <div class="col-xs-12 col-sm-10 info-orden-ticket" ng-show="lstOrdenCliente.length || deBusqueda">
-            <div class="row" ng-show="!deBusqueda">
+            <!-- BOTONES PARA AVANZAR -->
+            <div class="row visible-xs" ng-show="!deBusqueda">
                 <div class="col-xs-12 text-center">
-                    <button type="button" class="btn btn-default" ng-click="miIndex=0">
+                    <button type="button" class="btn btn-sm btn-default" ng-click="miIndex=0">
                         <span class="glyphicon glyphicon-fast-backward"></span>
                     </button>
-                    <button type="button" class="btn btn-default" ng-click="downUpOrdenes( true )">
+                    <button type="button" class="btn btn-sm btn-default" ng-click="downUpOrdenes( true )">
                         <span class="glyphicon glyphicon-chevron-left"></span>
                         <b>Anterior</b>
                     </button>
                     <span class="badge" style="font-size:17px">{{ ( miIndex + 1 ) + " de " + lstOrdenCliente.length }}</span>
-                    <button type="button" class="btn btn-default" ng-click="downUpOrdenes( false )">
+                    <button type="button" class="btn btn-sm btn-default" ng-click="downUpOrdenes( false )">
                         <span class="glyphicon glyphicon-chevron-right"></span>
                         <b>Siguiente</b>
                     </button>
-                    <button type="button" class="btn btn-default" ng-click="miIndex = ( lstOrdenCliente.length - 1 )">
+                    <button type="button" class="btn btn-sm btn-default" ng-click="miIndex = ( lstOrdenCliente.length - 1 )">
                         <span class="glyphicon glyphicon-fast-forward"></span>
                     </button>
                 </div>
             </div>
+            <!-- *********** INFORMACION DE ORDEN ********* -->
             <div class="row">
                 <div class="col-sm-6 col-xs-12">
                     <h4>
