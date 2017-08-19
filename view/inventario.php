@@ -307,6 +307,11 @@
 								</h4>
 							</div>
 							<div class="panel-body">
+
+							<button type="button" class="btn btn-info btn-sm" ng-click="cargarLstFacturaCompra()">
+								<span class="glyphicon glyphicon-th-list"></span> VER INGRESOS
+							</button>
+
 								<div class="text-right">
 									<h3>
 										TOTAL: Q.{{ subTotalQuetzales() | number: 2 }} 
@@ -317,7 +322,7 @@
 									<div class="form-group">
 										<div class="col-sm-3">
 											<label class="control-label">NO. FACTURA</label>
-											<input type="number" class="form-control" id="numeroFactura" ng-model="compras.noFactura">
+											<input type="text" maxlength="15" class="form-control" id="numeroFactura" ng-model="compras.noFactura">
 										</div>	
 										<div class="col-sm-4 col-md-3">
 											<label class="control-label">FECHA DE COMPRA</label>
@@ -330,18 +335,18 @@
 										</div>
 										<div class="col-sm-5">
 											<label class="control-label">PROVEEDOR</label>
-											<input type="text" class="form-control" ng-model="compras.proveedor">
+											<input type="text"  maxlength="45" class="form-control" ng-model="compras.proveedor">
 										</div>
 									</div>
 									<div class="form-group">
 										<div class="col-sm-6 col-md-5">
 											<label class="control-label">ESTADO DE LA FACTURA</label>
-											<div class="btn-group" role="group" aria-label="...">
-		  										<button type="button" class="btn btn-default btn-sm" ng-repeat="estadoFactura in lstEstadosFactura" ng-click="compras.idEstadoFactura = estadoFactura.idEstadoFactura">
-		  											<span class="glyphicon" ng-class="{'glyphicon-check': compras.idEstadoFactura == estadoFactura.idEstadoFactura, 'glyphicon-unchecked': compras.idEstadoFactura != estadoFactura.idEstadoFactura}"></span>
-
-		  											{{ estadoFactura.estadoFactura }}
-		  										</button>
+											<div class="btn-group" role="group" aria-label="">
+											
+												<button type="button" class="btn btn-default btn-sm" ng-class="{'btn-success': compras.idEstadoFactura==1 && compras.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-danger': compras.idEstadoFactura==2 && compras.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-warning': compras.idEstadoFactura==3 && compras.idEstadoFactura == estadoFactura.idEstadoFactura}" ng-repeat="estadoFactura in lstEstadosFactura" ng-click="compras.idEstadoFactura = estadoFactura.idEstadoFactura">
+													<span class="glyphicon" ng-class="{'glyphicon-check': compras.idEstadoFactura == estadoFactura.idEstadoFactura, 'glyphicon-unchecked': compras.idEstadoFactura != estadoFactura.idEstadoFactura}"></span>
+													{{ estadoFactura.estadoFactura }}
+												</button>
 											</div>
 										</div>
 										<div class="col-sm-6 col-md-6">
@@ -451,7 +456,7 @@
 									</div>
 									<div class="form-group" style="margin-top: 15px">
 										<div class="col-sm-12 text-center">
-											<button type="button" class="btn btn-success btn-lg noBorder" ng-click="consultaFactura()">
+											<button type="button" class="btn btn-success btn-lg noBorder" ng-click="consultaFactura( 'insert' )">
 												<span class="glyphicon glyphicon-saved"></span> Guardar
 											</button>
 										</div>
@@ -467,6 +472,160 @@
 	</div>
 </div>
 
+
+<!-- DIALOGO LST FACTURAS COMPRAS -->
+<script type="text/ng-template" id="dial.editarFacturaCompra.html">
+	<div class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content panel-danger">
+				<div class="modal-header panel-heading text-center">
+					<button type="button" class="close" ng-click="$hide()">&times;</button>
+					<span class="glyphicon glyphicon-edit"></span>
+					EDITAR FACTURA / COMPRA
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" novalidate autocomplete="off">
+						<div class="form-group">
+							<div class="col-sm-3">
+								<label class="control-label">NO. FACTURA</label>
+								<input type="text" maxlength="15" class="form-control" id="numeroFactura" ng-model="facturaCompra.noFactura">
+							</div>	
+							<div class="col-sm-4 col-md-3">
+								<label class="control-label">FECHA DE COMPRA</label>
+								<div class="input-group">
+									<span class="input-group-addon">
+										<i class="glyphicon glyphicon-calendar"></i>
+									</span>
+									<input type="text" class="form-control" ng-model="facturaCompra.fechaFactura" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker>
+								</div>
+							</div>
+							<div class="col-sm-5">
+								<label class="control-label">PROVEEDOR</label>
+								<input type="text" maxlength="45" class="form-control" ng-model="facturaCompra.proveedor">
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-6 col-md-5">
+								<label class="control-label">ESTADO DE LA FACTURA</label>
+								<div class="btn-group" role="group" aria-label="...">
+									<button type="button" class="btn btn-default btn-sm" ng-class="{'btn-success': facturaCompra.idEstadoFactura==1 && facturaCompra.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-danger': facturaCompra.idEstadoFactura==2 && facturaCompra.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-warning': facturaCompra.idEstadoFactura==3 && facturaCompra.idEstadoFactura == estadoFactura.idEstadoFactura}" ng-repeat="estadoFactura in lstEstadosFactura" ng-click="facturaCompra.idEstadoFactura = estadoFactura.idEstadoFactura">
+										<span class="glyphicon" ng-class="{'glyphicon-check': facturaCompra.idEstadoFactura == estadoFactura.idEstadoFactura, 'glyphicon-unchecked': facturaCompra.idEstadoFactura != estadoFactura.idEstadoFactura}"></span>
+
+										{{ estadoFactura.estadoFactura }}
+									</button>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-6">
+								<label class="control-label">COMENTARIO</label>
+								<textarea class="form-control" ng-model="facturaCompra.comentario" placeholder="Ingresar comentario (Opcional)"></textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-6 col-md-5">
+								<small>
+									<kbd>Usuario: {{ facturaCompra.usuario }}</kbd>
+								</small>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" ng-click="consultaFactura( 'update' )">
+						<span class="glyphicon glyphicon-saved"></span> Guardar
+					</button>
+
+					<button type="button" class="btn btn-default" ng-click="facturaCompra={};$hide()">
+						<span class="glyphicon glyphicon-log-out"></span>
+						<b>Salir</b>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+
+
+
+<!-- DIALOGO LST FACTURAS COMPRAS -->
+<script type="text/ng-template" id="dial.lstFacturaCompra.html">
+	<div class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content panel-danger">
+				<div class="modal-header panel-heading text-center">
+					<button type="button" class="close" ng-click="$hide()">&times;</button>
+					<span class="glyphicon glyphicon-shopping-cart"></span>
+					FACTURAS / COMPRAS INGRESADAS
+				</div>
+				<div class="modal-body">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th class="text-center">No.</th>
+								<th class="col-sm-3 text-center">Factura</th>
+								<th class="col-sm-3 text-center">Proveedor</th>
+								<th class="col-sm-2 text-center">Fecha Factura</th>
+								<th class="col-sm-2 text-center">Estado Factura</th>
+								<th class="col-sm-2 text-center">Usuario</th>
+								<th class="text-center"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr dir-paginate="facturaCompra in lstFacturaCompra | filter: filtroCancion | itemsPerPage: 25">
+								<td class="text-center">
+									{{ $index + 1 }}
+								</td>
+								<td>
+									{{ facturaCompra.noFactura }}
+									<br>
+									<button type="button" class="btn btn-xs btn-default" ng-click="facturaCompra.mostrar=!facturaCompra.mostrar" ng-show="facturaCompra.comentario.length">
+										<span class="glyphicon glyphicon-eye-open"></span>
+									</button>
+									<div ng-show="facturaCompra.mostrar">
+										{{ facturaCompra.comentario }}
+									</div>
+								</td>
+								<td class="text-center">
+									{{ facturaCompra.proveedor }}
+								</td>
+								<td class="text-center">
+									{{ facturaCompra.fechaFact }}
+								</td>
+								<td class="text-center" ng-class="{'danger': facturaCompra.idEstadoFactura == 2, 'warning': facturaCompra.idEstadoFactura == 3}">
+									{{ facturaCompra.estadoFactura }}
+								</td>
+								<td class="text-center">
+									{{ facturaCompra.usuario }}
+								</td>
+								<td class="text-center">
+									<div class="menu-contenedor">
+										<button type="button" class="btn btn-warning noBorde">
+											<span class="glyphicon glyphicon-th"></span>
+										</button>
+										<div class="menu-horizontal">
+											<button type="button" class="btn" ng-click="editarFacturaCompra( facturaCompra )" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
+												<span class="glyphicon glyphicon-pencil"></span>
+											</button>
+											<button type="button" class="btn" title="Ver Detalle" data-toggle="tooltip" data-placement="top" tooltip>
+												<span class="glyphicon glyphicon-th-list"></span>
+											</button>
+										</div>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" template-url="dirPagination.tpl.html"></dir-pagination-controls>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" ng-click="$hide()">
+						<span class="glyphicon glyphicon-log-out"></span>
+						<b>Salir</b>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
 
 <!-- DIALOGO CIERRE DIARIO -->
 <script type="text/ng-template" id="dial.cierreDiario.html">
@@ -501,7 +660,7 @@
 									<th class="text-center">No.</th>
 									<th class="col-sm-3 text-center">Producto</th>
 									<th class="col-sm-1 text-center">Perecedero</th>
-									<th class="col-sm-2 text-center">Disponible <br>Sistema</th>
+									<th class="col-sm-2 text-center">Disponible <br>Sistema(*)</th>
 									<th class="col-sm-2 text-center">Disponible <br>Fisico</th>
 									<th class="col-sm-2 text-center">Medida</th>
 								</tr>
@@ -513,14 +672,15 @@
 									</td>
 									<td>
 										{{ inv.producto }}
+										<span class="glyphicon glyphicon-eye-open" ng-show="inv.esImportante == 'SI'"></span>
 									</td>
 									<td class="text-center">
 										{{ inv.esPerecedero }}
 									</td>
-									<td class="text-center">
+									<td class="text-center warning">
 										{{ inv.disponible }}
 									</td>
-									<td class="text-center">
+									<td class="text-center success">
 										<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.disponibilidad" required>
 									</td>
 									<td class="text-center">
@@ -533,9 +693,11 @@
 							<div class="col-sm-12">
 								<label class="control-label">INGRESAR COMENTARIO</label>
 								<textarea rows="3" class="form-control" ng-model="cierreDiario.comentario" placeholder="Ingresar comentario del cierre"></textarea>
-								<label class="label label-info">
-									Caracteres <span class="badge">{{ cierreDiario.comentario.length }}</span>
-								</label>
+								<div class="pull-right">
+									<label class="label label-default">
+										Caracteres <span class="badge">{{ cierreDiario.comentario.length }}</span>
+									</label>
+								</div>
 							</div>
 						</div>
 					</form>

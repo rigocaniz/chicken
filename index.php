@@ -150,6 +150,15 @@
             e.preventDefault();
             $("#sidebar-wrapper").toggleClass("active");
         });
+
+
+        $(document).ready(function(){
+            $('[data-toggle=tooltip]').hover(function(){
+                $(this).tooltip('show');
+            }, function(){
+                $(this).tooltip('hide');
+            });
+        });
         
     </script>
 </body>

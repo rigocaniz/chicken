@@ -4,8 +4,12 @@
 		<!-- TABS -->
 		<div class="col-sm-12">
 			<div class="pull-right">
-	            <img class="img-responsive" src="img/logo_churchil.png" style="height: 56px;">
+				<a href="#/" >
+	            	<img class="img-responsive" src="img/logo_churchil.png" style="height: 56px;">
+	            </a>
 	        </div>
+
+
 			<ul class="nav nav-tabs tabs-title" role="tablist">
 				<li role="presentation" ng-class="{'active' : menuTab=='menu'}" ng-click="verListaMenu(); resetValores(); menuTab='menu'">
 					<a href="" role="tab" data-toggle="tab">
