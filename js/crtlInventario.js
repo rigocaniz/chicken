@@ -18,11 +18,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	});
 
 
-	$scope.dialIngreso          = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
-	$scope.dialAdministrar      = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
-	$scope.dialCierreDiario     = $modal({scope: $scope,template:'dial.cierreDiario.html', show: false, backdrop: 'static'});
-	$scope.dialLstFacturaCompra = $modal({scope: $scope,template:'dial.lstFacturaCompra.html', show: false, backdrop: 'static'});
-	
+	$scope.dialIngreso             = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
+	$scope.dialAdministrar         = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
+	$scope.dialCierreDiario        = $modal({scope: $scope,template:'dial.cierreDiario.html', show: false, backdrop: 'static'});
+	$scope.dialLstFacturaCompra    = $modal({scope: $scope,template:'dial.lstFacturaCompra.html', show: false, backdrop: 'static'});
+	$scope.dialEditarFacturaCompra = $modal({scope: $scope,template:'dial.editarFacturaCompra.html', show: false, backdrop: 'static'});
 	
 
 	$scope.dialAdministrarAbrir = function(){
@@ -225,15 +225,16 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		}
 	};
 
-	$scope.consultaFactura = function(){
+	$scope.consultaFactura = function( accion ){
 		var error = false;
 
+		$scope.accion = accion;
 		console.log( $scope.compras );
-		if( !($scope.compras.lstProductos.length) ){
+		if( !($scope.compras.lstProductos.length) && $scope.accion == 'insert' ){
 			error = true;
 			alertify.notify( 'No ha ingrado ningun producto, verifique', 'info', 5 );
 		}
-		else{
+		else if( $scope.accion == 'insert' ){
 			for (var i = 0; i < $scope.compras.lstProductos.length; i++) {
 				var prod = $scope.compras.lstProductos[ i ];
 
@@ -253,8 +254,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		if( !error ){
 			$http.post('consultas.php',{
 				opcion : 'consultaFactura',
-				accion : 'insert',
-				data   : $scope.compras
+				accion : $scope.accion,
+				data   : $scope.accion == 'insert' ? $scope.compras : $scope.facturaCompra
 			})
 			.success(function(data){
 				console.log( data );
@@ -284,7 +285,17 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 	};
 
-	// TIPOS DE PRODUCTO
+	$scope.editarFacturaCompra = function( facturaCompra )
+	{
+		console.log( facturaCompra ) ;
+		$scope.accion = 'update';
+		$scope.facturaCompra = angular.copy( facturaCompra );
+		$scope.facturaCompra.fechaFactura = moment( facturaCompra.fechaFactura );
+		$scope.dialLstFacturaCompra.hide();
+		$scope.dialEditarFacturaCompra.show();
+	};
+
+	// LST FACTURAS COMPRA
 	$scope.lstFacturaCompra = [];
 	$scope.cargarLstFacturaCompra = function(){
 		$http.post('consultas.php',{

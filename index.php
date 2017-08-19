@@ -115,30 +115,6 @@
         </div>
     </div>
 
-
-<button type="button" class="btn btn-default" data-toggle="tooltip" title="Tooltip on left">Tooltip on left</button>
-
-<button type="button" class="btn btn-default" data-toggle="tooltip" title="Tooltip on top">Tooltip on top</button>
-
-<button type="button" class="btn btn-default" data-toggle="tooltip" title="Tooltip on bottom">Tooltip on bottom</button>
-
-<button type="button" class="btn btn-default" data-toggle="tooltip" title="Tooltip on right">Tooltip on right</button>
-
-
-<a href="#" data-toggle="tooltip" title="Some tooltip text!">Hover over me</a>
-
-<!-- Generated markup by the plugin -->
-<div class="tooltip top" role="tooltip">
-  <div class="tooltip-arrow"></div>
-  <div class="tooltip-inner">
-    Some tooltip text!
-  </div>
-</div>
-
-
-<a href="#" data-toggle="tooltip" title="Hooray!">Hover over me</a>
-
-
     <!-- jQuery -->
     <script src="node-app/node_modules/socket.io-client/dist/socket.io.js"></script>
     <script src="js/libs/jquery-3.2.1.min.js"></script>

@@ -230,8 +230,8 @@ class Producto
 
 	function consultaFactura( $accion, $data )
 	{
-
-		if( count( $data->lstProductos ) )
+		var_dump( $data );
+		if( ( count( $data->lstProductos ) AND $accion == 'insert' ) || $accion == 'update' )
 		{
 			$validar = new Validar();
 
@@ -291,14 +291,16 @@ class Producto
 	 					else
 	 						$this->data = $idFacturaCompra;
 
-						foreach ( $data->lstProductos AS $producto ) {
+	 					if( $accion == 'insert' )
+	 					{
+							foreach ( $data->lstProductos AS $producto ) {
 
-							$this->consultaIngreso( $accion, $this->data, $producto );
+								$this->consultaIngreso( $accion, $this->data, $producto );
 
-							if( $this->respuesta == 'danger' )
-								break;
-						}
-
+								if( $this->respuesta == 'danger' )
+									break;
+							}
+	 					}
 	 				}
 		 		}
 		 		else{
