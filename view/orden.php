@@ -43,7 +43,7 @@
         <div class="col-xs-12 col-sm-2">
             <div class="list-group">
                 <button type="button" class="list-group-item" ng-repeat="item in lstOrdenCliente track by $index" ng-class="{'active':$index==miIndex}"
-                    ng-click="seleccionarTicket( item.idOrdenCliente )">
+                    ng-click="seleccionarTicket( item.idOrdenCliente )" ng-hide="deBusqueda">
                     <span class="tkt-active"></span>
                     <span class="glyphicon glyphicon-bookmark"></span>
                     {{item.numeroTicket}}
@@ -52,12 +52,12 @@
             </div>
         </div>
         
-        <div class="col-xs-12" ng-hide="lstOrdenCliente.length">
+        <div class="col-xs-12" ng-hide="lstOrdenCliente.length || deBusqueda">
             <div class="alert alert-info" role="alert">No existen ordenes</div>
         </div>
 
         <!-- *********** INFORMACION DE ORDEN ********* -->
-        <div class="col-xs-12 col-sm-10 info-orden-ticket" ng-show="lstOrdenCliente.length">
+        <div class="col-xs-12 col-sm-10 info-orden-ticket" ng-show="lstOrdenCliente.length || deBusqueda">
             <div class="row">
                 <div class="col-sm-6 col-xs-12">
                     <h4>
@@ -465,7 +465,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr ng-repeat="item in lstTicketBusqueda track by $index">
+                                        <tr ng-repeat="item in lstTicketBusqueda track by $index" ng-click="seleccionarDeBusqueda( item )">
                                             <td>{{item.idOrdenCliente}}</td>
                                             <td>{{item.numeroTicket}}</td>
                                             <td>{{item.usuarioResponsable}}</td>

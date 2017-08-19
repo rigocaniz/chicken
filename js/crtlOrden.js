@@ -84,8 +84,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		if ( $scope.$parent.loading )
 			return false;
 
+		$scope.lstOrdenCliente = [];
 		if ( $scope.idEstadoOrden > 0 ) {
-			$scope.lstOrdenCliente = [];
 			$scope.miIndex         = -1;
 			$scope.$parent.loading = true; // cargando...
 			// CONSULTA TIPO DE SERVICIOS
@@ -118,6 +118,14 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				}
 			}
 		}
+	};
+
+	$scope.seleccionarDeBusqueda = function ( orden ) {
+		$scope.miIndex = -1;
+		$scope.dialOrdenBusqueda.hide();
+		$timeout(function () {
+			$scope.modalInfo( orden, true );
+		});
 	};
 
 	// SI ES SUBIR O BAJAR ORDEN
@@ -499,9 +507,20 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% DIALOGO PARA MAS INFORMACION DE ORDEN %%%%%%%%%%%%%%%%%%%%%% */
 	$scope.infoOrden = {};
-	$scope.modalInfo = function ( orden ) {
+	$scope.deBusqueda = false;
+	$scope.modalInfo = function ( orden, deBusqueda ) {
 		if ( $scope.$parent.loading )
 			return false;
+
+		// SI NO ES DE BUSQUEDA
+		if ( deBusqueda == undefined ) {
+			$scope.deBusqueda = false;
+		}
+		// SI ES DE BUSQUEDA
+		else {
+			$scope.idEstadoOrden = 0;
+			$scope.deBusqueda    = true;
+		}
 
 		$scope.$parent.loading = true;
 		$scope.infoOrden = orden;
