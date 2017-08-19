@@ -18,9 +18,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	});
 
 
-	$scope.dialIngreso      = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
-	$scope.dialAdministrar  = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
-	$scope.dialCierreDiario = $modal({scope: $scope,template:'dial.cierreDiario.html', show: false, backdrop: 'static'});
+	$scope.dialIngreso          = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
+	$scope.dialAdministrar      = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
+	$scope.dialCierreDiario     = $modal({scope: $scope,template:'dial.cierreDiario.html', show: false, backdrop: 'static'});
+	$scope.dialLstFacturaCompra = $modal({scope: $scope,template:'dial.lstFacturaCompra.html', show: false, backdrop: 'static'});
+	
 	
 
 	$scope.dialAdministrarAbrir = function(){
@@ -283,13 +285,28 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	};
 
 	// TIPOS DE PRODUCTO
+	$scope.lstFacturaCompra = [];
+	$scope.cargarLstFacturaCompra = function(){
+		$http.post('consultas.php',{
+			opcion : 'cargarLstFacturaCompra'
+		}).success(function(data){
+			console.log( data );
+			$scope.lstFacturaCompra = data;
+			if( $scope.lstFacturaCompra.length )
+				$scope.dialLstFacturaCompra.show();
+		})
+	};
+
+
+	// TIPOS DE PRODUCTO
 	$scope.catTipoProducto = function(){
 		$http.post('consultas.php',{
-			opcion:'catTipoProducto'
+			opcion : 'catTipoProducto'
 		}).success(function(data){
 			$scope.lstTipoProducto = data;
 		})
 	};
+
 
 
 	$scope.lstEstadosFactura = [];

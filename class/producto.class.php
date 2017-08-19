@@ -27,9 +27,23 @@ class Producto
  	}
 
 
+ 	// LST FACTURAS COMPRA
+ 	function cargarLstFacturaCompra()
+ 	{
+ 		$lstFacturaCompra = array();
+
+ 		$sql = "SELECT *, DATE_FORMAT( fechaFactura, '%d/%m/%Y' ) AS fechaFact FROM lstFacturaCompra ORDER BY idFacturaCompra DESC;";
+ 		
+ 		if( $rs = $this->con->query( $sql ) ){
+ 			while( $row = $rs->fetch_object() )
+ 				$lstFacturaCompra[] = $row;
+ 		}
+
+ 		return $lstFacturaCompra;
+ 	}
 
 
-//	CREATE PROCEDURE consultaCierreDiario( _action VARCHAR(20), _idCierreDiario INT, _fechaCierre DATE, _comentario TEXT )
+	//	CREATE PROCEDURE consultaCierreDiario( _action VARCHAR(20), _idCierreDiario INT, _fechaCierre DATE, _comentario TEXT )
 	function consultaCierreDiario( $accion, $data )
 	{
  		if( count( $data->lstProductos ) ){
@@ -209,7 +223,6 @@ class Producto
 			$this->mensaje   = 'No ha ingrado ningun producto, verifique';
 		}
 
-		//$this->con->
 		return $this->getRespuesta();
 	}
 
@@ -233,7 +246,6 @@ class Producto
 			// SETEO VARIABLES GENERALES
 	 		$data->noFactura       = isset( $data->noFactura )		  ? (string)$data->noFactura 	: NULL;
 	 		$data->fechaFactura    = isset( $data->fechaFactura )	  ? $data->fechaFactura 		: NULL;
-	 		$data->proveedor       = isset( $data->proveedor )		  ? (string)$data->proveedor 	: NULL;
 	 		$data->idEstadoFactura = isset( $data->idEstadoFactura )  ? (int)$data->idEstadoFactura : NULL;
 	 		$data->comentario      = isset( $data->comentario )		  ? (string)$data->comentario 	: NULL;
 	 		
@@ -241,6 +253,8 @@ class Producto
 	 		// VALIDACIONES
 			$idEstadoFactura = $validar->validarEntero( $data->idEstadoFactura, NULL, TRUE, 'El ID del estado de factura no es válido' );
 			$noFactura       = $validar->validarTexto( $data->noFactura, NULL, TRUE, 'El No. de factura no es válido' );
+			$noFactura       = $validar->validarTexto( $data->noFactura, NULL, TRUE, 'El No. de factura no es válido' );
+	 		$proveedor       = isset( $data->proveedor ) ? (string)$data->proveedor : NULL;
 
 	 		if( $accion == 'update' )
 	 		{
@@ -710,7 +724,7 @@ class Producto
 				elseif( $row->disponibilidad <= $row->cantidadMinima + 15 ):
 					$alertaStock = 2;
 				
-				elseif( $row->disponibilidad + 100 >= $row->cantidadMaxima ):
+				elseif( $row->disponibilidad > $row->cantidadMaxima ):
 					$alertaStock = 3;
 				
 				endif;

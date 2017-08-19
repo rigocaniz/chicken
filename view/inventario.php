@@ -307,6 +307,11 @@
 								</h4>
 							</div>
 							<div class="panel-body">
+
+							<button type="button" class="btn btn-info btn-sm" ng-click="cargarLstFacturaCompra()">
+								<span class="glyphicon glyphicon-th-list"></span> VER INGRESOS
+							</button>
+
 								<div class="text-right">
 									<h3>
 										TOTAL: Q.{{ subTotalQuetzales() | number: 2 }} 
@@ -467,6 +472,86 @@
 	</div>
 </div>
 
+<!-- DIALOGO LST FACTURAS COMPRAS -->
+<script type="text/ng-template" id="dial.lstFacturaCompra.html">
+	<div class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content panel-danger">
+				<div class="modal-header panel-heading text-center">
+					<button type="button" class="close" ng-click="$hide()">&times;</button>
+					<span class="glyphicon glyphicon-shopping-cart"></span>
+					FACTURAS / COMPRAS INGRESADAS
+				</div>
+				<div class="modal-body">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th class="text-center">No.</th>
+								<th class="col-sm-2 text-center">Factura</th>
+								<th class="col-sm-3 text-center">Proveedor</th>
+								<th class="col-sm-2 text-center">Fecha Factura</th>
+								<th class="col-sm-2 text-center">Estado Factura</th>
+								<th class="col-sm-2 text-center">Usuario</th>
+								<th class="text-center"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr dir-paginate="facturaCompra in lstFacturaCompra | filter: filtroCancion | itemsPerPage: 25">
+								<td class="text-center">
+									{{ $index + 1 }}
+								</td>
+								<td>
+									{{ facturaCompra.noFactura }}
+									<br>
+									<button type="button" class="btn btn-xs btn-default" ng-click="facturaCompra.mostrar=!facturaCompra.mostrar" ng-show="facturaCompra.comentario.length">
+										<span class="glyphicon glyphicon-eye-open"></span>
+									</button>
+									<div ng-show="facturaCompra.mostrar">
+										{{ facturaCompra  | json }}
+									</div>
+								</td>
+								<td>
+									{{ facturaCompra.proveedor }}
+								</td>
+								<td class="text-center">
+									{{ facturaCompra.fechaFact }}
+								</td>
+								<td class="text-center" ng-class="{'danger': facturaCompra.idEstadoFactura == 2, 'warning': facturaCompra.idEstadoFactura == 3}">
+									{{ facturaCompra.estadoFactura }}
+								</td>
+								<td class="text-center">
+									{{ facturaCompra.usuario }}
+								</td>
+								<td class="text-center">
+									<div class="menu-contenedor">
+										<button type="button" class="btn btn-warning noBorde">
+											<span class="glyphicon glyphicon-th"></span>
+										</button>
+										<div class="menu-horizontal">
+											<button type="button" class="btn" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
+												<span class="glyphicon glyphicon-pencil"></span>
+											</button>
+											<button type="button" class="btn">
+												<span class="glyphicon glyphicon-pencil"></span>
+											</button>
+										</div>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" template-url="dirPagination.tpl.html"></dir-pagination-controls>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" ng-click="$hide()">
+						<span class="glyphicon glyphicon-log-out"></span>
+						<b>Salir</b>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
 
 <!-- DIALOGO CIERRE DIARIO -->
 <script type="text/ng-template" id="dial.cierreDiario.html">
@@ -501,7 +586,7 @@
 									<th class="text-center">No.</th>
 									<th class="col-sm-3 text-center">Producto</th>
 									<th class="col-sm-1 text-center">Perecedero</th>
-									<th class="col-sm-2 text-center">Disponible <br>Sistema</th>
+									<th class="col-sm-2 text-center">Disponible <br>Sistema(*)</th>
 									<th class="col-sm-2 text-center">Disponible <br>Fisico</th>
 									<th class="col-sm-2 text-center">Medida</th>
 								</tr>
@@ -513,14 +598,15 @@
 									</td>
 									<td>
 										{{ inv.producto }}
+										<span class="glyphicon glyphicon-eye-open" ng-show="inv.esImportante == 'SI'"></span>
 									</td>
 									<td class="text-center">
 										{{ inv.esPerecedero }}
 									</td>
-									<td class="text-center">
+									<td class="text-center warning">
 										{{ inv.disponible }}
 									</td>
-									<td class="text-center">
+									<td class="text-center success">
 										<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.disponibilidad" required>
 									</td>
 									<td class="text-center">
@@ -533,9 +619,11 @@
 							<div class="col-sm-12">
 								<label class="control-label">INGRESAR COMENTARIO</label>
 								<textarea rows="3" class="form-control" ng-model="cierreDiario.comentario" placeholder="Ingresar comentario del cierre"></textarea>
-								<label class="label label-info">
-									Caracteres <span class="badge">{{ cierreDiario.comentario.length }}</span>
-								</label>
+								<div class="pull-right">
+									<label class="label label-default">
+										Caracteres <span class="badge">{{ cierreDiario.comentario.length }}</span>
+									</label>
+								</div>
 							</div>
 						</div>
 					</form>
