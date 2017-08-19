@@ -22,7 +22,7 @@
 <body ng-controller="inicioCtrl" ng-keyup="pressKey( $event.keyCode );">
     <div class="cargando" id="cargando" ng-show="loading">
         <div class="loading-bro">
-            <h1>Cargando...</h1>
+            <h1>{{ loadingText }}</h1>
             <svg id="load" x="0px" y="0px" viewBox="0 0 150 150">
                 <circle id="loading-inner" cx="75" cy="75" r="60"/>
             </svg>

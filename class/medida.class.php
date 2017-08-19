@@ -47,7 +47,7 @@ class Medida
  			$idMedida       = $validar->validarEntero( $data->idMedida, NULL, TRUE, 'El ID del Menú no es válido, verifique.' );
  		endif;
 
- 		$medida = $validar->validarTexto( $data->medida, NULL, TRUE, 3, 45, 'en la descripcíón de la medida' );
+ 		$medida = $this->con->real_escape_string( $validar->validarTexto( $data->medida, NULL, TRUE, 3, 45, 'en la descripcíón de la medida' ) );
 
 		// OBTENER RESULTADO DE VALIDACIONES
  		if( $validar->getIsError() ):

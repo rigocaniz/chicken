@@ -136,6 +136,23 @@ var socket = io.connect('http://127.0.0.1:8080', { 'forceNew': true });
 
 // CONTROLADOR PRINCIPAL
 app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $modal ){
+    
+    $scope.loading     = false;
+    $scope.loadingText = "Cargando...";
+
+    $scope.hideLoading = function(){
+        $scope.loading     = false;
+        $scope.loadingText = "Cargando...";
+    };
+
+    $scope.showLoading = function( mensaje )
+    {
+        $scope.loading     = true;
+        $scope.loadingText = mensaje ? mensaje : "Cargando...";
+    };
+
+    $scope.hideLoading();
+
     // LISTEN INFO NODE
     socket.on('mensaje', function(data) {  
         console.log(data);
@@ -147,10 +164,12 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     });
 
     $scope.difLocalServer = 0;
-
+    $scope.fechaActual = null;
     // DIFERENCIA DE TIEMPO RESPECTO AL SERVIDOR
     $http.post('consultas.php', { opcion : 'timeNow' })
     .success(function (data) {
+        console.log(data);
+        $scope.fechaActual    = moment( data.fechaActual );
         $scope.difLocalServer = moment( new Date() ).diff( moment( data.timeNow ) );
     });
 
@@ -247,7 +266,6 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
         $('#cargando').removeAttr("style"); 
     });
 
-    $scope.loading = false;
 
     /*CLIENTES*/
     $scope.clienteMenu = 1;

@@ -2,9 +2,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 	// LISTA EL INVENTARIO GENERAL DE PRODUCTOS
 	$scope.lstInventario  = [];
-	$scope.inventarioMenu = 'compras';
+	$scope.inventarioMenu = 'medidas';
 	$scope.accion         = 'insert';
-	$scope.groupBy          = 'sinFiltro';
+	$scope.groupBy        = 'sinFiltro';
 
 	$scope.$watch('inventarioMenu', function( _old, _new){
 		console.log( _old, _new );
@@ -23,8 +23,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	$scope.dialCierreDiario            = $modal({scope: $scope,template:'dial.cierreDiario.html', show: false, backdrop: 'static'});
 	$scope.dialLstFacturaCompra        = $modal({scope: $scope,template:'dial.lstFacturaCompra.html', show: false, backdrop: 'static'});
 	$scope.dialEditarFacturaCompra     = $modal({scope: $scope,template:'dial.editarFacturaCompra.html', show: false, backdrop: 'static'});
-	$scope.dialVerDetalleFacturaCompra = $modal({scope: $scope,template:'dial.verDetalleFacturaCompra.html', show: false, backdrop: 'static'});
-	
+	$scope.dialVerDetalleFacturaCompra = $modal({scope: $scope,template:'dial.verDetalleFacturaCompra.html', show: false, backdrop: 'static'});	
 
 	$scope.dialAdministrarAbrir = function(){
 		$scope.dialAdministrar.show();
@@ -75,11 +74,27 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	$scope.getListaProductos = function(){
 		$http.post('consultas.php',{
 			opcion : "getListaProductos",
+			filtro : $scope.cierreDiario.cierreTodos
 		}).success(function(data){
 			console.log( data );
 			$scope.cierreDiario.lstProductos = data;
 		})
 	};
+
+	$scope.realizarCierre = function(){
+		$scope.accion == 'insert';
+		$scope.cierreDiario = {
+			cierreTodos    : true,
+			idCierreDiario : null,
+			fechaCierre    : angular.copy( $scope.fechaActual ),
+			comentario     : '',
+			lstProductos   : []
+		};
+
+		$scope.getListaProductos();
+		$scope.dialCierreDiario.show();
+	};	
+
 
 	$scope.consultaCierreDiario = function(){
 		var cierreDiario = $scope.cierreDiario;
@@ -90,11 +105,13 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		else if( !(cierreDiario.fechaCierre) )
 			alertify.notify( 'Ingrese la fecha de cierre', 'warning', 3 );
 		
-		else{
+		else
+		{
+			$scope.$parent.showLoading( 'Guardando...' );
 
 			$http.post('consultas.php',{
 				opcion : "consultaCierreDiario",
-				accion : 'insert',
+				accion : $scope.accion,
 				data   : $scope.cierreDiario
 			}).success(function(data){
 				console.log( data );
@@ -107,16 +124,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 					$scope.inventario();
 				}
 
+				$scope.$parent.hideLoading();
 			});
-			
+
 		}
 	};
-
-
-	$scope.realizarCierre = function(){
-		$scope.getListaProductos();
-		$scope.dialCierreDiario.show();
-	};	
 
 	$scope.idxProducto = -1;
 	$scope.seleccionKeyProducto = function( key )
@@ -157,7 +169,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 	};
 
-
+	// CANCELAR INGRESO
 	$scope.cancelarIngreso = function( accion )
 	{
 		if( accion == 1 ){
@@ -228,9 +240,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 	$scope.consultaFactura = function( accion ){
 		var error = false;
-
 		$scope.accion = accion;
-		console.log( $scope.compras );
+
 		if( !($scope.compras.lstProductos.length) && $scope.accion == 'insert' ){
 			error = true;
 			alertify.notify( 'No ha ingresado ningun producto, verifique', 'info', 5 );
@@ -346,8 +357,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	};
 
 
-
 	$scope.lstEstadosFactura = [];
+	// ESTADOS FACTURA
 	$scope.catEstadosFactura = function(){
 		$http.post('consultas.php',{
 			opcion:'catEstadosFactura'
@@ -355,7 +366,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 			$scope.lstEstadosFactura = data;
 		})
 	};
-
 	
 	// TIPOS DE MEDIDA
 	$scope.catMedidas = function(){
@@ -527,6 +537,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		}
 		else{
 
+			$scope.$parent.showLoading( 'Guardando...' );
+
 			$http.post('consultas.php',{
 				opcion : "consultaProducto",
 				accion : $scope.accion,
@@ -541,6 +553,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 					$scope.inventario();
 					$scope.dialAdministrarCerrar();
 				}
+
+				$scope.$parent.hideLoading();
 			})
 		}
 	};
@@ -579,7 +593,10 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		else if( !(tp.tipoProducto && tp.tipoProducto.length > 3 ) ){
 			alertify.notify( 'La descripción del tipo de producto debe ser mayor a 3 caracteres', 'warning', 5 );
 		}
-		else{
+		else
+		{
+			$scope.$parent.showLoading( 'Guardando...' );
+
 			$http.post('consultas.php',{
 				opcion : "consultaTipoProducto",
 				accion : $scope.accion,
@@ -592,6 +609,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 					$scope.resetValores( 4 );
 					$scope.catTipoProducto();
 				}
+
+				$scope.$parent.hideLoading();
 			})
 		}
 	};
@@ -612,13 +631,15 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	$scope.consultaMedida = function(){
 		var medida = $scope.medidaProd;
 
-		if( $scope.accion == 'update' && !(medida.idMedida && medida.idMedida > 0 ) ){
+		if( $scope.accion == 'update' && !(medida.idMedida && medida.idMedida > 0 ) )
 			alertify.notify( 'El No. de la medida no es válido', 'warning', 5 );
-		}
-		else if( !(medida.medida && medida.medida.length > 3 ) ){
+
+		else if( !(medida.medida && medida.medida.length > 3 ) )
 			alertify.notify( 'La descripcion de la medida debe ser mayor a 3 caracteres', 'warning', 5 );
-		}
-		else{
+		else
+		{
+			$scope.$parent.showLoading( 'Guardando...' );
+
 			$http.post('consultas.php',{
 				opcion : "consultaMedida",
 				accion : $scope.accion,
@@ -631,6 +652,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 					$scope.catMedidas();
 					$scope.resetValores( 6 );
 				}
+
+				$scope.$parent.hideLoading();
 			})
 		}
 	};

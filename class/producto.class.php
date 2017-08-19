@@ -67,6 +67,7 @@ class Producto
 	//	CREATE PROCEDURE consultaCierreDiario( _action VARCHAR(20), _idCierreDiario INT, _fechaCierre DATE, _comentario TEXT )
 	function consultaCierreDiario( $accion, $data )
 	{
+
  		if( count( $data->lstProductos ) ){
 
 		 	$action         = "NULL";
@@ -112,7 +113,7 @@ class Producto
 
 		 					// REALIZAR CIERRA POR PRODUCTO
 		 					if( $this->respuesta <> 'danger' )
-		 						$this->consultaCierreDiarioProducto( $accion, $idCierreDiario, $data->lstProductos );
+		 						$this->consultaCierreDiarioProducto( $accion, $idCierreDiario, $data->lstProductos, $data->cierreTodos );
 		 				}
 		 			}
 		 		}
@@ -140,34 +141,43 @@ class Producto
 
 
 	// consultaCierreDiarioProducto
-	function consultaCierreDiarioProducto( $accion, $idCierreDiario, $lstProductos )
+	function consultaCierreDiarioProducto( $accion, $idCierreDiario, $lstProductos, $cierreTodos = TRUE )
 	{
 		if( count( $lstProductos ) ) {
 
+			$cierreTodos = (int)$cierreTodos;
 			foreach ( $lstProductos AS $producto ) {
 
-				$idProducto               = (int)$producto->idProducto;
-				$cantidad                 = (double)$producto->disponibilidad;
-				$actualizarDisponibilidad = 1; # (int)$data->actualizarDisponibilidad;
+				$omitir = FALSE;
+				if( !$cierreTodos AND !$producto->importante )
+					$omitir = TRUE;
 
-		 		// REALIZAR CONSULTA
-				$sql = "CALL consultaCierreDiarioProducto( '{$accion}', {$idCierreDiario}, {$idProducto}, {$cantidad}, {$actualizarDisponibilidad} );";
+				if( !$omitir )
+				{
+					$idProducto               = (int)$producto->idProducto;
+					$cantidad                 = (double)$producto->disponibilidad;
+					$actualizarDisponibilidad = 1; # (int)$data->actualizarDisponibilidad;
 
-				//echo $sql;
-		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-		 			$this->siguienteResultado();
+			 		// REALIZAR CONSULTA
+					$sql = "CALL consultaCierreDiarioProducto( '{$accion}', {$idCierreDiario}, {$idProducto}, {$cantidad}, {$actualizarDisponibilidad} );";
 
-	 				$this->respuesta = $row->respuesta;
-	 				$this->mensaje   = $row->mensaje;
-		 		}
-		 		else{
-		 			$this->respuesta = 'danger';
-		 			$this->mensaje   = 'Error al ejecutar la instrucción.';
-		 		}
+					//echo $sql;
+			 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+			 			$this->siguienteResultado();
 
-		 		// DETENER SI HAY ERROR
-		 		if( $this->respuesta == 'danger' )
-		 			break;
+		 				$this->respuesta = $row->respuesta;
+		 				$this->mensaje   = $row->mensaje;
+			 		}
+			 		else{
+			 			$this->respuesta = 'danger';
+			 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+			 		}
+
+			 		// DETENER SI HAY ERROR
+			 		if( $this->respuesta == 'danger' )
+			 			break;
+					
+				}
 			}
 		}
 		else {
@@ -413,7 +423,7 @@ class Producto
  			$idTipoProducto       = $validar->validarEntero( $data->idTipoProducto, NULL, TRUE, 'El ID del Tipo de Producto no es válido' );
  		endif;
 
-		$tipoProducto = $validar->validarTexto( $data->tipoProducto, NULL, TRUE, 3, 45, 'el Tipo Producto' );
+		$tipoProducto = $medida = $this->con->real_escape_string( $validar->validarTexto( $data->tipoProducto, NULL, TRUE, 3, 45, 'el Tipo Producto' ) );
 		
 		// OBTENER RESULTADO DE VALIDACIONES
  		if( $validar->getIsError() ):
@@ -474,7 +484,7 @@ class Producto
  			$idProducto       = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido, verifique.' );
  		endif;
 
-		$producto       = $validar->validarTexto( $data->producto, NULL, TRUE, 3, 45, 'el nombre del producto' );
+		$producto       = $medida = $this->con->real_escape_string( $validar->validarTexto( $data->producto, NULL, TRUE, 3, 45, 'el nombre del producto' ) );
 		$idTipoProducto = $validar->validarEntero( $data->idTipoProducto, NULL, TRUE, 'El ID del tipo de producto no es válido, verifique.' );
 		$idMedida       = $validar->validarEntero( $data->idMedida, NULL, TRUE, 'El ID del tipo de medida no es válido, verifique.' );
 		$cantidadMinima = $validar->validarCantidad( $data->cantidadMinima, NULL, TRUE, 1, 50000, 'la cantidad Minima' );
@@ -598,8 +608,9 @@ class Producto
 	}
 
 	// BUSCAR PRODUCTO(S)
-	function getListaProductos()
+	function getListaProductos( $filtro )
 	{
+
 		$lstProductos = array();
 
 		$sql = "SELECT 
@@ -615,18 +626,20 @@ class Producto
 		    disponibilidad,
 		    importante
 		FROM
-		    lstProducto;";
+		    lstProducto";
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
 					$producto = array(
-					 	'idProducto'     => (int)$row->idProducto,
-					 	'producto'       => $row->producto,
-					 	'medida'         => $row->medida,
-					 	'esPerecedero'   => (int)$row->perecedero ? 'SI' : 'NO',
-					 	'disponibilidad' => (double)$row->disponibilidad,
-					 	'disponible'     => (double)$row->disponibilidad,
-					 	'esImportante'   => (int)$row->importante ? 'SI' : 'NO'
+					 	'idProducto'               => (int)$row->idProducto,
+					 	'producto'                 => $row->producto,
+					 	'medida'                   => $row->medida,
+					 	'esPerecedero'             => (int)$row->perecedero ? 'SI' : 'NO',
+					 	'disponibilidad'           => (double)$row->disponibilidad,
+					 	'disponible'               => (double)$row->disponibilidad,
+					 	'esImportante'             => (int)$row->importante ? 'SI' : 'NO',
+					 	'importante'               => (int)$row->importante,
+					 	'actualizarDisponibilidad' => TRUE
 					);
 
 				$lstProductos[] = $producto;

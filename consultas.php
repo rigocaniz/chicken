@@ -22,10 +22,15 @@ $conexion->query( $sql );
 
 $datos = array();
 
+sleep( 1 );
+
 switch ( $data->opcion )
 {
 	case 'timeNow':
-		echo json_encode( array( 'timeNow' => date("Y-m-d H:i:s") ) );
+		$datos[ 'fechaActual' ] = DATE( 'Y-m-d' );
+		$datos[ 'timeNow' ]     = date("Y-m-d H:i:s");
+		//echo json_encode( array( 'timeNow' => date("Y-m-d H:i:s") ) );
+		echo json_encode( $datos );
 		break;
 
 	case 'login':
@@ -236,7 +241,7 @@ switch ( $data->opcion )
 
 	case 'getListaProductos':			// INSERT / UPDATE LST PRODUCTOS INGRESO
 		$producto = new Producto();
-		echo json_encode( $producto->getListaProductos() );
+		echo json_encode( $producto->getListaProductos( $data->filtro ) );
 		break;
 		
 	case 'consultaFactura':			// INSERT / UPDATE LST PRODUCTOS INGRESO
