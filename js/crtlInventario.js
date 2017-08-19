@@ -18,11 +18,12 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	});
 
 
-	$scope.dialIngreso             = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
-	$scope.dialAdministrar         = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
-	$scope.dialCierreDiario        = $modal({scope: $scope,template:'dial.cierreDiario.html', show: false, backdrop: 'static'});
-	$scope.dialLstFacturaCompra    = $modal({scope: $scope,template:'dial.lstFacturaCompra.html', show: false, backdrop: 'static'});
-	$scope.dialEditarFacturaCompra = $modal({scope: $scope,template:'dial.editarFacturaCompra.html', show: false, backdrop: 'static'});
+	$scope.dialIngreso                 = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
+	$scope.dialAdministrar             = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
+	$scope.dialCierreDiario            = $modal({scope: $scope,template:'dial.cierreDiario.html', show: false, backdrop: 'static'});
+	$scope.dialLstFacturaCompra        = $modal({scope: $scope,template:'dial.lstFacturaCompra.html', show: false, backdrop: 'static'});
+	$scope.dialEditarFacturaCompra     = $modal({scope: $scope,template:'dial.editarFacturaCompra.html', show: false, backdrop: 'static'});
+	$scope.dialVerDetalleFacturaCompra = $modal({scope: $scope,template:'dial.verDetalleFacturaCompra.html', show: false, backdrop: 'static'});
 	
 
 	$scope.dialAdministrarAbrir = function(){
@@ -293,13 +294,30 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 	};
 
-	$scope.editarFacturaCompra = function( facturaCompra )
+
+	$scope.editarFacturaCompra = function( facturaCompra, accion )
 	{
 		console.log( facturaCompra ) ;
 		$scope.facturaCompra = angular.copy( facturaCompra );
 		$scope.facturaCompra.fechaFactura = moment( facturaCompra.fechaFactura );
 		$scope.dialLstFacturaCompra.hide();
-		$scope.dialEditarFacturaCompra.show();
+		if( accion == 'editar' )
+			$scope.dialEditarFacturaCompra.show();
+
+		if( accion == 'verDetalle' )
+		{
+			$http.post('consultas.php',{
+				opcion          : 'cargarLstIngresoProducto',
+				idFacturaCompra : $scope.facturaCompra.idFacturaCompra
+			})
+			.success(function(data){
+				console.log('cargarLstIngresoProducto::: ',data);
+				$scope.facturaCompra.lstProductos = data;
+				$scope.dialVerDetalleFacturaCompra.show();
+			});
+
+		}
+
 	};
 
 	// LST FACTURAS COMPRA
@@ -312,6 +330,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 			$scope.lstFacturaCompra = data;
 			if( $scope.lstFacturaCompra.length )
 				$scope.dialLstFacturaCompra.show();
+			else
+				alertify.notify( 'No se encontrarón ingresos', 'info', 4 );
 		})
 	};
 

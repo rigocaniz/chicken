@@ -224,6 +224,11 @@ switch ( $data->opcion )
 		echo json_encode( $producto->cargarLstFacturaCompra() );
 		break;
 
+	case 'cargarLstIngresoProducto':		// CONSULTA lSTINGRESOPRODUCTO
+		$producto = new Producto();
+		echo json_encode( $producto->cargarLstIngresoProducto( $data->idFacturaCompra ) );
+		break;		
+
 	case 'consultaCierreDiario':			// INSERT / UPDATE CIERRE DEL DIA
 		$producto = new Producto();
 		echo json_encode( $producto->consultaCierreDiario( $data->accion, $data->data ) );

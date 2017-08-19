@@ -32,7 +32,9 @@ class Producto
  	{
  		$lstFacturaCompra = array();
 
- 		$sql = "SELECT *, DATE_FORMAT( fechaFactura, '%d/%m/%Y' ) AS fechaFact FROM lstFacturaCompra ORDER BY idFacturaCompra DESC;";
+ 		$sql = "SELECT *, DATE_FORMAT( fechaFactura, '%d/%m/%Y' ) AS fechaFact 
+ 					FROM lstFacturaCompra
+ 						ORDER BY idFacturaCompra DESC;";
  		
  		if( $rs = $this->con->query( $sql ) ){
  			while( $row = $rs->fetch_object() )
@@ -40,6 +42,25 @@ class Producto
  		}
 
  		return $lstFacturaCompra;
+ 	}
+
+
+	// LST INGRESO PRODUCTO
+ 	function cargarLstIngresoProducto( $idFacturaCompra )
+ 	{
+ 		$lstIngresoProd = array();
+
+ 		$sql = "SELECT *
+ 					FROM lstIngresoProducto
+ 						WHERE idFacturaCompra = {$idFacturaCompra}
+ 						ORDER BY idFacturaCompra DESC;";
+ 		
+ 		if( $rs = $this->con->query( $sql ) ){
+ 			while( $row = $rs->fetch_object() )
+ 				$lstIngresoProd[] = $row;
+ 		}
+
+ 		return $lstIngresoProd;
  	}
 
 
@@ -810,43 +831,6 @@ class Producto
 		return $this->getRespuesta();
 	}
 
-
-	function cargarLstIngresoProducto()
-	{
-		$LstReajusteProducto = array();
-
-		$sql = "SELECT
-					idIngreso,
-					idProducto,
-					producto,
-					idMedida,
-					medida,
-					idTipoProducto,
-					tipoProducto,
-					perecedero,
-					cantidadMinima,
-					cantidadMaxima,
-					disponibilidad,
-					importante,
-					cantidad,
-					usuarioIngreso,
-					fechaIngreso
-				FROM lstIngresoProducto;";
-		
-		if( $rs = $this->con->query( $sql ) ){
-			while( $row = $rs->fetch_object() ){
-				$LstReajusteProducto[] = $row;
-				/*$this->respuesta = $row->respuesta;
-				$this->mensaje   = $row->mensaje;
-				$this->data      = $row;
-				*/
-			}
-		}
-		else{
-			$this->respuesta = 'danger';
-			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
-		}
-	}
 
 	// OBTENER ARREGLO RESPUESTA
  	private function getRespuesta()
