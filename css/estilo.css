@@ -401,9 +401,11 @@ legend.legend2{
 }
 
 .label-border{
+    padding: 0;
     border: 0px;
     width: 21px;
     height: 21px;
+    font-size: 13px;
     text-align: center;
     display: inline-block;
     color: #fff;
