@@ -128,8 +128,8 @@ app.directive('tooltip', function(){
 });
 
 /* CONEXION A SERVIDOR DE NOTIFICACIONES */
+var socket = io.connect('http://192.168.0.140:8080', { 'forceNew': true });
 //var socket = io.connect('http://127.0.0.1:8080', { 'forceNew': true });
-var socket = io.connect('http://127.0.0.1:8080', { 'forceNew': true });
 
 
 /****CONTROLADORES****/

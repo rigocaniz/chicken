@@ -1,12 +1,12 @@
 <div class="col-xs-12" style="margin-top:5px">
 	<div class="row">
-        <div class="col-sm-4 col-xs-12" style="margin-bottom:9px">
+        <div class="col-sm-4 col-xs-5" style="margin-bottom:9px">
             <button type="button" class="btn btn-success" ng-click="nuevaOrden()">
                 <span class="glyphicon glyphicon-plus"></span>
                 <u>N</u>ueva Orden
             </button>
         </div>
-		<div class="col-sm-offset-2 col-sm-5 hidden-xs">
+		<div class="col-sm-offset-2 col-sm-5 col-xs-6">
             <div class="input-group">
                 <input type="number" class="form-control" ng-model="buscarTicket" id="buscarTicket" ng-class="{'input-focus':buscarTicket>0}"
                     placeholder="Ingrese # Ticket + ENTER" style="font-size:19px;padding: 1px 14px;font-weight:normal">
@@ -17,7 +17,7 @@
                 </span>
             </div>
 		</div>
-		<div class="col-sm-12">
+		<div class="col-xs-12" style="margin-top:5px">
 			<div class="btn-orden">
 				<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="idEstadoOrden=1">
 					<span class="glyphicon glyphicon-time"></span>
@@ -40,7 +40,7 @@
 	</div>
 	<div class="row contenedor-tickets">
         <!-- *********** LISTA DE TICKETS ********* -->
-        <div class="col-xs-12 col-sm-2">
+        <div class="col-xs-12 col-sm-2 hidden-xs">
             <div class="list-group">
                 <button type="button" class="list-group-item" ng-repeat="item in lstOrdenCliente track by $index" ng-class="{'active':$index==miIndex}"
                     ng-click="seleccionarTicket( item.idOrdenCliente )" ng-hide="deBusqueda">
@@ -58,6 +58,25 @@
 
         <!-- *********** INFORMACION DE ORDEN ********* -->
         <div class="col-xs-12 col-sm-10 info-orden-ticket" ng-show="lstOrdenCliente.length || deBusqueda">
+            <div class="row" ng-show="!deBusqueda">
+                <div class="col-xs-12 text-center">
+                    <button type="button" class="btn btn-default" ng-click="miIndex=0">
+                        <span class="glyphicon glyphicon-fast-backward"></span>
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="downUpOrdenes( true )">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <b>Anterior</b>
+                    </button>
+                    <span class="badge" style="font-size:17px">{{ ( miIndex + 1 ) + " de " + lstOrdenCliente.length }}</span>
+                    <button type="button" class="btn btn-default" ng-click="downUpOrdenes( false )">
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                        <b>Siguiente</b>
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="miIndex = ( lstOrdenCliente.length - 1 )">
+                        <span class="glyphicon glyphicon-fast-forward"></span>
+                    </button>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-sm-6 col-xs-12">
                     <h4>
