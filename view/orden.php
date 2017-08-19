@@ -42,7 +42,7 @@
         <!-- *********** LISTA DE TICKETS ********* -->
         <div class="col-xs-12 col-sm-2">
             <div class="list-group">
-                <button type="button" class="list-group-item" ng-repeat="item in lstOrdenCliente" ng-class="{'active':$index==miIndex}"
+                <button type="button" class="list-group-item" ng-repeat="item in lstOrdenCliente track by $index" ng-class="{'active':$index==miIndex}"
                     ng-click="seleccionarTicket( item.idOrdenCliente )">
                     <span class="tkt-active"></span>
                     <span class="glyphicon glyphicon-bookmark"></span>
@@ -115,7 +115,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="item in infoOrden.lstOrden">
+                                <tr ng-repeat="item in infoOrden.lstOrden track by $index">
                                     <td><img ng-src="{{item.imagen}}" style="height:40px"></td>
                                     <td>{{item.cantidad}}</td>
                                     <td>
@@ -273,7 +273,7 @@
                 					</tr>
                 				</thead>
                 				<tbody>
-                					<tr ng-repeat="item in ordenActual.lstAgregar">
+                					<tr ng-repeat="item in ordenActual.lstAgregar track by $index">
                 						<td>
                 							<button type="button" class="btn btn-xs btn-default" ng-click="ordenCantidad( $index, 0, item.cantidad, item.precio )">
                 								<span class="glyphicon glyphicon-minus"></span>
@@ -331,7 +331,7 @@
                 	<div class="row" ng-show="tipoMenu=='menu'">
                 		<div class="col-xs-12" style="margin-bottom:4px">
                 			<button type="button" class="btn" ng-class="{'btn-default':idTipoMenu!=item.idTipoMenu, 'btn-info':idTipoMenu==item.idTipoMenu}" 
-                				ng-repeat="item in lstTipoMenu" ng-click="$parent.$parent.idTipoMenu=item.idTipoMenu" style="margin-right:5px">
+                				ng-repeat="item in lstTipoMenu track by $index" ng-click="$parent.$parent.idTipoMenu=item.idTipoMenu" style="margin-right:5px">
                 				<span class="glyphicon glyphicon-ok" ng-show="idTipoMenu==item.idTipoMenu"></span>
 	                			<span>{{item.tipoMenu}}</span>
                 			</button>
@@ -339,7 +339,7 @@
                 		<hr>
                    </div>
                 	<div class="row" ng-show="tipoMenu=='menu'">
-                		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstMenu">
+                		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstMenu track by $index">
                 			<button type="button" class="menu-btn" ng-click="seleccionarMenu( item )">
 	                			<span class="codigo">{{item.idMenu}}</span>
 	                			<img ng-src="{{item.imagen}}">
@@ -348,7 +348,7 @@
                 		</div>
                    </div>
                    <div class="row" ng-show="tipoMenu=='combo'">
-                		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstCombo">
+                		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstCombo track by $index">
                 			<button type="button" class="menu-btn" ng-click="seleccionarMenu( item )">
 	                			<span class="codigo">{{item.idCombo}}</span>
 	                			<img ng-src="{{item.imagen}}">
@@ -455,7 +455,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr ng-repeat="item in lstTicketBusqueda">
+                                        <tr ng-repeat="item in lstTicketBusqueda track by $index">
                                             <td>{{item.idOrdenCliente}}</td>
                                             <td>{{item.numeroTicket}}</td>
                                             <td>{{item.usuarioResponsable}}</td>
