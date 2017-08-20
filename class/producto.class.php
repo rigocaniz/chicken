@@ -282,9 +282,8 @@ class Producto
  		
  		// VALIDACIONES
 		$idEstadoFactura = $validar->validarEntero( $data->idEstadoFactura, NULL, TRUE, 'El ID del estado de factura no es válido' );
-		$noFactura       = $validar->validarTexto( $data->noFactura, NULL, TRUE, 'El No. de factura no es válido' );
-		$noFactura       = $validar->validarTexto( $data->noFactura, NULL, TRUE, 'El No. de factura no es válido' );
- 		$proveedor       = isset( $data->proveedor ) ? (string)$data->proveedor : NULL;
+		$noFactura       = $this->con->real_escape_string( $validar->validarTexto( $data->noFactura, NULL, TRUE, 'El No. de factura no es válido' ) );
+ 		$proveedor       = isset( $data->proveedor ) ? $this->con->real_escape_string( (string)$data->proveedor ) : NULL;
 
  		if( $accion == 'update' )
  		{
@@ -295,7 +294,6 @@ class Producto
 		$comentario   = $this->con->real_escape_string( $data->comentario );
 		$fechaFactura = substr( $data->fechaFactura, 0, -14);;
 		
-
 		// OBTENER RESULTADO DE VALIDACIONES
  		if( $validar->getIsError() ):
 	 		$this->respuesta = 'danger';

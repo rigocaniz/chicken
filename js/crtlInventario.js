@@ -2,7 +2,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 	// LISTA EL INVENTARIO GENERAL DE PRODUCTOS
 	$scope.lstInventario  = [];
-	$scope.inventarioMenu = 'medidas';
+	$scope.inventarioMenu = 'compras';
 	$scope.accion         = 'insert';
 	$scope.groupBy        = 'sinFiltro';
 
@@ -214,16 +214,18 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 			$scope.cancelarIngreso( 1 );
 			alertify.notify( 'Agregado a la lista', 'success', 3 );
+			$scope.lstProductos = [];
 		}
 	};
 
-
+	// SELECCIONAR PRODUCTO
 	$scope.seleccionarProducto = function( producto )
 	{
-		if( !(producto.idProducto && producto.idProducto > 0) ) {
+		if( !(producto.idProducto && producto.idProducto > 0) )
 			alertify.notify( 'El código del Producto no es válido', 'danger', 5 );
-		}
-		else{
+		
+		else
+		{
 			$scope.prod = {
 				idProducto   : producto.idProducto,
 				producto     : producto.producto,
@@ -238,6 +240,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		}
 	};
 
+	// CONSULTA FACTURA
 	$scope.consultaFactura = function( accion ){
 		var error = false;
 		$scope.accion = accion;
@@ -264,6 +267,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		}
 
 		if( !error ){
+			$scope.$parent.showLoading( 'Guardando...' );
+
 			$http.post('consultas.php',{
 				opcion : 'consultaFactura',
 				accion : $scope.accion,
@@ -284,6 +289,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 						$scope.cargarLstFacturaCompra();
 					}
 				}
+
+				$scope.$parent.hideLoading();
 			});
 		}
 	};
@@ -317,14 +324,16 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 		if( accion == 'verDetalle' )
 		{
+			$scope.$parent.showLoading( 'Cargando...' );
 			$http.post('consultas.php',{
 				opcion          : 'cargarLstIngresoProducto',
 				idFacturaCompra : $scope.facturaCompra.idFacturaCompra
 			})
 			.success(function(data){
-				console.log('cargarLstIngresoProducto::: ',data);
 				$scope.facturaCompra.lstProductos = data;
 				$scope.dialVerDetalleFacturaCompra.show();
+
+				$scope.$parent.hideLoading();
 			});
 
 		}
@@ -334,6 +343,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	// LST FACTURAS COMPRA
 	$scope.lstFacturaCompra = [];
 	$scope.cargarLstFacturaCompra = function(){
+		$scope.$parent.showLoading( 'Cargando...' );
+
 		$http.post('consultas.php',{
 			opcion : 'cargarLstFacturaCompra'
 		}).success(function(data){
@@ -343,6 +354,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 				$scope.dialLstFacturaCompra.show();
 			else
 				alertify.notify( 'No se encontrarón ingresos', 'info', 4 );
+
+			$scope.$parent.hideLoading();
 		})
 	};
 

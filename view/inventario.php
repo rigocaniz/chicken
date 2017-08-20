@@ -38,6 +38,13 @@
 						<button type="button" class="btn btn-success btn-sm" ng-click="editarAccion( null, 'insert' )">
 							<span class="glyphicon glyphicon-plus"></span> Ingresar Producto
 						</button>
+						<button type="button" class="btn btn-info btn-sm" ng-click="cargarLstFacturaCompra()" ng-show="inventarioMenu=='compras'">
+							<span class="glyphicon glyphicon-th-list"></span> VER INGRESOS
+						</button>
+
+						<button type="button" class="btn btn-info btn-sm" ng-click="verCierreDiario()" ng-show="inventarioMenu=='inventario'">
+							<span class="glyphicon glyphicon-th-list"></span> VER CIERRES
+						</button>
 					</p>
 				</div>
 
@@ -48,7 +55,7 @@
 							<h3 class="panel-title">INVENTARIO DE PRODUCTOS</h3>
 						</div>
 						<div class="panel-body">
-							<div class="text-right">
+							<div class="pull-right">
 								<div class="btn-group btn-group-sm" role="group">
 									<button type="button" class="btn btn-default" ng-click="groupBy='sinFiltro'">
 								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='sinFiltro', 'glyphicon-unchecked': groupBy!='sinFiltro'}"></span> Sin Filtro
@@ -61,11 +68,12 @@
 								  	</button>
 								</div>
 							</div>
-
-							<button class="btn btn-sm btn-danger" ng-click="realizarCierre()">
-								<span class="glyphicon glyphicon-list-alt"></span> REALIZAR CIERRE
-							</button>
-
+							<div class="text-left">
+								<button class="btn btn-sm btn-danger" ng-click="realizarCierre()">
+									<span class="glyphicon glyphicon-list-alt"></span> REALIZAR CIERRE
+								</button>
+							</div>
+							<br>
 							<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 								<div class="panel panel-default" ng-repeat="(ixInventario, inventario) in lstInventario">
 									<div class="panel-heading" role="tab">
@@ -308,9 +316,6 @@
 							</div>
 							<div class="panel-body">
 
-							<button type="button" class="btn btn-info btn-sm" ng-click="cargarLstFacturaCompra()">
-								<span class="glyphicon glyphicon-th-list"></span> VER INGRESOS
-							</button>
 
 								<div class="text-right">
 									<h3>
@@ -338,7 +343,7 @@
 											<input type="text"  maxlength="45" class="form-control" ng-model="compras.proveedor">
 										</div>
 									</div>
-									<div class="form-group">
+									<div class="form-group" style="margin-bottom: 0;">
 										<div class="col-sm-6 col-md-5">
 											<label class="control-label">ESTADO DE LA FACTURA</label>
 											<div class="btn-group" role="group" aria-label="">
@@ -456,7 +461,7 @@
 									</div>
 									<div class="form-group" style="margin-top: 15px">
 										<div class="col-sm-12 text-center">
-											<button type="button" class="btn btn-success btn-lg noBorder" ng-click="consultaFactura( 'insert' )">
+											<button type="button" class="btn btn-success btn-lg noBorder" ng-click="consultaFactura( 'insert' )" ng-disabled="loading">
 												<span class="glyphicon glyphicon-saved"></span> Guardar
 											</button>
 										</div>
@@ -557,6 +562,14 @@
 				<div class="modal-body">
 					<form class="form-horizontal" novalidate autocomplete="off">
 						<div class="form-group">
+							<div class="col-sm-6 col-md-5">
+								<label class="control-label">INGRESADO POR:</label>
+								<div>
+									<kbd>USUARIO: {{ facturaCompra.usuario | uppercase }}</kbd>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
 							<div class="col-sm-3">
 								<label class="control-label">NO. FACTURA</label>
 								<input type="text" maxlength="15" class="form-control" id="numeroFactura" ng-model="facturaCompra.noFactura" disabled>
@@ -589,14 +602,6 @@
 							<div class="col-sm-6 col-md-6">
 								<label class="control-label">COMENTARIO</label>
 								<textarea class="form-control" ng-model="facturaCompra.comentario" placeholder="Ingresar comentario (Opcional)" disabled></textarea>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-sm-6 col-md-5">
-								<label class="control-label">INGRESADO POR:</label>
-								<div>
-									<kbd>USUARIO: {{ facturaCompra.usuario | uppercase }}</kbd>
-								</div>
 							</div>
 						</div>
 						<div class="form-group">
