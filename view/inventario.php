@@ -171,10 +171,10 @@
 								<div class="row">
 									<label class="col-sm-1 col-md-2">Tipo</label>
 									<div class="col-sm-6">
-										<input type="text" id="tipoProducto" ng-keyup="$event.keyCode == 13 && consultaTipoProducto()" class="form-control" ng-model="tp.tipoProducto" maxlength="45">
+										<input type="text" id="tipoProducto" ng-keyup="$event.keyCode == 13 && consultaTipoProducto()" class="form-control" ng-model="tp.tipoProducto" maxlength="45" ng-disabled="loading">
 									</div>
 									<div class="col-sm-5 col-md-4">
-										<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaTipoProducto()">
+										<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaTipoProducto()" ng-disabled="loading">
 											<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 										</button>
 										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 4 )">
@@ -239,10 +239,10 @@
 								<div class="row">
 									<label class="col-sm-1 col-md-2">Medida</label>
 									<div class="col-sm-6">
-										<input type="text" id="medida" ng-keyup="$event.keyCode == 13 && consultaMedida()" class="form-control" ng-model="medidaProd.medida" maxlength="45">
+										<input type="text" id="medida" ng-keyup="$event.keyCode == 13 && consultaMedida()" class="form-control" ng-model="medidaProd.medida" maxlength="45" ng-disabled="loading">
 									</div>
 									<div class="col-sm-5 col-md-4">
-										<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMedida()">
+										<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMedida()" ng-disabled="loading">
 											<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 										</button>
 										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 6 )">
@@ -552,7 +552,7 @@
 				<div class="modal-header panel-heading text-center">
 					<button type="button" class="close" ng-click="$hide()">&times;</button>
 					<span class="glyphicon glyphicon-list"></span>
-					DETALLE FACTURA/INGRES COMPRAS
+					DETALLE FACTURA/INGRESO COMPRAS
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" novalidate autocomplete="off">
@@ -752,10 +752,6 @@
 					<form class="form-horizontal" role="form" name="$parent.formCierre">
 						<div class="form-group">
 							<div class="col-sm-4">
-								<label class="control-label">NO. DE CIERRE</label>
-								<input type="text" class="form-control" ng-model="cierreDiario.idCierreDiario" readonly>
-							</div>	
-							<div class="col-sm-4">
 								<label class="control-label">FECHA DEL CIERRE</label>
 								<div class="input-group">
 								  	<span class="input-group-addon">
@@ -764,6 +760,23 @@
     								<input type="text" class="form-control" ng-model="cierreDiario.fechaCierre" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker>
 								</div>
 							</div>
+							<div class="col-sm-4">
+								<label class="control-label">SELECCIONAR OPCIÓN</label>
+								<div class="btn-group" role="group" aria-label="">
+								  	<button type="button" class="btn btn-default" ng-click="cierreDiario.cierreTodos=true">
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': cierreDiario.cierreTodos, 'glyphicon-unchecked': !cierreDiario.cierreTodos}"></span>
+								  		Todos
+								  	</button>
+								  	<button type="button" class="btn btn-default" ng-click="cierreDiario.cierreTodos=false">
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': !cierreDiario.cierreTodos, 'glyphicon-unchecked': cierreDiario.cierreTodos}"></span>
+								  		Importantes
+								  	</button>
+								</div>
+							</div>
+							<div class="col-sm-4" ng-show="accion=='update'">
+								<label class="control-label">NO. DE CIERRE</label>
+								<input type="text" class="form-control" ng-model="cierreDiario.idCierreDiario" readonly>
+							</div>	
 						</div>
 						<table class="table table-hover">
 							<thead>
@@ -774,16 +787,16 @@
 									<th class="col-sm-2 text-center">Disponible <br>Sistema(*)</th>
 									<th class="col-sm-2 text-center">Disponible <br>Fisico</th>
 									<th class="col-sm-2 text-center">Medida</th>
+									<th class="col-sm-2 text-center">Afectar<br> Disponibilidad</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="inv in cierreDiario.lstProductos">
+								<tr ng-repeat="inv in cierreDiario.lstProductos" ng-show="cierreDiario.cierreTodos || (!cierreDiario.cierreTodos && inv.importante == 1 )" ng-class="{'border-success': inv.importante == 1}">
 									<td class="text-right">
 										{{ $index + 1 }}
 									</td>
 									<td>
 										{{ inv.producto }}
-										<span class="glyphicon glyphicon-eye-open" ng-show="inv.esImportante == 'SI'"></span>
 									</td>
 									<td class="text-center">
 										{{ inv.esPerecedero }}
@@ -796,6 +809,11 @@
 									</td>
 									<td class="text-center">
 										{{ inv.medida }}
+									</td>
+									<td class="text-center">
+										<button type="button" class="btn btn-sm">
+											{{ inv.actualizarDisponibilidad }}
+										</button>
 									</td>
 								</tr>
 							</tbody>
@@ -815,8 +833,8 @@
 			
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-warning" ng-click="consultaCierreDiario()">
-						<span class="glyphicon glyphicon-saved"></span> GUARDAR CIERRE
+					<button class="btn btn-warning" ng-click="consultaCierreDiario()" ng-disabled="loading">
+						<span class="glyphicon glyphicon-saved"></span> REALIZAR CIERRE
 					</button>
 					<button type="button" class="btn btn-default" ng-click="$hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
@@ -993,7 +1011,7 @@
 					</fieldset>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaProducto()">
+					<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaProducto()" ng-disabled="loading">
 						<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 					</button>
 					<button type="button" class="btn btn-default" ng-click="resetValores( 1 ); $hide()">
