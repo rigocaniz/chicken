@@ -89,18 +89,17 @@
 				<div class="modal-body">
 					<form class="form-horizontal" novalidate autocomplete="off">
 						<div class="form-group">
-							<div class="text-right">
-								<div class="btn-group" role="group"	>
-								  	<button type="button" class="btn btn-default" ng-click="usuario.idEstadoUsuario = estadoUsuario.idEstadoUsuario" ng-repeat="estadoUsuario in lstEstadoUsuario">
+							<div class="col-sm-10">
+								<label>ESTADO DEL USUARIO</label>
+								<div class="btn-group btn-group-sm" role="group"	>
+								  	<button type="button" class="btn btn-default" ng-class="{'btn-success': usuario.idEstadoUsuario==1 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'btn-danger': usuario.idEstadoUsuario==2 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'btn-warning': usuario.idEstadoUsuario==3 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario}" ng-click="usuario.idEstadoUsuario = estadoUsuario.idEstadoUsuario" ng-repeat="estadoUsuario in lstEstadoUsuario">
 								  		<span class="glyphicon" ng-class="{'glyphicon-check': usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'glyphicon-unchecked': usuario.idEstadoUsuario!=estadoUsuario.idEstadoUsuario}"></span>
 								  		{{ estadoUsuario.estadoUsuario }}
 								  	</button>
-								  	<button type="button" class="btn btn-default"></button>
 								</div>
 							</div>
 						</div>
 						<div class="form-group">
-							{{ accion }}
 							<div class="col-sm-6">
 								<label>SELECCIONE NIVEL</label>
 								<div>
@@ -154,7 +153,6 @@
 							</div>
 						</div>
 					</form>
-					clave
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-success" ng-click="consultaFactura( 'update' )">
