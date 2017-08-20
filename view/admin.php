@@ -21,9 +21,52 @@
 
 				<!--  PRODUCTOS DEL INVENTARIO -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : adminMenu=='usuarios'}" ng-show="adminMenu=='usuarios'">
+			<!--
+			{{ lstUsuarios	| json }}
+	-->
 					<button type="button" class="btn btn-sm btn-success" ng-click="agregarUsuario()">
 						<span class="glyphicon glyphicon-plus"></span> AGREGAR USUARIO
 					</button>
+
+					<div>
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th class="text-center col-sm-1">No.</th>
+									<th class="text-center col-sm-2">Nombres</th>
+									<th class="text-center col-sm-2">Apellidos</th>
+									<th class="text-center col-sm-2">Usuario</th>
+									<th class="text-center col-sm-2">Código</th>
+									<th class="text-center col-sm-2">Estado</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="usuario in lstUsuarios">
+									<td>{{ $index + 1 }}</td>
+									<td>{{ usuario.nombres }}</td>
+									<td>{{ usuario.apellidos }}</td>
+									<td class="text-center">{{ usuario.usuario }}</td>
+									<td class="text-center">{{ usuario.codigo }}</td>
+									<td class="text-center">{{ usuario.estadoUsuario }}</td>
+									<td class="text-center">
+										<div class="menu-contenedor">
+											<button type="button" class="btn btn-warning noBorde">
+												<span class="glyphicon glyphicon-th"></span>
+											</button>
+											<div class="menu-horizontal">
+												<button type="button" class="btn" ng-click="editarUsuario( usuario )" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
+													<span class="glyphicon glyphicon-pencil"></span>
+												</button>
+												<button type="button" class="btn" ng-click="resetearClave( usuario.usuario )" title="Resetear Clave" data-toggle="tooltip" data-placement="top" tooltip>
+													<span class="glyphicon glyphicon-lock"></span>
+												</button>
+											</div>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 
@@ -34,13 +77,13 @@
 
 
 <!-- DIALOGO LST FACTURAS COMPRAS -->
-<script type="text/ng-template" id="dial.addUsuario.html">
+<script type="text/ng-template" id="dial.adminUsuario.html">
 	<div class="modal" tabindex="-1" role="dialog">
 		<div class="modal-dialog modal-lg">
-			<div class="modal-content panel-success">
+			<div class="modal-content" ng-class="{'panel-success': accion == 'insert', 'panel-info': accion == 'update'}">
 				<div class="modal-header panel-heading text-center">
 					<button type="button" class="close" ng-click="$hide()">&times;</button>
-					<span class="glyphicon glyphicon-edit"></span>
+					<span class="glyphicon glyphicon-user"></span>
 					{{ accion == 'insert' ? 'AGREGAR' : 'ACTUALIZAR' }} USUARIO
 				</div>
 				<div class="modal-body">
@@ -57,6 +100,7 @@
 							</div>
 						</div>
 						<div class="form-group">
+							{{ accion }}
 							<div class="col-sm-6">
 								<label>SELECCIONE NIVEL</label>
 								<div>
@@ -110,12 +154,7 @@
 							</div>
 						</div>
 					</form>
-
-					idEstadoUsuario : 1,
-					idNivel         : 1,
-					idPerfil        : 1,
-					clave           : '',
-
+					clave
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-success" ng-click="consultaFactura( 'update' )">

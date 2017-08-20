@@ -7,7 +7,7 @@ class Usuario
 	private $con       = NULL;
 	private $respuesta = 'info';
  	private $mensaje   = '';
- 	private $tiempo    = 6;
+ 	private $tiempo    = 5;
 
 	function __construct()
 	{
@@ -17,6 +17,13 @@ class Usuario
  			$this->con = $conexion;
 	}
 
+
+	// LIBERAR SIGUIENTE RESULTADO
+ 	private function siguienteResultado()
+ 	{
+ 		if( $this->con->more_results() )
+ 			$this->con->next_result();
+ 	}
 
 	// CARGAR LISTA ESTADOS USUARIO
 	function lstEstadoUsuario()
@@ -66,6 +73,65 @@ class Usuario
 	}
 
 
+	// OBTENER LISTA DE USUARIOS
+	function lstUsuarios()
+	{
+
+		$lstUsuarios = array();
+
+		$sql = "SELECT * FROM usuario;";
+		
+		if( $rs = $this->con->query( $sql ) ){
+			while( $row = $rs->fetch_object() ){
+				$lstUsuarios[] = $row;
+			}
+		}
+		
+		return $lstUsuarios;
+	}
+
+
+
+	function consultaUsuario()
+	{
+
+	}
+
+	
+	// RESETEAR CLAVE
+	function resetearClave( $usuario )
+	{
+		$validar = new Validar();
+
+		$usuario = $this->con->real_escape_string( $validar->validarTexto( $usuario, NULL, TRUE, 8, 16, "USUARIO" ) );
+
+		if( $validar->getIsError() ):
+ 			$this->respuesta = 'danger';
+ 			$this->mensaje   = $validar->getMsj();
+ 		else:
+
+ 			$usuario = strtolower( $usuario );
+			$sql = "CALL resetearClave( '{$usuario}' )";
+			
+			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+				$this->siguienteResultado();
+
+				$this->respuesta = $row->respuesta;
+				$this->mensaje   = $row->mensaje;
+				if( $this->respuesta == 'success' )
+					$this->tiempo = 3;
+			}
+			else{
+				$this->respuesta = 'danger';
+				$this->mensaje   = 'Error al ejecutar la operacion de reseteo (USUARIO)';
+			}
+ 		endif;
+
+ 		return $this->getRespuesta();
+	}
+
+
+	// LOGIN USUARIO
 	function login( $usuario, $clave )
 	{
 		$validar = new Validar();

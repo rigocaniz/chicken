@@ -20,7 +20,8 @@ class Producto
 	}
 
 
-	private function siguienteResultado()
+	// LIBERAR SIGUIENTE RESULTADO
+ 	private function siguienteResultado()
  	{
  		if( $this->con->more_results() )
  			$this->con->next_result();

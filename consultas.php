@@ -212,6 +212,16 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** USUARIO
 	/////////////////////////
+	case 'resetearClave':		// RESETEAR CLAVE DEL USUARIO
+		$usuario = new Usuario();
+		echo json_encode( $usuario->resetearClave( $data->usuario ) );
+		break;
+
+	case 'cargarLstUsuarios':	// CONSULTAR LST USUARIO
+		$usuario = new Usuario();
+		echo json_encode( $usuario->lstUsuarios() );
+		break;
+		
 	case 'lstEstadoUsuario':	// CONSULTA ESTADOS USUARIO
 		$usuario = new Usuario();
 		echo json_encode( $usuario->lstEstadoUsuario() );
