@@ -35,15 +35,15 @@
 			<div class="tab-content">
 				<div class="text-right">
 					<p>
-						<button type="button" class="btn btn-success btn-sm" ng-click="editarAccion( null, 'insert' )">
+						<button type="button" class="btn btn-success" ng-click="editarAccion( null, 'insert' )">
 							<span class="glyphicon glyphicon-plus"></span> Ingresar Producto
 						</button>
-						<button type="button" class="btn btn-info btn-sm" ng-click="cargarLstFacturaCompra()" ng-show="inventarioMenu=='compras'">
+						<button type="button" class="btn btn-info noBorde" ng-click="cargarLstFacturaCompra()" ng-show="inventarioMenu=='compras'">
 							<span class="glyphicon glyphicon-th-list"></span> VER INGRESOS
 						</button>
 
-						<button type="button" class="btn btn-info btn-sm" ng-click="verCierreDiario()" ng-show="inventarioMenu=='inventario'">
-							<span class="glyphicon glyphicon-th-list"></span> VER CIERRES
+						<button type="button" class="btn btn-info noBorde" ng-click="verCierreDiario()" ng-show="inventarioMenu=='inventario'">
+							<span class="glyphicon glyphicon-th-list"></span> VER CIERRE DIARIO
 						</button>
 					</p>
 				</div>
@@ -672,6 +672,19 @@
 					FACTURAS / COMPRAS INGRESADAS
 				</div>
 				<div class="modal-body">
+					<div class="text-right">
+						<div class="btn-group btn-group-sm" role="group" aria-label="...">
+						  	<button type="button" class="btn btn-success">
+						  		{{ detalleFacturaCompra.pagado }} <span class="badge">{{ detalleFacturaCompra.totalPagadas }}</span>
+						  	</button>
+						  	<button type="button" class="btn btn-danger">
+						  		{{ detalleFacturaCompra.pendiente }} <span class="badge">{{ detalleFacturaCompra.totalPendientes }}</span>
+						  	</button>
+						  	<button type="button" class="btn btn-warning">
+						  		{{ detalleFacturaCompra.pagoParcial }} <span class="badge">{{ detalleFacturaCompra.totalPagosParcial }}</span>
+						  	</button>
+						</div>
+					</div>
 					<table class="table table-hover">
 						<thead>
 							<tr>
@@ -685,7 +698,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr dir-paginate="facturaCompra in lstFacturaCompra | filter: filtroCancion | itemsPerPage: 25">
+							<tr dir-paginate="facturaCompra in detalleFacturaCompra.lstFacturaCompra | filter: filtroCancion | itemsPerPage: 25">
 								<td class="text-center">
 									{{ $index + 1 }}
 								</td>
@@ -742,6 +755,112 @@
 	</div>
 </script>
 
+
+<!-- DIALOGO CIERRE DIARIO -->
+<script type="text/ng-template" id="dial.verCierreDiario.html">
+	<div class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content panel-primary">
+				<div class="modal-header panel-heading text-center">
+					<button type="button" class="close" ng-click="$hide()">&times;</button>
+					<span class="glyphicon glyphicon-list-alt"></span>
+					CIERRE DIARIO DE INVENTARIO
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form" name="$parent.formCierre">
+						<div class="form-group">
+							<div class="col-sm-4">
+								<label class="control-label">SELECCIONE LA FECHA DE CIERRE</label>
+								<div class="input-group">
+								  	<span class="input-group-addon">
+    									<span class="fa fa-calendar"></span>
+								  	</span>
+    								<input type="text" class="form-control"  ng-model="fechaCierre" ng-change="cargarFechaCierre( fechaCierre )" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker>
+								</div>
+							</div>	
+						</div>
+						<hr>
+						<div ng-show="fechaCierreP.encontrado">
+							<div class="form-group">
+								<div class="col-sm-4">
+									<label class="control-label">FECHA DE CIERRE</label>
+									<div class="input-group">
+									  	{{ fechaCierreP.fechaCierre }}
+									</div>
+								</div>	
+								<div class="col-sm-4">
+									<label class="control-label">INGRESADO POR:</label>
+									<div>
+										<kbd>USUARIO: {{ fechaCierreP.usuario | uppercase }}</kbd>
+									</div>
+								</div>
+								<div class="col-sm-4">
+									<label class="control-label">FECHA / HORA:</label>
+									<div>
+										<kbd>{{ fechaCierreP.fechaHora }}</kbd>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-12">
+									<label class="control-label">COMENTARIO:</label>
+									<div>
+										{{ fechaCierreP.comentario }}
+									</div>
+								</div>
+							</div>
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th class="col-sm-1 text-center">No.</th>
+										<th class="col-sm-3 text-center">Producto</th>
+										<th class="col-sm-1 text-center">Perecedero</th>
+										<th class="col-sm-2 text-center">Cantidad</th>
+										<th class="col-sm-2 text-center">Medida</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="inv in fechaCierreP.lstProductos">
+										<td class="text-right">
+											{{ $index + 1 }}
+										</td>
+										<td>
+											{{ inv.producto }}
+										</td>
+										<td class="text-center">
+											{{ inv.perecedero ? 'SI' : 'NO' }}
+										</td>
+										<td class="text-center success">
+											{{ inv.cantidadCierre }}
+										</td>
+										<td class="text-center">
+											{{ inv.medida }}
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div ng-show="!fechaCierreP.encontrado && fechaCierre">
+							<div class="alert alert-warning" role="alert">
+								<span class="glyphicon glyphicon-info-sign"></span> NO SE ENCONTRARON RESULTADOS
+							</div>
+						</div>
+					</form>
+			
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-warning" ng-click="consultaCierreDiario()" ng-disabled="loading">
+						<span class="glyphicon glyphicon-saved"></span> REALIZAR CIERRE
+					</button>
+					<button type="button" class="btn btn-default" ng-click="$hide()">
+						<span class="glyphicon glyphicon-log-out"></span>
+						<b>Salir</b>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
 
 <!-- DIALOGO CIERRE DIARIO -->
 <script type="text/ng-template" id="dial.cierreDiario.html">

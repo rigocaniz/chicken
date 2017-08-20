@@ -1,4 +1,4 @@
-app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
+app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $filter ){
 
 	// LISTA EL INVENTARIO GENERAL DE PRODUCTOS
 	$scope.lstInventario  = [];
@@ -24,6 +24,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	$scope.dialLstFacturaCompra        = $modal({scope: $scope,template:'dial.lstFacturaCompra.html', show: false, backdrop: 'static'});
 	$scope.dialEditarFacturaCompra     = $modal({scope: $scope,template:'dial.editarFacturaCompra.html', show: false, backdrop: 'static'});
 	$scope.dialVerDetalleFacturaCompra = $modal({scope: $scope,template:'dial.verDetalleFacturaCompra.html', show: false, backdrop: 'static'});	
+	$scope.dialVerCierreDiario         = $modal({scope: $scope,template:'dial.verCierreDiario.html', show: false, backdrop: 'static'});	
+
+	
 
 	$scope.dialAdministrarAbrir = function(){
 		$scope.dialAdministrar.show();
@@ -341,7 +344,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	};
 
 	// LST FACTURAS COMPRA
-	$scope.lstFacturaCompra = [];
+	$scope.detalleFacturaCompra = [];
 	$scope.cargarLstFacturaCompra = function(){
 		$scope.$parent.showLoading( 'Cargando...' );
 
@@ -349,11 +352,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 			opcion : 'cargarLstFacturaCompra'
 		}).success(function(data){
 			console.log( data );
-			$scope.lstFacturaCompra = data;
-			if( $scope.lstFacturaCompra.length )
-				$scope.dialLstFacturaCompra.show();
-			else
-				alertify.notify( 'No se encontrarón ingresos', 'info', 4 );
+			$scope.detalleFacturaCompra = data;
+			$scope.dialLstFacturaCompra.show();
 
 			$scope.$parent.hideLoading();
 		})
@@ -387,6 +387,29 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		}).success(function(data){
 			$scope.lstMedidas = data;
 		})
+	};
+
+	
+	// VER CIERRE DIARIO
+	$scope.verCierreDiario = function(){
+		$scope.dialVerCierreDiario.show();
+	};
+
+
+	$scope.fechaCierreP = {};
+	$scope.cargarFechaCierre = function( fechaCierre ){
+		if( fechaCierre )
+		{
+			var fechaCierre = $filter('date')( fechaCierre,"yyyy-MM-dd");
+			console.log( 'fechaCierre:::', fechaCierre );
+			$http.post('consultas.php',{
+				opcion      : 'cargarFechaCierre',
+				fechaCierre : fechaCierre
+			}).success(function(data){
+				console.log( data );
+				$scope.fechaCierreP = data;
+			})	
+		}
 	};
 
 
