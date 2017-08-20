@@ -400,6 +400,12 @@ switch ( $data->opcion )
 		echo json_encode( $orden->busquedaTicket( $data->ticket ) );
 		break;
 
+	// CANCELAR ORDEN PARCIALMENTE
+	case 'cancelarOrdenParcial':
+		$orden = new Orden();
+		echo json_encode( $orden->cancelarOrdenParcial( $data->idOrdenCliente, $data->lstDetalle ) );
+		break;
+
 	// CAMBIA SERVICIO DE ORDEN
 	case 'cambiarServicio':
 		$orden = new Orden();
