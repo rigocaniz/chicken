@@ -103,7 +103,7 @@ app.config(function($routeProvider) {
     })
     .when('/mantenimiento',{
         templateUrl:'view/mantenimiento.php',
-        controller:'mantenimientoCtrl'
+        controller:'crtlMantenimiento'
     })
     .when('/factura',{
         templateUrl:'view/factura.php',

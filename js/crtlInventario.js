@@ -23,15 +23,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 	$scope.dialCierreDiario            = $modal({scope: $scope,template:'dial.cierreDiario.html', show: false, backdrop: 'static'});
 	$scope.dialLstFacturaCompra        = $modal({scope: $scope,template:'dial.lstFacturaCompra.html', show: false, backdrop: 'static'});
 	$scope.dialEditarFacturaCompra     = $modal({scope: $scope,template:'dial.editarFacturaCompra.html', show: false, backdrop: 'static'});
-<<<<<<< HEAD
 	$scope.dialVerDetalleFacturaCompra = $modal({scope: $scope,template:'dial.verDetalleFacturaCompra.html', show: false, backdrop: 'static'});
 	$scope.dialVerCierreDiario         = $modal({scope: $scope,template:'dial.verCierreDiario.html', show: false, backdrop: 'static', keyboard: false});
-=======
-	$scope.dialVerDetalleFacturaCompra = $modal({scope: $scope,template:'dial.verDetalleFacturaCompra.html', show: false, backdrop: 'static'});	
-<<<<<<< HEAD
->>>>>>> parent of 64b64f5... Consulta cierre Diario producto
-=======
->>>>>>> parent of 64b64f5... Consulta cierre Diario producto
+
 
 	$scope.dialAdministrarAbrir = function(){
 		$scope.dialAdministrar.show();
@@ -397,9 +391,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 		})
 	};
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-	
+
 	// VER CIERRE DIARIO
 	$scope.verCierreDiario = function(){
 		$scope.dialVerCierreDiario.show();
@@ -423,11 +415,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 			})	
 		}
 	};
-
-=======
->>>>>>> parent of 64b64f5... Consulta cierre Diario producto
-=======
->>>>>>> parent of 64b64f5... Consulta cierre Diario producto
 
 	$scope.filter = {
 		pagina: 1,
