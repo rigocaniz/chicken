@@ -28,90 +28,21 @@ class Producto
  	}
 
 
- 	function cargarFechaCierre( $fechaCierre )
- 	{
- 		$fechaCierreP = array(
- 				'encontrado' => 0
- 			);
-
- 		$sql = "SELECT 
-				    idCierreDiario,
-				     DATE_FORMAT(fechaCierre, '%d/%m/%Y' ) AS fechaCierre,
-				    comentario,
-				    usuario,
-				    DATE_FORMAT(fechaRegistroCierre, '%d/%m/%Y %h:%i %p') AS fechaHora
-				FROM
-				    vCierreDiario
-				WHERE
-				    fechaCierre = '{$fechaCierre}';";
- 		
- 		if( $rs = $this->con->query( $sql ) AND $rs->num_rows > 0 AND $row = $rs->fetch_object() ){
-
- 			$fechaCierreP = array(
-					'encontrado'     => 1,
-					'idCierreDiario' => $row->idCierreDiario,
-					'fechaCierre'    => $row->fechaCierre,
-					'comentario'     => $row->comentario,
-					'usuario'        => $row->usuario,
-					'fechaHora'      => $row->fechaHora,
-					'lstProductos'   => $this->cargarCierreDiarioProd( $row->idCierreDiario )
- 				);
- 		}
-
- 		return (object)$fechaCierreP;
- 	}
-
-
- 	// CARGAR CIERRE DIARIO PRODUCTO
- 	function cargarCierreDiarioProd( $idCierreDiario )
- 	{
- 		$lstCierreDiarioProd = array();
-
- 		$sql = "SELECT * FROM vCierreDiarioProducto WHERE idCierreDiario = {$idCierreDiario};";
- 		
- 		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() )
- 				$lstCierreDiarioProd[] = $row;
- 		}
- 		
- 		return $lstCierreDiarioProd;
- 	}
-
-
  	// LST FACTURAS COMPRA
  	function cargarLstFacturaCompra()
  	{
- 		$facturaCompra = array();
-
- 		$facturaCompra = (object)array(
- 				'pagado'            => 'Pagado',
- 				'totalPagadas'      => 0,
- 				'pendiente'         => 'Pendiente',
- 				'totalPendientes'   => 0,
- 				'pagoParcial'       => 'Pagado parcialmente',
- 				'totalPagosParcial' => 0,
- 				'lstFacturaCompra'  => array()
- 			);
+ 		$lstFacturaCompra = array();
 
  		$sql = "SELECT *, DATE_FORMAT( fechaFactura, '%d/%m/%Y' ) AS fechaFact 
  					FROM lstFacturaCompra
  						ORDER BY idFacturaCompra DESC;";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() ){
-
- 				if( $row->idEstadoFactura == 1 )
- 					$facturaCompra->totalPagadas++;
- 				if( $row->idEstadoFactura == 2 )
- 					$facturaCompra->totalPendientes++;
- 				if( $row->idEstadoFactura == 3 )
- 					$facturaCompra->totalPagosParcial++;
-
- 				$facturaCompra->lstFacturaCompra[] = $row;
- 			}
+ 			while( $row = $rs->fetch_object() )
+ 				$lstFacturaCompra[] = $row;
  		}
 
- 		return $facturaCompra;
+ 		return $lstFacturaCompra;
  	}
 
 

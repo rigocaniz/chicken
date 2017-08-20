@@ -1,4 +1,4 @@
-app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $filter ){
+app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout ){
 
 	// LISTA EL INVENTARIO GENERAL DE PRODUCTOS
 	$scope.lstInventario  = [];
@@ -23,8 +23,15 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	$scope.dialCierreDiario            = $modal({scope: $scope,template:'dial.cierreDiario.html', show: false, backdrop: 'static'});
 	$scope.dialLstFacturaCompra        = $modal({scope: $scope,template:'dial.lstFacturaCompra.html', show: false, backdrop: 'static'});
 	$scope.dialEditarFacturaCompra     = $modal({scope: $scope,template:'dial.editarFacturaCompra.html', show: false, backdrop: 'static'});
+<<<<<<< HEAD
 	$scope.dialVerDetalleFacturaCompra = $modal({scope: $scope,template:'dial.verDetalleFacturaCompra.html', show: false, backdrop: 'static'});
 	$scope.dialVerCierreDiario         = $modal({scope: $scope,template:'dial.verCierreDiario.html', show: false, backdrop: 'static', keyboard: false});
+=======
+	$scope.dialVerDetalleFacturaCompra = $modal({scope: $scope,template:'dial.verDetalleFacturaCompra.html', show: false, backdrop: 'static'});	
+<<<<<<< HEAD
+>>>>>>> parent of 64b64f5... Consulta cierre Diario producto
+=======
+>>>>>>> parent of 64b64f5... Consulta cierre Diario producto
 
 	$scope.dialAdministrarAbrir = function(){
 		$scope.dialAdministrar.show();
@@ -342,7 +349,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	};
 
 	// LST FACTURAS COMPRA
-	$scope.detalleFacturaCompra = [];
+	$scope.lstFacturaCompra = [];
 	$scope.cargarLstFacturaCompra = function(){
 		$scope.$parent.showLoading( 'Cargando...' );
 
@@ -350,8 +357,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			opcion : 'cargarLstFacturaCompra'
 		}).success(function(data){
 			console.log( data );
-			$scope.detalleFacturaCompra = data;
-			$scope.dialLstFacturaCompra.show();
+			$scope.lstFacturaCompra = data;
+			if( $scope.lstFacturaCompra.length )
+				$scope.dialLstFacturaCompra.show();
+			else
+				alertify.notify( 'No se encontrarón ingresos', 'info', 4 );
 
 			$scope.$parent.hideLoading();
 		})
@@ -387,6 +397,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		})
 	};
 
+<<<<<<< HEAD
+<<<<<<< HEAD
 	
 	// VER CIERRE DIARIO
 	$scope.verCierreDiario = function(){
@@ -412,6 +424,10 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		}
 	};
 
+=======
+>>>>>>> parent of 64b64f5... Consulta cierre Diario producto
+=======
+>>>>>>> parent of 64b64f5... Consulta cierre Diario producto
 
 	$scope.filter = {
 		pagina: 1,

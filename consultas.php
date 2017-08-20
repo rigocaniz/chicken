@@ -253,11 +253,6 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** PRODUCTO
 	/////////////////////////
-	case 'cargarFechaCierre':			// INSERT / UPDATE CIERRE DEL DIA
-		$producto = new Producto();
-		echo json_encode( $producto->cargarFechaCierre( $data->fechaCierre ) );
-		break;
-
 	case 'cargarLstFacturaCompra':			// INSERT / UPDATE CIERRE DEL DIA
 		$producto = new Producto();
 		echo json_encode( $producto->cargarLstFacturaCompra() );
