@@ -756,15 +756,15 @@
 </script>
 
 
-<!-- DIALOGO CIERRE DIARIO -->
+<!-- DIALOGO HISTORIAL CIERRE DIARIO -->
 <script type="text/ng-template" id="dial.verCierreDiario.html">
 	<div class="modal" tabindex="-1" role="dialog">
 		<div class="modal-dialog modal-lg">
-			<div class="modal-content panel-primary">
+			<div class="modal-content panel-success">
 				<div class="modal-header panel-heading text-center">
-					<button type="button" class="close" ng-click="$hide()">&times;</button>
+					<button type="button" class="close" ng-click="fechaCierre=null; $parent.fechaCierreP={}; $hide()">&times;</button>
 					<span class="glyphicon glyphicon-list-alt"></span>
-					CIERRE DIARIO DE INVENTARIO
+					HISTORIAL CIERRE DIARIO DE INVENTARIO
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" role="form" name="$parent.formCierre">
@@ -780,7 +780,7 @@
 							</div>	
 						</div>
 						<hr>
-						<div ng-show="fechaCierreP.encontrado">
+						<div ng-show="$parent.fechaCierreP.encontrado">
 							<div class="form-group">
 								<div class="col-sm-4">
 									<label class="control-label">FECHA DE CIERRE</label>
@@ -815,6 +815,7 @@
 										<th class="col-sm-1 text-center">No.</th>
 										<th class="col-sm-3 text-center">Producto</th>
 										<th class="col-sm-1 text-center">Perecedero</th>
+										<th class="col-sm-2 text-center">Tipo Producto</th>
 										<th class="col-sm-2 text-center">Cantidad</th>
 										<th class="col-sm-2 text-center">Medida</th>
 									</tr>
@@ -830,6 +831,9 @@
 										<td class="text-center">
 											{{ inv.perecedero ? 'SI' : 'NO' }}
 										</td>
+										<td class="text-center">
+											{{ inv.tipoProducto }}
+										</td>
 										<td class="text-center success">
 											{{ inv.cantidadCierre }}
 										</td>
@@ -840,19 +844,11 @@
 								</tbody>
 							</table>
 						</div>
-						<div ng-show="!fechaCierreP.encontrado && fechaCierre">
-							<div class="alert alert-warning" role="alert">
-								<span class="glyphicon glyphicon-info-sign"></span> NO SE ENCONTRARON RESULTADOS
-							</div>
-						</div>
 					</form>
 			
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-warning" ng-click="consultaCierreDiario()" ng-disabled="loading">
-						<span class="glyphicon glyphicon-saved"></span> REALIZAR CIERRE
-					</button>
-					<button type="button" class="btn btn-default" ng-click="$hide()">
+					<button type="button" class="btn btn-default" ng-click="fechaCierre=null; $parent.fechaCierreP={}; $hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
 						<b>Salir</b>
 					</button>

@@ -12,8 +12,59 @@ class Usuario
 	function __construct()
 	{
 		GLOBAL $conexion;
- 		$this->con  = $conexion;
+
+		if( is_null( $this->con ) )
+ 			$this->con = $conexion;
 	}
+
+
+	// CARGAR LISTA ESTADOS USUARIO
+	function lstEstadoUsuario()
+	{
+		$lstEstadoUsuario = array();
+
+		$sql = "SELECT * FROM estadoUsuario;";
+		
+		if( $rs = $this->con->query( $sql ) ){
+			while( $row = $rs->fetch_object() )
+				$lstEstadoUsuario[] = $row;
+		}
+		
+		return $lstEstadoUsuario;
+	}
+
+	
+	// CARGAR LISTA NIVELES
+	function lstNiveles()
+	{
+		$lstNiveles = array();
+
+		$sql = "SELECT * FROM nivel;";
+		
+		if( $rs = $this->con->query( $sql ) ){
+			while( $row = $rs->fetch_object() )
+				$lstNiveles[] = $row;
+		}
+		
+		return $lstNiveles;
+	}
+
+	
+	// CARGAR LISTA PERFILES
+	function lstPerfiles()
+	{
+		$lstPerfiles = array();
+
+		$sql = "SELECT * FROM perfil;";
+		
+		if( $rs = $this->con->query( $sql ) ){
+			while( $row = $rs->fetch_object() )
+				$lstPerfiles[] = $row;
+		}
+		
+		return $lstPerfiles;
+	}
+
 
 	function login( $usuario, $clave )
 	{

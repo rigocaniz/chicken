@@ -23,10 +23,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	$scope.dialCierreDiario            = $modal({scope: $scope,template:'dial.cierreDiario.html', show: false, backdrop: 'static'});
 	$scope.dialLstFacturaCompra        = $modal({scope: $scope,template:'dial.lstFacturaCompra.html', show: false, backdrop: 'static'});
 	$scope.dialEditarFacturaCompra     = $modal({scope: $scope,template:'dial.editarFacturaCompra.html', show: false, backdrop: 'static'});
-	$scope.dialVerDetalleFacturaCompra = $modal({scope: $scope,template:'dial.verDetalleFacturaCompra.html', show: false, backdrop: 'static'});	
-	$scope.dialVerCierreDiario         = $modal({scope: $scope,template:'dial.verCierreDiario.html', show: false, backdrop: 'static'});	
-
-	
+	$scope.dialVerDetalleFacturaCompra = $modal({scope: $scope,template:'dial.verDetalleFacturaCompra.html', show: false, backdrop: 'static'});
+	$scope.dialVerCierreDiario         = $modal({scope: $scope,template:'dial.verCierreDiario.html', show: false, backdrop: 'static', keyboard: false});
 
 	$scope.dialAdministrarAbrir = function(){
 		$scope.dialAdministrar.show();
@@ -408,6 +406,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			}).success(function(data){
 				console.log( data );
 				$scope.fechaCierreP = data;
+				if( !$scope.fechaCierreP.encontrado )
+					alertify.notify( 'No se encontró el cierre', 'info', 5 );
 			})	
 		}
 	};
