@@ -422,7 +422,7 @@ class Producto
  			$idTipoProducto       = $validar->validarEntero( $data->idTipoProducto, NULL, TRUE, 'El ID del Tipo de Producto no es válido' );
  		endif;
 
-		$tipoProducto = $medida = $this->con->real_escape_string( $validar->validarTexto( $data->tipoProducto, NULL, TRUE, 3, 45, 'el Tipo Producto' ) );
+		$tipoProducto = $this->con->real_escape_string( $validar->validarTexto( $data->tipoProducto, NULL, TRUE, 3, 45, 'el Tipo Producto' ) );
 		
 		// OBTENER RESULTADO DE VALIDACIONES
  		if( $validar->getIsError() ):
@@ -483,7 +483,7 @@ class Producto
  			$idProducto       = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido, verifique.' );
  		endif;
 
-		$producto       = $medida = $this->con->real_escape_string( $validar->validarTexto( $data->producto, NULL, TRUE, 3, 45, 'el nombre del producto' ) );
+		$producto       = $this->con->real_escape_string( $validar->validarTexto( $data->producto, NULL, TRUE, 3, 45, 'el nombre del producto' ) );
 		$idTipoProducto = $validar->validarEntero( $data->idTipoProducto, NULL, TRUE, 'El ID del tipo de producto no es válido, verifique.' );
 		$idMedida       = $validar->validarEntero( $data->idMedida, NULL, TRUE, 'El ID del tipo de medida no es válido, verifique.' );
 		$cantidadMinima = $validar->validarCantidad( $data->cantidadMinima, NULL, TRUE, 1, 50000, 'la cantidad Minima' );

@@ -70,7 +70,7 @@ class Menu
 		 		$idMenu      = (int)$data->idMenu;
 		 		$idProducto  = (int)$data->idProducto;
 				$cantidad    = (double)$data->cantidad;
-				$observacion = strlen( $data->observacion )	? (string)$data->observacion 	: "NULL";
+				$observacion = strlen( $data->observacion )	? $this->con->real_escape_string( $data->observacion )	: "NULL";
 
 		 		$sql = "CALL consultaReceta( '{$accion}', {$idMenu}, {$idProducto}, {$cantidad}, '{$observacion}' );";
 			 		
@@ -124,7 +124,7 @@ class Menu
 
 	 		// VALIDACIONES
 			$cantidad    = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 2500, 'la cantidad' );
-			$observacion = $validar->validarTexto( $data->observacion, NULL, !esNulo( $data->observacion ), 15, 1500, 'la observación' );
+			$observacion = $this->con->real_escape_string( $validar->validarTexto( $data->observacion, NULL, !esNulo( $data->observacion ), 15, 1500, 'la observación' ) );
  		}
 
  		// OBTENER RESULTADOS
@@ -376,13 +376,12 @@ class Menu
 	 			$idMenu       = $validar->validarEntero( $data->idMenu, NULL, TRUE, 'El ID del Menú no es válido' );
 	 		endif;
 
-			$menu          = $validar->validarTexto( $data->menu, NULL, TRUE, 3, 45, 'el nombre del menu' );
+			$menu          = $this->con->real_escape_string( $validar->validarTexto( $data->menu, NULL, TRUE, 3, 45, 'el nombre del menu' ) );
 			$codigo        = $validar->validarEntero( $data->codigo, NULL, TRUE, 'El código del Menu no es válido' );
-			$descripcion   = $validar->validarTexto( $data->descripcion, NULL, TRUE, 3, 1500, 'en la descripcion' );
+			$descripcion   = $this->con->real_escape_string( $validar->validarTexto( $data->descripcion, NULL, TRUE, 3, 1500, 'en la descripcion' ) );
 			$idEstadoMenu  = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado Menú no es válido' );
 			$idDestinoMenu = $validar->validarEntero( $data->idDestinoMenu, NULL, TRUE, 'El ID del tipo de medida no es válido	' );
 			$idTipoMenu    = $validar->validarEntero( $data->idTipoMenu, NULL, TRUE, 'El ID del tipo de menú no es válido' );
-
 
 			// OBTENER RESULTADO DE VALIDACIONES
 	 		if( $validar->getIsError() ):

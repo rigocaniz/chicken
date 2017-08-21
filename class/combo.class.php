@@ -60,7 +60,6 @@ class Combo
 
 		$inicio = ($pagina - 1) * $limite;
 
-
 		$sql = "SELECT 
 					    idCombo,
 					    combo,
@@ -434,9 +433,9 @@ class Combo
 	 			$idCombo       = $validar->validarEntero( $data->idCombo, NULL, TRUE, 'El ID del COMBO no es válido' );
 	 		endif;
 
-			$combo        = $medida = $this->con->real_escape_string( $validar->validarTexto( $data->combo, NULL, TRUE, 3, 45, 'el nombre del combo' ) );
+			$combo        = $this->con->real_escape_string( $validar->validarTexto( $data->combo, NULL, TRUE, 3, 45, 'el nombre del combo' ) );
 			$codigo       = $validar->validarEntero( $data->codigo, NULL, TRUE, 'El código del combo no es válido' );
-			$descripcion  = $medida = $this->con->real_escape_string( $validar->validarTexto( $data->descripcion, NULL, TRUE, 10, 1500, 'la descripcion' ) );
+			$descripcion  = $this->con->real_escape_string( $validar->validarTexto( $data->descripcion, NULL, TRUE, 10, 1500, 'la descripcion' ) );
 			$idEstadoMenu = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado combo no es válido' );
 
 
@@ -640,8 +639,8 @@ class Combo
  			$idSuperCombo       = $validar->validarEntero( $data->idSuperCombo, NULL, TRUE, 'El ID del Super Combo no es válido, verifique.' );
  		endif;
 
-		$superCombo   = $medida = $this->con->real_escape_string( $validar->validarTexto( $data->superCombo, NULL, TRUE, 3, 45, 'el nombre del Super Combo' ) );
-		$descripcion  = $medida = $this->con->real_escape_string( $validar->validarTexto( $data->descripcion, NULL, TRUE, 15, 45, 'la descripcion' ) );
+		$superCombo   = $this->con->real_escape_string( $validar->validarTexto( $data->superCombo, NULL, TRUE, 3, 45, 'el nombre del Super Combo' ) );
+		$descripcion  = $this->con->real_escape_string( $validar->validarTexto( $data->descripcion, NULL, TRUE, 15, 45, 'la descripcion' ) );
 		$idEstadoMenu = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado combo no es válido, verifique.' );
 
 

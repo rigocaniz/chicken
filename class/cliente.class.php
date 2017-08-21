@@ -43,11 +43,11 @@ class Cliente
 
  		// VALIDAR
 		$nit           = $validar->validarNit( $cliente->nit, NULL, !esNulo( $cliente->nit ) );
-		$nombre        = $medida = $this->con->real_escape_string( $validar->validarNombre( $cliente->nombre, NULL, !esNulo( $cliente->nombre ) ) );
+		$nombre        = $this->con->real_escape_string( $validar->validarNombre( $cliente->nombre, NULL, !esNulo( $cliente->nombre ) ) );
 		$cui           = $validar->validarCui( $cliente->cui, NULL, !esNulo( $cliente->cui ) );
-		$correo        = $medida = $this->con->real_escape_string( $validar->validarCorreo( $cliente->correo, NULL, !esNulo( $cliente->correo ) ) );
+		$correo        = $this->con->real_escape_string( $validar->validarCorreo( $cliente->correo, NULL, !esNulo( $cliente->correo ) ) );
 		$telefono      = $validar->validarTelefono( $cliente->telefono, NULL, !esNulo( $cliente->telefono ) );
-		$direccion     = $medida = $this->con->real_escape_string( $validar->validarDireccion( $cliente->direccion, NULL, !esNulo( $cliente->direccion ) ) );
+		$direccion     = $this->con->real_escape_string( $validar->validarDireccion( $cliente->direccion, NULL, !esNulo( $cliente->direccion ) ) );
 		$idTipoCliente = $validar->validarEntero( $cliente->idTipoCliente, NULL, TRUE );
 
  		if( $validar->getIsError() ):
