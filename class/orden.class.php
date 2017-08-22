@@ -718,6 +718,88 @@ class Orden
 		);
  	}
 
+ 	// CANCELAR ORDEN DE MANERA PARCIAL
+ 	public function cancelarOrdenParcial( $idOrdenCliente, $lstDetalle )
+ 	{
+
+		$count       = count( $lstDetalle );
+		$nCancelados = 0;
+
+ 		if ( $count AND $idOrdenCliente > 0 ):
+ 			$validar = new Validar();
+
+		 	$this->con->query( "START TRANSACTION" );
+
+			foreach ( $lstDetalle as $ix => $item ):
+
+				$item->idDetalleOrdenCombo = (int)$item->idDetalleOrdenCombo;
+				$item->idDetalleOrdenMenu  = (int)$item->idDetalleOrdenMenu;
+
+				if ( $item->idDetalleOrdenMenu > 0 )
+					$sql = "CALL consultaDetalleOrdenMenu( 'cancel', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, NULL, NULL, NULL, NULL );";
+				
+				else if ( $item->idDetalleOrdenCombo > 0 )
+					$sql = "CALL consultaDetalleOrdenCombo( 'cancel', {$item->idDetalleOrdenCombo}, NULL, NULL, NULL, NULL, NULL, NULL, NULL );";
+
+		 		if( $rs = $this->con->query( $sql ) ) {
+		 			@$this->con->next_result();
+		 			if( $row = $rs->fetch_object() ) {
+						$this->respuesta = $row->respuesta;
+						$this->mensaje   = $row->mensaje;
+		 			}
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la consulta.';
+		 			break;
+		 		}
+		 		
+		 		if ( $this->respuesta == 'success' )
+		 			$nCancelados++;
+
+		 		if ( $this->respuesta == 'danger' )
+		 			break;
+
+			endforeach;
+
+			// SI SE GUARDO CORRECTAMENTE
+			if ( $this->respuesta == 'success' OR $this->respuesta == 'warning' ) {
+
+		 		$this->con->query( "COMMIT" );
+				$this->respuesta = 'success';
+
+				if ( $count == $nCancelados )
+		 			$this->mensaje = 'Cancelado correctamente';
+
+				else
+		 			$this->mensaje = 'Se cancelaron ' . ( $count - $nCancelados ) . " de " . $count; 
+
+			 	$infoNode = (object)array(
+					'accion' => 'cancelarOrdenParcial',
+					'data'   => array(
+						'idOrdenCliente' => $idOrdenCliente,
+						'lstDetalle'     => $lstDetalle,
+				 	),
+				);
+			 	
+			 	// SI LA CLASE NO EXISTE SE LLAMA
+			 	if ( !class_exists( "Redis" ) )
+			 		include 'redis.class.php';
+
+			 	// ENVIA LOS DATOS POR MEDIO DE REDIS
+			 	$red = new Redis();
+				$red->messageRedis( $infoNode );
+			}
+			
+			// SI OCURRIO ALGUN ERROR
+		 	else
+		 		$this->con->query( "ROLLBACK" );
+
+ 		endif;
+
+ 		return $this->getRespuesta();
+ 	}
+
  	function getRespuesta()
  	{
  		return $respuesta = array( 

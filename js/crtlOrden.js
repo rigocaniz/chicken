@@ -467,6 +467,32 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		}
 	};
 
+	// => CANCELAR ORDEN PARCIAL
+	$scope.cancelarOrdenParcial = function ( idOrdenCliente, lstDetalle ) {
+		console.log( idOrdenCliente, lstDetalle );
+		if ( $scope.$parent.loading )
+			return false;
+
+		$scope.$parent.loading = true; // cargando...
+
+		// CONSULTA PRECIOS DEL MENU
+		$http.post('consultas.php', { 
+			opcion         : 'cancelarOrdenParcial',
+			idOrdenCliente : idOrdenCliente,
+			lstDetalle     : lstDetalle
+		})
+		.success(function (data) {
+			console.log( data );
+
+			$scope.$parent.loading = false; // cargando...
+
+			if ( data.mensaje != undefined ) {
+				alertify.set('notifier','position', 'top-right');
+				alertify.notify( data.mensaje, data.respuesta, 3 );
+			}
+		});
+	};
+
 	// => CAMBIAR SERVICIO DE ORDEN
 	$scope.cambiarServicio = function ( idOrdenCliente, lstDetalle, idTipoServicio ) {
 		console.log( idOrdenCliente, lstDetalle, idTipoServicio );

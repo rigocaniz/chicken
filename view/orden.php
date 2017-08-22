@@ -158,15 +158,15 @@
                                     </td>
                                     <td>{{item.subTotal | number:2}}</td>
                                     <td>
-                                        
+                                        <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarOrdenParcial( infoOrden.idOrdenCliente, item.lstDetalle )">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td></td><td></td><td>TOTAL</td>
                                     <td><b>Q. {{infoOrden.total | number:2}}</b></td>
-                                    <td>
-                                        
-                                    </td>
+                                    <td></td>
                                 </tr>
                             </tbody>
                         </table>
