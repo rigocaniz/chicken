@@ -92,10 +92,62 @@ class Usuario
 
 
 
-	function consultaUsuario()
-	{
+ 	// CONSULTA USUARIO => INSERT / UPDATE
+ 	function consultaUsuario( $accion, $data )
+ 	{
+		$validar = new Validar();
 
-	}
+		// INICIALIZACIÓN VAR
+		$usuario   = "NULL";
+		$codigo    = "NULL";
+		$nombres   = "NULL";
+		$apellidos = "NULL";
+		$idNivel   = "NULL";
+		$idPerfil  = "NULL";
+
+		// SETEO VARIABLES GENERALES
+ 		$data->idEstadoUsuario = isset( $data->idEstadoUsuario )	? (int)$data->idEstadoUsuario 	: NULL;
+ 		$data->idNivel         = isset( $data->idNivel )			? (int)$data->idNivel 			: NULL;
+ 		$data->idPerfil        = isset( $data->idPerfil )			? (int)$data->idPerfil 			: NULL;
+ 		$data->usuario         = isset( $data->usuario )			? (string)$data->usuario 		: NULL;
+ 		$data->codigo          = isset( $data->codigo )				? (int)$data->codigo 			: NULL;
+ 		$data->nombres         = isset( $data->nombres )			? (string)$data->nombres 		: NULL;
+ 		$data->apellidos       = isset( $data->apellidos )			? (string)$data->apellidos 		: NULL;
+
+
+ 		// VALIDACIONES
+		$idEstadoUsuario = $validar->validarEntero( $data->idEstadoUsuario, NULL, TRUE, 'El Estado del Usuario no es válido' );
+		$idNivel         = $validar->validarEntero( $data->idNivel, NULL, TRUE, 'El nivel del Usuario no es válido' );
+		$idPerfil        = $validar->validarEntero( $data->idPerfil, NULL, TRUE, 'El perfil no es válido' );
+		$usuario         = $this->con->real_escape_string( $validar->validarTexto( $data->usuario, NULL, TRUE, 8, 16, "USUARIO" ) );
+		$codigo          = $validar->validarEntero( $data->codigo, NULL, TRUE, 'El código del usuario no es válido' );
+		$nombres         = $this->con->real_escape_string( $validar->validarTexto( $data->nombres, NULL, TRUE, 3, 65, 'el nombre' ) );
+		$apellidos       = $this->con->real_escape_string( $validar->validarTexto( $data->apellidos, NULL, TRUE, 3, 65, 'los apellidos' ) );
+
+ 		// OBTENER RESULTADOS
+ 		if( $validar->getIsError() ):
+	 		$this->respuesta = 'danger';
+	 		$this->mensaje   = $validar->getMsj();
+	 		$this->tiempo    = $validar->getTiempo();
+
+ 		else:
+	 		$sql = "CALL consultaUsuario( '{$accion}', '{$usuario}', {$codigo}, '{$nombres}', '{$apellidos}', {$idEstadoUsuario}, {$idNivel}, {$idPerfil} );";
+
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+	 			$this->siguienteResultado();
+	 			
+ 				$this->respuesta = $row->respuesta;
+ 				$this->mensaje   = $row->mensaje;
+	 		}
+	 		else{
+	 			$this->respuesta = 'danger';
+	 			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
+	 		}
+	 		
+ 		endif;
+
+ 		return $this->getRespuesta();
+ 	}
 
 	
 	// RESETEAR CLAVE

@@ -82,7 +82,7 @@
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content" ng-class="{'panel-success': accion == 'insert', 'panel-info': accion == 'update'}">
 				<div class="modal-header panel-heading text-center">
-					<button type="button" class="close" ng-click="$hide()">&times;</button>
+					<button type="button" class="close" ng-click="resetValores( 'usuario' );$hide()">&times;</button>
 					<span class="glyphicon glyphicon-user"></span>
 					{{ accion == 'insert' ? 'AGREGAR' : 'ACTUALIZAR' }} USUARIO
 				</div>
@@ -100,7 +100,8 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<div class="col-sm-6">
+						{{ usuario | json }}
+							<div class="col-sm-5">
 								<label>SELECCIONE NIVEL</label>
 								<div>
 									<div class="btn-group btn-group-sm" role="group"	>
@@ -111,7 +112,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-sm-6">
+							<div class="col-sm-7">
 								<label>SELECCIONE PERFIL</label>
 								<div>
 									<div class="btn-group btn-group-sm" role="group"	>
@@ -128,7 +129,7 @@
 							<div class="col-sm-4">
 								<label>USUARIO</label>
 								<div>
-									<input type="text" class="form-control" ng-model="usuario.usuario" maxlength="15" placeholder="Usuario">	
+									<input type="text" class="form-control" ng-model="usuario.usuario" maxlength="15" placeholder="Usuario" ng-pattern="/^[a-zA-Z0-9]*$/" ng-trim="false">	
 								</div>
 							</div>
 							<div class="col-sm-4">
@@ -155,11 +156,10 @@
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-success" ng-click="consultaFactura( 'update' )">
+					<button type="button" class="btn btn-success" ng-click="consultaUsuario()" ng-disabled="loading">
 						<span class="glyphicon glyphicon-saved"></span> Guardar
 					</button>
-
-					<button type="button" class="btn btn-default" ng-click="facturaCompra={};$hide()">
+					<button type="button" class="btn btn-default" ng-click="resetValores( 'usuario' );$hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
 						<b>Salir</b>
 					</button>

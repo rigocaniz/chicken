@@ -212,6 +212,11 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** USUARIO
 	/////////////////////////
+	case 'consultaUsuario':		// CONSULTA ASOCIADO => INSERT / UPDATE
+		$usuario = new Usuario();
+		echo json_encode( $usuario->consultaUsuario( $data->accion, $data->data ) );
+		break;
+	
 	case 'resetearClave':		// RESETEAR CLAVE DEL USUARIO
 		$usuario = new Usuario();
 		echo json_encode( $usuario->resetearClave( $data->usuario ) );
