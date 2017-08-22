@@ -32,6 +32,12 @@
             </a>
         </div>
         <div class="col-md-2 col-sm-4">
+            <a href="#/evento" class="item-menu">
+                <img src="img/evento.png">
+                <span>Evento</span>
+            </a>
+        </div>
+        <div class="col-md-2 col-sm-4">
             <a href="#/cliente" class="item-menu">
                 <img src="img/cliente.png" alt="">
                 <span>Clientes</span>
