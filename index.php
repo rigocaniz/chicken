@@ -49,6 +49,9 @@
                 <a href="#/factura" onclick='$("#menu-close").click()'>Facturación</a>
             </li>
             <li>
+                <a href="#/evento" onclick='$("#menu-close").click()'>Evento</a>
+            </li>
+            <li>
                 <a href="#/cliente" onclick='$("#menu-close").click()'>Clientes</a>
             </li>
             <li>
@@ -137,6 +140,7 @@
     <script src="js/crtlReporte.js"></script>
     <script src="js/crtlMantenimiento.js"></script>
     <script src="js/crtlFactura.js"></script>
+    <script src="js/crtlEvento.js"></script>
     <script src="js/alertify.js"></script>
 
     <script>

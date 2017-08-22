@@ -1,4 +1,4 @@
-app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
+app.controller('crtlEvento', function( $scope, $http, $timeout, $modal ){
 	$scope.lstTipoServicio = [];
 	$scope.lstTipoMenu     = [];
 	$scope.lstMenu         = [];
@@ -22,12 +22,15 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 	// DIALOGOS
-	$scope.dialOrden            = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialOrden            = $modal({scope: $scope,template:'dial.nuevo.evento.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenCliente     = $modal({scope: $scope,template:'dial.orden.cliente.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenMenu        = $modal({scope: $scope,template:'dial.orden-menu.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialMenuCantidad     = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialOrdenBusqueda    = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialOrdenCancelar    = $modal({scope: $scope,template:'dial.orden.cancelar.html', show: false, backdrop:false, keyboard: true });
+
+	$timeout(function () {
+		$scope.dialOrden.show();
+	});
 
 	($scope.init = function () {
 		// CONSULTA TIPO DE SERVICIOS
@@ -118,14 +121,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				}
 			}
 		}
-	};
-
-	$scope.seleccionarDeBusqueda = function ( orden ) {
-		$scope.miIndex = -1;
-		$scope.dialOrdenBusqueda.hide();
-		$timeout(function () {
-			$scope.modalInfo( orden, true );
-		});
 	};
 
 	// SI ES SUBIR O BAJAR ORDEN

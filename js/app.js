@@ -70,8 +70,7 @@ var app = angular.module('restaurante',['ngRoute','mgcrea.ngStrap','angularUtils
 app.config(function($routeProvider) {
 	$routeProvider
 	.when('/',{
-		templateUrl:'view/inicio.php',
-		controller:'inicioCtrl'
+		templateUrl:'view/inicio.php'
 	})
 	.when('/cliente',{
 		templateUrl:'view/cliente.php',
@@ -92,6 +91,10 @@ app.config(function($routeProvider) {
     .when('/orden',{
         templateUrl:'view/orden.php',
         controller:'crtlOrden'
+    })
+    .when('/evento',{
+        templateUrl:'view/evento.php',
+        controller:'crtlEvento'
     })
     .when('/adminOrden',{
         templateUrl:'view/adminOrden.php',

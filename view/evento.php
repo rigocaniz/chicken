@@ -3,7 +3,8 @@
         <div class="col-sm-4 col-xs-5" style="margin-bottom:9px">
             <button type="button" class="btn btn-success" ng-click="nuevaOrden()">
                 <span class="glyphicon glyphicon-plus"></span>
-                <u>N</u>ueva Orden
+                <u>N</u>uevo Evento
+                <span class="glyphicon glyphicon-calendar"></span>
             </button>
         </div>
 		<div class="col-sm-offset-2 col-sm-5 col-xs-6">
@@ -178,81 +179,73 @@
 </div>
 
 <!-- NUEVA ORDEN -->
-<script type="text/ng-template" id="dial.orden.nueva.html">
-    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_nueva">
+<script type="text/ng-template" id="dial.nuevo.evento.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_nuevo_evento">
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-primary">
                 <div class="modal-header panel-heading">
                 	<button type="button" class="close" ng-click="$hide()">&times;</button>
-                	<span class="glyphicon glyphicon-plus"></span>
-                    Nueva Orden
+                	<span class="glyphicon glyphicon-calendar"></span>
+                    Nuevo Evento
                 </div>
                 <div class="modal-body">
                 	<div class="row">
-                		<div class="col-xs-5">
-                			<h4># Ticket</h4>
-                		</div>
-                		<div class="col-xs-7">
-							<div class="input-group">
-								<input type="number" class="form-control input-lg input-focus" ng-model="$parent.noTicket" id="noTicket">
-								<span class="input-group-btn">
-									<button class="btn btn-lg btn-info" type="button" ng-click="auxKeyTicket( 'supr', 0, 'noTicket' )">
-										<span class="glyphicon glyphicon-remove"></span>
-									</button>
-								</span>
-							</div>
-                		</div>
-                        <div class="col-xs-12 text-center" style="margin-top:4px">
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 7, 'noTicket' )">
-                                <u>7</u>
-                            </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 8, 'noTicket' )">
-                                <u>8</u>
-                            </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 9, 'noTicket' )">
-                                <u>9</u>
+                        <label class="col-xs-2">Evento</label>
+                        <div class="col-xs-8">
+                            <input type="text" class="form-control" ng-model="evento.evento" placeholder="Descripción de evento">
+                        </div>
+                   </div>
+                   <div class="row" style="margin-top:5px">
+                        <label class="col-xs-2">Cliente</label>
+                        <div class="col-xs-6">
+                            <input type="text" class="form-control" ng-model="cliente.nombre">
+                        </div>
+                        <div class="col-xs-4">
+                            <button type="button" class="btn btn-info">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                Modificar
                             </button>
                         </div>
-                        <div class="col-xs-12 text-center" style="margin-top:4px">
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 4, 'noTicket' )">
-                                <u>4</u>
-                            </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 5, 'noTicket' )">
-                                <u>5</u>
-                            </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 6, 'noTicket' )">
-                                <u>6</u>
-                            </button>
+                   </div>
+                   <div class="row" style="margin-top:5px">
+                        <label class="col-xs-2">Fecha Evento</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="form-control" ng-model="evento.fechaEvento" data-date-format="dd/MM/yyyy" data-autoclose="1" bs-datepicker>
                         </div>
-                        <div class="col-xs-12 text-center" style="margin-top:4px">
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 1, 'noTicket' )">
-                                <u>1</u>
-                            </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 2, 'noTicket' )">
-                                <u>2</u>
-                            </button>
-                            <button class="btn btn-lg btn-default" style="margin-bottom:4px" ng-click="auxKeyTicket( 'number', 3, 'noTicket' )">
-                                <u>3</u>
-                            </button>
+                        <label class="col-xs-1">De</label>
+                        <div class="col-xs-2">
+                            <input type="text" class="form-control" ng-model="evento.horaInicio" bs-timepicker data-time-format="hh:mm a" data-time-type="string">
                         </div>
-                        <div class="col-xs-12 text-center" style="margin-top:4px">
-                            <button class="btn btn-lg btn-default" style="padding:10px 36px" ng-click="auxKeyTicket( 'number', 0, 'noTicket' )">
-                                <u>0</u>
-                            </button>
-                            <button class="btn btn-lg btn-danger" style="margin-bottom:4px" ng-click="auxKeyTicket( 'back', 0, 'noTicket' )">
-                                <span class="glyphicon glyphicon-arrow-left"></span>
-                            </button>
-                		</div>
+                        <label class="col-xs-1">Para</label>
+                        <div class="col-xs-2">
+                            <input type="text" class="form-control" ng-model="evento.horaFinal" bs-timepicker data-time-format="hh:mm a" data-time-type="string">
+                        </div>
+                   </div>
+                   <div class="row" style="margin-top:5px">
+                        <label class="col-xs-2">Anticipo</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="form-control" ng-model="evento.anticipo">
+                        </div>
+                        <label class="col-xs-2">Cantidad Personas</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="form-control" ng-model="evento.numeroPersonas">
+                        </div>
+                   </div>
+                   <div class="row">
+                        <label class="col-xs-2">Observación</label>
+                        <div class="col-xs-6">
+                            <textarea rows="3" class="form-control" ng-model="evento.observacion"></textarea>
+                        </div>
                    </div>
                 </div>
                 <div class="modal-footer">
-                	<button type="button" class="btn btn-success" ng-click="agregarOrden()">
+                	<button type="button" class="btn btn-success" ng-click="guardarEvento()">
                         <span class="glyphicon glyphicon-plus-sign"></span>
-                        <b>Agregar Ticket</b>
+                        <b>Guardar Evento</b>
                     </button>
                     <button type="button" class="btn btn-default" ng-click="$hide()">
                         <span class="glyphicon glyphicon-log-out"></span>
-                        <b><u>S</u>alir</b>
+                        <b>Salir</b>
                     </button>
                 </div>
             </div>
@@ -461,54 +454,6 @@
         </div>
     </div>
 </script>
-
-<!-- *********** BUSQUEDA DE ORDEN ********* -->
-<script type="text/ng-template" id="dial.orden-busqueda.html">
-    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_busqueda">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content panel-info">
-                <div class="modal-header panel-heading">
-                	<span class="glyphicon glyphicon-search"></span>
-                    Buscar Orden
-                </div>
-                <div class="modal-body">
-                	<div class="row">
-                		<div class="col-xs-12">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th># Orden</th>
-                                            <th>Ticket</th>
-                                            <th>Responsable</th>
-                                            <th>Estado Orden</th>
-                                            <th>Lapso</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr ng-repeat="item in lstTicketBusqueda track by $index" ng-click="seleccionarDeBusqueda( item )">
-                                            <td>{{item.idOrdenCliente}}</td>
-                                            <td>{{item.numeroTicket}}</td>
-                                            <td>{{item.usuarioResponsable}}</td>
-                                            <td>{{item.estadoOrden}}</td>
-                                            <td>{{ tiempoTranscurrido( item.fechaRegistro ) }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                		</div>
-                	</div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" ng-click="$hide();">
-                        <span class="glyphicon glyphicon-chevron-left"></span>
-                        <b>Salir</b>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</script> 
 
 
 
