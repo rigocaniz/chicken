@@ -431,7 +431,8 @@ switch ( $data->opcion )
 
 	case 'lstDetalleOrdenCliente':
 		$orden = new Orden();
-		echo json_encode( $orden->lstDetalleOrdenCliente( $data->idOrdenCliente ) );
+		$todo  = isset( $data->todo ) ? $data->todo : false ;
+		echo json_encode( $orden->lstDetalleOrdenCliente( $data->idOrdenCliente, $todo ) );
 		break;
 
 	case 'menuPorCodigo':
