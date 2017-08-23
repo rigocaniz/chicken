@@ -82,13 +82,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	{
 		$scope.groupBy = 'sinFiltro';
 		$scope.realizarReajuste = true;
-		//$scope.lstProductosInventario();
-		/*
-		for (var i = 0; i < $scope.lstInventario[ 0 ].lstProductos.length; i++) {
-			$scope.lstInventario[ 0 ].lstProductos[ i ].reajusteMasivo = true;
-		}
-		*/
-		
 	};
 
 	$scope.cancelarReajuste = function()
@@ -100,6 +93,71 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				$scope.lstProductosInventario();
 			}
             , function(){});
+
+	};
+
+	// GUARDAR REAJUSTE MASIVO
+	$scope.guardarReajusteMasivo = function(){
+		var invProductos = $scope.lstInventario[ 0 ].lstProductos, error = false;
+
+		if( !( invProductos.length ) ){
+			error = true;
+			alertify.notify( 'No se tiene productos en la lista', 'danger', 4 );
+		}
+		else{
+			for (var i = 0; i < invProductos.length; i++) {
+				console.log( invProductos[ i ].cantidad );
+				if( invProductos[ i ].cantidad == undefined ){
+					error = true;
+					alertify.notify( 'La cantidad ingresada en '+ invProductos[ i ].producto  +' no es válida', 'danger', 5 );	
+					break;
+				}
+				else{
+					if( invProductos[ i ].esIncremento )
+					{
+						if( ( invProductos[ i ].disponibilidad + invProductos[ i ].cantidad ) < 0 )
+						{
+							error = true;
+							alertify.notify( 'La nueva disponibilidad no puede ser negativa en '+ invProductos[ i ].producto, 'danger', 5 );	
+							break;
+						}
+					}
+					else{
+						if( ( invProductos[ i ].disponibilidad - invProductos[ i ].cantidad ) < 0 )
+						{
+							error = true;
+							alertify.notify( 'La nueva disponibilidad no puede ser negativa en '+ invProductos[ i ].producto, 'danger', 5 );	
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		if( !error )
+		{
+			$scope.$parent.showLoading( 'Guardando...' );
+
+			$http.post('consultas.php',{
+				opcion : 'consultaFactura',
+				accion : 'insert',
+				data   : $scope.
+			})
+			.success(function(data){
+				console.log( data );
+				alertify.set('notifier','position', 'top-right');
+				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+				if( data.respuesta == 'success' )
+				{
+					$scope.realizarReajuste = false;
+					$scope.groupBy = 'sinFiltro';
+					$scope.lstProductosInventario();	
+				}
+
+				$scope.$parent.hideLoading();
+			});
+
+		}
 
 	};
 
@@ -116,7 +174,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 		$scope.getListaProductos();
 		$scope.dialCierreDiario.show();
-	};	
+	};
 
 
 	$scope.consultaCierreDiario = function(){
