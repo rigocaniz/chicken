@@ -65,10 +65,10 @@
 									<button type="button" class="btn btn-default" ng-click="groupBy='sinFiltro'">
 								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='sinFiltro', 'glyphicon-unchecked': groupBy!='sinFiltro'}"></span> Sin Filtro
 								  	</button>
-								  	<button type="button" class="btn btn-default" ng-click="groupBy='tipoProducto'">
+								  	<button type="button" class="btn btn-default" ng-click="groupBy='tipoProducto'" ng-disabled="realizarReajuste">
 								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='tipoProducto', 'glyphicon-unchecked': groupBy!='tipoProducto'}"></span> Tipo de Producto
 								  	</button>
-								  	<button type="button" class="btn btn-default" ng-click="groupBy='medida'">
+								  	<button type="button" class="btn btn-default" ng-click="groupBy='medida'" ng-disabled="realizarReajuste">
 								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='medida', 'glyphicon-unchecked': groupBy!='medida'}"></span> Medidas
 								  	</button>
 								</div>
@@ -78,7 +78,7 @@
 									<span class="glyphicon glyphicon-list-alt"></span> REALIZAR CIERRE
 								</button>
 								<button class="btn btn-warning" ng-click="realizarReajusteMasivo()">
-									<span class="glyphicon glyphicon-list-alt"></span> REAJUSTE MASIVO
+									<span class="glyphicon glyphicon-edit"></span> REAJUSTE MASIVO
 								</button>
 							</div>
 							<br>
@@ -125,20 +125,20 @@
 													<th class="text-center">No.</th>
 													<th class="col-sm-3 text-center">Producto</th>
 													<th class="col-sm-2 text-center">Tipo Producto</th>
-													<th class="col-sm-1 text-center">Medida</th>
 													<th class="col-sm-1 text-center">Perecedero</th>
 													<th class="text-center">Mínimo</th>
 													<th class="text-center">Máximo</th>
 													<th class="col-sm-2 text-center">Disponible</th>
-													<th class="col-sm-2 text-center">Cantidad</th>
-													<th class="col-sm-2 text-center">Nueva Disponibilidad</th>
-													<th class="col-sm-1 text-center">Accion</th>
-													<th class="text-center" ng-hide="realizarReajuste">Reajustar Cantidad</th>
-													<th class="text-center" ng-hide="realizarReajuste">Editar</th>
+													<th class="col-sm-2 text-center" ng-show="realizarReajuste">Cantidad</th>
+													<th class="col-sm-1 text-center" ng-show="realizarReajuste"></th>
+													<th class="col-sm-2 text-center" ng-show="realizarReajuste">Nueva Disponibilidad</th>
+													<th class="text-center" ng-show="!realizarReajuste">Reajustar Cantidad</th>
+													<th class="col-sm-1 text-center">Medida</th>
+													<th class="text-center" ng-show="!realizarReajuste">Editar</th>
 												</tr>
 											</thead>
 											<tbody>
-												<tr ng-repeat="inv in inventario.lstProductos" ng-class="{'danger border-danger': inv.alertaStock == 1 && !inv.reajusteMasivo, 'warning border-warning':  inv.alertaStock == 2 && !inv.reajusteMasivo, 'border-success':  inv.alertaStock == 3 && !inv.reajusteMasivo}">
+												<tr ng-repeat="inv in inventario.lstProductos" ng-class="{'danger border-danger': inv.alertaStock == 1 && !realizarReajuste, 'warning border-warning':  inv.alertaStock == 2 && !realizarReajuste, 'border-success':  inv.alertaStock == 3 && !realizarReajuste}">
 													<td class="text-right">
 														{{ $index + 1 }}
 													</td>
@@ -153,9 +153,6 @@
 														{{ inv.tipoProducto }}
 													</td>
 													<td class="text-center">
-														{{ inv.medida }}
-													</td>
-													<td class="text-center">
 														{{ inv.esPerecedero }}
 													</td>
 													<td class="text-center">
@@ -167,16 +164,19 @@
 													<td class="text-center">
 														{{ inv.disponibilidad }}
 													</td>
-													<td class="text-center" ng-show="inv.reajusteMasivo">
+													<td class="text-center" ng-show="realizarReajuste">
 														<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.cantidad">
 													</td>
-													<td class="text-center" ng-class="{'danger': retornarTotalReajuste( inv.disponibilidad, inv.cantidad, inv.esIncremento ) < 0}">
-														{{ retornarTotalReajuste( inv.disponibilidad, inv.cantidad, inv.esIncremento ) }}
-													</td>
-													<td class="text-center">
-														<button class="btn btn-sm" ng-class="{'btn-success': inv.esIncremento, 'btn-danger': !inv.esIncremento}" ng-click="inv.esIncremento=!inv.esIncremento">
+													<td class="text-center" ng-show="realizarReajuste">
+														<button class="btn btn-xs" ng-class="{'btn-success': inv.esIncremento, 'btn-danger': !inv.esIncremento}" ng-click="inv.esIncremento=!inv.esIncremento" title="Clic para {{ inv.esIncremento ? 'DISMINUIR' : 'INCREMENTAR' }}" data-toggle="tooltip" data-placement="top" tooltip>
 															<span class="glyphicon" ng-class="{'glyphicon-plus-sign': inv.esIncremento, 'glyphicon-minus-sign': !inv.esIncremento}"></span>
 														</button>
+													</td>
+													<td class="text-center" ng-class="{'danger': retornarTotalReajuste( inv.disponibilidad, inv.cantidad, inv.esIncremento ) < 0}" ng-show="realizarReajuste">
+														<b>{{ retornarTotalReajuste( inv.disponibilidad, inv.cantidad, inv.esIncremento ) }}</b>
+													</td>
+													<td class="text-center">
+														{{ inv.medida }}
 													</td>
 													<td class="text-center" ng-hide="realizarReajuste">
 														<button type="button" ng-click="ingresarReajuste( inv.idProducto, inv.producto, inv.disponibilidad )" class="btn btn-primary btn-sm">
@@ -193,6 +193,14 @@
 										</table>
 									</div>
 								</div>
+							</div>
+							<div class="text-center" ng-show="realizarReajuste">
+								<button type="button" class="btn btn-success" ng-click="guardarReajusteMasivo()">
+									<span class="glyphicon glyphicon-saved"></span> REALIZAR REAJUSTE
+								</button>
+								<button type="button" class="btn btn-danger" ng-click="cancelarReajuste()">
+									<span class="glyphicon glyphicon-remove"></span> CANCELAR
+								</button>
 							</div>
 						</div>
 					</div>

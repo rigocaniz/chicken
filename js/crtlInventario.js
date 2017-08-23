@@ -83,10 +83,24 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		$scope.groupBy = 'sinFiltro';
 		$scope.realizarReajuste = true;
 		//$scope.lstProductosInventario();
+		/*
 		for (var i = 0; i < $scope.lstInventario[ 0 ].lstProductos.length; i++) {
 			$scope.lstInventario[ 0 ].lstProductos[ i ].reajusteMasivo = true;
 		}
+		*/
 		
+	};
+
+	$scope.cancelarReajuste = function()
+	{
+		alertify.confirm('CONFIRMAR CANCELACIÓN', 'Esta seguro(a) de cancelar el reajuste másivo de los productos?', 
+			function(){
+				$scope.realizarReajuste = false;
+				$scope.groupBy = 'sinFiltro';
+				$scope.lstProductosInventario();
+			}
+            , function(){});
+
 	};
 
 	$scope.realizarCierre = function(){

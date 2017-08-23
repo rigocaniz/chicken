@@ -866,7 +866,6 @@ class Producto
 					 	'usuarioProducto' => $row->usuarioProducto,
 					 	'fechaProducto'   => $row->fechaProducto,
 					 	'alertaStock'	  => $alertaStock,
-					 	'reajusteMasivo'  => FALSE,
 					 	'esIncremento'    => TRUE,
 					);
 
