@@ -2,7 +2,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 	// LISTA EL INVENTARIO GENERAL DE PRODUCTOS
 	$scope.lstInventario  = [];
-	$scope.inventarioMenu = 'compras';
+	$scope.inventarioMenu = 'inventario';
 	$scope.accion         = 'insert';
 	$scope.groupBy        = 'sinFiltro';
 
@@ -67,12 +67,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		lstProductos    : []
 	};
 	
-	$scope.cierreDiario = {
-		idCierreDiario : null,
-		fechaCierre    : null,
-		comentario     : '',
-		lstProductos   : []
-	};
+	$scope.cierreDiario = {};
 
 	$scope.getListaProductos = function(){
 		$http.post('consultas.php',{
@@ -90,6 +85,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			cierreTodos    : true,
 			idCierreDiario : null,
 			fechaCierre    : angular.copy( $scope.fechaActual ),
+			actualizarDisp : true,
 			comentario     : '',
 			lstProductos   : []
 		};

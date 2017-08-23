@@ -21,7 +21,6 @@ $sql = "CALL definirSesion( '{$sesion->getUsuario()}' );";
 $conexion->query( $sql );
 
 $datos = array();
-
 //sleep( 1 );
 
 switch ( $data->opcion )
@@ -29,7 +28,6 @@ switch ( $data->opcion )
 	case 'timeNow':
 		$datos[ 'fechaActual' ] = DATE( 'Y-m-d' );
 		$datos[ 'timeNow' ]     = date("Y-m-d H:i:s");
-		//echo json_encode( array( 'timeNow' => date("Y-m-d H:i:s") ) );
 		echo json_encode( $datos );
 		break;
 

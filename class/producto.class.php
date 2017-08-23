@@ -38,7 +38,8 @@ class Producto
 				     DATE_FORMAT(fechaCierre, '%d/%m/%Y' ) AS fechaCierre,
 				    comentario,
 				    usuario,
-				    DATE_FORMAT(fechaRegistroCierre, '%d/%m/%Y %h:%i %p') AS fechaHora
+				    DATE_FORMAT(fechaRegistroCierre, '%d/%m/%Y %h:%i %p') AS fechaHora,
+				    todos
 				FROM
 				    vCierreDiario
 				WHERE
@@ -53,7 +54,8 @@ class Producto
 					'comentario'     => $row->comentario,
 					'usuario'        => $row->usuario,
 					'fechaHora'      => $row->fechaHora,
-					'lstProductos'   => $this->cargarCierreDiarioProd( $row->idCierreDiario )
+					'lstProductos'   => $this->cargarCierreDiarioProd( $row->idCierreDiario ),
+					'todos'          => (int)$row->todos ? TRUE : FALSE
  				);
  		}
 
@@ -136,7 +138,7 @@ class Producto
 	//	CREATE PROCEDURE consultaCierreDiario( _action VARCHAR(20), _idCierreDiario INT, _fechaCierre DATE, _comentario TEXT )
 	function consultaCierreDiario( $accion, $data )
 	{
-
+		//var_dump( $data );
  		if( count( $data->lstProductos ) ){
 
 		 	$action         = "NULL";
@@ -154,9 +156,6 @@ class Producto
 		 		$idCierreDiario = $validar->validarEntero( $data->idCierreDiario, NULL, TRUE, 'El ID del Cierre Diario no es válido' );
 		 	}
 
-		 	$fechaCierre = $data->fechaCierre;
-		 	$comentario  = $this->con->real_escape_string( $data->comentario );
-
 		 	// OBTENER RESULTADO DE VALIDACIONES
 	 		if( $validar->getIsError() ):
 		 		$this->respuesta = 'danger';
@@ -164,10 +163,15 @@ class Producto
 
 	 		else:
 
+			 	$fechaCierre    = $data->fechaCierre;
+			 	$comentario     = $this->con->real_escape_string( $data->comentario );
+			 	$actualizarDisp = (int)$data->actualizarDisp;
+			 	$todos          = (int)$data->cierreTodos;
+
 	 			// INICIALIZAR TRANSACCIÓN
 				$this->con->query( "START TRANSACTION" );
 
-				$sql = "CALL consultaCierreDiario( '{$accion}', {$idCierreDiario}, '{$fechaCierre}', '{$comentario}' );";
+				$sql = "CALL consultaCierreDiario( '{$accion}', {$idCierreDiario}, '{$fechaCierre}', '{$comentario}', {$todos} );";
 
 		 		if( $rs = $this->con->query( $sql ) ){
 		 			
@@ -182,7 +186,7 @@ class Producto
 
 		 					// REALIZAR CIERRA POR PRODUCTO
 		 					if( $this->respuesta <> 'danger' )
-		 						$this->consultaCierreDiarioProducto( $accion, $idCierreDiario, $data->lstProductos, $data->cierreTodos );
+		 						$this->consultaCierreDiarioProducto( $accion, $idCierreDiario, $data->lstProductos, $data->cierreTodos, $actualizarDisp );
 		 				}
 		 			}
 		 		}
@@ -210,7 +214,7 @@ class Producto
 
 
 	// consultaCierreDiarioProducto
-	function consultaCierreDiarioProducto( $accion, $idCierreDiario, $lstProductos, $cierreTodos = TRUE )
+	function consultaCierreDiarioProducto( $accion, $idCierreDiario, $lstProductos, $cierreTodos = TRUE, $actualizarDisponibilidad = FALSE )
 	{
 		if( count( $lstProductos ) ) {
 
@@ -225,7 +229,7 @@ class Producto
 				{
 					$idProducto               = (int)$producto->idProducto;
 					$cantidad                 = (double)$producto->disponibilidad;
-					$actualizarDisponibilidad = 1; # (int)$data->actualizarDisponibilidad;
+					$actualizarDisponibilidad = (int)$data->actualizarDisponibilidad;
 
 			 		// REALIZAR CONSULTA
 					$sql = "CALL consultaCierreDiarioProducto( '{$accion}', {$idCierreDiario}, {$idProducto}, {$cantidad}, {$actualizarDisponibilidad} );";
@@ -705,8 +709,7 @@ class Producto
 					 	'disponibilidad'           => (double)$row->disponibilidad,
 					 	'disponible'               => (double)$row->disponibilidad,
 					 	'esImportante'             => (int)$row->importante ? 'SI' : 'NO',
-					 	'importante'               => (int)$row->importante,
-					 	'actualizarDisponibilidad' => TRUE
+					 	'importante'               => (int)$row->importante
 					);
 
 				$lstProductos[] = $producto;
