@@ -171,7 +171,6 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     // DIFERENCIA DE TIEMPO RESPECTO AL SERVIDOR
     $http.post('consultas.php', { opcion : 'timeNow' })
     .success(function (data) {
-        console.log(data);
         $scope.fechaActual    = moment( data.fechaActual );
         $scope.difLocalServer = moment( new Date() ).diff( moment( data.timeNow ) );
     });
@@ -182,6 +181,14 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
         var para = moment( tiempo );
 
         return de.to( para );
+    };
+
+    // TIEMPO EN MINUTOS
+    $scope.difMinutos = function ( tiempo ) {
+        var de   = moment( new Date() ).add( $scope.difLocalServer );
+        var para = moment( tiempo );
+
+        return de.diff( para, 'minutes' );
     };
 
     $scope.formatoFecha = function function_name( fecha, formato ) {

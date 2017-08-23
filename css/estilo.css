@@ -692,3 +692,9 @@ legend.legend2{
     border-width:0 5px 5px;
     border-bottom-color:#000
 }
+
+tr.tr_alert{
+    border-left: solid 11px #d13131;
+}
+
+

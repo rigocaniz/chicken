@@ -433,6 +433,12 @@ switch ( $data->opcion )
 		echo json_encode( $orden->lstDetalleOrdenCliente( $data->idOrdenCliente, $todo ) );
 		break;
 
+	// LISTA DE ORDENES DETALL => POR DESTINO
+	case 'lstDetalleDestinos':
+		$orden = new Orden();
+		echo json_encode( $orden->lstDetalleDestinos( $data->idEstadoDetalleOrden, $data->idDestinoMenu ) );
+		break;
+
 	case 'menuPorCodigo':
 		$orden = new Orden();
 		echo json_encode( $orden->menuPorCodigo( $data->codigoRapido ) );

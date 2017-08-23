@@ -559,6 +559,56 @@ class Orden
  		);
  	}
 
+ 	public function lstDetalleDestinos( $idEstadoDetalleOrden, $idDestinoMenu, $usuarioResponsableDetalle = NULL, $limite = 30 )
+ 	{
+		$idEstadoDetalleOrden = (int)$idEstadoDetalleOrden;
+		$idDestinoMenu        = (int)$idDestinoMenu;
+		$where = $limit 	  = "";
+		$lst                  = array();
+
+		// SI ESTA DEFINIDO EL USUARIO RESPONSABLE
+		if ( isset( $usuarioResponsableDetalle ) AND strlen( $usuarioResponsableDetalle ) > 3 )
+			$where = " AND responsableDetalle = '$usuarioResponsableDetalle' ";
+
+		if ( $idEstadoDetalleOrden != 1 AND $limite > 0 )
+			$limit = " LIMIT  " . $limite;
+
+ 		$sql = "SELECT 
+					idDetalleOrdenMenu,
+				    idOrdenCliente,
+				    numeroTicket,
+					cantidad,
+					idMenu,
+					menu,
+					codigoMenu,
+					perteneceCombo,
+					imagen,
+					idTipoServicio,
+					tipoServicio,
+					idDetalleOrdenCombo,
+					idCombo,
+				    combo,
+					imagenCombo,
+				    idDestinoMenu,
+					destinoMenu,
+				    responsableDetalle,
+				    responsableOrden,
+				    fechaRegistro
+				FROM vOrdenes
+				WHERE idEstadoDetalleOrden = {$idEstadoDetalleOrden} AND idDestinoMenu = {$idDestinoMenu}
+					$where
+				ORDER BY idDetalleOrdenMenu ASC " . $limit;
+
+		if( $rs = $this->con->query( $sql ) ) {
+			while ( $row = $rs->fetch_object() ) {
+				$row->perteneceCombo = (bool)$row->perteneceCombo;
+				$lst[] = $row;
+			}
+		}
+
+		return $lst;
+ 	}
+
  	public function menuPorCodigo( $codigoRapido )
  	{
 		$datos        = (object)array( "menu" => NULL, "tipoMenu" => NULL );

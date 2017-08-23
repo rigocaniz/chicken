@@ -6,7 +6,15 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.idTipoServicio  = '';
 	$scope.idTipoMenu      = '';
 	$scope.accionOrden     = 'nuevo';
+
+	$scope.minutosAlerta = 20;
+
+
+	$scope.idDestinoMenu = 1;
 	$scope.idEstadoOrden   = 1;
+	$scope.tipoVista = 'ambos';
+
+
 
 	$scope.ordenActual = {
 		idOrdenCliente : 0,
@@ -21,6 +29,69 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 
+	$scope.lstMenusMaster = [];
+	// CONSULTA INFORMACION DE ORDENES
+	($scope.consultaOrden = function () {
+		$scope.lstMenusMaster = [];
+		$http.post('consultas.php', { 
+			opcion               : 'lstDetalleDestinos',
+			idEstadoDetalleOrden : $scope.idEstadoOrden,
+			idDestinoMenu        : $scope.idDestinoMenu
+		})
+		.success(function (data) {
+			console.log( data );
+			$scope.lstMenusMaster = data;
+			$timeout(function () {
+				$scope.lstPorMenu();
+			});
+		});
+	})();
+
+	$scope.lstMenus = [];
+	$scope.ixMenuActual = -1;
+	$scope.lstPorMenu = function () {
+		$scope.lstMenus = [];
+		for (var ip = 0; ip < $scope.lstMenusMaster.length; ip++) {
+			var ixMenu = -1;
+
+			for (var im = 0; im < $scope.lstMenus.length; im++) {
+				if ( $scope.lstMenus[ im ].idMenu == $scope.lstMenusMaster[ ip ].idMenu ) {
+					ixMenu = im;
+					break;
+				}
+			}
+
+			// SI NO EXISTE SE CREA DATOS DE MENU
+			if ( ixMenu == -1 ) {
+				ixMenu = $scope.lstMenus.length;
+				$scope.lstMenus.push({
+					idMenu       : $scope.lstMenusMaster[ ip ].idMenu,
+					codigoMenu   : $scope.lstMenusMaster[ ip ].codigoMenu,
+					menu         : $scope.lstMenusMaster[ ip ].menu,
+					imagen       : $scope.lstMenusMaster[ ip ].imagen,
+					numMenus     : 0,
+					primerTiempo : $scope.lstMenusMaster[ ip ].fechaRegistro,
+					detalle      : []
+				});
+			}
+			
+			$scope.lstMenus[ ixMenu ].detalle.push({
+				perteneceCombo      : $scope.lstMenusMaster[ ip ].perteneceCombo,
+				idDetalleOrdenMenu  : $scope.lstMenusMaster[ ip ].idDetalleOrdenMenu,
+				cantidad            : $scope.lstMenusMaster[ ip ].cantidad,
+				fechaRegistro       : $scope.lstMenusMaster[ ip ].fechaRegistro,
+				tipoServicio        : $scope.lstMenusMaster[ ip ].tipoServicio,
+				idTipoServicio      : $scope.lstMenusMaster[ ip ].idTipoServicio,
+				idCombo             : $scope.lstMenusMaster[ ip ].idCombo,
+				idDetalleOrdenCombo : $scope.lstMenusMaster[ ip ].idDetalleOrdenCombo,
+				imagenCombo         : $scope.lstMenusMaster[ ip ].imagenCombo
+			});
+
+			$scope.lstMenus[ ixMenu ].numMenus    += parseInt( $scope.lstMenusMaster[ ip ].cantidad );
+			//$scope.lstMenus[ ixMenu ].primerTiempo = $scope.lstMenusMaster[ ip ].fechaRegistro;
+		}
+		console.log( $scope.lstMenus );
+	};
 
 
 
@@ -61,60 +132,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 
 
-
-	// DIALOGOS
-	$scope.dialOrden = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false, keyboard: false });
-
-	($scope.init = function () {
-		// CONSULTA TIPO DE SERVICIOS
-		$http.post('consultas.php', { opcion:'catTiposServicio'})
-		.success(function (data) {
-			if ( data.length ) {
-				$scope.lstTipoServicio = data;
-				$scope.idTipoServicio  = data[ 0 ].idTipoServicio;
-			}
-		});
-
-		// CONSULTA TIPO DE MENU
-		$http.post('consultas.php', { opcion:'catTipoMenu'})
-		.success(function (data) {
-			if ( data.length ) {
-				$scope.lstTipoMenu = data;
-				$scope.idTipoMenu  = data[ 0 ].idTipoMenu;
-			}
-		});
-	})();
-
-
-	// CONSULTA ORDENES
-	$scope.lstOrdenCliente = [];
-	$scope.consultaOrdenCliente = function () {
-		if ( $scope.$parent.loading )
-			return false;
-
-		if ( $scope.idEstadoOrden > 0 ) {
-			$scope.lstOrdenCliente = [];
-			$scope.$parent.loading = true; // cargando...
-			// CONSULTA TIPO DE SERVICIOS
-			$http.post('consultas.php', { opcion : 'lstOrdenCliente', idEstadoOrden : $scope.idEstadoOrden })
-			.success(function (data) {
-				$scope.$parent.loading = false; // cargando...
-
-				if ( Array.isArray( data ) )
-					$scope.lstOrdenCliente = data;
-			});
-		}
-	};
-
-
-	// #1 => MUESTRA DIALOGO INGRESO DE TICKET
-	$scope.nuevaOrden = function () {
-		$scope.noTicket = '';
-		$scope.dialOrden.show();
-		$timeout(function () {
-			document.getElementById('noTicket').focus();
-		},100);
-	};
 
 	// #2 => CREA UNA NUEVA ORDEN
 	$scope.agregarOrden = function () {
@@ -252,107 +269,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		$scope.dialMenuCantidad.show();
 	};
 
-	// #4 => AGREGAR MENU Y CANTIDAD A ORDEN A AGREGAR
-	$scope.agregarAPedido = function () {
-		if ( !( $scope.menuActual.precio > 0 ) ) {
-			alertify.set('notifier','position', 'top-right');
-			alertify.notify('Menú no disponible para este Tipo de Servicio', 'danger', 4);
-		}
-		else if ( !( $scope.menuActual.cantidad > 0 ) ) {
-			alertify.set('notifier','position', 'top-right');
-			alertify.notify('La cantidad debe ser mayor a cero', 'danger', 4);
-		}
-		else if ( !( $scope.idTipoServicio > 0 ) ) {
-			alertify.set('notifier','position', 'top-right');
-			alertify.notify('Debe seleccionar un Tipo de Servicio', 'danger', 4);
-		}
-		else{
-			var tipoServicio = $scope.descripcion( 'lstTipoServicio', 'idTipoServicio', $scope.idTipoServicio, 'tipoServicio' );
-
-			var subTotal = parseFloat( $scope.menuActual.precio ) * $scope.menuActual.cantidad;
-			$scope.ordenActual.totalAgregar += subTotal;
-
-			var index = -1;
-			for (var i = 0; i < $scope.ordenActual.lstAgregar.length; i++) {
-				if ( $scope.ordenActual.lstAgregar[ i ].idMenu == $scope.menuActual.idMenu 
-					&& $scope.ordenActual.lstAgregar[ i ].idTipoServicio == $scope.idTipoServicio
-					&& $scope.ordenActual.lstAgregar[ i ].tipoMenu == $scope.tipoMenu 
-				) {
-					index = i;
-					break;
-				}
-			}
-
-			if ( index >= 0 ) {
-				$scope.ordenActual.lstAgregar[ index ].cantidad += $scope.menuActual.cantidad;
-			}
-			else{
-				$scope.ordenActual.lstAgregar.unshift({
-					idMenu         : $scope.menuActual.idMenu,
-					menu           : $scope.menuActual.menu,
-					cantidad       : $scope.menuActual.cantidad,
-					precio         : $scope.menuActual.precio,
-					tipoServicio   : tipoServicio,
-					idTipoServicio : $scope.idTipoServicio,
-					tipoMenu       : $scope.tipoMenu
-				});
-			}
-			$scope.dialOrdenCliente.show();
-			$scope.dialMenuCantidad.hide();
-		}
-	};
-
-	// #5 =>=>=>=>=>=> GUARDA DETALLE DE ORDEN DE CLIENTE <=<=<=<=<=<=<=<=<=<=
-	$scope.guardarOrden = function () {
-		if ( $scope.$parent.loading )
-			return false;
-		
-		// LISTA A AGREGAR
-		if ( $scope.ordenActual.lstAgregar.length ) {
-			var lstAgregar = [];
-
-			for (var i = 0; i < $scope.ordenActual.lstAgregar.length; i++) {
-				lstAgregar.push({
-					idMenu         : $scope.ordenActual.lstAgregar[ i ].idMenu,
-					cantidad       : $scope.ordenActual.lstAgregar[ i ].cantidad,
-					idTipoServicio : $scope.ordenActual.lstAgregar[ i ].idTipoServicio,
-					tipoMenu       : $scope.ordenActual.lstAgregar[ i ].tipoMenu
-				});
-			}
-
-			$scope.$parent.loading = true; // cargando...
-
-			// CONSULTA PRECIOS DEL MENU
-			$http.post('consultas.php', { 
-				opcion         : 'guardarDetalleOrden',
-				idOrdenCliente : $scope.ordenActual.idOrdenCliente,
-				lstAgregar     : lstAgregar
-			})
-			.success(function (data) {
-				console.log( data );
-
-				$scope.$parent.loading = false; // cargando...
-
-				if ( data.respuesta == 'success' ) {
-					alertify.set('notifier','position', 'top-right');
-					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
-					
-					$scope.dialOrdenCliente.hide();
-					$scope.ordenActual.lstAgregar = [];
-				}
-				else{
-					alertify.set('notifier','position', 'top-right');
-					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
-				}
-			});
-		}
-		// SI NO SE A AGREGADO NINGUNA ORDEN
-		else{
-			alertify.set('notifier','position', 'top-right');
-			alertify.notify('No agregado ningún menú', 'danger', 4);
-		}
-	};
-
 
 	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% DIALOGO PARA BUSQUEDA DE ORDEN %%%%%%%%%%%%%%%%%%%%%% */
 	$scope.modalBuscar = function () {
@@ -420,10 +336,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		}
 	};
 
-	// SI EL ESTADO DE ORDEN CAMBIA
-	$scope.$watch('idEstadoOrden', function (_new) {
-		$scope.consultaOrdenCliente();
-	});
 
 	// SI CAMBIA EL Tipo de Menú
 	$scope.$watch('idTipoMenu', function (_new) {
@@ -449,8 +361,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 		// SI NO EXISTE NINGUN DIALOGO ABIERTO
 		if ( !$scope.modalOpen() ) {
-			if ( key == 78 ) // {N}
-				$scope.nuevaOrden();
+			
 		}
 
 		// CUANDO ESTE ABIERTO ALGUN CUADRO DE DIALOGO
