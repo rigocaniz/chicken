@@ -458,10 +458,14 @@ class Orden
  	}
 
 
- 	public function lstDetalleOrdenCliente( $idOrdenCliente )
+ 	public function lstDetalleOrdenCliente( $idOrdenCliente, $todo = false )
  	{
 		$lst   = array();
 		$total = 0;
+		$where = "";
+
+		if ( !$todo )
+			$where = " AND idEstadoDetalleOrden != 10 ";
 
  		$sql = "SELECT 
 				    idDetalleOrdenMenu,
@@ -483,7 +487,7 @@ class Orden
 				FROM
 				    vOrdenes
 				WHERE
-				    idOrdenCliente = {$idOrdenCliente}
+				    idOrdenCliente = {$idOrdenCliente} $where
 				GROUP BY IF( perteneceCombo, idDetalleOrdenCombo, idDetalleOrdenMenu ), perteneceCombo;";
 		if( $rs = $this->con->query( $sql ) ) {
 			while ( $row = $rs->fetch_object() ) {

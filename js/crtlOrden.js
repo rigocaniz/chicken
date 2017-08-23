@@ -8,6 +8,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.idTipoMenu      = '';
 	$scope.accionOrden     = 'nuevo';
 	$scope.idEstadoOrden   = 1;
+	$scope.todoDetalle 	   = false;
 
 	$scope.ordenActual = {
 		idOrdenCliente : 0,
@@ -28,6 +29,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.dialMenuCantidad     = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenBusqueda    = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialOrdenCancelar    = $modal({scope: $scope,template:'dial.orden.cancelar.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialCancelarDetalle  = $modal({scope: $scope,template:'dial.orden.cancelar-parcial.html', show: false, backdrop:false, keyboard: true });
 
 	($scope.init = function () {
 		// CONSULTA TIPO DE SERVICIOS
@@ -469,7 +471,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 	// => CANCELAR ORDEN PARCIAL
 	$scope.cancelarOrdenParcial = function ( idOrdenCliente, lstDetalle ) {
-		console.log( idOrdenCliente, lstDetalle );
 		if ( $scope.$parent.loading )
 			return false;
 
@@ -489,6 +490,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			if ( data.mensaje != undefined ) {
 				alertify.set('notifier','position', 'top-right');
 				alertify.notify( data.mensaje, data.respuesta, 3 );
+
+				if ( data.respuesta == 'success' )
+					$scope.dialCancelarDetalle.hide();
 			}
 		});
 	};
@@ -550,7 +554,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 		$scope.$parent.loading = true;
 		$scope.infoOrden = orden;
-		$http.post('consultas.php', { opcion : 'lstDetalleOrdenCliente', idOrdenCliente : orden.idOrdenCliente })
+		$http.post('consultas.php', { opcion : 'lstDetalleOrdenCliente', idOrdenCliente : orden.idOrdenCliente, todo : $scope.todoDetalle })
 		.success(function (data) {
 			$scope.$parent.loading    = false;
 			if ( data.lst ) {
@@ -558,6 +562,14 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				$scope.infoOrden.total    = data.total;
 			}
 		});
+	};
+
+
+	$scope.itemDetalle = {};
+	// CANCELAR ORDEN
+	$scope.cancelarDetalle = function ( itemDetalle ) {
+		$scope.itemDetalle = itemDetalle;
+		$scope.dialCancelarDetalle.show();
 	};
 
 
@@ -594,6 +606,12 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 	// SI EL ESTADO DE ORDEN CAMBIA
 	$scope.$watch('idEstadoOrden', function (_new) {
+		if ( _new == 10 )
+			$scope.todoDetalle = true;
+		
+		else
+			$scope.todoDetalle = false;
+
 		$scope.consultaOrdenCliente();
 	});
 
@@ -822,9 +840,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 
-	/* 
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%% INFORMACION DE NODEJS %%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-	*/
+	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% INFORMACION DE NODEJS %%%%%%%%%%%%%%%%%%%%%%%%%%%%  */
 	$scope.$on('infoNode', function( event, datos ) {
 
 		switch ( datos.accion ) {
@@ -904,21 +920,62 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 					if ( index >= 0 )
 						$scope.lstOrdenCliente.splice( index, 1 );
 
-					console.log( $scope.miIndex );
-
 					$timeout(function () {
 						if ( $scope.lstOrdenCliente.length && $scope.miIndex == -1 )
 							$scope.miIndex = newIndex;
 					});
 				}
 			break;
+
+			case 'cancelarOrdenParcial':
+
+				console.log( datos.data.lstDetalle, $scope.infoOrden.lstOrden );
+				if ( datos.data && $scope.infoOrden.idOrdenCliente == datos.data.idOrdenCliente )
+				{
+
+					var lstEliminado = datos.data.lstDetalle;
+					var ixParent = -1, ixChildren = -1;
+
+					for (var ixo = 0; ixo < $scope.infoOrden.lstOrden.length; ixo++) 
+					{
+
+						for (var id = 0; id < $scope.infoOrden.lstOrden[ ixo ].lstDetalle.length; id++) 
+						{
+							var item = $scope.infoOrden.lstOrden[ ixo ].lstDetalle[ id ];
+
+							for (var i = 0; i < lstEliminado.length; i++) 
+							{
+								if ( ( item.idDetalleOrdenCombo > 0 && lstEliminado[ i ].idDetalleOrdenCombo == item.idDetalleOrdenCombo ) 
+									|| ( item.idDetalleOrdenMenu > 0 && lstEliminado[ i ].idDetalleOrdenMenu == item.idDetalleOrdenMenu ) ) 
+								{
+									ixParent   = ixo;
+									ixChildren = id;
+									break;
+								}
+							}
+						
+							if ( ixChildren >= 0 ) break;
+						}
+
+						if ( ixParent >= 0 ) break;
+					}
+					
+					// SI EXISTE EL ELEMENTO
+					if ( ixParent >= 0 ) {
+						var subTotal = $scope.infoOrden.lstOrden[ ixParent ].subTotal;
+						var cantidad = $scope.infoOrden.lstOrden[ ixParent ].cantidad;
+						$scope.infoOrden.lstOrden.splice( ixParent, 1 );
+						$scope.infoOrden.numMenu -= cantidad;
+						$scope.infoOrden.total   -= subTotal;
+					}
+				}
+
+			break;
 		}
 
 		$scope.$apply();
 	});
-	/* 
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%% INFORMACION DE NODEJS %%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-	*/
+	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% INFORMACION DE NODEJS %%%%%%%%%%%%%%%%%%%%%%%%%%%%   */
 
 	/* ++++++++++++++++++ UTIL ++++++++++++++++ */
 
