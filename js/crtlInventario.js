@@ -9,12 +9,12 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	$scope.$watch('inventarioMenu', function( _old, _new){
 		console.log( _old, _new );
 		if( $scope.inventarioMenu == 'inventario' )
-			$scope.inventario();
+			$scope.lstProductosInventario();
 	});
 
 	$scope.$watch('groupBy', function( _old, _new ){
 		if( _old != _new && $scope.inventarioMenu == 'inventario' )
-			$scope.inventario();
+			$scope.lstProductosInventario();
 	});
 
 
@@ -25,8 +25,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	$scope.dialEditarFacturaCompra     = $modal({scope: $scope,template:'dial.editarFacturaCompra.html', show: false, backdrop: 'static'});
 	$scope.dialVerDetalleFacturaCompra = $modal({scope: $scope,template:'dial.verDetalleFacturaCompra.html', show: false, backdrop: 'static'});	
 	$scope.dialVerCierreDiario         = $modal({scope: $scope,template:'dial.verCierreDiario.html', show: false, backdrop: 'static'});	
-
-	
 
 	$scope.dialAdministrarAbrir = function(){
 		$scope.dialAdministrar.show();
@@ -79,6 +77,18 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		})
 	};
 
+	$scope.realizarReajuste = false;
+	$scope.realizarReajusteMasivo = function()
+	{
+		$scope.groupBy = 'sinFiltro';
+		$scope.realizarReajuste = true;
+		//$scope.lstProductosInventario();
+		for (var i = 0; i < $scope.lstInventario[ 0 ].lstProductos.length; i++) {
+			$scope.lstInventario[ 0 ].lstProductos[ i ].reajusteMasivo = true;
+		}
+		
+	};
+
 	$scope.realizarCierre = function(){
 		$scope.accion == 'insert';
 		$scope.cierreDiario = {
@@ -120,7 +130,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				{
 					$scope.resetValores( 'cierreDiario' );
 					$scope.dialCierreDiario.hide();
-					$scope.inventario();
+					$scope.lstProductosInventario();
 				}
 
 				$scope.$parent.hideLoading();
@@ -582,7 +592,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 				if ( data.respuesta == "success" ) {
 					$scope.resetValores( 1 );
-					$scope.inventario();
+					$scope.lstProductosInventario();
 					$scope.dialAdministrarCerrar();
 				}
 
@@ -592,7 +602,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	};
 
 
-	$scope.inventario = function(){
+	$scope.lstProductosInventario = function(){
 		$http.post('consultas.php',{
 			opcion  : 'lstProductos',
 			groupBy : $scope.groupBy
@@ -709,18 +719,18 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	};
 
 
-	$scope.retornarTotal = function()
+	$scope.retornarTotalReajuste = function( disponibilidad, cantidad, esIncremento )
 	{
-		var itemProducto = $scope.itemProducto, total = 0;
+		var total = 0;
 
-		if( itemProducto.cantidad ){
-			if( itemProducto.esIncremento )
-				total = parseFloat( itemProducto.disponibilidad ) + parseFloat( itemProducto.cantidad );
+		if( cantidad ){
+			if( esIncremento )
+				total = parseFloat( disponibilidad ) + parseFloat( cantidad );
 			else
-				total = parseFloat( itemProducto.disponibilidad ) - parseFloat( itemProducto.cantidad );
+				total = parseFloat( disponibilidad ) - parseFloat( cantidad );
 
 		}else
-			total = itemProducto.disponibilidad;
+			total = disponibilidad;
 
 		return total;
 	};
@@ -745,7 +755,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
 				if ( data.respuesta == 'success' ) {
-					$scope.inventario();
+					$scope.lstProductosInventario();
 					$scope.resetValores( 2 );
 					$scope.dialIngreso.hide();
 				}

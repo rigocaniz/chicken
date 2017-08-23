@@ -77,6 +77,9 @@
 								<button class="btn btn-danger" ng-click="realizarCierre()">
 									<span class="glyphicon glyphicon-list-alt"></span> REALIZAR CIERRE
 								</button>
+								<button class="btn btn-warning" ng-click="realizarReajusteMasivo()">
+									<span class="glyphicon glyphicon-list-alt"></span> REAJUSTE MASIVO
+								</button>
 							</div>
 							<br>
 							<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -127,12 +130,15 @@
 													<th class="text-center">Mínimo</th>
 													<th class="text-center">Máximo</th>
 													<th class="col-sm-2 text-center">Disponible</th>
-													<th class="text-center">Reajustar Cantidad</th>
-													<th class="text-center">Editar</th>
+													<th class="col-sm-2 text-center">Cantidad</th>
+													<th class="col-sm-2 text-center">Nueva Disponibilidad</th>
+													<th class="col-sm-1 text-center">Accion</th>
+													<th class="text-center" ng-hide="realizarReajuste">Reajustar Cantidad</th>
+													<th class="text-center" ng-hide="realizarReajuste">Editar</th>
 												</tr>
 											</thead>
 											<tbody>
-												<tr ng-repeat="inv in inventario.lstProductos" ng-class="{'danger border-danger': inv.alertaStock == 1, 'warning border-warning':  inv.alertaStock == 2, 'border-success':  inv.alertaStock == 3}">
+												<tr ng-repeat="inv in inventario.lstProductos" ng-class="{'danger border-danger': inv.alertaStock == 1 && !inv.reajusteMasivo, 'warning border-warning':  inv.alertaStock == 2 && !inv.reajusteMasivo, 'border-success':  inv.alertaStock == 3 && !inv.reajusteMasivo}">
 													<td class="text-right">
 														{{ $index + 1 }}
 													</td>
@@ -161,12 +167,23 @@
 													<td class="text-center">
 														{{ inv.disponibilidad }}
 													</td>
+													<td class="text-center" ng-show="inv.reajusteMasivo">
+														<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.cantidad">
+													</td>
+													<td class="text-center" ng-class="{'danger': retornarTotalReajuste( inv.disponibilidad, inv.cantidad, inv.esIncremento ) < 0}">
+														{{ retornarTotalReajuste( inv.disponibilidad, inv.cantidad, inv.esIncremento ) }}
+													</td>
 													<td class="text-center">
+														<button class="btn btn-sm" ng-class="{'btn-success': inv.esIncremento, 'btn-danger': !inv.esIncremento}" ng-click="inv.esIncremento=!inv.esIncremento">
+															<span class="glyphicon" ng-class="{'glyphicon-plus-sign': inv.esIncremento, 'glyphicon-minus-sign': !inv.esIncremento}"></span>
+														</button>
+													</td>
+													<td class="text-center" ng-hide="realizarReajuste">
 														<button type="button" ng-click="ingresarReajuste( inv.idProducto, inv.producto, inv.disponibilidad )" class="btn btn-primary btn-sm">
 															<span class="glyphicon glyphicon-plus"></span>
 														</button>
 													</td>
-													<td class="text-center">
+													<td class="text-center" ng-hide="realizarReajuste">
 														<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( inv.idProducto, 'update', producto )">
 															<span class="glyphicon glyphicon-pencil"></span>
 														</button>
@@ -803,15 +820,15 @@
 										<kbd>{{ fechaCierreP.usuario | uppercase }}</kbd>
 									</div>
 								</div>
-								<div class="col-sm-4">
+								<div class="col-sm-3">
 									<label class="control-label">FECHA / HORA:</label>
 									<div>
 										<kbd>{{ fechaCierreP.fechaHora }}</kbd>
 									</div>
 								</div>
-								<div class="col-sm-2">
+								<div class="col-sm-3">
 									<label class="control-label">TIPO DE CIERRE:</label>
-									<div class="text-center">
+									<div>
 										<kbd>{{ fechaCierreP.todos ? 'TODOS LOS PRODUCTOS' : 'PRODUCTOS IMPORTANTES' }}</kbd>
 									</div>
 								</div>
@@ -829,18 +846,22 @@
 									<tr>
 										<th class="col-sm-1 text-center">No.</th>
 										<th class="col-sm-3 text-center">Producto</th>
+										<th class="col-sm-2 text-center">Tipo Producto</th>
 										<th class="col-sm-1 text-center">Perecedero</th>
 										<th class="col-sm-2 text-center">Cantidad</th>
 										<th class="col-sm-2 text-center">Medida</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="inv in fechaCierreP.lstProductos">
+									<tr ng-repeat="inv in fechaCierreP.lstProductos" ng-class="{'border-success':inv.importante}">
 										<td class="text-right">
 											{{ $index + 1 }}
 										</td>
 										<td>
 											{{ inv.producto }}
+										</td>
+										<td class="text-center">
+											{{ inv.tipoProducto }}
 										</td>
 										<td class="text-center">
 											{{ inv.perecedero ? 'SI' : 'NO' }}
@@ -1028,7 +1049,7 @@
 									</div>
 									<div class="col-sm-5">
 										<label class="control-label">Nueva Disponibilidad</label>
-										<input type="text" class="form-control" placeholder="Cantidad" value="{{ retornarTotal() }}" readonly>											  	
+										<input type="text" class="form-control" placeholder="Cantidad" value="{{ retornarTotalReajuste( itemProducto.disponibilidad, itemProducto.cantidad, itemProducto.esIncremento ) }}" readonly>											  	
 									</div>
 								</div>
 								<div class="form-group">

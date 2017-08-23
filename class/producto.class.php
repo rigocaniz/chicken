@@ -68,11 +68,26 @@ class Producto
  	{
  		$lstCierreDiarioProd = array();
 
- 		$sql = "SELECT * FROM vCierreDiarioProducto WHERE idCierreDiario = {$idCierreDiario};";
+ 		$sql = "SELECT 
+ 					idCierreDiario, 
+					fechaCierre, 
+					cantidadCierre, 
+					idProducto, 
+					producto, 
+					idMedida, 
+					medida, 
+					idTipoProducto, 
+					tipoProducto, 
+					perecedero, 
+					importante
+ 				FROM vCierreDiarioProducto 
+ 				WHERE idCierreDiario = {$idCierreDiario};";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() )
+ 			while( $row = $rs->fetch_object() ){
+ 				$row->importante = (int)$row->importante ? TRUE : FALSE;
  				$lstCierreDiarioProd[] = $row;
+ 			}
  		}
  		
  		return $lstCierreDiarioProd;
@@ -229,7 +244,7 @@ class Producto
 				{
 					$idProducto               = (int)$producto->idProducto;
 					$cantidad                 = (double)$producto->disponibilidad;
-					$actualizarDisponibilidad = (int)$data->actualizarDisponibilidad;
+					$actualizarDisponibilidad = (int)$actualizarDisponibilidad;
 
 			 		// REALIZAR CONSULTA
 					$sql = "CALL consultaCierreDiarioProducto( '{$accion}', {$idCierreDiario}, {$idProducto}, {$cantidad}, {$actualizarDisponibilidad} );";
@@ -685,19 +700,19 @@ class Producto
 		$lstProductos = array();
 
 		$sql = "SELECT 
-		    idProducto,
-		    producto,
-		    idMedida,
-		    medida,
-		    idTipoProducto,
-		    tipoProducto,
-		    perecedero,
-		    cantidadMinima,
-		    cantidadMaxima,
-		    disponibilidad,
-		    importante
-		FROM
-		    lstProducto";
+			    idProducto,
+			    producto,
+			    idMedida,
+			    medida,
+			    idTipoProducto,
+			    tipoProducto,
+			    perecedero,
+			    cantidadMinima,
+			    cantidadMaxima,
+			    disponibilidad,
+			    importante
+			FROM
+			    lstProducto";
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
@@ -745,10 +760,10 @@ class Producto
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
 
-				$iMedida        = -1;
-				$iTipoProducto  = -1;
+				$iMedida       = -1;
+				$iTipoProducto = -1;
 				$indexProducto = -1;
-				$iProducto      = -1;
+				$iProducto     = -1;
 
 				// VER TIPO DE AGRUPACIÓN
 				if( $groupBy == 'sinFiltro' ): 		// SIN FILTRO
@@ -845,11 +860,14 @@ class Producto
 					 	'cantidadMinima'  => (double)$row->cantidadMinima,
 					 	'cantidadMaxima'  => (double)$row->cantidadMaxima,
 					 	'disponibilidad'  => (double)$row->disponibilidad,
+					 	'cantidad'        => 0,
 					 	'importante'      => $row->importante,
 					 	'esImportante'    => (int)$row->importante ? 'SI' : 'NO',
 					 	'usuarioProducto' => $row->usuarioProducto,
 					 	'fechaProducto'   => $row->fechaProducto,
-					 	'alertaStock'	  => $alertaStock
+					 	'alertaStock'	  => $alertaStock,
+					 	'reajusteMasivo'  => FALSE,
+					 	'esIncremento'    => TRUE,
 					);
 
 				$lstProductos[ $ixSolicitud ][ 'lstProductos' ][] = $producto;
