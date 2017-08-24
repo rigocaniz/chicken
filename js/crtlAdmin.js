@@ -3,9 +3,14 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	$scope.adminMenu       = 'usuarios';
 	$scope.accion          = 'insert';
 
+	$scope.filtroUsuario   = 'activos';
+
 	$scope.dialAdminUsuario = $modal({scope: $scope,template:'dial.adminUsuario.html', show: false, backdrop: 'static', keyboard: false});
 	
-
+	$scope.$watch( 'filtroUsuario', function( _old, _new ){
+		if( ( _old != _new ) && $scope.adminMenu == 'usuarios' )
+			$scope.cargarLstUsuarios();
+	})
 	$scope.lstEstadoUsuario = [];
 	$scope.cargarLstEstadoUsuario = function(){
 		$http.post('consultas.php',{
@@ -38,7 +43,8 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 	$scope.cargarLstUsuarios = function(){
 		$http.post('consultas.php',{
-			opcion : 'cargarLstUsuarios'
+			opcion : 'cargarLstUsuarios',
+			filtro : $scope.filtroUsuario
 		}).success(function(data){
 			console.log( data );
 			$scope.lstUsuarios = data;

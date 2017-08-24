@@ -29,7 +29,25 @@
 					</button>
 
 					<div>
-						<table class="table table-striped">
+						<div class="text-right">
+							<strong>CONSULTAR</strong>
+							<div class="btn-group btn-group-sm" role="group" aria-label="...">
+							  	<button type="button" class="btn btn-default" ng-click="filtroUsuario='todos'">
+							  		<span class="glyphicon" ng-class="{'glyphicon-check': filtroUsuario=='todos', 'glyphicon-unchecked': filtroUsuario!='todos'}"></span> TODOS
+							  	</button>
+							  	<button type="button" class="btn btn-default" ng-click="filtroUsuario='activos'">
+							  		<span class="glyphicon" ng-class="{'glyphicon-check': filtroUsuario=='activos', 'glyphicon-unchecked': filtroUsuario!='activos'}"></span> Activos
+							  	</button>
+							  	<button type="button" class="btn btn-default" ng-click="filtroUsuario='bloqueados'">
+							  		<span class="glyphicon" ng-class="{'glyphicon-check': filtroUsuario=='bloqueados', 'glyphicon-unchecked': filtroUsuario!='bloqueados'}"></span> Bloqueados
+							  	</button>
+							  	<button type="button" class="btn btn-default" ng-click="filtroUsuario='deshabilitados'">
+							  		<span class="glyphicon" ng-class="{'glyphicon-check': filtroUsuario=='deshabilitados', 'glyphicon-unchecked': filtroUsuario!='deshabilitados'}"></span> Deshabilitados
+							  	</button>
+							</div>
+						</div>
+						<br>
+						<table class="table table-hover">
 							<thead>
 								<tr>
 									<th class="text-center col-sm-1">No.</th>
@@ -37,16 +55,18 @@
 									<th class="text-center col-sm-2">Apellidos</th>
 									<th class="text-center col-sm-2">Usuario</th>
 									<th class="text-center col-sm-2">Código</th>
+									<th class="text-center col-sm-2">Nivel</th>
 									<th class="text-center col-sm-2">Estado</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="usuario in lstUsuarios">
+								<tr ng-repeat="usuario in lstUsuarios" ng-class="{'border-success':usuario.idEstadoUsuario == 1, 'border-danger':usuario.idEstadoUsuario == 2, 'border-warning':usuario.idEstadoUsuario == 3}">
 									<td>{{ $index + 1 }}</td>
 									<td>{{ usuario.nombres }}</td>
 									<td>{{ usuario.apellidos }}</td>
 									<td class="text-center">{{ usuario.usuario }}</td>
 									<td class="text-center">{{ usuario.codigo }}</td>
+									<td class="text-center">{{ usuario.nivel }}</td>
 									<td class="text-center">{{ usuario.estadoUsuario }}</td>
 									<td class="text-center">
 										<div class="menu-contenedor">
@@ -76,7 +96,7 @@
 </div>
 
 
-<!-- DIALOGO LST FACTURAS COMPRAS -->
+<!-- DIALOGO ADMINISTRACIÓN USUARIO => INSERT / UPDATE -->
 <script type="text/ng-template" id="dial.adminUsuario.html">
 	<div class="modal" tabindex="-1" role="dialog">
 		<div class="modal-dialog modal-lg">
@@ -89,10 +109,10 @@
 				<div class="modal-body">
 					<form class="form-horizontal" novalidate autocomplete="off">
 						<div class="form-group">
-							<div class="col-sm-10">
-								<label>ESTADO DEL USUARIO</label>
+							<div class="col-sm-12 text-right">
+								<label>ESTADO</label>
 								<div class="btn-group btn-group-sm" role="group"	>
-								  	<button type="button" class="btn btn-default" ng-class="{'btn-success': usuario.idEstadoUsuario==1 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'btn-danger': usuario.idEstadoUsuario==2 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'btn-warning': usuario.idEstadoUsuario==3 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario}" ng-click="usuario.idEstadoUsuario = estadoUsuario.idEstadoUsuario" ng-repeat="estadoUsuario in lstEstadoUsuario" disabled>
+								  	<button type="button" class="btn btn-default" ng-class="{'btn-success': usuario.idEstadoUsuario==1 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'btn-danger': usuario.idEstadoUsuario==2 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'btn-warning': usuario.idEstadoUsuario==3 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario}" ng-repeat="estadoUsuario in lstEstadoUsuario" ng-show="usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario">
 								  		<span class="glyphicon" ng-class="{'glyphicon-check': usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'glyphicon-unchecked': usuario.idEstadoUsuario!=estadoUsuario.idEstadoUsuario}"></span>
 								  		{{ estadoUsuario.estadoUsuario }}
 								  	</button>

@@ -74,12 +74,20 @@ class Usuario
 
 
 	// OBTENER LISTA DE USUARIOS
-	function lstUsuarios()
+	function lstUsuarios( $filtro = 'activos' )
 	{
 
 		$lstUsuarios = array();
+		$where = "";
 
-		$sql = "SELECT * FROM usuario;";
+		if( $filtro == 'activos' )
+			$where .= "WHERE idEstadoUsuario = 1";
+		else if( $filtro == 'bloqueados' )
+			$where .= "WHERE idEstadoUsuario = 2";
+		else if( $filtro == 'deshabilitados' )
+			$where .= "WHERE idEstadoUsuario = 3";
+
+		$sql = "SELECT * FROM vUsuario $where ;";
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){

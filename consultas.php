@@ -222,7 +222,7 @@ switch ( $data->opcion )
 
 	case 'cargarLstUsuarios':	// CONSULTAR LST USUARIO
 		$usuario = new Usuario();
-		echo json_encode( $usuario->lstUsuarios() );
+		echo json_encode( $usuario->lstUsuarios( $data->filtro ) );
 		break;
 		
 	case 'lstEstadoUsuario':	// CONSULTA ESTADOS USUARIO
