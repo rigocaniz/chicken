@@ -725,9 +725,13 @@ tr.tr_alert{
     width: 100%;
     padding-bottom: 5px;
     padding-top: 5px;
-    border-radius: 7px 7px 7px 7px;
-    -moz-border-radius: 7px 7px 7px 7px;
-    -webkit-border-radius: 7px 7px 7px 7px;
+    border-radius: 7px 7px 0px 0px;
+    -moz-border-radius: 7px 7px 0px 0px;
+    -webkit-border-radius: 7px 7px 0px 0px;
+}
+
+.panel-menu.inactivo{
+    opacity: 0.75;
 }
 
 .panel-menu .header .btn{
@@ -772,8 +776,8 @@ tr.tr_alert{
     float: left;
     width: 100%;
     padding-bottom: 7px;
-    border-radius: 7px 7px 7px 7px;
-    -moz-border-radius: 7px 7px 7px 7px;
-    -webkit-border-radius: 7px 7px 7px 7px;
+    border-radius: 0px 0px 7px 7px;
+    -moz-border-radius: 0px 0px 7px 7px;
+    -webkit-border-radius: 0px 0px 7px 7px;
 }
 

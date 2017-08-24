@@ -40,7 +40,7 @@
 	<div class="row" style="margin-top:7px">
 		<!-- VISTA POR TICKET -->
 		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='menu'}" ng-hide="tipoVista=='ticket'">
-			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index">
+			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index" ng-class="{'inactivo':ixMenuActual!=$index}">
 				<div class="header">
 					<div class="col-xs-6">
 						<button type="button" class="btn" ng-click="$parent.ixMenuActual = ( seleccionMenu.si ? $parent.ixMenuActual : $index )"
