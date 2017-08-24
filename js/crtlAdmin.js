@@ -5,7 +5,8 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 	$scope.filtroUsuario   = 'activos';
 
-	$scope.dialAdminUsuario = $modal({scope: $scope,template:'dial.adminUsuario.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialAdminUsuario         = $modal({scope: $scope,template:'dial.adminUsuario.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialCambiarEstadoUsuario = $modal({scope: $scope,template:'dial.cambiarEstado.html', show: false, backdrop: 'static', keyboard: false});
 	
 	$scope.$watch( 'filtroUsuario', function( _old, _new ){
 		if( ( _old != _new ) && $scope.adminMenu == 'usuarios' )
@@ -19,6 +20,22 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			console.log( data );
 			$scope.lstEstadoUsuario = data;
 		});
+	};
+
+	$scope.actualizarEstadoUsuario = function(){
+		$http.post('consultas.php',{
+			opcion : 'actualizarEstadoUsuario',
+			data   : $scope.user
+		}).success(function(data){
+			console.log( data );
+			$scope.cargarLstEstadoUsuario();
+		});
+	};
+
+	$scope.user = {};
+	$scope.cambiarEstadoUsuario = function( usuario ){
+		$scope.user = angular.copy( usuario );
+		$scope.dialCambiarEstadoUsuario.show();
 	};
 
 	$scope.lstNiveles = [];
@@ -92,7 +109,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 		if( !(usuario.idNivel && usuario.idNivel > 0 ) )
 			alertify.notify( 'Seleccione el nivel del Usuario', 'warning', 4 );
-/*
+
 		else if( !(usuario.idPerfil && usuario.idPerfil > 0 ) )
 			alertify.notify( 'Seleccione el perfil del Usuario', 'warning', 4 );
 
@@ -107,7 +124,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 		else if( !(usuario.apellidos && usuario.apellidos.length >=2 ) )
 			alertify.notify( 'Los apellidos de la persona debe tener más de 1 caracter', 'warning', 5 );
-*/
+
 		else
 		{
 			$scope.$parent.showLoading( 'Guardando...' );

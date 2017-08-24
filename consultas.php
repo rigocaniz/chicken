@@ -210,21 +210,28 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** USUARIO
 	/////////////////////////
-	case 'consultaUsuario':		// CONSULTA ASOCIADO => INSERT / UPDATE
+	
+
+	case 'consultaUsuario':			// CONSULTA ASOCIADO => INSERT / UPDATE
 		$usuario = new Usuario();
 		echo json_encode( $usuario->consultaUsuario( $data->accion, $data->data ) );
 		break;
 	
-	case 'resetearClave':		// RESETEAR CLAVE DEL USUARIO
+	case 'resetearClave':			// RESETEAR CLAVE DEL USUARIO
 		$usuario = new Usuario();
 		echo json_encode( $usuario->resetearClave( $data->usuario ) );
 		break;
 
-	case 'cargarLstUsuarios':	// CONSULTAR LST USUARIO
+	case 'cargarLstUsuarios':		// CONSULTAR LST USUARIO
 		$usuario = new Usuario();
 		echo json_encode( $usuario->lstUsuarios( $data->filtro ) );
 		break;
-		
+
+	case 'actualizarEstadoUsuario':		// ACTUALIZAR ESTADO DEL USUARIO
+		$usuario = new Usuario();
+		echo json_encode( $usuario->actualizarEstadoUsuario( $data->data ) );
+		break;
+
 	case 'lstEstadoUsuario':	// CONSULTA ESTADOS USUARIO
 		$usuario = new Usuario();
 		echo json_encode( $usuario->lstEstadoUsuario() );

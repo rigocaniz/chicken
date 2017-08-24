@@ -47,45 +47,56 @@
 							</div>
 						</div>
 						<br>
-						<table class="table table-hover">
-							<thead>
-								<tr>
-									<th class="text-center col-sm-1">No.</th>
-									<th class="text-center col-sm-2">Nombres</th>
-									<th class="text-center col-sm-2">Apellidos</th>
-									<th class="text-center col-sm-2">Usuario</th>
-									<th class="text-center col-sm-2">Código</th>
-									<th class="text-center col-sm-2">Nivel</th>
-									<th class="text-center col-sm-2">Estado</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr ng-repeat="usuario in lstUsuarios" ng-class="{'border-success':usuario.idEstadoUsuario == 1, 'border-danger':usuario.idEstadoUsuario == 2, 'border-warning':usuario.idEstadoUsuario == 3}">
-									<td>{{ $index + 1 }}</td>
-									<td>{{ usuario.nombres }}</td>
-									<td>{{ usuario.apellidos }}</td>
-									<td class="text-center">{{ usuario.usuario }}</td>
-									<td class="text-center">{{ usuario.codigo }}</td>
-									<td class="text-center">{{ usuario.nivel }}</td>
-									<td class="text-center">{{ usuario.estadoUsuario }}</td>
-									<td class="text-center">
-										<div class="menu-contenedor">
-											<button type="button" class="btn btn-warning noBorde">
-												<span class="glyphicon glyphicon-th"></span>
-											</button>
-											<div class="menu-horizontal">
-												<button type="button" class="btn" ng-click="editarUsuario( usuario )" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
-													<span class="glyphicon glyphicon-pencil"></span>
-												</button>
-												<button type="button" class="btn" ng-click="resetearClave( usuario.usuario )" title="Resetear Clave" data-toggle="tooltip" data-placement="top" tooltip>
-													<span class="glyphicon glyphicon-lock"></span>
-												</button>
-											</div>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
+						<div class="panel panel-warning">
+							<div class="panel-heading">
+								<STRONG>LISTA DE USUARIOS</STRONG>
+							</div>
+							<div class="panel-body">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th class="text-center col-sm-1">No.</th>
+											<th class="text-center col-sm-2">Nombres</th>
+											<th class="text-center col-sm-2">Apellidos</th>
+											<th class="text-center col-sm-2">Usuario</th>
+											<th class="text-center col-sm-2">Código</th>
+											<th class="text-center col-sm-2">Nivel</th>
+											<th class="text-center col-sm-2">Estado</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="usuario in lstUsuarios" ng-class="{'border-success':usuario.idEstadoUsuario == 1, 'border-danger':usuario.idEstadoUsuario == 2, 'border-warning':usuario.idEstadoUsuario == 3}">
+											<td>{{ $index + 1 }}</td>
+											<td>{{ usuario.nombres }}</td>
+											<td>{{ usuario.apellidos }}</td>
+											<td class="text-center">{{ usuario.usuario }}</td>
+											<td class="text-center">{{ usuario.codigo }}</td>
+											<td class="text-center">{{ usuario.nivel }}</td>
+											<td class="text-center">{{ usuario.estadoUsuario }}</td>
+											<td class="text-center">
+												<div class="menu-contenedor">
+													<button type="button" class="btn btn-warning noBorde">
+														<span class="glyphicon glyphicon-th"></span>
+													</button>
+													<div class="menu-horizontal">
+														<button type="button" class="btn" ng-click="cambiarEstadoUsuario( usuario )" title="Cambiar Estado del Usuario" data-toggle="tooltip" data-placement="top" tooltip>
+															<span class="glyphicon glyphicon-flag"></span>
+														</button>
+														<button type="button" class="btn" ng-click="editarUsuario( usuario )" title="Editar Usuario" data-toggle="tooltip" data-placement="top" tooltip>
+															<span class="glyphicon glyphicon-pencil"></span>
+														</button>
+														<button type="button" class="btn" ng-click="resetearClave( usuario.usuario )" title="Resetear Clave" data-toggle="tooltip" data-placement="top" tooltip>
+															<span class="glyphicon glyphicon-lock"></span>
+														</button>
+													</div>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -94,6 +105,89 @@
 
 	</div>
 </div>
+
+
+<!-- DIALOGO CAMBIAR ESTADO USUARIO -->
+<script type="text/ng-template" id="dial.cambiarEstado.html">
+	<div class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content" ng-class="{'panel-success': user.idEstadoUsuario == 1, 'panel-danger': user.idEstadoUsuario == 2, 'panel-warning': user.idEstadoUsuario == 3}">
+				<div class="modal-header panel-heading text-center">
+					<button type="button" class="close" ng-click="resetValores( 'usuario' );$hide()">&times;</button>
+					<span class="glyphicon glyphicon-user"></span>
+					CAMBIAR ESTADO DEL USUARIO
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" novalidate autocomplete="off">
+						<div class="form-group">
+							<div class="col-sm-3">
+								<label>USUARIO</label>
+								<div>
+									{{ user.usuario }}
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<label>CODIGO</label>
+								<div>
+									{{ user.codigo }}
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<label>NIVEL</label>
+								<div>
+									{{ user.nivel }}
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<label>PERFIL</label>
+								<div>
+									{{ user.perfil }}
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-6">
+								<label>NOMBRES</label>
+								<div>
+									{{ user.nombres }}
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<label>APELLIDOS</label>
+								<div>
+									{{ user.apellidos }}
+								</div>
+							</div>
+						</div>
+						<br>
+						<div class="form-group">
+							<div class="col-sm-12 text-center">
+								<label>SELECCIONE EL ESTADO DEL USUARIO</label>
+								<br>
+								<div class="btn-group btn-group-sm" role="group">
+								  	<button type="button" class="btn btn-default" ng-class="{'btn-success': user.idEstadoUsuario==1 && user.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'btn-danger': user.idEstadoUsuario==2 && user.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'btn-warning': user.idEstadoUsuario==3 && user.idEstadoUsuario==estadoUsuario.idEstadoUsuario}" ng-repeat="estadoUsuario in lstEstadoUsuario" ng-click="user.idEstadoUsuario = estadoUsuario.idEstadoUsuario">
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': user.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'glyphicon-unchecked': user.idEstadoUsuario!=estadoUsuario.idEstadoUsuario}"></span>
+								  		{{ estadoUsuario.estadoUsuario | uppercase }}
+								  	</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" ng-click="actualizarEstadoUsuario()" ng-disabled="loading">
+						<span class="glyphicon glyphicon-saved"></span> Cambiar Estado
+					</button>
+					<button type="button" class="btn btn-default" ng-click="resetValores( 'usuario' );$hide()">
+						<span class="glyphicon glyphicon-log-out"></span>
+						<b>Salir</b>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+
 
 
 <!-- DIALOGO ADMINISTRACIÓN USUARIO => INSERT / UPDATE -->

@@ -598,12 +598,11 @@ class Combo
  		else:
 	 		$sql = "CALL consultaComboDetalle( '{$accion}', {$idCombo}, {$idMenu}, {$cantidad} );";
 
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
-	 			if( $row = $rs->fetch_object() ){
-	 				$this->respuesta = $row->respuesta;
-	 				$this->mensaje   = $row->mensaje;
-	 			}
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+	 			$this->siguienteResultado();
+ 				
+ 				$this->respuesta = $row->respuesta;
+ 				$this->mensaje   = $row->mensaje;
 	 		}
 	 		else{
 	 			$this->respuesta = 'danger';
@@ -652,14 +651,15 @@ class Combo
  		else:
 	 		$sql = "CALL consultaSuperCombo( '{$accion}', {$idSuperCombo}, '{$superCombo}', {$imagen}, '{$descripcion}', {$idEstadoMenu} );";
 
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
-	 			if( $row = $rs->fetch_object() ){
-	 				$this->respuesta = $row->respuesta;
-	 				$this->mensaje   = $row->mensaje;
-	 				if( $accion == 'insert' AND $this->respuesta == 'success' )
-	 					$this->data = (int)$row->id;
-	 			}
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+	 			$this->siguienteResultado();
+
+ 				$this->respuesta = $row->respuesta;
+ 				$this->mensaje   = $row->mensaje;
+ 				if( $accion == 'insert' AND $this->respuesta == 'success' ){
+ 					$this->data   = (int)$row->id;
+ 					$this->tiempo = 3;
+ 				}
 	 		}
 	 		else{
 	 			$this->respuesta = 'danger';
@@ -703,12 +703,12 @@ class Combo
  		else:
 	 		$sql = "CALL consultaSuperComboDetalle( '{$accion}', {$idCombo}, {$idSuperCombo}, {$cantidad} );";
 
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
-	 			if( $row = $rs->fetch_object() ){
-	 				$this->respuesta = $row->respuesta;
-	 				$this->mensaje   = $row->mensaje;
-	 			}
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+	 			$this->siguienteResultado();
+
+ 				$this->respuesta = $row->respuesta;
+ 				$this->mensaje   = $row->mensaje;
+
 	 		}
 	 		else{
 	 			$this->respuesta = 'danger';

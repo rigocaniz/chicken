@@ -100,6 +100,7 @@ class Usuario
 
 
 
+
  	// CONSULTA USUARIO => INSERT / UPDATE
  	function consultaUsuario( $accion, $data )
  	{
@@ -151,6 +152,8 @@ class Usuario
 	 			
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;
+ 				if( $this->respuesta == 'success' )
+ 					$this->tiempo = 2;
 	 		}
 	 		else{
 	 			$this->respuesta = 'danger';
@@ -162,6 +165,42 @@ class Usuario
  		return $this->getRespuesta();
  	}
 
+
+	// ACTUALIZAR ESTADO DEL USUARIO
+	function actualizarEstadoUsuario( $data )
+	{
+		$validar = new Validar();
+
+		$data->idEstadoUsuario = isset( $data->idEstadoUsuario ) ? (int)$data->idEstadoUsuario  : NULL;
+		$data->usuario         = isset( $data->usuario )		 ? (string)$data->usuario 		: NULL;
+		$data->usuario         = strlen( $data->usuario )		 ? (string)$data->usuario 		: NULL;
+
+		$usuario  = $this->con->real_escape_string( $validar->validarTexto( $data->usuario, NULL, TRUE, 8, 16, "USUARIO" ) );
+		$idEstadoUsuario = $validar->validarEntero( $data->idEstadoUsuario, NULL, TRUE, 'El Estado del usuario no es válido' );
+
+		if( $validar->getIsError() ):
+ 			$this->respuesta = 'danger';
+ 			$this->mensaje   = $validar->getMsj();
+ 		else:
+
+			$sql = "CALL actualizarEstadoUsuario( '{$usuario}', {$idEstadoUsuario} )";
+			
+			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+				$this->siguienteResultado();
+
+				$this->respuesta = $row->respuesta;
+				$this->mensaje   = $row->mensaje;
+				if( $this->respuesta == 'success' )
+ 					$this->tiempo = 3;
+			}
+			else{
+				$this->respuesta = 'danger';
+				$this->mensaje   = 'Error al ejecutar la operacion de reseteo (USUARIO)';
+			}
+ 		endif;
+
+ 		return $this->getRespuesta();
+	}
 	
 	// RESETEAR CLAVE
 	function resetearClave( $usuario )
@@ -211,20 +250,19 @@ class Usuario
 
 			$sql = "CALL login( '{$usuario}', '{$clave}' )";
 			
-			if( $rs = $this->con->query( $sql ) ){
-				@$this->con->next_result();
-				if( $row = $rs->fetch_object() ){
-					$this->respuesta = $row->respuesta;
-					$this->mensaje   = $row->mensaje;
-					if( $this->respuesta == 'success' ){
-						// 	CREAR SESION
-						$sesion = new Sesion();
-						$sesion->setVariable( 'nombre', $row->nombre );
-						$sesion->setVariable( 'idNivel', (int)$row->idNivel );
-						$sesion->setVariable( 'idPerfil', (int)$row->idPerfil );
-						$sesion->setVariable( 'usuario', $usuario );
-						header( "Location: index.php" );
-					}
+			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+				$this->siguienteResultado();
+
+				$this->respuesta = $row->respuesta;
+				$this->mensaje   = $row->mensaje;
+				if( $this->respuesta == 'success' ){
+					// 	CREAR SESION
+					$sesion = new Sesion();
+					$sesion->setVariable( 'nombre', $row->nombre );
+					$sesion->setVariable( 'idNivel', (int)$row->idNivel );
+					$sesion->setVariable( 'idPerfil', (int)$row->idPerfil );
+					$sesion->setVariable( 'usuario', $usuario );
+					header( "Location: index.php" );
 				}
 			}
 			else{
@@ -239,7 +277,7 @@ class Usuario
 
 	function getRespuesta()
  	{
- 		return $respuesta = array( 
+ 		return array( 
  				'respuesta' => $this->respuesta,
  				'mensaje'   => $this->mensaje,
  				'tiempo'    => $this->tiempo
