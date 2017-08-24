@@ -35,15 +35,21 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		$scope.dialAdministrar.hide();
 	};
 
-
-	$scope.subTotalQuetzales = function()
+	// RETORNAR TOTAL
+	$scope.subTotalQuetzales = function( accion )
 	{
 		var subTotalQuetzales = 0;
-		for (var i = 0; i < $scope.compras.lstProductos.length; i++) {
-			subTotalQuetzales += parseFloat( $scope.compras.lstProductos[ i ].costo );
+		if( accion == 1 ) {
+			for (var i = 0; i < $scope.compras.lstProductos.length; i++) {
+				subTotalQuetzales += parseFloat( $scope.compras.lstProductos[ i ].costo );
+			}
+		}
+		else if( accion == 2 ) {
+			for (var i = 0; i < $scope.facturaCompra.lstProductos.length; i++) {
+				subTotalQuetzales += parseFloat( $scope.facturaCompra.lstProductos[ i ].costo );
+			}
 		}
 		return subTotalQuetzales;
-
 	};
 
 	// OBJ PRODUCTO

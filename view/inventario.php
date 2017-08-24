@@ -378,7 +378,7 @@
 						<div class="panel-body">
 							<div class="text-right">
 								<h3 class="total">
-									TOTAL: Q.{{ subTotalQuetzales() | number: 2 }} 
+									TOTAL: Q.{{ subTotalQuetzales( 1 ) | number: 2 }} 
 								</h3>
 							</div>
 							<!-- COMPRAS -->
@@ -511,7 +511,7 @@
 											</tr>
 											<tr id="tb-title" ng-show="compras.lstProductos.length">
 												<td colspan="4" class="text-right">
-													<strong> TOTAL {{ subTotalQuetzales() | number: 2 }}</strong>
+													<strong> TOTAL {{ subTotalQuetzales( 1 ) | number: 2 }}</strong>
 												</td>
 												<td></td>
 											</tr>
@@ -670,19 +670,22 @@
 											<tr>
 												<th class="text-center">No.</th>
 												<th class="col-sm-4 text-center">Producto</th>
+												<th class="col-sm-2 text-center">Tipo</th>
 												<th class="col-sm-3 text-center">Cantidad</th>
 												<th class="col-sm-2 text-center">Medida</th>
 												<th class="text-center">Total</th>
 											</tr>
 										</thead>
 										<tbody>
-											<!-- QUETZALES -->
 											<tr ng-repeat="(ixProd, prod) in facturaCompra.lstProductos">
 												<td>
 													{{ prod.idProducto }}
 												</td>
 												<td>
 													{{ prod.producto }}
+												</td>
+												<td class="text-center">
+													{{ prod.tipoProducto }}
 												</td>
 												<td class="text-center">
 													{{ prod.cantidad }}
@@ -694,11 +697,10 @@
 													{{ prod.costo }}
 												</td>
 											</tr>
-											<tr id="tb-title" ng-show="compras.lstProductos.length">
-												<td colspan="4" class="text-right">
-													<strong> TOTAL {{ subTotalQuetzales() | number: 2 }}</strong>
+											<tr id="tb-title" ng-show="facturaCompra.lstProductos.length">
+												<td colspan="6" class="text-right">
+													<strong> TOTAL {{ subTotalQuetzales( 2 ) | number: 2 }}</strong>
 												</td>
-												<td></td>
 											</tr>
 										</tbody>
 									</table>
