@@ -210,8 +210,6 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** USUARIO
 	/////////////////////////
-	
-
 	case 'consultaUsuario':			// CONSULTA ASOCIADO => INSERT / UPDATE
 		$usuario = new Usuario();
 		echo json_encode( $usuario->consultaUsuario( $data->accion, $data->data ) );
@@ -227,22 +225,22 @@ switch ( $data->opcion )
 		echo json_encode( $usuario->lstUsuarios( $data->filtro ) );
 		break;
 
-	case 'actualizarEstadoUsuario':		// ACTUALIZAR ESTADO DEL USUARIO
+	case 'actualizarEstadoUsuario':	// ACTUALIZAR ESTADO DEL USUARIO
 		$usuario = new Usuario();
 		echo json_encode( $usuario->actualizarEstadoUsuario( $data->data ) );
 		break;
 
-	case 'lstEstadoUsuario':	// CONSULTA ESTADOS USUARIO
+	case 'lstEstadoUsuario':		// CONSULTA ESTADOS USUARIO
 		$usuario = new Usuario();
 		echo json_encode( $usuario->lstEstadoUsuario() );
 		break;
 
-	case 'lstNiveles':			// CONSULTA NIVELES
+	case 'lstNiveles':				// CONSULTA NIVELES
 		$usuario = new Usuario();
 		echo json_encode( $usuario->lstNiveles() );
 		break;
 
-	case 'lstPerfiles':			// CONSULTA PERFILES
+	case 'lstPerfiles':				// CONSULTA PERFILES
 		$usuario = new Usuario();
 		echo json_encode( $usuario->lstPerfiles() );
 		break;
@@ -321,6 +319,11 @@ switch ( $data->opcion )
 	case 'consultaReajusteInventario':		//	ACCION REAJUSTE: INSERT
 		$producto = new Producto();
 		echo json_encode( $producto->consultaReajusteInventario( $data->accion, $data->datos ) );
+		break;
+
+	case 'guardarReajusteMasivo':
+		$producto = new Producto();
+		echo json_encode( $producto->guardarReajusteMasivo( $data->accion, $data->datos ) );
 		break;
 
 	/////////////////////////

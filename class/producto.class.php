@@ -277,6 +277,26 @@ class Producto
 	}
 
 
+	// GUARDAR LST REAJUSTES MASIVOS
+ 	function guardarReajusteMasivo( $accion, $lstProductos )
+ 	{
+ 		if( count( $lstProductos ) )
+ 		{
+ 			foreach ($lstProductos AS $producto) {
+ 				
+ 				$this->consultaReajusteInventario( $accion, $producto );
+
+ 				if( $this->respuesta == 'danger' )
+ 					break;
+ 			}
+ 		}
+ 		else{
+
+ 		}
+
+ 		return $this->getRespuesta();
+ 	}
+
 	// GUARDAR // ACTUALIZAR => INGRESO
 	function consultaReajusteInventario( $accion, $data )
 	{
@@ -811,7 +831,7 @@ class Producto
 						'indexProd'       => 1,
 						'listado'         => 'LISTADO DE PRODUCTOS',
 						'idTipoProducto'  => (int) $row->idTipoProducto,
-						'tipoProducto'    => $row->tipoProducto,
+						'tipoProducto'    => strtoupper( $row->tipoProducto ),
 						'idMedida'        => (int) $row->idMedida,
 						'medida'          => strtoupper( $row->medida ),
 						'totalProductos'  => 0,

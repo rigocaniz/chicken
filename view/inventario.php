@@ -7,10 +7,9 @@
 	            </a>
 	        </div>
 
-			<!-- MENU TABS -->
 			<ul class="nav nav-tabs tabs-title" role="tablist">
 				<li role="presentation">
-					<a href="#/" role="tab" data-toggle="tab">
+					<a href="#/">
 						<span class="glyphicon glyphicon-home"></span>
 					</a>
 				</li>
@@ -74,11 +73,15 @@
 								</div>
 							</div>
 							<div class="text-left">
-								<button class="btn btn-danger" ng-click="realizarCierre()">
+								<button class="btn btn-danger" ng-click="realizarCierre()" ng-disabled="realizarReajuste">
 									<span class="glyphicon glyphicon-list-alt"></span> REALIZAR CIERRE
 								</button>
-								<button class="btn btn-warning" ng-click="realizarReajusteMasivo()">
+								<button class="btn btn-warning" ng-click="realizarReajusteMasivo()" ng-show="!realizarReajuste">
 									<span class="glyphicon glyphicon-edit"></span> REAJUSTE MASIVO
+								</button>
+
+								<button type="button" class="btn btn-danger" ng-click="cancelarReajuste()" ng-show="realizarReajuste">
+									<span class="glyphicon glyphicon-remove"></span> CANCELAR REAJUSTE
 								</button>
 							</div>
 							<br>
@@ -118,6 +121,18 @@
 												</button>
 											</div>
 										</div>
+										<br>
+										<div class="row">
+										  	<div class="col-sm-5 col-md-6 col-lg-7"></div>
+										  	<div class="col-sm-7 col-md-6 col-lg-5">
+										    	<div class="input-group">
+										      		<span class="input-group-addon" id="basic-addon1">
+										        		<span class="glyphicon glyphicon-search"></span>
+										      		</span>
+										      		<input type="text" class="form-control" ng-model="filtroProducto" maxlength="75" placeholder="Buscar producto">
+										    	</div>
+										  	</div>
+										</div>
 										<!-- TABLA -->
 										<table class="table table-hover">
 											<thead>
@@ -138,7 +153,7 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr ng-repeat="inv in inventario.lstProductos" ng-class="{'danger border-danger': inv.alertaStock == 1 && !realizarReajuste, 'warning border-warning':  inv.alertaStock == 2 && !realizarReajuste, 'border-success':  inv.alertaStock == 3 && !realizarReajuste}">
+												<tr ng-repeat="inv in inventario.lstProductos | filter: filtroProducto" ng-class="{'danger border-danger': inv.alertaStock == 1 && !realizarReajuste, 'warning border-warning':  inv.alertaStock == 2 && !realizarReajuste, 'border-success':  inv.alertaStock == 3 && !realizarReajuste}">
 													<td class="text-right">
 														{{ $index + 1 }}
 													</td>
@@ -199,7 +214,7 @@
 									<span class="glyphicon glyphicon-saved"></span> REALIZAR REAJUSTE
 								</button>
 								<button type="button" class="btn btn-danger" ng-click="cancelarReajuste()">
-									<span class="glyphicon glyphicon-remove"></span> CANCELAR
+									<span class="glyphicon glyphicon-remove"></span> CANCELAR REAJUSTE
 								</button>
 							</div>
 						</div>

@@ -10,13 +10,14 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		console.log( _old, _new );
 		if( $scope.inventarioMenu == 'inventario' )
 			$scope.lstProductosInventario();
+		else if( $scope.realizarReajuste && $scope.inventarioMenu != 'inventario' )
+			$scope.realizarReajuste = false;
 	});
 
 	$scope.$watch('groupBy', function( _old, _new ){
 		if( _old != _new && $scope.inventarioMenu == 'inventario' )
 			$scope.lstProductosInventario();
 	});
-
 
 	$scope.dialIngreso                 = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
 	$scope.dialAdministrar             = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
@@ -82,6 +83,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	{
 		$scope.groupBy = 'sinFiltro';
 		$scope.realizarReajuste = true;
+
+		$scope.reajusteMasivo = {
+			lstProductos : [],
+			observacion  : ''
+		};
 	};
 
 	$scope.cancelarReajuste = function()
@@ -139,9 +145,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			$scope.$parent.showLoading( 'Guardando...' );
 
 			$http.post('consultas.php',{
-				opcion : 'consultaFactura',
+				opcion : 'guardarReajusteMasivo',
 				accion : 'insert',
-				data   : null
+				data   : invProductos
 			})
 			.success(function(data){
 				console.log( data );

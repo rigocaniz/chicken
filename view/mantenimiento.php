@@ -1,16 +1,18 @@
 <div class="contenedor">
-
 	<div class="row">
-		<!-- TABS -->
 		<div class="col-sm-12">
 			<div class="pull-right">
-				<a href="#/" >
+				<a href="#/">
 	            	<img class="img-responsive" src="img/logo_churchil.png" style="height: 56px;">
 	            </a>
 	        </div>
 
-
 			<ul class="nav nav-tabs tabs-title" role="tablist">
+				<li role="presentation">
+					<a href="#/">
+						<span class="glyphicon glyphicon-home"></span>
+					</a>
+				</li>
 				<li role="presentation" ng-class="{'active' : menuTab=='menu'}" ng-click="verListaMenu(); resetValores(); menuTab='menu'">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-list"></span> MENUS

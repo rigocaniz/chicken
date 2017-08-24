@@ -9,6 +9,11 @@
 
 			<!-- MENU TABS -->
 			<ul class="nav nav-tabs tabs-title" role="tablist">
+				<li role="presentation">
+					<a href="#/">
+						<span class="glyphicon glyphicon-home"></span>
+					</a>
+				</li>
 				<li role="presentation" ng-class="{'active' : adminMenu=='usuarios'}" ng-click="resetValores(); adminMenu='usuarios'">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-user"></span> USUARIOS
@@ -21,9 +26,6 @@
 
 				<!--  PRODUCTOS DEL INVENTARIO -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : adminMenu=='usuarios'}" ng-show="adminMenu=='usuarios'">
-			<!--
-			{{ lstUsuarios	| json }}
-	-->
 					<button type="button" class="btn btn-sm btn-success" ng-click="agregarUsuario()">
 						<span class="glyphicon glyphicon-plus"></span> AGREGAR USUARIO
 					</button>
