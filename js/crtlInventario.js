@@ -141,7 +141,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			$http.post('consultas.php',{
 				opcion : 'consultaFactura',
 				accion : 'insert',
-				data   : $scope.
+				data   : null
 			})
 			.success(function(data){
 				console.log( data );

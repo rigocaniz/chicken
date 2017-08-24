@@ -92,7 +92,7 @@
 							<div class="col-sm-10">
 								<label>ESTADO DEL USUARIO</label>
 								<div class="btn-group btn-group-sm" role="group"	>
-								  	<button type="button" class="btn btn-default" ng-class="{'btn-success': usuario.idEstadoUsuario==1 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'btn-danger': usuario.idEstadoUsuario==2 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'btn-warning': usuario.idEstadoUsuario==3 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario}" ng-click="usuario.idEstadoUsuario = estadoUsuario.idEstadoUsuario" ng-repeat="estadoUsuario in lstEstadoUsuario">
+								  	<button type="button" class="btn btn-default" ng-class="{'btn-success': usuario.idEstadoUsuario==1 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'btn-danger': usuario.idEstadoUsuario==2 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'btn-warning': usuario.idEstadoUsuario==3 && usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario}" ng-click="usuario.idEstadoUsuario = estadoUsuario.idEstadoUsuario" ng-repeat="estadoUsuario in lstEstadoUsuario" disabled>
 								  		<span class="glyphicon" ng-class="{'glyphicon-check': usuario.idEstadoUsuario==estadoUsuario.idEstadoUsuario, 'glyphicon-unchecked': usuario.idEstadoUsuario!=estadoUsuario.idEstadoUsuario}"></span>
 								  		{{ estadoUsuario.estadoUsuario }}
 								  	</button>
@@ -100,7 +100,6 @@
 							</div>
 						</div>
 						<div class="form-group">
-						{{ usuario | json }}
 							<div class="col-sm-5">
 								<label>SELECCIONE NIVEL</label>
 								<div>

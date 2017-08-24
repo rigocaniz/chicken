@@ -84,12 +84,9 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 		var usuario = $scope.usuario;
 
-		if( !(usuario.idEstadoUsuario && usuario.idEstadoUsuario > 0 ) )
-			alertify.notify( 'Seleccione el estado del Usuario', 'warning', 4 );
-
-		else if( !(usuario.idNivel && usuario.idNivel > 0 ) )
+		if( !(usuario.idNivel && usuario.idNivel > 0 ) )
 			alertify.notify( 'Seleccione el nivel del Usuario', 'warning', 4 );
-
+/*
 		else if( !(usuario.idPerfil && usuario.idPerfil > 0 ) )
 			alertify.notify( 'Seleccione el perfil del Usuario', 'warning', 4 );
 
@@ -104,7 +101,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 		else if( !(usuario.apellidos && usuario.apellidos.length >=2 ) )
 			alertify.notify( 'Los apellidos de la persona debe tener más de 1 caracter', 'warning', 5 );
-
+*/
 		else
 		{
 			$scope.$parent.showLoading( 'Guardando...' );

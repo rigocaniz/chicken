@@ -168,7 +168,7 @@
 														<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.cantidad">
 													</td>
 													<td class="text-center" ng-show="realizarReajuste">
-														<button class="btn btn-xs" ng-class="{'btn-success': inv.esIncremento, 'btn-danger': !inv.esIncremento}" ng-click="inv.esIncremento=!inv.esIncremento" title="Clic para {{ inv.esIncremento ? 'DISMINUIR' : 'INCREMENTAR' }}" data-toggle="tooltip" data-placement="top" tooltip>
+														<button class="btn btn-xs" ng-class="{'btn-success': inv.esIncremento, 'btn-danger': !inv.esIncremento}" ng-click="inv.esIncremento=!inv.esIncremento" title="Clic para {{ inv.esIncremento ? 'DISMINUIR' : 'INCREMENTAR' }}" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="!inv.cantidad">
 															<span class="glyphicon" ng-class="{'glyphicon-plus-sign': inv.esIncremento, 'glyphicon-minus-sign': !inv.esIncremento}"></span>
 														</button>
 													</td>
@@ -195,7 +195,7 @@
 								</div>
 							</div>
 							<div class="text-center" ng-show="realizarReajuste">
-								<button type="button" class="btn btn-success" ng-click="guardarReajusteMasivo()">
+								<button type="button" class="btn btn-success" ng-click="guardarReajusteMasivo()" ng-disabled="loading">
 									<span class="glyphicon glyphicon-saved"></span> REALIZAR REAJUSTE
 								</button>
 								<button type="button" class="btn btn-danger" ng-click="cancelarReajuste()">
