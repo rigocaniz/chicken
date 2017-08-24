@@ -23,15 +23,15 @@
 		<div class="col-sm-3 col-xs-12">
 			<div class="btn-group" role="group">
 				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='menu', 'btn-default':tipoVista!='menu'}" 
-					ng-click="tipoVista='menu'" title="Menú: M">
+					ng-click="cambiarVista( 'menu' )" title="Menú: M">
 					<span class="glyphicon glyphicon-cutlery"></span>
 				</button>
 				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='dividido', 'btn-default':tipoVista!='dividido'}" 
-					ng-click="tipoVista='dividido'" title="Dividido: D">
+					ng-click="cambiarVista( 'dividido' )" title="Dividido: D">
 					<b>Dividido</b>
 				</button>
 				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='ticket', 'btn-default':tipoVista!='ticket'}" 
-					ng-click="tipoVista='ticket'" title="Ticket: T">
+					ng-click="cambiarVista( 'ticket' )" title="Ticket: T">
 					<span class="glyphicon glyphicon-bookmark"></span>
 				</button>
 			</div>

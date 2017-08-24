@@ -177,6 +177,21 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		}
 	};
 
+	$scope.permitirAccion = function () {
+		var respuesta = true;
+		if ( $scope.seleccionMenu.si ) {
+			alertify.set('notifier','position', 'top-right');
+			alertify.notify( "Existen menús seleccionados", 'info', 3 );
+			respuesta = false;
+		}
+
+		return respuesta;
+	};
+
+	$scope.cambiarVista = function ( tipoVista ) {
+		if ( $scope.permitirAccion() )
+			$scope.tipoVista = tipoVista;
+	};
 
 	// AUX -> ATAJO INICIO
 	$scope._keyInicio = function ( key ) {
@@ -218,9 +233,9 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		// SI NO EXISTE NINGUN DIALOGO ABIERTO
 		if ( !$scope.modalOpen() ) {
 			// MODO PANTALLA
-			if ( altDerecho && key == 77 ) $scope.tipoVista = 'menu';
-			else if ( altDerecho && key == 68 ) $scope.tipoVista = 'dividido';
-			else if ( altDerecho && key == 84 ) $scope.tipoVista = 'ticket';
+			if ( altDerecho && key == 77 ) $scope.cambiarVista( 'menu' );
+			else if ( altDerecho && key == 68 ) $scope.cambiarVista( 'dividido' );
+			else if ( altDerecho && key == 84 ) $scope.cambiarVista( 'ticket' );
 
 			else{
 				$scope._keyInicio( key );
