@@ -52,10 +52,10 @@
 						</button>
 					</div>
 					<div class="col-xs-6 text-right">
-						<button type="button" class="btn btn-default" ng-click="selTodo( true )" ng-disabled="ixMenuActual!=$index" title="TODOS">
+						<button type="button" class="btn btn-default" ng-click="selItemMenu( true )" ng-disabled="ixMenuActual!=$index" title="TODOS">
 							<span class="glyphicon glyphicon-check"></span>
 						</button>
-						<button type="button" class="btn btn-default" ng-click="selTodo( false )" ng-disabled="ixMenuActual!=$index" title="NINGUNO">
+						<button type="button" class="btn btn-default" ng-click="selItemMenu( false )" ng-disabled="ixMenuActual!=$index" title="NINGUNO">
 							<span class="glyphicon glyphicon-unchecked"></span>
 						</button>
 					</div>
@@ -74,7 +74,7 @@
 								<tbody>
 									<tr ng-repeat="item in menu.detalle track by $index" 
 										ng-class="{'success':item.selected, 'tr_alert':difMinutos( item.fechaRegistro )>minutosAlerta}"
-										ng-click="item.selected=!item.selected">
+										ng-click="selItemMenu( !item.selected, $index )">
 										<td>
 											<span class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}">
 	                                            <span ng-show="item.idTipoServicio==2">R</span>

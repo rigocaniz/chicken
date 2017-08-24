@@ -139,16 +139,32 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 	// SELECCIONA O DESELECCIONA TODOS
-	$scope.selTodo = function ( seleccionado ) {
+	$scope.selItemMenu = function ( seleccionado, ixDetalle ) {
 		if ( !( $scope.ixMenuActual >= 0 ) )
 			return false;
 
-		$scope.seleccionMenu.si     = false;
-		$scope.seleccionMenu.count  = 0;
+		console.log( seleccionado, ixDetalle );
+
 		$scope.seleccionMenu.menu   = $scope.lstMenus[ $scope.ixMenuActual ].menu;
 		$scope.seleccionMenu.imagen = $scope.lstMenus[ $scope.ixMenuActual ].imagen;
+		$scope.seleccionMenu.si     = false;
 
-		if ( $scope.lstMenus[ $scope.ixMenuActual ] ) {
+		// SI ES INDIVIDUAL
+		if ( ixDetalle != undefined ) {
+			if ( seleccionado )
+				$scope.seleccionMenu.count++;
+
+			else
+				$scope.seleccionMenu.count--;
+
+			$scope.lstMenus[ $scope.ixMenuActual ].detalle[ ixDetalle ].selected = seleccionado;
+
+			if ( $scope.seleccionMenu.count )
+				$scope.seleccionMenu.si = true;
+		}
+		// SI ES PARA TODOS
+		else if ( $scope.lstMenus[ $scope.ixMenuActual ] ) {
+			$scope.seleccionMenu.count  = 0;
 
 			for (var i = 0; i < $scope.lstMenus[ $scope.ixMenuActual ].detalle.length; i++) {
 				$scope.seleccionMenu.count++;		
@@ -171,9 +187,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 			if ( $scope.lstMenus.length && elemento < $scope.lstMenus.length )
 				$scope.ixMenuActual = elemento;
-
-			else
-				console.log( "nada que hacer" );
 		}
 		else if ( key == 40 ) { // {DOWN}
 			if ( $scope.lstMenus.length && $scope.ixMenuActual == -1 )
@@ -188,10 +201,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		}
 
 		else if ( key == 84 ) // {T}  => SELECCIONAR TODOS
-			$scope.selTodo( true );
+			$scope.selItemMenu( true );
 		
 		else if ( key == 78 ) // {N}  => DESELECCIONAR TODOS
-			$scope.selTodo( false );
+			$scope.selItemMenu( false );
 	};
 
 	// TECLA PARA ATAJOS RAPIDOS
