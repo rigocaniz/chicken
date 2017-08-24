@@ -211,6 +211,11 @@
 							</div>
 							<div class="text-center" ng-show="realizarReajuste">
 								<textarea class="form-control" rows="2" ng-model="reajusteMasivo.observacion" placeholder="Ingresar Observaciones (Opcional)"></textarea>
+								<div class="pull-right">
+									<label class="label label-default">
+										Caracteres <span class="badge">{{ reajusteMasivo.observacion.length }}</span>
+									</label>
+								</div>
 							</div>
 							<hr>
 							<div class="text-center" ng-show="realizarReajuste">
@@ -822,7 +827,7 @@
 				<div class="modal-body">
 					<form class="form-horizontal" role="form" name="$parent.formCierre">
 						<div class="form-group">
-							<div class="col-sm-4">
+							<div class="col-md-4 col-sm-5 col-xs-8">
 								<label class="control-label">SELECCIONE LA FECHA DE CIERRE</label>
 								<div class="input-group">
 								  	<span class="input-group-addon">
@@ -835,25 +840,25 @@
 						<hr>
 						<div ng-show="fechaCierreP.encontrado">
 							<div class="form-group">
-								<div class="col-sm-3">
+								<div class="col-sm-3 col-xs-6">
 									<label class="control-label">FECHA DE CIERRE</label>
 									<div class="input-group">
 									  	{{ fechaCierreP.fechaCierre }}
 									</div>
 								</div>	
-								<div class="col-sm-3">
+								<div class="col-sm-3 col-xs-6">
 									<label class="control-label">REALIZADO POR:</label>
 									<div>
 										<kbd>{{ fechaCierreP.usuario | uppercase }}</kbd>
 									</div>
 								</div>
-								<div class="col-sm-3">
+								<div class="col-sm-3 col-xs-6">
 									<label class="control-label">FECHA / HORA:</label>
 									<div>
 										<kbd>{{ fechaCierreP.fechaHora }}</kbd>
 									</div>
 								</div>
-								<div class="col-sm-3">
+								<div class="col-sm-3 col-xs-6">
 									<label class="control-label">TIPO DE CIERRE:</label>
 									<div>
 										<kbd>{{ fechaCierreP.todos ? 'TODOS LOS PRODUCTOS' : 'PRODUCTOS IMPORTANTES' }}</kbd>
@@ -960,7 +965,7 @@
 								  	</button>
 								</div>
 							</div>
-							<div class="col-sm-3">
+							<div class="col-sm-4 col-md-3">
 								<label class="control-label">AFECTAR DISPONIBILIDAD*</label>
 								<button type="button" class="btn" ng-class="{'btn-success': cierreDiario.actualizarDisp, 'btn-warning': !cierreDiario.actualizarDisp}" ng-click="cierreDiario.actualizarDisp=!cierreDiario.actualizarDisp" title="Afectar Disponibilidad en el INVENTARIO" data-toggle="tooltip" data-placement="top" tooltip>
 									<span class="glyphicon" ng-class="{'glyphicon-check': cierreDiario.actualizarDisp, 'glyphicon-unchecked': !cierreDiario.actualizarDisp}"></span> {{ cierreDiario.actualizarDisp ? 'SI' : 'NO' }}

@@ -316,7 +316,7 @@ switch ( $data->opcion )
 		echo json_encode( $producto->consultaIngreso( $data->accion, $data->datos ) );
 		break;
 
-	case 'consultaReajusteInventario':		//	ACCION REAJUSTE: INSERT
+	case 'consultaReajusteInventario':	//	CONSULTA REAJUSTE INVENTARIO INDIVIDUAL: INSERT
 		$producto = new Producto();
 		echo json_encode( $producto->consultaReajusteInventario( $data->accion, $data->datos ) );
 		break;

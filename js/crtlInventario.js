@@ -109,9 +109,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		if( !(itemProducto.cantidad && itemProducto.cantidad != 0) ){
  			alertify.notify('La cantidad debe ser diferente a 0', 'warning', 4);
 		}
-		else if( !(itemProducto.observacion && itemProducto.observacion.length > 20) ){
-			alertify.notify('La observación debe tener más de 20 caracteres', 'warning', 4);
-		}
 		else{
 			$http.post('consultas.php',{
 				opcion : "consultaReajusteInventario",
@@ -428,8 +425,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	// BUSCAR PRODUCTOS
 	$scope.lstProductos = [];
 	$scope.buscarProducto = function( nombreProducto ){
-		if( nombreProducto.length && !$scope.prod.seleccionado )
-		{
+		if( nombreProducto.length && !$scope.prod.seleccionado ) {
 			$http.post('consultas.php',{opcion: 'buscarProducto', nombreProducto: nombreProducto})
 			.success(function(data){
 				console.log('buscarProducto::: ',data);
@@ -437,14 +433,12 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			});
 		}
 		else
-			$scope.lstProductos = []
-
+			$scope.lstProductos = [];
 	};
 
 
 	$scope.editarFacturaCompra = function( facturaCompra, accion )
 	{
-		console.log( facturaCompra ) ;
 		$scope.facturaCompra = angular.copy( facturaCompra );
 		$scope.facturaCompra.fechaFactura = moment( facturaCompra.fechaFactura );
 		$scope.dialLstFacturaCompra.hide();
@@ -466,25 +460,21 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			});
 
 		}
-
 	};
 
 	// LST FACTURAS COMPRA
 	$scope.detalleFacturaCompra = [];
 	$scope.cargarLstFacturaCompra = function(){
 		$scope.$parent.showLoading( 'Cargando...' );
-
 		$http.post('consultas.php',{
 			opcion : 'cargarLstFacturaCompra'
 		}).success(function(data){
 			console.log( data );
 			$scope.detalleFacturaCompra = data;
 			$scope.dialLstFacturaCompra.show();
-
 			$scope.$parent.hideLoading();
 		})
 	};
-
 
 	// TIPOS DE PRODUCTO
 	$scope.catTipoProducto = function(){
@@ -494,7 +484,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			$scope.lstTipoProducto = data;
 		})
 	};
-
 
 	$scope.lstEstadosFactura = [];
 	// ESTADOS FACTURA
@@ -515,19 +504,15 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		})
 	};
 
-	
 	// VER CIERRE DIARIO
 	$scope.verCierreDiario = function(){
 		$scope.dialVerCierreDiario.show();
 	};
 
-
 	$scope.fechaCierreP = {};
 	$scope.cargarFechaCierre = function( fechaCierre ){
-		if( fechaCierre )
-		{
+		if( fechaCierre ) {
 			var fechaCierre = $filter('date')( fechaCierre,"yyyy-MM-dd");
-			console.log( 'fechaCierre:::', fechaCierre );
 			$http.post('consultas.php',{
 				opcion      : 'cargarFechaCierre',
 				fechaCierre : fechaCierre

@@ -348,6 +348,25 @@ class Producto
  		endif;
  	}
 
+ 	// CONSULTAR REAJUSTE INVENTARIO INDIVIDUAL
+ 	function consultaReajusteInventario( $accion, $data )
+ 	{
+ 		//var_dump( $accion, $data );
+ 		$this->con->query( "START TRANSACTION" );
+ 		$this->consultaReajuste( $accion, $data->observacion );
+
+		if( $this->respuesta == 'success' AND $this->data > 0 )
+	 		$this->consultaReajusteProducto( $accion, $data );
+
+		// FINALIZAR TRANSACCIÓN
+		if( $this->respuesta == 'success' )
+			$this->con->query( "COMMIT" );
+		else
+			$this->con->query( "ROLLBACK" );
+		
+		return $this->getRespuesta();
+ 	}
+
 	// GUARDAR // ACTUALIZAR => INGRESO
 	function consultaReajusteProducto( $accion, $data )
 	{
