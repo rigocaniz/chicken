@@ -153,7 +153,6 @@ class Producto
 	//	CREATE PROCEDURE consultaCierreDiario( _action VARCHAR(20), _idCierreDiario INT, _fechaCierre DATE, _comentario TEXT )
 	function consultaCierreDiario( $accion, $data )
 	{
-		//var_dump( $data );
  		if( count( $data->lstProductos ) ){
 
 		 	$action         = "NULL";
@@ -278,45 +277,50 @@ class Producto
 
 
 	// GUARDAR LST REAJUSTES MASIVOS
- 	function guardarReajusteMasivo( $accion, $lstProductos )
- 	{
- 		if( count( $lstProductos ) )
+ 	function guardarReajusteMasivo( $accion, $data )
+ 	{ 		
+ 		if( count( $data->lstProductos ) )
  		{
- 			foreach ($lstProductos AS $producto) {
- 				
- 				$this->consultaReajusteInventario( $accion, $producto );
+ 			// INCIALIZAR TRANSACCIÓN
+ 			$this->con->query( "START TRANSACTION" );
 
- 				if( $this->respuesta == 'danger' )
- 					break;
+ 			$this->consultaReajuste( $accion, $data->observacion );
+
+ 			// GUARDAR REAJUSTE
+ 			if( $this->respuesta == 'success' AND $this->data > 0 )
+ 			{
+	 			foreach ( $data->lstProductos AS $producto) {	 				
+	 				$this->consultaReajusteProducto( $accion, $producto );
+
+	 				if( $this->respuesta == 'danger' )
+	 					break;
+	 			}
  			}
+
+ 			// FINALIZAR TRANSACCIÓN
+ 			if( $this->respuesta == 'success' )
+ 				$this->con->query( "COMMIT" );
+ 			else
+ 				$this->con->query( "ROLLBACK" );
  		}
  		else{
-
+ 			$this->respuesta = 'warning';
+ 			$this->mensaje   = 'No se realizaron cambios en los productos';
  		}
 
  		return $this->getRespuesta();
  	}
 
-	// GUARDAR // ACTUALIZAR => INGRESO
-	function consultaReajusteInventario( $accion, $data )
-	{
-		$validar = new Validar();
-
-		// INICIALIZACIÓN VAR
- 		$idProducto  = 'NULL';
- 		$cantidad    = 'NULL';
- 		$observacion = 'NULL';
-
+ 	// CONSULTA REAJUSTE => INSERT
+ 	function consultaReajuste( $accion, $observacion )
+ 	{
 		// SETEO VARIABLES GENERALES
- 		$data->idProducto  = isset( $data->idProducto )  	? (int)$data->idProducto 		: NULL;
- 		$data->cantidad    = isset( $data->cantidad )		? (double)$data->cantidad 		: NULL;
- 		$data->observacion = isset( $data->observacion )	? (string)$data->observacion 	: NULL;
+ 		$observacion = isset( $observacion )	? (string)$observacion 	: NULL;
+ 		$observacion = strlen( $observacion )	? (string)$observacion 	: NULL;
 
  		// VALIDACIONES
-		$idProducto   = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido' );
-		$cantidad     = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 50000, 'la cantidad' );
-		$observacion  = $this->con->real_escape_string( $validar->validarTexto( $data->observacion, NULL, TRUE, 20, 1500, 'la observación' ) );
-		$esIncremento = (int)$data->esIncremento;
+ 		$validar = new Validar();
+		$observacion  = $this->con->real_escape_string( $validar->validarTexto( $observacion, NULL, !esNulo( $observacion ), 20, 1500, 'la observación' ) );
 
 		// OBTENER RESULTADO DE VALIDACIONES
  		if( $validar->getIsError() ):
@@ -324,7 +328,8 @@ class Producto
 	 		$this->mensaje   = $validar->getMsj();
 
  		else:
-			$sql = "CALL consultaReajusteInventario( '{$accion}', {$idProducto}, {$cantidad}, '{$observacion}', {$esIncremento} );";
+
+			$sql = "CALL consultaReajuste( '{$accion}', '{$observacion}' );";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 	 			$this->siguienteResultado();
@@ -334,6 +339,50 @@ class Producto
 
  				if( $accion == 'insert' AND $this->respuesta == 'success' )
  					$this->data = (int)$row->id;
+	 		}
+	 		else{
+	 			$this->respuesta = 'danger';
+	 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+	 		}
+
+ 		endif;
+ 	}
+
+	// GUARDAR // ACTUALIZAR => INGRESO
+	function consultaReajusteProducto( $accion, $data )
+	{
+		$validar = new Validar();
+
+		// INICIALIZACIÓN VAR
+ 		$idProducto  = 'NULL';
+ 		$cantidad    = 'NULL';
+
+		// SETEO VARIABLES GENERALES
+ 		$data->idProducto  = isset( $data->idProducto )  	? (int)$data->idProducto 		: NULL;
+ 		$data->cantidad    = isset( $data->cantidad )		? (double)$data->cantidad 		: NULL;
+ 		
+ 		// VALIDACIONES
+		$idProducto   = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido' );
+		$cantidad     = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 50000, 'la cantidad' );
+		$esIncremento = (int)$data->esIncremento;
+
+		// OBTENER RESULTADO DE VALIDACIONES
+ 		if( $validar->getIsError() ):
+	 		$this->respuesta = 'danger';
+	 		$this->mensaje   = $validar->getMsj();
+
+ 		else:
+			$sql = "CALL consultaReajusteProducto( '{$accion}', $this->data, {$idProducto}, {$cantidad}, {$esIncremento} );";
+
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+	 			$this->siguienteResultado();
+	 			
+ 				$this->respuesta = $row->respuesta;
+ 				$this->mensaje   = $row->mensaje;
+ 				/*
+ 				if( $accion == 'insert' AND $this->respuesta == 'success' )
+ 					$this->data = (int)$row->id;
+ 				*/
 	 		}
 	 		else{
 	 			$this->respuesta = 'danger';

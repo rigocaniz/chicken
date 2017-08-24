@@ -76,7 +76,7 @@
 								<button class="btn btn-danger" ng-click="realizarCierre()" ng-disabled="realizarReajuste">
 									<span class="glyphicon glyphicon-list-alt"></span> REALIZAR CIERRE
 								</button>
-								<button class="btn btn-warning" ng-click="realizarReajusteMasivo()" ng-show="!realizarReajuste">
+								<button class="btn btn-primary" ng-click="realizarReajusteMasivo()" ng-show="!realizarReajuste">
 									<span class="glyphicon glyphicon-edit"></span> REAJUSTE MASIVO
 								</button>
 
@@ -147,8 +147,8 @@
 													<th class="col-sm-2 text-center" ng-show="realizarReajuste">Cantidad</th>
 													<th class="col-sm-1 text-center" ng-show="realizarReajuste"></th>
 													<th class="col-sm-2 text-center" ng-show="realizarReajuste">Nueva Disponibilidad</th>
-													<th class="text-center" ng-show="!realizarReajuste">Reajustar Cantidad</th>
 													<th class="col-sm-1 text-center">Medida</th>
+													<th class="text-center" ng-show="!realizarReajuste">Reajustar Cantidad</th>
 													<th class="text-center" ng-show="!realizarReajuste">Editar</th>
 												</tr>
 											</thead>
@@ -209,6 +209,10 @@
 									</div>
 								</div>
 							</div>
+							<div class="text-center" ng-show="realizarReajuste">
+								<textarea class="form-control" rows="2" ng-model="reajusteMasivo.observacion" placeholder="Ingresar Observaciones (Opcional)"></textarea>
+							</div>
+							<hr>
 							<div class="text-center" ng-show="realizarReajuste">
 								<button type="button" class="btn btn-success" ng-click="guardarReajusteMasivo()" ng-disabled="loading">
 									<span class="glyphicon glyphicon-saved"></span> REALIZAR REAJUSTE
@@ -805,7 +809,7 @@
 </script>
 
 
-<!-- DIALOGO CIERRE DIARIO -->
+<!-- DIALOGO CONSULTAR CIERRE DIARIO -->
 <script type="text/ng-template" id="dial.verCierreDiario.html">
 	<div class="modal" tabindex="-1" role="dialog">
 		<div class="modal-dialog modal-lg">
@@ -1030,7 +1034,7 @@
 </script>
 
 	
-<!-- DIALOGO INGRESO EXISTENCIA -->
+<!-- DIALOGO INGRESO REAJUSTE EXISTENCIA -->
 <script type="text/ng-template" id="dial.ingreso.html">
 	<div class="modal" tabindex="-1" role="dialog">
 		<div class="modal-dialog">

@@ -102,69 +102,111 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 	};
 
+
+	$scope.consultaReajusteInventario = function(){
+		var itemProducto = $scope.itemProducto;
+
+		if( !(itemProducto.cantidad && itemProducto.cantidad != 0) ){
+ 			alertify.notify('La cantidad debe ser diferente a 0', 'warning', 4);
+		}
+		else if( !(itemProducto.observacion && itemProducto.observacion.length > 20) ){
+			alertify.notify('La observación debe tener más de 20 caracteres', 'warning', 4);
+		}
+		else{
+			$http.post('consultas.php',{
+				opcion : "consultaReajusteInventario",
+				accion : 'insert',
+				datos  : $scope.itemProducto
+			}).success(function(data){
+				console.log( data );
+				alertify.set('notifier','position', 'top-right');
+ 				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
+				if ( data.respuesta == 'success' ) {
+					$scope.lstProductosInventario();
+					$scope.resetValores( 2 );
+					$scope.dialIngreso.hide();
+				}
+			})
+		}
+	};
+
+
 	// GUARDAR REAJUSTE MASIVO
 	$scope.guardarReajusteMasivo = function(){
-		var invProductos = $scope.lstInventario[ 0 ].lstProductos, error = false;
+		var invProductos = $scope.lstInventario[ 0 ].lstProductos, error = false, totalCambios = 0;
 
 		if( !( invProductos.length ) ){
 			error = true;
 			alertify.notify( 'No se tiene productos en la lista', 'danger', 4 );
 		}
 		else{
+			$scope.reajusteMasivo.lstProductos = [];
 			for (var i = 0; i < invProductos.length; i++) {
-				console.log( invProductos[ i ].cantidad );
+				console.log( invProductos[ i ] );
 				if( invProductos[ i ].cantidad == undefined ){
 					error = true;
 					alertify.notify( 'La cantidad ingresada en '+ invProductos[ i ].producto  +' no es válida', 'danger', 5 );	
 					break;
 				}
 				else{
-					if( invProductos[ i ].esIncremento )
-					{
-						if( ( invProductos[ i ].disponibilidad + invProductos[ i ].cantidad ) < 0 )
-						{
+					if( invProductos[ i ].esIncremento ) {
+						if( ( invProductos[ i ].disponibilidad + invProductos[ i ].cantidad ) < 0 ) {
 							error = true;
 							alertify.notify( 'La nueva disponibilidad no puede ser negativa en '+ invProductos[ i ].producto, 'danger', 5 );	
 							break;
 						}
 					}
 					else{
-						if( ( invProductos[ i ].disponibilidad - invProductos[ i ].cantidad ) < 0 )
-						{
+						if( ( invProductos[ i ].disponibilidad - invProductos[ i ].cantidad ) < 0 ) {
 							error = true;
 							alertify.notify( 'La nueva disponibilidad no puede ser negativa en '+ invProductos[ i ].producto, 'danger', 5 );	
 							break;
 						}
 					}
 				}
+
+				if( !error && invProductos[ i ].cantidad > 0 ){
+					totalCambios++;
+					$scope.reajusteMasivo.lstProductos.push({
+						idProducto   : invProductos[ i ].idProducto,
+						cantidad     : invProductos[ i ].cantidad,
+						esIncremento : invProductos[ i ].esIncremento,
+					});
+				}
 			}
 		}
 
+		console.log( totalCambios );
+
 		if( !error )
 		{
-			$scope.$parent.showLoading( 'Guardando...' );
+			if( totalCambios > 0 )
+			{
+				$scope.$parent.showLoading( 'Guardando...' );
 
-			$http.post('consultas.php',{
-				opcion : 'guardarReajusteMasivo',
-				accion : 'insert',
-				data   : invProductos
-			})
-			.success(function(data){
-				console.log( data );
-				alertify.set('notifier','position', 'top-right');
-				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
-				if( data.respuesta == 'success' )
-				{
-					$scope.realizarReajuste = false;
-					$scope.groupBy = 'sinFiltro';
-					$scope.lstProductosInventario();	
-				}
+				$http.post('consultas.php',{
+					opcion : 'guardarReajusteMasivo',
+					accion : 'insert',
+					datos  : $scope.reajusteMasivo
+				})
+				.success(function(data){
+					console.log( data );
+					alertify.set('notifier','position', 'top-right');
+					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+					if( data.respuesta == 'success' )
+					{
+						$scope.realizarReajuste = false;
+						$scope.groupBy = 'sinFiltro';
+						$scope.lstProductosInventario();	
+					}
 
-				$scope.$parent.hideLoading();
-			});
-
+					$scope.$parent.hideLoading();
+				});
+				
+			}
+			else
+				alertify.notify('Usted no ha realizado ningun reajuste, verifique', 'warning', 5 );
 		}
-
 	};
 
 	$scope.realizarCierre = function(){
@@ -811,34 +853,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			total = disponibilidad;
 
 		return total;
-	};
-
-
-	$scope.consultaReajusteInventario = function(){
-		var itemProducto = $scope.itemProducto;
-
-		if( !(itemProducto.cantidad && itemProducto.cantidad != 0) ){
- 			alertify.notify('La cantidad debe ser diferente a 0', 'warning', 4);
-		}
-		else if( !(itemProducto.observacion && itemProducto.observacion.length > 20) ){
-			alertify.notify('La observación debe tener más de 20 caracteres', 'warning', 4);
-		}
-		else{
-			$http.post('consultas.php',{
-				opcion : "consultaReajusteInventario",
-				accion : 'insert',
-				datos  : $scope.itemProducto
-			}).success(function(data){
-				console.log( data );
-				alertify.set('notifier','position', 'top-right');
- 				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
-				if ( data.respuesta == 'success' ) {
-					$scope.lstProductosInventario();
-					$scope.resetValores( 2 );
-					$scope.dialIngreso.hide();
-				}
-			})
-		}
 	};
 
 });

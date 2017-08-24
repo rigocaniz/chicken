@@ -49,8 +49,9 @@
 							</div>
 						</div>
 						<br>
-						<div class="panel panel-warning">
+						<div class="panel panel-default">
 							<div class="panel-heading">
+								<span class="glyphicon glyphicon-th-list"></span>
 								<STRONG>LISTA DE USUARIOS</STRONG>
 							</div>
 							<div class="panel-body">

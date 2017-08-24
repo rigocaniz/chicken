@@ -23,12 +23,24 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	};
 
 	$scope.actualizarEstadoUsuario = function(){
+		
+		$scope.$parent.showLoading( 'Guardando...' );
+
 		$http.post('consultas.php',{
 			opcion : 'actualizarEstadoUsuario',
 			data   : $scope.user
 		}).success(function(data){
 			console.log( data );
-			$scope.cargarLstEstadoUsuario();
+			alertify.set('notifier','position', 'top-right');
+			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+			if( data.respuesta == 'success' )
+			{
+				$scope.cargarLstEstadoUsuario();
+				$scope.user = {};
+				$scope.dialCambiarEstadoUsuario.hide();
+			}
+
+			$scope.$parent.hideLoading();
 		});
 	};
 
