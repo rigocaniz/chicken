@@ -22,52 +22,50 @@
 		</div>
 		<div class="col-sm-3 col-xs-12">
 			<div class="btn-group" role="group">
-				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='ticket', 'btn-default':tipoVista!='ticket'}" 
-					ng-click="tipoVista='ticket'">
-					<span class="glyphicon glyphicon-user"></span>
-				</button>
-				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='ambos', 'btn-default':tipoVista!='ambos'}" 
-					ng-click="tipoVista='ambos'">
-					<b>Ambos</b>
-				</button>
 				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='menu', 'btn-default':tipoVista!='menu'}" 
-					ng-click="tipoVista='menu'">
-					<span class="glyphicon glyphicon-list-alt"></span>
+					ng-click="tipoVista='menu'" title="Menú: M">
+					<span class="glyphicon glyphicon-cutlery"></span>
+				</button>
+				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='dividido', 'btn-default':tipoVista!='dividido'}" 
+					ng-click="tipoVista='dividido'" title="Dividido: D">
+					<b>Dividido</b>
+				</button>
+				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='ticket', 'btn-default':tipoVista!='ticket'}" 
+					ng-click="tipoVista='ticket'" title="Ticket: T">
+					<span class="glyphicon glyphicon-bookmark"></span>
 				</button>
 			</div>
 		</div>
 	</div>
 	<div class="row" style="margin-top:7px">
 		<!-- VISTA POR TICKET -->
-		<div ng-class="{'col-sm-6':tipoVista=='ambos','col-sm-12':tipoVista=='ticket'}" ng-hide="tipoVista=='menu'">
-			<div class="panel panel-default" ng-repeat="menu in lstMenus track by $index">
-				<div class="panel-heading col-xs-12">
-					<h3 class="panel-title">
-						<div class="col-xs-6">
-							<button type="button" class="btn" ng-click="$parent.ixMenuActual=$index" 
-								ng-class="{'btn-default':!(difMinutos( menu.primerTiempo )>minutosAlerta),
-									'btn-danger':difMinutos( menu.primerTiempo )>minutosAlerta}">
-								<span class="glyphicon glyphicon-chevron-down"></span>
-								{{menu.menu}} <span class="badge">{{menu.numMenus}}</span>
-							</button>
-						</div>
-						<div class="col-xs-6 text-right">
-							<button type="button" class="btn btn-default">
-								<span class="glyphicon glyphicon-check"></span>
-							</button>
-							<button type="button" class="btn btn-default">
-								<span class="glyphicon glyphicon-unchecked"></span>
-							</button>
-						</div>
-					</h3>
+		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='menu'}" ng-hide="tipoVista=='ticket'">
+			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index">
+				<div class="header">
+					<div class="col-xs-6">
+						<button type="button" class="btn" ng-click="$parent.ixMenuActual=$index" 
+							ng-class="{'danger':difMinutos( menu.primerTiempo )>minutosAlerta}">
+							<span class="index" ng-if="$index<=8">{{$index+1}}</span>
+							<span class="glyphicon glyphicon-chevron-down"></span>
+							<span class="badge">{{menu.numMenus}}</span>
+							{{menu.menu}} 
+						</button>
+					</div>
+					<div class="col-xs-6 text-right">
+						<button type="button" class="btn btn-default" ng-click="selTodo( true )" ng-disabled="ixMenuActual!=$index" title="TODOS">
+							<span class="glyphicon glyphicon-check"></span>
+						</button>
+						<button type="button" class="btn btn-default" ng-click="selTodo( false )" ng-disabled="ixMenuActual!=$index" title="NINGUNO">
+							<span class="glyphicon glyphicon-unchecked"></span>
+						</button>
+					</div>
 				</div>
-				<div class="panel-body" ng-show="ixMenuActual==$index">
+				<div class="body" ng-show="ixMenuActual==$index">
 					<div class="col-sm-12">
 						<div class="table-responsive">
 							<table class="table table-hover">
 								<thead>
 									<tr>
-										<th></th>
 										<th>Tipo Servicio</th>
 										<th>Lapso</th>
 										<th>Combo</th>
@@ -77,7 +75,6 @@
 									<tr ng-repeat="item in menu.detalle track by $index" 
 										ng-class="{'success':item.selected, 'tr_alert':difMinutos( item.fechaRegistro )>minutosAlerta}"
 										ng-click="item.selected=!item.selected">
-										<td><img ng-src="{{menu.imagen}}" style="height:15px"></td>
 										<td>
 											<span class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}">
 	                                            <span ng-show="item.idTipoServicio==2">R</span>
@@ -103,7 +100,7 @@
 			</div>
 		</div>
 		<!-- VISTA POR MENU -->
-		<div ng-class="{'col-sm-6':tipoVista=='ambos','col-sm-12':tipoVista=='menu'}" ng-hide="tipoVista=='ticket'">
+		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='ticket'}" ng-hide="tipoVista=='menu'">
 			<div class="table-responsive">
 				<table class="table table-hover">
 					<thead>
@@ -130,13 +127,18 @@
 				</table>
 			</div>
 		</div>
+		<!-- FIN VISTA POR MENU -->
 	</div>
-	<div class="acciones" ng-show="seleccion.si">
-		<button type="button" class="btn btn-success">
+
+	<!-- SI TIENE SELECCIONADO ALGUN MENU -->
+	<div class="acciones" ng-show="seleccionMenu.si">
+		<button type="button" class="btn btn-lg btn-success">
 			<span class="glyphicon glyphicon-play"></span>
-			<b>Preparar</b>
-			<span class="badge">{{seleccion.count}}</span>
+			Preparar
+			<span class="badge" style="font-size:16px">{{seleccionMenu.count}}</span>
+			<b><u>{{seleccionMenu.menu}}</u></b>
 		</button>
+		<img ng-src="{{seleccionMenu.imagen}}">
 	</div>
 </div>
 

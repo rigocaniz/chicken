@@ -456,17 +456,29 @@ legend.legend2{
 
 .acciones{
     position: fixed;
+    text-align: center;
     bottom: 0;
-    background: #f3f3f3;
-    border-top: solid 3px #cfcfcf;
-    border-radius: 19px 19px 0px 0px;
-    left: 0;
-    width: 100%;
-    padding: 7px 5px 22px 12px;
-    box-shadow: 0px 0px 20px 3px rgba(0, 0, 0, 0.17);
-    -moz-box-shadow: 0px 0px 20px 3px rgba(0, 0, 0, 0.17);
-    -webkit-box-shadow: 0px 0px 20px 3px rgba(0, 0, 0, 0.17);
+    background: rgba(243, 237, 231, 0.85);
+    border-top: solid 4px rgb(220, 134, 53);
+    right: 0;
+    width: auto;
+    padding: 7px 17px 8px 20px;
+    border-radius: 50px 19px 0px 0px;
+    -moz-border-radius: 50px 19px 0px 0px;
+    -webkit-border-radius: 50px 19px 0px 0px;
+    box-shadow: -7px -2px 12px 0px rgba(0, 0, 0, 0.14);
+    -moz-box-shadow: -7px -2px 12px 0px rgba(0, 0, 0, 0.14);
+    -webkit-box-shadow: -7px -2px 12px 0px rgba(0, 0, 0, 0.14);
 }
+
+.acciones img{
+    border: solid 1px #ccc;
+    background: #fff;
+    border-radius: 7px;
+    padding: 5px;
+    height: 85px;
+}
+
 
 .border-success{
     border-left: 3px solid #4caf50;
@@ -728,14 +740,19 @@ tr.tr_alert{
 }
 
 .panel-menu .header .btn .index{
-    background-color: #4f4f4f;
-    color: #ffffff;
     position: absolute;
-    display: block;
     z-index: 5;
+    color: #5a5a5a;
     padding: 1px 2px 1px 3px;
-    border-radius: 5px 0px 0px 5px;
     left: 2px;
+    border-bottom: 1px solid #9f9f9f;
+    border-top: 1px solid #d6d6d6;
+    border-radius: 7px 0px 0px 7px;
+    -moz-border-radius: 7px 0px 0px 7px;
+    -webkit-border-radius: 7px 0px 0px 7px;
+    text-shadow: -1px 1px 1px #c7ceda;
+    -moz-text-shadow: -1px 1px 1px #c7ceda;
+    -webkit-text-shadow: -1px 1px 1px #c7ceda;
 }
 
 .panel-menu .header .btn.danger{

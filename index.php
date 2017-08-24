@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="css/estilo.css">
     <link rel="stylesheet" href="css/fileinput.css">
 </head>
-<body ng-controller="inicioCtrl" ng-keyup="pressKey( $event.keyCode );">
+<body ng-controller="inicioCtrl" ng-keydown="pressKey( $event.keyCode, ( $event.altKey && $event.ctrlKey ) );">
     <div class="cargando" id="cargando" ng-show="loading">
         <div class="loading-bro">
             <h1>{{ loadingText }}</h1>

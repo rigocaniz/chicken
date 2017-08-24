@@ -199,8 +199,10 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     };
 
     // CAPTURA TECLA PARA ATAJOS RAPIDOS
-    $scope.pressKey = function ( key ) {
-        $rootScope.$broadcast('keyPress', key );
+    $scope.pressKey = function ( key, altDerecho ) {
+        if ( key != 17 && key != 18 ) {
+            $rootScope.$broadcast('keyPress', key, altDerecho );
+        }
     };
 
     $scope.imagen = {
