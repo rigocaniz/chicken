@@ -167,7 +167,8 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			$scope.seleccionMenu.count  = 0;
 
 			for (var i = 0; i < $scope.lstMenus[ $scope.ixMenuActual ].detalle.length; i++) {
-				$scope.seleccionMenu.count++;		
+				if ( seleccionado )
+					$scope.seleccionMenu.count++;
 				$scope.lstMenus[ $scope.ixMenuActual ].detalle[ i ].selected = seleccionado;
 			}
 
@@ -182,20 +183,20 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		console.log( key );
 
 		// ATAJO PRIMEROS 9 ELEMENTOS
-		if ( key >= 49 && key <= 57 ) { // {1-9}
+		if ( key >= 49 && key <= 57 && !$scope.seleccionMenu.si ) { // {1-9}
 			var elemento = key - 49;
 
 			if ( $scope.lstMenus.length && elemento < $scope.lstMenus.length )
 				$scope.ixMenuActual = elemento;
 		}
-		else if ( key == 40 ) { // {DOWN}
+		else if ( key == 40 && !$scope.seleccionMenu.si ) { // {DOWN}
 			if ( $scope.lstMenus.length && $scope.ixMenuActual == -1 )
 				$scope.ixMenuActual = 0;
 
 			else if ( ( $scope.ixMenuActual + 1 ) < $scope.lstMenus.length )
 				$scope.ixMenuActual++;
 		}
-		else if ( key == 38 ) { // {UP}
+		else if ( key == 38 && !$scope.seleccionMenu.si ) { // {UP}
 			if ( $scope.ixMenuActual != -1 && $scope.ixMenuActual > 0 )
 				$scope.ixMenuActual--;
 		}

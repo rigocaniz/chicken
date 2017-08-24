@@ -43,7 +43,7 @@
 			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index">
 				<div class="header">
 					<div class="col-xs-6">
-						<button type="button" class="btn" ng-click="$parent.ixMenuActual=$index" 
+						<button type="button" class="btn" ng-click="$parent.ixMenuActual = ( seleccionMenu.si ? $parent.ixMenuActual : $index )"
 							ng-class="{'danger':difMinutos( menu.primerTiempo )>minutosAlerta}">
 							<span class="index" ng-if="$index<=8">{{$index+1}}</span>
 							<span class="glyphicon glyphicon-chevron-down"></span>
