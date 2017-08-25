@@ -66,69 +66,7 @@ var app = angular.module('restaurante',['ngRoute','mgcrea.ngStrap','angularUtils
         }
     });
 }]);
-/****rutas para menu opciones*****/
-app.config(function($routeProvider) {
-	$routeProvider
-	.when('/',{
-		templateUrl:'view/inicio.php'
-	})
-	.when('/cliente',{
-		templateUrl:'view/cliente.php',
-		controller:'clienteCtrl'
-	})
-	.when('/inventario',{
-		templateUrl:'view/inventario.php',
-		controller:'inventarioCtrl'
-	})
-    .when('/nuevoEdita/:evento/:id?',{
-        templateUrl:'view/nuevoEdita.php',
-        controller:'nuevoEditaCtrl'
-    })
-    .when('/admin',{
-        templateUrl:'view/admin.php',
-        controller:'crtlAdmin'
-    })
-    .when('/orden',{
-        templateUrl:'view/orden.php',
-        controller:'crtlOrden'
-    })
-    .when('/evento',{
-        templateUrl:'view/evento.php',
-        controller:'crtlEvento'
-    })
-    .when('/adminOrden',{
-        templateUrl:'view/adminOrden.php',
-        controller:'crtlAdminOrden'
-    })
-    .when('/reporte',{
-        templateUrl:'view/reporte.php',
-        controller:'reporteCtrl'
-    })
-    .when('/mantenimiento',{
-        templateUrl:'view/mantenimiento.php',
-        controller:'crtlMantenimiento'
-    })
-    .when('/factura',{
-        templateUrl:'view/factura.php',
-        controller:'facturaCtrl'
-    })	.otherwise({
-        redirectTo:'/'
-    });
 
-});
-
-app.directive('tooltip', function(){
-    return {
-        restrict: 'A',
-        link: function(scope, element, attrs){
-            $(element).hover(function(){
-                $(element).tooltip('show');
-            }, function(){
-                $(element).tooltip('hide');
-            });
-        }
-    };
-});
 
 /* CONEXION A SERVIDOR DE NOTIFICACIONES */
 var socket = io.connect('http://192.168.0.140:8080', { 'forceNew': true });
@@ -414,24 +352,4 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
         $scope.cliente.telefono = parseInt(cliente.telefono);
     };
 
-});
-
-
-app.directive('capitalize', function() {
-    return {
-        require: 'ngModel',
-        link: function(scope, element, attrs, modelCtrl) {
-            var capitalize = function(inputValue) {
-                if (inputValue == undefined) inputValue = '';
-                var capitalized = inputValue.toUpperCase();
-                if (capitalized !== inputValue) {
-                    modelCtrl.$setViewValue(capitalized);
-                    modelCtrl.$render();
-                }
-                return capitalized;
-            }
-            modelCtrl.$parsers.push(capitalize);
-            capitalize(scope[attrs.ngModel]); // capitalize initial value
-        }
-    };
 });

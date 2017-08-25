@@ -25,7 +25,7 @@
 								<input type="text" class="form-control" ng-model="$parent.txtCliente" ng-keypress="$event.keyCode == 13 && $parent.buscarCliente( $parent.txtCliente, 1 )" placeholder="NIT / DPI / NOMBRE" capitalize>
 							</div>
 							<div class="col-xs-3 col-sm-3 col-md-2">
-								<button class="btn btn-sm btn-primary" ng-click="$parent.buscarCliente( $parent.txtCliente, 1 )">
+								<button type="button" class="btn btn-sm btn-primary" ng-click="$parent.buscarCliente( $parent.txtCliente, 1 )">
 									<span class="glyphicon glyphicon-search"></span> Buscar
 								</button>
 							</div>
@@ -36,7 +36,7 @@
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : $parent.clienteMenu==1}" ng-show="$parent.clienteMenu==1">
 					<div class="panel panel-primary">
 						<div class="panel-body">
-							<form class="form-horizontal">
+							<form class="form-horizontal" autocomplete="off" novalidate>
 								<div class="form-group">
 									<div class="pull-right">
 										<label class="label" ng-class="{'label-success': accion == 'insert', 'label-info': accion == 'update'}" style="font-size: 15px;">
@@ -88,10 +88,10 @@
 									</div>
 								</div>
 								<div class="col-sm-12 text-center">
-									<button class="btn btn-success" ng-click="$parent.guardarCliente()">
+									<button type="button" class="btn btn-success" ng-click="$parent.guardarCliente()">
 										<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }} cliente
 									</button>
-									<button class="btn btn-default" ng-click="$parent.cancelarCliente()"> 
+									<button type="button" class="btn btn-default" ng-click="$parent.resetValores( 'cliente' )"> 
 										<span class="glyphicon glyphicon-log-out"></span> Cancelar
 									</button>
 								</div>

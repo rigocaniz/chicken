@@ -4,7 +4,9 @@
 		<div class="col-sm-10 col-sm-offset-1">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					<h3 class="panel-title">Facturar</h3>
+					<h3 class="panel-title">
+						<span class="glyphicon glyphicon-list-alt"></span> Facturar
+					</h3>
 				</div>
 				<div class="panel-body">
 					<form class="form-horizontal" role="form">
@@ -86,57 +88,73 @@
             <div class="modal-content panel-primary">
                 <div class="modal-header panel-heading">
                 	<button type="button" class="close" ng-click="$hide()">&times;</button>
-                	<span class="glyphicon glyphicon-plus"></span>
-                    Nuevo cliente
+                	<span class="glyphicon glyphicon-plus"></span> NUEVO CLIENTE
                 </div>
                 <div class="modal-body">
-                	<div class="container">
-	                	<div class="row">
-	                		<form class="form-horizontal">
+                	<div class="row">
+                		<div class="col-sm-12">
+	                		<form class="form-horizontal" autocomplete="off" novalidate>
+								<div class="form-group">
+									<div class="pull-right">
+										<label class="label" ng-class="{'label-success': accion == 'insert', 'label-info': accion == 'update'}" style="font-size: 15px;">
+											{{ accion == 'insert' ? 'AGREGAR' : 'ACTUALIZAR' }} CLIENTE
+										</label>
+									</div>
+								</div>
 								<div class="form-group">
 									<label class="col-sm-2">Nit</label>
-									<div class="col-sm-2 has-success">
-										<input type="text"  ng-model="$parent.cliente.nit" class="form-control"  maxlength="15" autofocus>
+									<div class="col-sm-3">
+										<input type="text" ng-model="$parent.cliente.nit" class="form-control" id="nit" maxlength="15" autofocus>
 									</div> 
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2">Nombre</label>
-									<div class="col-sm-6 has-success">
-										<input type="text" class="form-control" ng-model="$parent.cliente.nombre" maxlength="65">
+									<div class="col-sm-8">
+										<input type="text" class="form-control" ng-model="$parent.cliente.nombre" maxlength="65" capitalize>
 									</div>
 								</div>
-								<div class="form-group has-success">
-									<label class="col-sm-2">Cui(DPI)</label>
-									<div class="col-sm-2">
-										<input type="number" class="form-control" max="9999999999999" ng-model="$parent.cliente.cui">
-									</div>
-									<label class="col-sm-1">Correo</label>
+								<div class="form-group">
+									<label class="col-sm-2">Cui (DPI)</label>
 									<div class="col-sm-3">
-										<input type="text" class="form-control"  maxlength="65" ng-model="$parent.cliente.correo">
+										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="$parent.cliente.cui" capitalize>
+									</div>
+									<label class="col-sm-2">Correo</label>
+									<div class="col-sm-3">
+										<input type="email" class="form-control"  maxlength="65" ng-model="$parent.cliente.correo" capitalize>
 									</div>
 								</div>
-								<div class="form-group has-success">
+								<div class="form-group">
 									<label class="col-sm-2">Telefono</label>
-									<div class="col-sm-2">
-										<input type="number" class="form-control"  max="99999999" ng-model="$parent.cliente.telefono">
-									</div>
-									<label class="col-sm-1">Tipo Cliente</label>
 									<div class="col-sm-3">
-										<select class="form-control" ng-model="$parent.cliente.idTipoCliente">
-											<option ng-repeat="tc in lstTipoCliente" value="{{tc.idTipoCliente}}">{{tc.tipoCliente}}</option>
-										</select>
+										<input type="number" class="form-control"  max="99999999" ng-model="$parent.cliente.telefono" capitalize>
+									</div>
+									<label class="col-sm-2">Tipo Cliente</label>
+									<div class="col-sm-4">
+										<div class="btn-group" role="group" aria-label="">
+										  	<button type="button" class="btn btn-default" ng-repeat="tc in lstTipoCliente" ng-click="$parent.cliente.idTipoCliente = tc.idTipoCliente" ng-class="{'btn-warning': tc.idTipoCliente == $parent.cliente.idTipoCliente}">
+										  		<span class="glyphicon" ng-class="{'glyphicon-check': tc.idTipoCliente == $parent.cliente.idTipoCliente, 'glyphicon-unchecked': tc.idTipoCliente != $parent.cliente.idTipoCliente}"></span>
+										  		{{ tc.tipoCliente }}
+										  	</button>
+										</div>
 									</div>	
 								</div>
-								<div class="form-group has-success">
+								<div class="form-group">
 									<label class="col-sm-2">Dirección</label>
-									<div class="col-sm-6">
-										<input type="text" class="form-control"  maxlength="95" ng-model="$parent.cliente.direccion">
+									<div class="col-sm-8">
+										<input type="text" class="form-control"  maxlength="95" ng-model="$parent.cliente.direccion" capitalize>
 									</div>
 								</div>
+								<div class="col-sm-12 text-center">
+									<button type="button" class="btn btn-success" ng-click="$parent.guardarCliente()">
+										<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }} cliente
+									</button>
+									<button type="button" class="btn btn-default" ng-click="$parent.resetValores( 'cliente' )"> 
+										<span class="glyphicon glyphicon-log-out"></span> Cancelar
+									</button>
+								</div>
 							</form>
-	                   </div>
-                		
-                	</div>
+                		</div>
+                   </div>
                 </div>
                 <div class="modal-footer">
                 	<button type="button" class="btn btn-success" ng-click="$parent.guardarCliente()">

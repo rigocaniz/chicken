@@ -206,8 +206,9 @@
     <script src="js/libs/fileinput.js"></script>
     <script src="js/libs/moment.min.js"></script>
     
-
     <script src="js/app.js"></script>
+    <script src="js/rutas.js"></script>
+    <script src="js/directivas.js"></script>
     <script src="js/crtlCliente.js"></script>
     <script src="js/crtlInventario.js"></script>
     <script src="js/crtlNuevoEdita.js"></script>
