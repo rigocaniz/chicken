@@ -471,6 +471,27 @@ legend.legend2{
     -webkit-box-shadow: -7px -2px 12px 0px rgba(0, 0, 0, 0.14);
 }
 
+.acciones .btn-accion{
+    display: inline-block;
+    float: left;
+}
+
+.acciones .btn-accion .tipo-servicio{
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 7px;
+}
+
+.acciones .btn-accion .tipo-servicio .label{
+    margin: 0px 2px 0px 2px;
+    font-size: 14px;
+}
+
+.acciones .btn-accion .tipo-servicio .label .badge{
+    color: #2a2a2a;
+    background: rgba(255, 255, 255, 0.89);
+}
+
 .acciones img{
     border: solid 1px #ccc;
     background: #fff;

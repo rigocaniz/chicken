@@ -40,7 +40,7 @@
 	<div class="row" style="margin-top:7px">
 		<!-- VISTA POR TICKET -->
 		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='menu'}" ng-hide="tipoVista=='ticket'">
-			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index" ng-class="{'inactivo':ixMenuActual!=$index}">
+			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index" ng-class="{'inactivo':ixMenuActual!=$index&&seleccionMenu.si}">
 				<div class="header">
 					<div class="col-xs-6">
 						<button type="button" class="btn" ng-click="$parent.ixMenuActual = ( seleccionMenu.si ? $parent.ixMenuActual : $index )"
@@ -72,7 +72,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="item in menu.detalle track by $index" 
+									<tr ng-repeat="item in menu.detalle track by $index" style="cursor:pointer" 
 										ng-class="{'success':item.selected, 'tr_alert':difMinutos( item.fechaRegistro )>minutosAlerta}"
 										ng-click="selItemMenu( !item.selected, $index )">
 										<td>
@@ -132,12 +132,26 @@
 
 	<!-- SI TIENE SELECCIONADO ALGUN MENU -->
 	<div class="acciones" ng-show="seleccionMenu.si">
-		<button type="button" class="btn btn-lg btn-success">
-			<span class="glyphicon glyphicon-play"></span>
-			Preparar
-			<span class="badge" style="font-size:16px">{{seleccionMenu.count}}</span>
-			<b><u>{{seleccionMenu.menu}}</u></b>
-		</button>
+		<div class="btn-accion">
+			<!-- SELECCION POR TIPO DE SERVICIO -->
+			<div class="tipo-servicio">
+                <span ng-show="seleccionMenu.count.llevar>0" class="label label-primary">
+                	L <span class="badge">{{seleccionMenu.count.llevar}}</span>
+                </span>
+				<span ng-show="seleccionMenu.count.restaurante>0" class="label label-success">
+					R <span class="badge">{{seleccionMenu.count.restaurante}}</span>
+				</span>
+                <span ng-show="seleccionMenu.count.domicilio>0" class="label label-warning">
+                	D <span class="badge">{{seleccionMenu.count.domicilio}}</span>
+                </span>
+			</div>
+			<button type="button" class="btn btn-lg btn-success">
+				<span class="glyphicon glyphicon-play"></span>
+				Preparar
+				<span class="badge" style="font-size:16px">{{seleccionMenu.count.total}}</span>
+				<b><u>{{seleccionMenu.menu}}</u></b>
+			</button>
+		</div>
 		<img ng-src="{{seleccionMenu.imagen}}">
 	</div>
 </div>
