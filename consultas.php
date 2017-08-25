@@ -446,7 +446,8 @@ switch ( $data->opcion )
 	// LISTA DE ORDENES DETALL => POR DESTINO
 	case 'lstDetalleDestinos':
 		$orden = new Orden();
-		echo json_encode( $orden->lstDetalleDestinos( $data->idEstadoDetalleOrden, $data->idDestinoMenu ) );
+		$idDestinoMenu = 1; // COCINA
+		echo json_encode( $orden->lstDetalleDestinos( $data->idEstadoDetalleOrden, $idDestinoMenu ) );
 		break;
 
 	case 'menuPorCodigo':
