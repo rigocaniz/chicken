@@ -447,10 +447,10 @@
 													</div>
 												</td>
 												<td class="text-center">
-													<input type="number" min="0.01" ng-model="prod.cantidad" id="cantidad" class="form-control" ng-keydown="$event.keyCode == 27 && cancelarIngreso( 1 );" placeholder="Cantidad">
+													<input type="number" min="0.01" ng-model="prod.cantidad" id="cantidad" class="form-control" ng-keydown="$event.keyCode == 27 && cancelarIngreso( 1 );" placeholder="Cantidad" ng-disabled="!prod.seleccionado">
 												</td>
 												<td class="text-left">
-													<input type="number" class="form-control" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" ng-keydown="( $event.keyCode == 13 && agregarIngresoProducto() ) || ( $event.keyCode == 27 && cancelarIngreso( 1 ) )" step="0.01" ng-model="prod.costo" placeholder="Total">
+													<input type="number" class="form-control" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" ng-keydown="( $event.keyCode == 13 && agregarIngresoProducto() ) || ( $event.keyCode == 27 && cancelarIngreso( 1 ) )" step="0.01" ng-model="prod.costo" placeholder="Total" ng-disabled="!prod.seleccionado">
 												</td>
 												<td class="text-center">
 													<button type="button" class="btn btn-sm btn-warning" ng-click="agregarIngresoProducto();">

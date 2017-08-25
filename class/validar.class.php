@@ -74,7 +74,7 @@ class Validar
 
 		if( $warning AND $required ):
 			$this->error   = TRUE;
-			$this->mensaje = 'No. de CUI inválido, verifique que tenga 13 dígitos.'.$valor;
+			$this->mensaje = 'No. de CUI inválido, verifique que tenga 13 dígitos.';
 
 		elseif( !$required AND $warning ):
 			$valor = $default;
@@ -99,7 +99,7 @@ class Validar
 
 		if( $warning AND $required ):
 			$this->error   = TRUE;
-			$this->mensaje = 'No. de NIT inválido, verifique.';
+			$this->mensaje = 'No. de NIT inválido, verifique que tenga mas de 7 dígitos.';
 			$this->tiempo  = 4;
 
 		elseif( !$required AND $warning ):

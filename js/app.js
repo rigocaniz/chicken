@@ -264,7 +264,6 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
             $rootScope.$broadcast('cargarLista', data.response.accion );
             $scope.resetImagen();
         }
-
     })
     .on('filebatchuploaderror', function( event, data, msg ) {
         console.log( "4", data );
@@ -278,6 +277,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
         $('#cargando').removeAttr("style"); 
     });
 
+    $scope.dialBuscarCliente = $modal({scope: $scope,template:'dial.buscarCliente.html', show: false, backdrop: 'static', keyboard: false});
 
     /*CLIENTES*/
     $scope.clienteMenu = 1;
@@ -292,86 +292,146 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     $scope.catTipoCliente();
 
     $scope.cliente  = {
-        'nit'       : null,
-        'nombre'    : '',
-        'cui'       : null,
-        'correo'    : '',
-        'telefono'  : null,
-        'direccion' : '',
-        'idTipoCliente' : null,
+        'nit'           : null,
+        'nombre'        : '',
+        'cui'           : null,
+        'correo'        : '',
+        'telefono'      : null,
+        'direccion'     : '',
+        'idTipoCliente' : 1,
     };  
 
-    $scope.cancelarCliente = function(){
-        $scope.cliente = {};
-    }
+    $scope.resetValores = function( accion ){
+        $scope.accion = 'insert';
+        if( accion == 'cliente' )
+        {
+            $scope.cliente  = {
+                'nit'           : null,
+                'nombre'        : '',
+                'cui'           : null,
+                'correo'        : '',
+                'telefono'      : null,
+                'direccion'     : '',
+                'idTipoCliente' : 1,
+            }; 
+        }
+        if( accion == 'lstClientes' )
+        {
+            $scope.lstClientes = [];
+        }
 
+    };
+
+    $scope.accion = 'insert';
     $scope.guardarCliente = function(){
-        if ($scope.cliente.nombre =='' || !( $scope.cliente.idTipoCliente > 0 ) ) {
-            alertify.set('notifier','position', 'top-right');
-            alertify.notify('Ingrese nombre y tipo de cliente para guardar', 'warning', 3);
-        }else{
-            //validar accion a realizar
-            var accion = 'insert';
-            if ( $scope.cliente.idCliente > 0 ) {
-                accion = 'update';
-            }
-            
+        var cliente = $scope.cliente;
+
+        if( !(cliente.nombre && cliente.nombre.length >= 3) )
+        {
+            alertify.notify('El nombre debe tener más de 2 caracteres', 'warning', 4);
+        }
+        else{
             $http.post('consultas.php',{
-                opcion:"consultaCliente",
-                accion:accion,
-                cliente: $scope.cliente
+                opcion  : "consultaCliente",
+                accion  : $scope.accion,
+                cliente : $scope.cliente
             }).success(function(data){
                 console.log(data);
                 alertify.set('notifier','position', 'top-right');
-                alertify.notify(data.mensaje,data.respuesta, data.tiempo);
-                if ( data.respuesta == "success" ) {
-                    $scope.cancelarCliente();
-                }
+                alertify.notify( data.mensaje,data.respuesta, data.tiempo );
+                if ( data.respuesta == "success" )
+                    $scope.resetValores( 'cliente' );
+
             }).error(function (error, status){
                 $scope.data.error = { message: error, status: status};
-                console.log($scope.data.error.status); 
+                console.log( $scope.data.error.status ); 
             }); 
+            
         }
     };
 
-    $scope.buscarCliente = function(valor,evento){
-        if (valor == "" || valor == undefined )  {
-            alertify.set('notifier','position', 'top-right');
-            alertify.notify('Ingrese algún dato para buscar', 'warning', 3);
-        }else{
+    $scope.lstClientes = [];
+    $scope.txtCliente = '';
+    $scope.buscarCliente = function( valor, evento ){
+        if ( !(valor.length >= 1) )  {
+            alertify.notify('Ingrese algún dato para buscar al cliente', 'warning', 5);
+            $scope.lstClientes = [];
+        }
+        else{
             $http.post('consultas.php',{
-                opcion:"consultarCliente",
-                valor: valor
+                opcion : "consultarCliente",
+                valor  : valor
             }).success(function(data){
-                console.log(data);
-                var encontrados = data.length;
-                if (encontrados == 1 ) {
-                    if ( evento == 1) {//consulta desde clientes
-                        $scope.clienteMenu = 1;
-                        $scope.cliente = data[0]
-                        $scope.cliente.cui      = parseInt(data[0].cui);
-                        $scope.cliente.telefono = parseInt(data[0].telefono);
-                    }else{//consulta desde facturacioón
-                        $scope.facturaCliente = data[0];
+                console.log( data );
+                $scope.lstClientes = data;
+                if( $scope.lstClientes.length == 1 )
+                {
+                    $scope.cliente          = $scope.lstClientes[ 0 ]
+                    $scope.cliente.telefono = parseInt( $scope.lstClientes[0].telefono );
+                    $scope.resetValores( 'lstClientes' );
+                    $scope.txtCliente = '';
+                    $scope.accion     = 'update';
+                    $scope.dialBuscarCliente.hide();
+                    $timeout(function(){
+                        $( '#nit' ).focus();
+                    }, 125)
+                }
+                else if( $scope.lstClientes.length > 1 ){
+                    $scope.dialBuscarCliente.show();
+                    if( $scope.lstClientes.length >= 5 ){
+                        $timeout(function(){
+                            $('#buscarCliente').focus();
+                        }, 150);
                     }
-                }else if( encontrados > 1 ){
-                    $scope.masEncontrados = 1;
-                    $scope.lstClienteEncontrado = data;
-                }else{
+                }
+                else{
                     alertify.set('notifier','position', 'top-right');
-                    alertify.notify('Ningún cliente localizado', 'warning', 3);
+                    alertify.notify('Ningún cliente encontrado', 'warning', 3);
+                    $scope.resetValores( 'cliente' );
+                    $timeout(function(){
+                        $( '#nit' ).focus();
+                    }, 125)
                 }
             })
         }
     };
 
+    $scope.seleccionarCliente = function(cliente)
+    {
+        $scope.cliente = angular.copy( cliente );
+        $scope.cliente.telefono = parseInt( cliente.telefono );
+        $scope.txtCliente = '';
+        $scope.resetValores( 'lstClientes' );
+        $scope.accion = 'update';
+        $scope.dialBuscarCliente.hide();
+        $timeout(function(){
+            $( '#nit' ).focus();
+        }, 125)
+    };
+
     $scope.editarCliente = function(cliente){
         $scope.cliente          = angular.copy(cliente);
-        $scope.cliente.cui      = parseInt(cliente.cui);
         $scope.cliente.telefono = parseInt(cliente.telefono);
-        $scope.masEncontrados   = 0;
-        $scope.clienteMenu      = 1;
     };
 
 });
 
+
+app.directive('capitalize', function() {
+    return {
+        require: 'ngModel',
+        link: function(scope, element, attrs, modelCtrl) {
+            var capitalize = function(inputValue) {
+                if (inputValue == undefined) inputValue = '';
+                var capitalized = inputValue.toUpperCase();
+                if (capitalized !== inputValue) {
+                    modelCtrl.$setViewValue(capitalized);
+                    modelCtrl.$render();
+                }
+                return capitalized;
+            }
+            modelCtrl.$parsers.push(capitalize);
+            capitalize(scope[attrs.ngModel]); // capitalize initial value
+        }
+    };
+});

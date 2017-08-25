@@ -355,7 +355,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	{
 		if( !(producto.idProducto && producto.idProducto > 0) )
 			alertify.notify( 'El código del Producto no es válido', 'danger', 5 );
-		
 		else
 		{
 			$scope.prod = {
@@ -366,8 +365,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				costo        : null,
 				seleccionado : true
 			};
-
-			$('#cantidad').focus();
+			$timeout(function(){
+				$('#cantidad').focus();
+			}, 125);
 			$scope.lstProductos = [];
 		}
 	};
@@ -441,7 +441,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		else
 			$scope.lstProductos = [];
 	};
-
 
 	$scope.editarFacturaCompra = function( facturaCompra, accion )
 	{
@@ -528,14 +527,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			})	
 		}
 	};
-
-
-	$scope.filter = {
-		pagina: 1,
-		limite: 25,
-		orden: 'ASC'
-	};
-
 
 	$scope.buscarTipoProducto = '';
 	$scope.resetValores = function( accion )

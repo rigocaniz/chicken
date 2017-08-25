@@ -20,7 +20,13 @@ class Cliente
  		$this->sess = $sesion;
  	}
 
- 	
+ 	private function siguienteResultado()
+ 	{
+ 		if( $this->con->more_results() )
+ 			$this->con->next_result();
+ 	}
+
+
  	function consultaCliente( $accion, $cliente )
  	{
  		$validar = new Validar();
@@ -28,18 +34,31 @@ class Cliente
  		$idCliente = "NULL";
 
  		if( $accion == 'update' ):
- 			$cliente->idCliente = strlen( (int)$cliente->idCliente ) > 0 ? (int)$cliente->idCliente : NULL;
+ 			$cliente->idCliente = (int)$cliente->idCliente > 0 ? (int)$cliente->idCliente : NULL;
  			$idCliente          = $validar->validarNumero( $cliente->idCliente, NULL, TRUE, 1  );
- 		endif; 		
+ 		endif;
 
- 		// SET
+ 		// SETEO DE VARIABLES
  		$cliente->nit           = isset( $cliente->nit )  			? (string)$cliente->nit 		: NULL;
+ 		$cliente->nit           = strlen( $cliente->nit )  			? (string)$cliente->nit 		: NULL;
+
  		$cliente->nombre        = isset( $cliente->nombre ) 		? (string)$cliente->nombre 		: NULL;
- 		$cliente->cui           = isset( $cliente->cui )			? (double)$cliente->cui 		: NULL;
+ 		$cliente->nombre        = strlen( $cliente->nombre ) 		? (string)$cliente->nombre 		: NULL;
+
+ 		$cliente->cui           = isset( $cliente->cui )			? (string)$cliente->cui 		: NULL;
+
  		$cliente->correo        = isset( $cliente->correo ) 		? (string)$cliente->correo 		: NULL;
+ 		$cliente->correo        = strlen( $cliente->correo ) 		? (string)$cliente->correo 		: NULL;
+
  		$cliente->telefono      = isset( $cliente->telefono ) 		? (int)$cliente->telefono 		: NULL;
+ 		$cliente->telefono      = strlen( $cliente->telefono ) 		? (int)$cliente->telefono 		: NULL;
+
  		$cliente->direccion     = isset( $cliente->direccion ) 		? (string)$cliente->direccion 	: NULL;
+ 		$cliente->direccion     = strlen( $cliente->direccion ) 	? (string)$cliente->direccion 	: NULL;
+
  		$cliente->idTipoCliente = isset( $cliente->idTipoCliente ) 	? (int)$cliente->idTipoCliente 	: NULL;
+ 		$cliente->idTipoCliente = (int)$cliente->idTipoCliente > 0 	? (int)$cliente->idTipoCliente 	: NULL;
+
 
  		// VALIDAR
 		$nit           = $validar->validarNit( $cliente->nit, NULL, !esNulo( $cliente->nit ) );
@@ -60,13 +79,12 @@ class Cliente
  			$sql = "CALL consultaCliente( '{$accion}',{$idCliente},'{$nit}', '{$nombre}', '{$cui}', '{$correo}', '{$telefono}', '{$direccion}', {$idTipoCliente} )";
  		
  			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
- 				@$this->con->next_result();
+ 				$this->siguienteResultado();
 
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;
- 				if( $this->respuesta == 'success' )
+ 				if( $this->respuesta == 'success' AND $accion == 'insert' )
  					$this->data = (int)$row->id;
-
  			}
  			else{
  				$this->respuesta = 'danger';
@@ -81,38 +99,27 @@ class Cliente
 
  	function consultarCliente( $valor )
  	{
- 		$dataCliente = array();
- 		$comp = "";
+ 		$lstClientes = [];
+ 		$where = "";
+
  		if( strlen($valor) >= 8  AND strlen($valor) < 13 ){
- 			$comp = "nit='$valor'";
+ 			$where = "nit = '$valor'";
  		}
  		elseif( is_numeric($valor) AND strlen($valor) == 13 ){
- 			$comp = "cui=$valor";
+ 			$where = "cui=$valor";
  		}
  		else{
  			$valor= str_replace(' ','%', $valor);
-			$comp = "nombre like '%{$valor}%'";
+			$where = "nombre like '%{$valor}%'";
  		}
 
-	 	$sql = "SELECT *from vstCliente where $comp";
-	 	if( $rs = $this->con->query( $sql ) ){
-	 		if( $rs->num_rows > 0 ){
-	 			$this->respuesta = 'success';
-	 			$this->mensaje   = 'Encontrado';
+	 	$sql = "SELECT * FROM vstCliente where $where LIMIT 20;";
 
-		 		while( $row = $rs->fetch_object() )
-		 			$dataCliente[] = $row;
-	 		}else{
-	 			$this->respuesta = 'warning';
-	 			$this->mensaje   = 'No Encontrado';
-	 		}
-	 	}
-	 	else{
-	 		$this->respuesta = 'danger';
-	 		$this->mensaje   = 'Error al ejecutar la operacion (SP)';
-	 	}
+	 	if( $rs = $this->con->query( $sql ) )
+	 		while( $row = $rs->fetch_object() )
+	 			$lstClientes[] = $row;
 
-	 	return $dataCliente;
+	 	return $lstClientes;
  	
  	}
 
