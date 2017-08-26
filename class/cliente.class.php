@@ -39,26 +39,25 @@ class Cliente
  		endif;
 
  		// SETEO DE VARIABLES
- 		$cliente->nit           = isset( $cliente->nit )  			? (string)$cliente->nit 		: NULL;
- 		$cliente->nit           = strlen( $cliente->nit )  			? (string)$cliente->nit 		: NULL;
+ 		$cliente->nit           = isset( $cliente->nit )  				? (string)$cliente->nit 		: NULL;
+ 		$cliente->nit           = strlen( $cliente->nit )  				? (string)$cliente->nit 		: NULL;
 
- 		$cliente->nombre        = isset( $cliente->nombre ) 		? (string)$cliente->nombre 		: NULL;
- 		$cliente->nombre        = strlen( $cliente->nombre ) 		? (string)$cliente->nombre 		: NULL;
+ 		$cliente->nombre        = isset( $cliente->nombre ) 			? (string)$cliente->nombre 		: NULL;
+ 		$cliente->nombre        = strlen( $cliente->nombre ) 			? (string)$cliente->nombre 		: NULL;
 
- 		$cliente->cui           = isset( $cliente->cui )			? (string)$cliente->cui 		: NULL;
+ 		$cliente->cui           = isset( $cliente->cui ) > 1			? (string)$cliente->cui 		: NULL;
 
- 		$cliente->correo        = isset( $cliente->correo ) 		? (string)$cliente->correo 		: NULL;
- 		$cliente->correo        = strlen( $cliente->correo ) 		? (string)$cliente->correo 		: NULL;
+ 		$cliente->correo        = isset( $cliente->correo ) 			? (string)$cliente->correo 		: NULL;
+ 		$cliente->correo        = strlen( $cliente->correo ) 			? (string)$cliente->correo 		: NULL;
 
- 		$cliente->telefono      = isset( $cliente->telefono ) 		? (int)$cliente->telefono 		: NULL;
- 		$cliente->telefono      = strlen( $cliente->telefono ) 		? (int)$cliente->telefono 		: NULL;
+ 		$cliente->telefono      = isset( $cliente->telefono ) 			? (int)$cliente->telefono 		: NULL;
+ 		$cliente->telefono      = strlen( $cliente->telefono ) > 1 		? (int)$cliente->telefono 		: NULL;
 
- 		$cliente->direccion     = isset( $cliente->direccion ) 		? (string)$cliente->direccion 	: NULL;
- 		$cliente->direccion     = strlen( $cliente->direccion ) 	? (string)$cliente->direccion 	: NULL;
+ 		$cliente->direccion     = isset( $cliente->direccion ) 			? (string)$cliente->direccion 	: NULL;
+ 		$cliente->direccion     = strlen( $cliente->direccion ) 		? (string)$cliente->direccion 	: NULL;
 
- 		$cliente->idTipoCliente = isset( $cliente->idTipoCliente ) 	? (int)$cliente->idTipoCliente 	: NULL;
- 		$cliente->idTipoCliente = (int)$cliente->idTipoCliente > 0 	? (int)$cliente->idTipoCliente 	: NULL;
-
+ 		$cliente->idTipoCliente = isset( $cliente->idTipoCliente ) 		? (int)$cliente->idTipoCliente 	: NULL;
+ 		$cliente->idTipoCliente = (int)$cliente->idTipoCliente > 0 		? (int)$cliente->idTipoCliente 	: NULL;
 
  		// VALIDAR
 		$nit           = $validar->validarNit( $cliente->nit, NULL, !esNulo( $cliente->nit ) );
@@ -103,28 +102,27 @@ class Cliente
  		$lstClientes = [];
  		$where = "";
 
- 		if( strlen( $valor ) >= 8  AND strlen( $valor ) < 13 )
+ 		if( strlen($valor) >= 2  AND strtoupper( $valor ) == 'CF' OR strtoupper( $valor ) == 'C/F' )
+ 			$where = "nit = 'CF'";
+
+ 		else if( preg_match('/^[0-9-\s]{7,10}$/', $valor ) AND strlen( $valor ) >= 7  AND strlen( $valor ) <= 10 )
  			$where = "nit = '$valor'";
 
- 		elseif( is_numeric( $valor ) AND strlen($valor) == 13 )
+ 		elseif( preg_match('/^[0-9-\s]{13,15}$/', $valor ) AND strlen( $valor) >= 13 AND strlen( $valor) <= 15 )
  			$where = "cui = $valor";
-
- 		else if( strlen($valor) >= 2  AND strtoupper( $valor ) == 'CF' OR strtoupper( $valor ) == 'C/F' )
- 			$where = "nit = 'CF'";
 
  		else {
  			$valor= str_replace(' ','%', $valor);
-			$where = "nombre like '%{$valor}%'";
+			$where = "nombre LIKE '%{$valor}%'  LIMIT 20";
  		}
 
-	 	$sql = "SELECT * FROM vstCliente where $where LIMIT 20;";
-
+	 	$sql = "SELECT * FROM vstCliente where $where ;";
+// echo $sql;
 	 	if( $rs = $this->con->query( $sql ) )
 	 		while( $row = $rs->fetch_object() )
 	 			$lstClientes[] = $row;
 
 	 	return $lstClientes;
- 	
  	}
 
  	function consultarClientes()

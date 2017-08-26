@@ -161,7 +161,7 @@ class Validar
 
 		if( $warning AND $required ):
 			$this->error = TRUE;
-    		$this->mensaje = 'No. de teléfono inválid, verifique que tenga 8 dígitos.';
+    		$this->mensaje = 'No. de teléfono inválido, verifique que tenga 8 dígitos.';
 		endif;
 
 		return $valor;

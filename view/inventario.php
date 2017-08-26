@@ -126,7 +126,7 @@
 										  	<div class="col-sm-5 col-md-6 col-lg-7"></div>
 										  	<div class="col-sm-7 col-md-6 col-lg-5">
 										    	<div class="input-group">
-										      		<span class="input-group-addon" id="basic-addon1">
+										      		<span class="input-group-addon">
 										        		<span class="glyphicon glyphicon-search"></span>
 										      		</span>
 										      		<input type="text" class="form-control" ng-model="filtroProducto" maxlength="75" placeholder="Buscar producto">
@@ -265,7 +265,7 @@
 								<div class="col-sm-8 col-md-6">
 									<div class="input-group">
 										<input type="text" class="form-control" ng-model="buscarTipoProducto" placeholder="Buscar tipo">
-										<span class="input-group-addon" id="basic-addon1">
+										<span class="input-group-addon">
 											<span class="glyphicon glyphicon-search"></span> BUSCAR
 										</span>
 									</div>
@@ -333,7 +333,7 @@
 								<div class="col-sm-8 col-md-6">
 									<div class="input-group">
 										<input type="text" class="form-control" ng-model="buscarMedida" placeholder="Buscar medida">
-										<span class="input-group-addon" id="basic-addon1">
+										<span class="input-group-addon">
 											<span class="glyphicon glyphicon-search"></span> BUSCAR
 										</span>
 									</div>

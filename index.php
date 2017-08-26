@@ -151,7 +151,7 @@
                                 <div class="col-sm-5 col-md-6 col-lg-7"></div>
                                 <div class="col-sm-7 col-md-6 col-lg-5">
                                     <div class="input-group">
-                                        <span class="input-group-addon" id="basic-addon1">
+                                        <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-search"></span>
                                         </span>
                                         <input type="text" class="form-control" id="buscarCliente" ng-model="filtroCliente" maxlength="75" placeholder="Buscar cliente">

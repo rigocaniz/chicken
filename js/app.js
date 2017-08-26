@@ -261,32 +261,6 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     };
 
     $scope.accion = 'insert';
-    $scope.guardarCliente = function(){
-        var cliente = $scope.cliente;
-
-        if( !(cliente.nombre && cliente.nombre.length >= 3) )
-        {
-            alertify.notify('El nombre debe tener más de 2 caracteres', 'warning', 4);
-        }
-        else{
-            $http.post('consultas.php',{
-                opcion  : "consultaCliente",
-                accion  : $scope.accion,
-                cliente : $scope.cliente
-            }).success(function(data){
-                console.log(data);
-                alertify.set('notifier','position', 'top-right');
-                alertify.notify( data.mensaje,data.respuesta, data.tiempo );
-                if ( data.respuesta == "success" )
-                    $scope.resetValores( 'cliente' );
-
-            }).error(function (error, status){
-                $scope.data.error = { message: error, status: status};
-                console.log( $scope.data.error.status ); 
-            }); 
-            
-        }
-    };
 
     $scope.lstClientes = [];
     $scope.txtCliente = '';
