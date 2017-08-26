@@ -69,8 +69,8 @@ var app = angular.module('restaurante',['ngRoute','mgcrea.ngStrap','angularUtils
 
 
 /* CONEXION A SERVIDOR DE NOTIFICACIONES */
-var socket = io.connect('http://192.168.0.140:8080', { 'forceNew': true });
-//var socket = io.connect('http://127.0.0.1:8080', { 'forceNew': true });
+//var socket = io.connect('http://192.168.0.140:8080', { 'forceNew': true });
+var socket = io.connect('http://127.0.0.1:8080', { 'forceNew': true });
 
 
 /****CONTROLADORES****/
@@ -251,7 +251,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
                 'telefono'      : null,
                 'direccion'     : '',
                 'idTipoCliente' : 1,
-            }; 
+            };
         }
         if( accion == 'lstClientes' )
         {
@@ -290,8 +290,12 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
 
     $scope.lstClientes = [];
     $scope.txtCliente = '';
-    $scope.buscarCliente = function( valor, evento ){
-        if ( !(valor.length >= 1) )  {
+    $scope.tipo = null;
+    $scope.buscarCliente = function( valor, tipo ){
+
+        $scope.tipo = tipo ? tipo : $scope.tipo;
+        
+        if ( !(valor.length >= 1) && tipo != 'factura' )  {
             alertify.notify('Ingrese algún dato para buscar al cliente', 'warning', 5);
             $scope.lstClientes = [];
         }
@@ -304,15 +308,24 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
                 $scope.lstClientes = data;
                 if( $scope.lstClientes.length == 1 )
                 {
-                    $scope.cliente          = $scope.lstClientes[ 0 ]
-                    $scope.cliente.telefono = parseInt( $scope.lstClientes[0].telefono );
-                    $scope.resetValores( 'lstClientes' );
+                    if( tipo == 'factura' ){
+                        $scope.facturaCliente = $scope.lstClientes[ 0 ];
+                    }
+                    else
+                    {
+                        $scope.cliente = $scope.lstClientes[ 0 ];
+                        $scope.cliente.telefono = parseInt( $scope.lstClientes[0].telefono );
+
+                        $scope.resetValores( 'lstClientes' );
+                        $scope.accion     = 'update';
+                        $timeout(function(){
+                            $( '#nit' ).focus();
+                        }, 125)
+
+                    }
+
                     $scope.txtCliente = '';
-                    $scope.accion     = 'update';
                     $scope.dialBuscarCliente.hide();
-                    $timeout(function(){
-                        $( '#nit' ).focus();
-                    }, 125)
                 }
                 else if( $scope.lstClientes.length > 1 ){
                     $scope.dialBuscarCliente.show();

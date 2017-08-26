@@ -22,10 +22,10 @@
 						<div class="row">
 							<label class="col-xs-12 col-sm-3 col-md-2">BUSCAR CLIENTE</label>
 							<div class="col-xs-9 col-sm-6 col-md-5">
-								<input type="text" class="form-control" ng-model="$parent.txtCliente" ng-keypress="$event.keyCode == 13 && $parent.buscarCliente( $parent.txtCliente, 1 )" placeholder="NIT / DPI / NOMBRE" capitalize>
+								<input type="text" class="form-control" ng-model="$parent.txtCliente" ng-keypress="$event.keyCode == 13 && $parent.buscarCliente( $parent.txtCliente, 'cliente' )" placeholder="NIT / DPI / NOMBRE" capitalize>
 							</div>
 							<div class="col-xs-3 col-sm-3 col-md-2">
-								<button type="button" class="btn btn-sm btn-primary" ng-click="$parent.buscarCliente( $parent.txtCliente, 1 )">
+								<button type="button" class="btn btn-sm btn-primary" ng-click="$parent.buscarCliente( $parent.txtCliente, 'cliente' )">
 									<span class="glyphicon glyphicon-search"></span> Buscar
 								</button>
 							</div>
@@ -84,7 +84,7 @@
 								<div class="form-group">
 									<label class="col-sm-2">Dirección</label>
 									<div class="col-sm-8">
-										<input type="text" class="form-control"  maxlength="95" ng-model="$parent.cliente.direccion" capitalize>
+										<input type="text" class="form-control"  maxlength="95" ng-model="$parent.cliente.direccion" ng-keypress="$event.keyCode==13 && $parent.guardarCliente()" capitalize>
 									</div>
 								</div>
 								<div class="col-sm-12 text-center">

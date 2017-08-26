@@ -99,16 +99,20 @@ class Cliente
 
  	function consultarCliente( $valor )
  	{
+ 		//var_dump( $valor );
  		$lstClientes = [];
  		$where = "";
 
- 		if( strlen($valor) >= 8  AND strlen($valor) < 13 ){
+ 		if( strlen( $valor ) >= 8  AND strlen( $valor ) < 13 )
  			$where = "nit = '$valor'";
- 		}
- 		elseif( is_numeric($valor) AND strlen($valor) == 13 ){
- 			$where = "cui=$valor";
- 		}
- 		else{
+
+ 		elseif( is_numeric( $valor ) AND strlen($valor) == 13 )
+ 			$where = "cui = $valor";
+
+ 		else if( strlen($valor) >= 2  AND strtoupper( $valor ) == 'CF' OR strtoupper( $valor ) == 'C/F' )
+ 			$where = "nit = 'CF'";
+
+ 		else {
  			$valor= str_replace(' ','%', $valor);
 			$where = "nombre like '%{$valor}%'";
  		}

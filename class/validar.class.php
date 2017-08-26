@@ -41,14 +41,14 @@ class Validar
 
 		$warning = FALSE;
 
-		if( !(strlen( $valor ) >= 10) ):
+		if( !(strlen( $valor ) >= 8) AND ( $valor != 'CIUDAD' ) ):
 			$warning = TRUE;
 		endif;
 
 
 		if( $warning AND $required ):
 			$this->error   = TRUE;
-			$this->mensaje = 'Dirección inválida, verifique que tenga un mínimo de 10 caracteres.';
+			$this->mensaje = 'Dirección inválida, verifique que tenga un mínimo de 8 caracteres.';
 		
 		elseif( !$required AND $warning ):
 			$valor = $default;
@@ -92,19 +92,17 @@ class Validar
 			return $valor;
 
 		$warning = FALSE;
-
-		if( !(strlen( $valor ) >= 8) ):
+		if( !(strlen( $valor ) >= 5) AND ( $valor != 'CF' AND $valor != 'C/F' ) ):
 			$warning = TRUE;
 		endif;
 
 		if( $warning AND $required ):
 			$this->error   = TRUE;
-			$this->mensaje = 'No. de NIT inválido, verifique que tenga mas de 7 dígitos.';
+			$this->mensaje = 'No. de NIT inválido, verifique que tenga mas de 4 dígitos.';
 			$this->tiempo  = 4;
 
 		elseif( !$required AND $warning ):
 			$valor = $default;
-
 		endif;
 
 		return $valor;
