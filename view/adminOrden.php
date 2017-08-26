@@ -44,7 +44,7 @@
 				<div class="header">
 					<div class="col-xs-6">
 						<button type="button" class="btn" ng-click="$parent.ixMenuActual = ( seleccionMenu.si ? $parent.ixMenuActual : $index )"
-							ng-class="{'danger':difMinutos( menu.primerTiempo )>minutosAlerta}">
+							ng-class="{'danger':(difMinutos( menu.primerTiempo )>minutosAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}">
 							<span class="index" ng-if="$index<=8">{{$index+1}}</span>
 							<span class="glyphicon glyphicon-chevron-down"></span>
 							<span class="badge">{{menu.numMenus}}</span>
@@ -73,7 +73,7 @@
 								</thead>
 								<tbody>
 									<tr ng-repeat="item in menu.detalle track by $index" style="cursor:pointer" 
-										ng-class="{'success':item.selected, 'tr_alert':difMinutos( item.fechaRegistro )>minutosAlerta}"
+										ng-class="{'success':item.selected, 'tr_alert':(difMinutos( item.fechaRegistro )>minutosAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}"
 										ng-click="selItemMenu( !item.selected, $index )">
 										<td>
 											<span class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}">

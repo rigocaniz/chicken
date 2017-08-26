@@ -2,9 +2,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.lstMenu        = [];
 	$scope.minutosAlerta  = 20;
 	$scope.idEstadoOrden  = 0;
-	$scope.tipoVista      = 'menu';
+	$scope.tipoVista      = 'ticket';
 	$scope.ixMenuActual   = -1;
 	$scope.lstMenus       = [];
+	$scope.lstTickets     = [];
 	$scope.lstMenusMaster = [];
 	$scope.seleccionMenu  = {
 		si     : false,
@@ -33,6 +34,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			$scope.lstMenusMaster = data;
 			$timeout(function () {
 				$scope.lstPorMenu();
+				$scope.lstPorTicket();
 			});
 		});
 	};
@@ -80,6 +82,57 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 			$scope.lstMenus[ ixMenu ].numMenus += parseInt( $scope.lstMenusMaster[ ip ].cantidad );
 		}
+	};
+
+	// CLASIFICA ORDEN EN TICKETS DE <==== lstMenusMaster
+	$scope.lstPorTicket = function () {
+		console.log( $scope.lstMenusMaster );
+
+		return false;
+
+		$scope.lstTickets = [];
+		for (var ip = 0; ip < $scope.lstMenusMaster.length; ip++) {
+			var ixMenu = -1;
+
+			for (var im = 0; im < $scope.lstTickets.length; im++) {
+				if ( $scope.lstTickets[ im ].idMenu == $scope.lstMenusMaster[ ip ].idMenu ) {
+					ixMenu = im;
+					break;
+				}
+			}
+
+			// SI NO EXISTE SE CREA DATOS DE MENU
+			if ( ixMenu == -1 ) {
+				ixMenu = $scope.lstTickets.length;
+				$scope.lstTickets.push({
+					idMenu       : $scope.lstMenusMaster[ ip ].idMenu,
+					codigoMenu   : $scope.lstMenusMaster[ ip ].codigoMenu,
+					menu         : $scope.lstMenusMaster[ ip ].menu,
+					imagen       : $scope.lstMenusMaster[ ip ].imagen,
+					numMenus     : 0,
+					primerTiempo : $scope.lstMenusMaster[ ip ].fechaRegistro,
+					detalle      : []
+				});
+			}
+			
+			// AGREGA DETALL AL MENU
+			$scope.lstTickets[ ixMenu ].detalle.push({
+				perteneceCombo      : $scope.lstMenusMaster[ ip ].perteneceCombo,
+				idMenu              : $scope.lstMenusMaster[ ip ].idMenu,
+				idDetalleOrdenMenu  : $scope.lstMenusMaster[ ip ].idDetalleOrdenMenu,
+				cantidad            : $scope.lstMenusMaster[ ip ].cantidad,
+				fechaRegistro       : $scope.lstMenusMaster[ ip ].fechaRegistro,
+				tipoServicio        : $scope.lstMenusMaster[ ip ].tipoServicio,
+				idTipoServicio      : $scope.lstMenusMaster[ ip ].idTipoServicio,
+				idCombo             : $scope.lstMenusMaster[ ip ].idCombo,
+				idDetalleOrdenCombo : $scope.lstMenusMaster[ ip ].idDetalleOrdenCombo,
+				imagenCombo         : $scope.lstMenusMaster[ ip ].imagenCombo
+			});
+
+			$scope.lstTickets[ ixMenu ].numMenus += parseInt( $scope.lstMenusMaster[ ip ].cantidad );
+		}
+
+		console.log( $scope.lstTickets );
 	};
 
 

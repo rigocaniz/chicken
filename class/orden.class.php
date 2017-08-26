@@ -559,7 +559,7 @@ class Orden
  		);
  	}
 
- 	public function lstDetalleDestinos( $idEstadoDetalleOrden, $idDestinoMenu, $usuarioResponsableDetalle = NULL, $limite = 30 )
+ 	public function lstDetalleDestinos( $idEstadoDetalleOrden, $idDestinoMenu, $usuarioResponsableDetalle = NULL, $limite = 20 )
  	{
 		$idEstadoDetalleOrden = (int)$idEstadoDetalleOrden;
 		$idDestinoMenu        = (int)$idDestinoMenu;
@@ -570,7 +570,7 @@ class Orden
 		if ( isset( $usuarioResponsableDetalle ) AND strlen( $usuarioResponsableDetalle ) > 3 )
 			$where = " AND responsableDetalle = '$usuarioResponsableDetalle' ";
 
-		if ( $idEstadoDetalleOrden != 1 AND $limite > 0 )
+		if ( ( $idEstadoDetalleOrden != 1 OR $idEstadoDetalleOrden != 2 ) AND $limite > 0 )
 			$limit = " LIMIT  " . $limite;
 
  		$sql = "SELECT 
