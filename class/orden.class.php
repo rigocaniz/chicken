@@ -483,7 +483,8 @@ class Orden
 				    idTipoServicio,
 				    tipoServicio,
 				    idDetalleOrdenCombo,
-				    idCombo
+				    idCombo,
+				    tiempoAlerta
 				FROM
 				    vOrdenes
 				WHERE
@@ -593,7 +594,8 @@ class Orden
 					destinoMenu,
 				    responsableDetalle,
 				    responsableOrden,
-				    fechaRegistro
+				    fechaRegistro,
+				    tiempoAlerta
 				FROM vOrdenes
 				WHERE idEstadoDetalleOrden = {$idEstadoDetalleOrden} AND idDestinoMenu = {$idDestinoMenu}
 					$where

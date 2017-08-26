@@ -165,7 +165,8 @@ class Menu
 				    descripcion,
 				    idEstadoMenu,
 				    idDestinoMenu,
-				    codigoMenu AS codigo
+				    codigoMenu AS codigo,
+				    tiempoAlerta
 				FROM
 				    lstMenu
 				WHERE
@@ -253,7 +254,8 @@ class Menu
 					destinoMenu,
 					idTipoMenu,
 					tipoMenu,
-					codigoMenu
+					codigoMenu,
+					tiempoAlerta
 				FROM
 					lstMenu WHERE idEstadoMenu <> 3 ORDER BY idMenu $orden LIMIT $inicio, $limite;";
 		
@@ -304,7 +306,19 @@ class Menu
  		if ( !is_null( $idMenu ) AND $idMenu > 0 )
 	 		$where = " WHERE idMenu = $idMenu ";
 
- 		$sql = "SELECT idMenu, menu, imagen, descripcion, idEstadoMenu, estadoMenu, idDestinoMenu, destinoMenu, idTipoMenu, tipoMenu FROM lstMenu $where";
+ 		$sql = "SELECT
+ 					idMenu,
+ 					menu,
+ 					imagen,
+ 					descripcion,
+ 					idEstadoMenu,
+ 					estadoMenu,
+ 					idDestinoMenu,
+ 					destinoMenu,
+ 					idTipoMenu,
+ 					tipoMenu,
+ 					tiempoAlerta
+ 				FROM lstMenu $where";
  		
  		if( $rs = $this->con->query( $sql ) ){
 
