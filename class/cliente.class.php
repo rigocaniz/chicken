@@ -29,8 +29,7 @@ class Cliente
 
  	function consultaCliente( $accion, $cliente )
  	{
- 		$validar = new Validar();
- 		
+ 		$validar   = new Validar();
  		$idCliente = "NULL";
 
  		if( $accion == 'update' ):
@@ -45,7 +44,8 @@ class Cliente
  		$cliente->nombre        = isset( $cliente->nombre ) 			? (string)$cliente->nombre 		: NULL;
  		$cliente->nombre        = strlen( $cliente->nombre ) 			? (string)$cliente->nombre 		: NULL;
 
- 		$cliente->cui           = isset( $cliente->cui ) > 1			? (string)$cliente->cui 		: NULL;
+ 		$cliente->cui           = isset( $cliente->cui )				? (string)(int)$cliente->cui 	: NULL;
+ 		$cliente->cui           = strlen( (string)(int)$cliente->cui ) > 1	? (int)$cliente->cui 	        : NULL;
 
  		$cliente->correo        = isset( $cliente->correo ) 			? (string)$cliente->correo 		: NULL;
  		$cliente->correo        = strlen( $cliente->correo ) 			? (string)$cliente->correo 		: NULL;
@@ -56,8 +56,8 @@ class Cliente
  		$cliente->direccion     = isset( $cliente->direccion ) 			? (string)$cliente->direccion 	: NULL;
  		$cliente->direccion     = strlen( $cliente->direccion ) 		? (string)$cliente->direccion 	: NULL;
 
- 		$cliente->idTipoCliente = isset( $cliente->idTipoCliente ) 		? (int)$cliente->idTipoCliente 	: NULL;
- 		$cliente->idTipoCliente = (int)$cliente->idTipoCliente > 0 		? (int)$cliente->idTipoCliente 	: NULL;
+ 		$cliente->idTipoCliente = isset( $cliente->idTipoCliente ) 		? (int)$cliente->idTipoCliente 	 : NULL;
+ 		$cliente->idTipoCliente = (int)$cliente->idTipoCliente > 0 		? (int)$cliente->idTipoCliente 	 : NULL;
 
  		// VALIDAR
 		$nit           = $validar->validarNit( $cliente->nit, NULL, !esNulo( $cliente->nit ) );
@@ -76,6 +76,8 @@ class Cliente
 
  		else:
  			$sql = "CALL consultaCliente( '{$accion}',{$idCliente},'{$nit}', '{$nombre}', '{$cui}', '{$correo}', '{$telefono}', '{$direccion}', {$idTipoCliente} )";
+
+ 		echo $sql;
  		
  			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
  				$this->siguienteResultado();

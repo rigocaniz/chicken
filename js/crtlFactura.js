@@ -55,10 +55,17 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 
 	$scope.consultaCliente = function(){
         var cliente = $scope.cliente;
+
+        console.log( cliente );
         if( !(cliente.nombre && cliente.nombre.length >= 3) ) {
             alertify.notify('El nombre debe tener más de 2 caracteres', 'warning', 4);
         }
-        else{
+		else if( cliente.cui == undefined )
+			alertify.notify('El No. de CUI es inválido', 'warning', 3);	
+		else if( cliente.cui.length >= 1 && !(cliente.cui.length == 13) )
+			alertify.notify('El No. de CUI debe tener 13 dígitos', 'warning', 3);	
+        else
+        {
             $http.post('consultas.php',{
                 opcion  : "consultaCliente",
                 accion  : $scope.accion,
@@ -75,6 +82,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 
                     $scope.$parent.resetValores( 'cliente' );
                     $scope.dialAccionCliente.hide();
+                    $scope.txtCliente = '';
                     $( '#ticket' ).focus();
                 }
             }).error(function (error, status){
@@ -110,6 +118,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			$scope.facturacion.datosCliente.nombre    = '';
 			$scope.facturacion.datosCliente.direccion = '';
 			$scope.txtCliente = '';
+			$scope.lstClientes = [];
 			$timeout(function(){
 				$('#buscador').focus();
 			});
@@ -154,7 +163,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	            	$scope.dialAccionCliente.hide();
 	            }
 	            else if( data.length >= 1 ){
-	            	console.log( "cargando" );
 					$scope.lstClientes   = data;
 					$scope.accionCliente = 'ninguna';
 					$scope.dialAccionCliente.show();

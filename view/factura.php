@@ -47,20 +47,14 @@
 										<div class="col-sm-4">
 											<input type="text" class="form-control" ng-model="facturacion.datosCliente.nit" ng-disabled="facturacion.datosCliente.idCliente!=1">
 										</div>
-										<div class="col-sm-4">
+										<div class="col-sm-2 col-md-1">
 											<button type="button" class="btn btn-warning" ng-click="editarCliente( facturacion.datosCliente, 'mostrar' );" ng-show="facturacion.datosCliente.idCliente && facturacion.datosCliente.idCliente != 1">
 												<span class="glyphicon glyphicon-pencil"></span>
 											</button>
 										</div>
-									</div>
-									<div class="form-group" ng-show="$parent.facturaCliente.idCliente != 1 && ( facturaCliente.cui &&  facturaCliente.tipoCliente ) ">
 										<label class="col-sm-1 control-label">CUI</label>
-										<div class="col-sm-4">
-											<kbd>{{ facturaCliente.cui }}</kbd>
-										</div>
-										<label class="col-sm-1">TIPO</label>
-										<div class="col-sm-4">
-											<kbd>{{ facturaCliente.tipoCliente | uppercase }}</kbd>
+										<div class="col-sm-3">
+											<kbd>{{ facturacion.datosCliente.cui }}</kbd>
 										</div>
 									</div>
 									<div class="form-group">
@@ -203,27 +197,27 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2">Nombre</label>
-									<div class="col-sm-8">
+									<label class="col-sm-2 control-label">Nombre</label>
+									<div class="col-sm-9 col-md-8">
 										<input type="text" class="form-control" ng-model="$parent.cliente.nombre" maxlength="65" capitalize>
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2">Cui (DPI)</label>
-									<div class="col-sm-3">
+									<label class="col-sm-2 control-label">Cui (DPI)</label>
+									<div class="col-sm-4 col-md-3">
 										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="$parent.cliente.cui" capitalize>
 									</div>
-									<label class="col-sm-2">Correo</label>
-									<div class="col-sm-3">
+									<label class="col-sm-2 control-label">Correo</label>
+									<div class="col-sm-4 col-md-3">
 										<input type="email" class="form-control"  maxlength="65" ng-model="$parent.cliente.correo">
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2">Telefono</label>
-									<div class="col-sm-3">
+									<label class="col-sm-2 control-label">Telefono</label>
+									<div class="col-sm-4 col-md-3">
 										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="8" ng-model="$parent.cliente.telefono">
 									</div>
-									<label class="col-sm-2">Tipo Cliente</label>
+									<label class="col-sm-2 control-label">Tipo Cliente</label>
 									<div class="col-sm-4">
 										<div class="btn-group" role="group" aria-label="">
 										  	<button type="button" class="btn btn-default" ng-repeat="tc in lstTipoCliente" ng-click="$parent.cliente.idTipoCliente = tc.idTipoCliente" ng-class="{'btn-warning': tc.idTipoCliente == $parent.cliente.idTipoCliente}">
@@ -234,8 +228,8 @@
 									</div>	
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2">Dirección</label>
-									<div class="col-sm-8">
+									<label class="col-sm-2 control-label">Dirección</label>
+									<div class="col-sm-9 col-md-8">
 										<input type="text" class="form-control"  maxlength="95" ng-model="$parent.cliente.direccion" ng-keypress="$event.keyCode==13 && consultaCliente()">
 									</div>
 								</div>
