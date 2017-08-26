@@ -385,6 +385,7 @@ class Menu
 	 		$data->idEstadoMenu  = isset( $data->idEstadoMenu ) 	? (int)$data->idEstadoMenu 		: NULL;
 	 		$data->idDestinoMenu = isset( $data->idDestinoMenu ) 	? (int)$data->idDestinoMenu 	: NULL;
 	 		$data->idTipoMenu    = isset( $data->idTipoMenu )		? (int)$data->idTipoMenu 		: NULL;
+	 		$data->tiempoAlerta  = isset( $data->tiempoAlerta )		? (int)$data->tiempoAlerta 		: NULL;
 	 
 	 		// VALIDACIONES
 	 		if( $accion == 'update' ):
@@ -398,6 +399,7 @@ class Menu
 			$idEstadoMenu  = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado Menú no es válido' );
 			$idDestinoMenu = $validar->validarEntero( $data->idDestinoMenu, NULL, TRUE, 'El ID del tipo de medida no es válido	' );
 			$idTipoMenu    = $validar->validarEntero( $data->idTipoMenu, NULL, TRUE, 'El ID del tipo de menú no es válido' );
+			$tiempoAlerta  = $validar->validarEntero( $data->tiempoAlerta, NULL, TRUE, 'El tiempo de respuesta debe ser mayor a 0' );
 
 			// OBTENER RESULTADO DE VALIDACIONES
 	 		if( $validar->getIsError() ):
@@ -408,7 +410,7 @@ class Menu
 	 			// INICIALIZAR TRANSACCION
 	 			$this->con->query( 'START TRANSACTION' );
 
-		 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu}, {$idTipoMenu}, {$codigo} );";
+		 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu}, {$idTipoMenu}, {$codigo}, {$tiempoAlerta} );";
 
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 			$this->siguienteResultado();
