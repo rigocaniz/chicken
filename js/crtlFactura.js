@@ -32,17 +32,16 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 
 	});
 
-	$scope.detalleTicket = function(idOrden){
+	$scope.detalleTicket = function( idOrden ){
 		if (! (idOrden > 0 ) ) {
 			alertify.set('notifier','position', 'top-right');
             alertify.notify('Ingrese algún dato para buscar', 'warning', 3);
 		}else{
 			 $http.post('consultas.php',{
-                opcion:"lstDetalleOrdenCliente",
-                idOrdenCliente: idOrden
+                opcion         : "lstDetalleOrdenCliente",
+                idOrdenCliente : idOrden
             }).success(function(data){
                 console.log(data);
-
                 /*if (encontrados == 1 ) {
                     $scope.lstDetalleTicket = data;
                 }else{
@@ -56,7 +55,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	$scope.consultaCliente = function(){
         var cliente = $scope.cliente;
 
-        console.log( cliente );
         if( !(cliente.nombre && cliente.nombre.length >= 3) ) {
             alertify.notify('El nombre debe tener más de 2 caracteres', 'warning', 4);
         }
@@ -64,8 +62,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			alertify.notify('El No. de CUI es inválido', 'warning', 3);	
 		else if( cliente.cui.length >= 1 && !(cliente.cui.length == 13) )
 			alertify.notify('El No. de CUI debe tener 13 dígitos', 'warning', 3);	
-        else
-        {
+        else {
             $http.post('consultas.php',{
                 opcion  : "consultaCliente",
                 accion  : $scope.accion,
@@ -107,13 +104,42 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
     		$scope.dialAccionCliente.show();
     }
 
+	$scope.dialOrdenBusqueda    = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
+
+   	$scope.lstTicketBusqueda = [];
+	$scope.buscarOrdenTicket = function () {
+		console.log( $scope.facturacion );
+		if ( $scope.$parent.loading )
+			return false;
+
+		if ( $scope.facturacion.ticket > 0 ) {
+			$scope.lstTicketBusqueda = [];
+			$scope.$parent.loading = true; // cargando...
+			
+			// CONSULTA TIPO DE SERVICIOS
+			$http.post('consultas.php', { opcion : 'busquedaTicket', ticket : $scope.facturacion.ticket })
+			.success(function (data) {
+				console.log( data );
+				$scope.$parent.loading = false; // cargando...
+
+				if ( Array.isArray( data ) && data.length ) {
+					$scope.facturacion.ticket = 0;
+					$scope.lstTicketBusqueda = data;
+					$scope.dialOrdenBusqueda.show();
+				}
+				else{
+					alertify.set('notifier','position', 'top-right');
+					alertify.notify( "No se encontro información", 'info', 2 );
+				}
+			});
+		}
+	};
+
 	// BUSCARCLIENTE
 	$scope.lstClientes = [];
 	$scope.txtCliente  = '';
 	$scope.buscarCliente = function( valor, accion ){
-		console.log( 'accion:::', accion )
-		if( valor.length == 0 && 'principal'  )
-		{
+		if( valor.length == 0 && 'principal'  ) {
 			$scope.accionCliente = 'ninguna';
 			$scope.facturacion.datosCliente.nombre    = '';
 			$scope.facturacion.datosCliente.direccion = '';

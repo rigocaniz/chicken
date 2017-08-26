@@ -272,7 +272,9 @@ class Menu
 						'destinoMenu'   => $row->destinoMenu,
 						'idTipoMenu'    => (int)$row->idTipoMenu,
 						'tipoMenu'      => $row->tipoMenu,
-						'codigo'        => $row->codigoMenu
+						'codigo'        => $row->codigoMenu,
+						'tiempoAlerta'  => (int)$row->tiempoAlerta
+						
 				);
 
 				$menus->lstMenus[] = $menu;
@@ -534,7 +536,7 @@ class Menu
  		elseif( $this->respuesta == 'danger')
  			$this->tiempo = 7;
 
- 		return $respuesta = array( 
+ 		return array( 
  				'respuesta' => $this->respuesta,
  				'mensaje'   => $this->mensaje,
  				'tiempo'    => $this->tiempo,

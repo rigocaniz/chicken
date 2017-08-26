@@ -23,11 +23,13 @@
 						<span class="glyphicon glyphicon-list-alt"></span> COMBOS
 					</a>
 				</li>
+				<!--
 				<li role="presentation" ng-class="{'active' : menuTab=='superCombo'}" ng-click="resetValores(); menuTab='superCombo'">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-book"></span> SUPERCOMBOS
 					</a>
 				</li>
+				-->
 			</ul>
 		</div>
 
@@ -219,15 +221,26 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 col-md-2">TIPO DE MENU</label>
-								<div class="col-sm-7">
+								<div class="col-xs-6 col-sm-6 col-md-4">
+									<label class="control-label">TIPO DE MENU</label>
+									<div>
+										
 									<div class="btn-group btn-group-sm" role="group">
 									  	<button type="button" class="btn btn-default" ng-class="{'btn-info': tipoMenu.idTipoMenu == menu.idTipoMenu}" ng-click="menu.idTipoMenu = tipoMenu.idTipoMenu" ng-repeat="tipoMenu in lstTipoMenu">
 									  		<span class="glyphicon" ng-class="{'glyphicon-check': tipoMenu.idTipoMenu == menu.idTipoMenu, 'glyphicon-unchecked': tipoMenu.idTipoMenu != menu.idTipoMenu}"></span>
 									  		{{ tipoMenu.tipoMenu }}
 									  	</button>
 									</div>
+									</div>
 								</div>
+								<div class="col-xs-5 col-sm-4 col-md-3">
+									<label class="control-label">TIEMPO LÍMITE (Aprox.)</label>
+									<div class="input-group">
+										<input type="number" min="0" class="form-control" ng-pattern="/^[0-9]+?$/" ng-model="menu.tiempoAlerta" max="60" required>
+									  	<span class="input-group-addon">Minutos</span>
+									</div>
+
+								</div>						
 							</div>
 							<div class="form-group">
 								<div class="col-sm-12">

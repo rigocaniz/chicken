@@ -88,7 +88,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		});
 	};
 
-
 	// BUSCAR MENUS
 	$scope.lstBusqueda = [];
 	$scope.buscarMenu = function( nombreMenu ){
@@ -143,7 +142,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		}
 	};
 
-
 	// ACTUALIZAR LST RECETA
 	$scope.actualizarLstDetalleCombo = function()
 	{
@@ -172,7 +170,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		}
 	};
 
-
 	$scope.eliminarDetalleCombo = function( idCombo, idMenu )
 	{
 		$http.post('consultas.php',{
@@ -194,7 +191,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		});
 	};
 
-
 	// CARGAR DETALLE COMBO
 	$scope.objCombo = {};
 	$scope.cargarDetalleCombo = function( combo )
@@ -204,7 +200,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			$scope.lstComboDetalle( $scope.objCombo.idCombo, true );
 		}
 	};
-
 
 	// CONSULTAR DETALLE COMBO
 	$scope.lstComboDetalle = function( idCombo, abrirModal )
@@ -217,7 +212,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				$scope.dialDetalleCombo.show();
 		});
 	};
-
 
 	// CARGAR RECETA MENU
 	$scope.objMenu = {};
@@ -496,6 +490,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				'menu'          : '',
 				'idDestinoMenu' : 1,
 				'idTipoMenu'    : 1,
+				'tiempoAlerta'  : 0,
 				'descripcion'   : '',
 				'imagen'        : '',
 				'subirImagen'   : true,
@@ -587,6 +582,10 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			error = true;
 			alertify.notify( 'Seleccione el tipo de Menú', 'info', 3 );
 		}
+		else if( !( menu.tiempoAlerta && menu.tiempoAlerta > 0 ) ){
+			error = true;
+			alertify.notify( 'El tiempo límite debe ser mayor a 0', 'info', 4 );
+		}
 		else if( !( menu.descripcion && menu.descripcion.length > 10 ) ){
 			error = true;
 			alertify.notify( 'La descripción del menú debe ser mayor a 10 caracteres', 'info', 5 );		
@@ -631,6 +630,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				'menu'          : '',
 				'idDestinoMenu' : 1,
 				'idTipoMenu'    : 1,
+				'tiempoAlerta'  : 0,
 				'descripcion'   : '',
 				'imagen'        : '',
 				'subirImagen'   : true,

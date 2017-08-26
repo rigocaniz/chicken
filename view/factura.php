@@ -52,8 +52,8 @@
 												<span class="glyphicon glyphicon-pencil"></span>
 											</button>
 										</div>
-										<label class="col-sm-1 control-label">CUI</label>
-										<div class="col-sm-3">
+										<label class="col-sm-1 control-label" ng-show="facturacion.datosCliente.cui.length >=10">CUI</label>
+										<div class="col-sm-3" ng-show="facturacion.datosCliente.cui.length >=10">
 											<kbd>{{ facturacion.datosCliente.cui }}</kbd>
 										</div>
 									</div>
@@ -72,7 +72,9 @@
 										<div class="col-sm-4">
 											<input type="text" id="ticket" class="form-control" ng-model="facturacion.ticket">
 										</div>
-										<button type="button" class="btn btn-primary" ng-click="detalleTicket(ticket)">Agregar</button>
+										<button type="button" class="btn btn-primary" ng-click="buscarOrdenTicket()">
+											Buscar
+										</button>
 									</div>
 								</form>
 								{{ facturacion | json }}
@@ -115,6 +117,62 @@
 		</div>
 	</div>
 </div>
+
+
+<!-- *********** BUSQUEDA DE ORDEN ********* -->
+<script type="text/ng-template" id="dial.orden-busqueda.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_busqueda">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-info">
+                <div class="modal-header panel-heading">
+                	<span class="glyphicon glyphicon-search"></span>
+                    Buscar Orden
+                </div>
+                <div class="modal-body">
+                	<div class="row">
+                		<div class="col-xs-12">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th># Orden</th>
+                                            <th>Ticket</th>
+                                            <th>Responsable</th>
+                                            <th>Estado Orden</th>
+                                            <th>Lapso</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in lstTicketBusqueda track by $index" ng-click="seleccionarDeBusqueda( item )">
+                                            <td>{{ item.idOrdenCliente }}</td>
+                                            <td>{{ item.numeroTicket }}</td>
+                                            <td>{{ item.usuarioResponsable }}</td>
+                                            <td>{{ item.estadoOrden }}</td>
+                                            <td>{{ tiempoTranscurrido( item.fechaRegistro ) }}</td>
+                                            <td>
+                                            	<button type="button" class="btn btn-info" ng-click="detalleTicket( item.idOrdenCliente )">
+                                            		<span class="glyphicon glyphicon-chevron-righ"></span> Seleccionar
+                                            	</button>
+                                            	
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                		</div>
+                	</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" ng-click="$hide();">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <b>Salir</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script> 
+
 
 <!-- DIALOGO BUSCAR / LISTAR CLIENTES -->
 <script type="text/ng-template" id="dial.accionCliente.html">
