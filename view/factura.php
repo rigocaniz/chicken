@@ -1,7 +1,6 @@
-<div class="container">
+<div class="contenedor">
 	<div class="row">
-		<br>
-		<div class="col-sm-10 col-sm-offset-1">
+		<div class="col-md-12 col-lg-10 col-lg-offset-1">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">
@@ -13,32 +12,42 @@
 						<div class="form-group">
 							<label class="col-sm-1">NIT</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control" ng-model="$parent.facturaCliente.nit">
+								<input type="text" class="form-control" ng-model="$parent.facturaCliente.nit" ng-keypress="$event.keyCode == 13 && $parent.buscarCliente( $parent.facturaCliente.nit, 'factura' )" ng-change="$parent">
 							</div>
 							<div class="col-sm-4">
-								<button type="button" class="btn btn-info" ng-click="$parent.buscarCliente($parent.facturaCliente.nit,2);">
+								<button type="button" class="btn btn-info" ng-click="$parent.buscarCliente( $parent.facturaCliente.nit, 'factura' );">
 									<span class="glyphicon glyphicon-search"></span>
 								</button>
-								<button type="button" class="btn btn-primary" ng-click="nuevoCliente($parent.facturaCliente,1);">
+								<button type="button" class="btn btn-primary" ng-click="nuevoCliente($parent.facturaCliente,1);" ng-disabled="$parent.facturaCliente.idCliente == 1">
 									<span class="glyphicon glyphicon-user"></span>
 								</button>
-								<button type="button" class="btn btn-warning" ng-click="nuevoCliente($parent.facturaCliente.nit,2);">
+								<button type="button" class="btn btn-warning" ng-click="nuevoCliente($parent.facturaCliente.nit,2);" ng-disabled="$parent.facturaCliente.idCliente == 1">
 									<span class="glyphicon glyphicon-pencil"></span>
 								</button>
+							</div>
+						</div>
+						<div class="form-group" ng-show="$parent.facturaCliente.idCliente != 1 && ( facturaCliente.cui &&  facturaCliente.tipoCliente ) ">
+							<label class="col-sm-1">CUI</label>
+							<div class="col-sm-4">
+								<kbd>{{ facturaCliente.cui }}</kbd>
+							</div>
+							<label class="col-sm-1">TIPO</label>
+							<div class="col-sm-4">
+								<kbd>{{ facturaCliente.tipoCliente }}</kbd>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-1">NOMBRE</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control" ng-model="$parent.facturaCliente.nombre">
+								<input type="text" class="form-control" ng-model="$parent.facturaCliente.nombre" disabled>
 							</div>
 							<label class="col-sm-2">DIRECCION</label>
 							<div class="col-sm-5">
-								<input type="text" class="form-control" ng-model="$parent.facturaCliente.direccion">
+								<input type="text" class="form-control" ng-model="$parent.facturaCliente.direccion" disabled>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-1">Ticket</label>
+							<label class="col-sm-1">TICKET</label>
 							<div class="col-sm-4">
 								<input type="text" class="form-control" ng-model="ticket">
 							</div>
@@ -81,6 +90,7 @@
 		</div>
 	</div>
 </div>
+
 <!-- DIALOGO NUEVO CLIENTE -->
 <script type="text/ng-template" id="dial.nuevo.cliente.html">
     <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
