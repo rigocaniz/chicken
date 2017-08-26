@@ -1,54 +1,43 @@
 app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
-	$scope.lstTipoServicio = [];
-	$scope.lstTipoMenu     = [];
-	$scope.lstMenu         = [];
-	$scope.noTicket        = '';
-	$scope.idTipoServicio  = '';
-	$scope.idTipoMenu      = '';
-	$scope.accionOrden     = 'nuevo';
-
-	$scope.minutosAlerta = 20;
-
-
-	$scope.idDestinoMenu = 1;
-	$scope.idEstadoOrden   = 1;
-	$scope.tipoVista = 'menu';
-
-
-
-	$scope.ordenActual = {
-		idOrdenCliente : 0,
-		noTicket       : '',
-		totalAgregar   : 0,
-		lstAgregar     : [],
-		lstPedidos     : []
-	};
-
-	$scope.menuActual     = {
-		lstPrecio : []
-	};
-
-
+	$scope.lstMenu        = [];
+	$scope.minutosAlerta  = 20;
+	$scope.idEstadoOrden  = 0;
+	$scope.tipoVista      = 'menu';
+	$scope.ixMenuActual   = -1;
+	$scope.lstMenus       = [];
 	$scope.lstMenusMaster = [];
+	$scope.seleccionMenu  = {
+		si     : false,
+		menu   : '',
+		imagen : null,
+		count  : {
+			total 		: 0,
+			llevar      : 0,
+			restaurante : 0,
+			domicilio   : 0
+		},
+	};
+
 	// CONSULTA INFORMACION DE ORDENES
-	($scope.consultaOrden = function () {
+	$scope.consultaOrden = function () {
+		if ( !( $scope.idEstadoOrden > 0 ) ) return false;
+
+		$scope.$parent.loading = true; // cargando...
 		$scope.lstMenusMaster = [];
 		$http.post('consultas.php', { 
 			opcion               : 'lstDetalleDestinos',
-			idEstadoDetalleOrden : $scope.idEstadoOrden,
-			idDestinoMenu        : $scope.idDestinoMenu
+			idEstadoDetalleOrden : $scope.idEstadoOrden
 		})
 		.success(function (data) {
-			console.log( data );
+			$scope.$parent.loading = false; // cargando...
 			$scope.lstMenusMaster = data;
 			$timeout(function () {
 				$scope.lstPorMenu();
 			});
 		});
-	})();
+	};
 
-	$scope.lstMenus = [];
-	$scope.ixMenuActual = -1;
+	// CLASIFICA ORDEN EN MENUS DE <==== lstMenusMaster
 	$scope.lstPorMenu = function () {
 		$scope.lstMenus = [];
 		for (var ip = 0; ip < $scope.lstMenusMaster.length; ip++) {
@@ -75,6 +64,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				});
 			}
 			
+			// AGREGA DETALL AL MENU
 			$scope.lstMenus[ ixMenu ].detalle.push({
 				perteneceCombo      : $scope.lstMenusMaster[ ip ].perteneceCombo,
 				idMenu              : $scope.lstMenusMaster[ ip ].idMenu,
@@ -89,60 +79,48 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			});
 
 			$scope.lstMenus[ ixMenu ].numMenus += parseInt( $scope.lstMenusMaster[ ip ].cantidad );
-			//$scope.lstMenus[ ixMenu ].primerTiempo = $scope.lstMenusMaster[ ip ].fechaRegistro;
 		}
-		console.log( $scope.lstMenus );
 	};
 
 
+	/* ************************** CAMBIO DE ESTADO ********************** */
+	// SI CAMBIA ESTADO DE ORDEN
+	$scope.cambioEstadoOrden = function ( idEstadoOrden ) {
+		if ( $scope.$parent.loading ) return false;
+
+		if ( $scope.permitirAccion() ) {
+			$scope.idEstadoOrden = idEstadoOrden;
+			$scope.consultaOrden();
+		}
+	};
+
+	$timeout(function () { $scope.cambioEstadoOrden( 1 ); });
 
 
-	$scope.lstOrdenes = [];
-	// INFORMACION DE NODEJS
-	$scope.$on('infoNode', function( event, datos ) {
-		console.log( 'DTS::', datos );
-
-		if ( datos.data && Array.isArray( datos.data.lstMenuAgregado ) ) {
-
-			for (var i = 0; i < datos.data.lstMenuAgregado.length; i++) {
-				$scope.lstOrdenes.push(
-					datos.data.lstMenuAgregado[i]
-				);
+	/* ************************** AUXILIARES ********************** */
+	// SI SE PERMITE ACCION
+	$scope.permitirAccion = function ( noMostrarAlerta ) {
+		var respuesta = true;
+		if ( $scope.seleccionMenu.si ) {
+			if ( !noMostrarAlerta ) {
+				alertify.set('notifier','position', 'top-right');
+				alertify.notify( "Existen menús seleccionados", 'info', 2 );
 			}
+
+			respuesta = false;
 		}
 
-		$scope.$apply();
-	});
-
-	$scope.seleccion = {
-		si    : false,
-		count : 0
+		return respuesta;
 	};
-	$scope.accionItems = function () {
-		$scope.seleccion.si    = false;
-		$scope.seleccion.count = 0;
-		
-		for (var i = 0; i < $scope.lstOrdenes.length; i++) {
-			if ( $scope.lstOrdenes[ i ].selected ) {
-				$scope.seleccion.si = true;
-				$scope.seleccion.count++;
-			}
-		}
+
+	// CAMBIO DE TIPO DE VISTA
+	$scope.cambiarVista = function ( tipoVista ) {
+		if ( $scope.permitirAccion() )
+			$scope.tipoVista = tipoVista;
 	};
 
 
-	$scope.seleccionMenu = {
-		si     : false,
-		menu   : '',
-		imagen : null,
-		count  : {
-			total 		: 0,
-			llevar      : 0,
-			restaurante : 0,
-			domicilio   : 0
-		},
-	};
-
+	/* ************************** SELECCION DE MENUS ********************** */
 	// SELECCIONA O DESELECCIONA TODOS
 	$scope.selItemMenu = function ( seleccionado, ixDetalle ) {
 		if ( !( $scope.ixMenuActual >= 0 ) )
@@ -281,25 +259,8 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		}
 	};
 
-	// SI SE PERMITE ACCION
-	$scope.permitirAccion = function ( noMostrarAlerta ) {
-		var respuesta = true;
-		if ( $scope.seleccionMenu.si ) {
-			if ( !noMostrarAlerta ) {
-				alertify.set('notifier','position', 'top-right');
-				alertify.notify( "Existen menús seleccionados", 'info', 2 );
-			}
 
-			respuesta = false;
-		}
-
-		return respuesta;
-	};
-
-	$scope.cambiarVista = function ( tipoVista ) {
-		if ( $scope.permitirAccion() )
-			$scope.tipoVista = tipoVista;
-	};
+	/* ************************** ATAJOS CON TECLADO ********************** */
 
 	// AUX -> ATAJO INICIO
 	$scope._keyInicio = function ( key, altDerecho ) {
@@ -336,6 +297,19 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 		else if ( key == 189 ) // {-}
 			$scope.selItemKey( false );
+
+		// CAMBIO DE ESTADO
+		else if ( altDerecho && key == 80 ) // {p}
+			$scope.cambioEstadoOrden( 1 );
+
+		else if ( altDerecho && key == 69 ) // {E}
+			$scope.cambioEstadoOrden( 2 );
+
+		else if ( altDerecho && key == 70 ) // {F}
+			$scope.cambioEstadoOrden( 3 );
+
+		else if ( altDerecho && key == 67 ) // {C}
+			$scope.cambioEstadoOrden( 10 );
 	};
 
 	// TECLA PARA ATAJOS RAPIDOS
@@ -366,6 +340,17 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		}
 	});
 
+
+	/* ************************** INFORMACION DE NODEJS ********************** */
+	// INFORMACION DE NODEJS
+	$scope.$on('infoNode', function( event, datos ) {
+		console.log( 'DTS::', datos );
+
+		$scope.$apply();
+	});
+
+
+	/* ************************** CONSULTA SI EXISTE MODAL ABIERTO ********************** */
 	$scope.modalOpen = function ( _name ) {
 		if ( _name == undefined )
 			return $("body>div").hasClass('modal') && $("body>div").hasClass('top');
