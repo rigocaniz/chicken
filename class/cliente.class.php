@@ -44,8 +44,8 @@ class Cliente
  		$cliente->nombre        = isset( $cliente->nombre ) 			? (string)$cliente->nombre 		: NULL;
  		$cliente->nombre        = strlen( $cliente->nombre ) 			? (string)$cliente->nombre 		: NULL;
 
- 		$cliente->cui           = isset( $cliente->cui )				? (string)(int)$cliente->cui 	: NULL;
- 		$cliente->cui           = strlen( (string)(int)$cliente->cui ) > 1	? (int)$cliente->cui 	        : NULL;
+		$cliente->cui 			= isset( $cliente->cui ) ? (string)gmp_init( $cliente->cui ) : NULL;
+		$cliente->cui 			= strlen( (string)gmp_init( $cliente->cui ) ) > 1 ? gmp_init( $cliente->cui ) : NULL;
 
  		$cliente->correo        = isset( $cliente->correo ) 			? (string)$cliente->correo 		: NULL;
  		$cliente->correo        = strlen( $cliente->correo ) 			? (string)$cliente->correo 		: NULL;
@@ -77,8 +77,6 @@ class Cliente
  		else:
  			$sql = "CALL consultaCliente( '{$accion}',{$idCliente},'{$nit}', '{$nombre}', '{$cui}', '{$correo}', '{$telefono}', '{$direccion}', {$idTipoCliente} )";
 
- 		echo $sql;
- 		
  			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
  				$this->siguienteResultado();
 
