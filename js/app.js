@@ -215,8 +215,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
         $('#cargando').removeAttr("style"); 
     });
 
-    $scope.dialBuscarCliente = $modal({scope: $scope,template:'dial.buscarCliente.html', show: false, backdrop: 'static', keyboard: false});
-
+    
     /*CLIENTES*/
     $scope.clienteMenu = 1;
     $scope.catTipoCliente = function(){
@@ -261,82 +260,6 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     };
 
     $scope.accion = 'insert';
-
-    $scope.lstClientes = [];
-    $scope.txtCliente = '';
     $scope.tipo = null;
-    $scope.buscarCliente = function( valor, tipo ){
-
-        $scope.tipo = tipo ? tipo : $scope.tipo;
-        
-        if ( !(valor.length >= 1) && tipo != 'factura' )  {
-            alertify.notify('Ingrese algún dato para buscar al cliente', 'warning', 5);
-            $scope.lstClientes = [];
-        }
-        else{
-            $http.post('consultas.php',{
-                opcion : "consultarCliente",
-                valor  : valor
-            }).success(function(data){
-                console.log( data );
-                $scope.lstClientes = data;
-                if( $scope.lstClientes.length == 1 )
-                {
-                    if( tipo == 'factura' ){
-                        $scope.facturaCliente = $scope.lstClientes[ 0 ];
-                    }
-                    else
-                    {
-                        $scope.cliente = $scope.lstClientes[ 0 ];
-                        $scope.cliente.telefono = parseInt( $scope.lstClientes[0].telefono );
-
-                        $scope.resetValores( 'lstClientes' );
-                        $scope.accion     = 'update';
-                        $timeout(function(){
-                            $( '#nit' ).focus();
-                        }, 125)
-
-                    }
-
-                    $scope.txtCliente = '';
-                    $scope.dialBuscarCliente.hide();
-                }
-                else if( $scope.lstClientes.length > 1 ){
-                    $scope.dialBuscarCliente.show();
-                    if( $scope.lstClientes.length >= 5 ){
-                        $timeout(function(){
-                            $('#buscarCliente').focus();
-                        }, 150);
-                    }
-                }
-                else{
-                    alertify.set('notifier','position', 'top-right');
-                    alertify.notify('Ningún cliente encontrado', 'warning', 3);
-                    $scope.resetValores( 'cliente' );
-                    $timeout(function(){
-                        $( '#nit' ).focus();
-                    }, 125)
-                }
-            })
-        }
-    };
-
-    $scope.seleccionarCliente = function(cliente)
-    {
-        $scope.cliente = angular.copy( cliente );
-        $scope.cliente.telefono = parseInt( cliente.telefono );
-        $scope.txtCliente = '';
-        $scope.resetValores( 'lstClientes' );
-        $scope.accion = 'update';
-        $scope.dialBuscarCliente.hide();
-        $timeout(function(){
-            $( '#nit' ).focus();
-        }, 125)
-    };
-
-    $scope.editarCliente = function(cliente){
-        $scope.cliente          = angular.copy(cliente);
-        $scope.cliente.telefono = parseInt(cliente.telefono);
-    };
 
 });
