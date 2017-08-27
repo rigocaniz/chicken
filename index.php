@@ -1,6 +1,6 @@
 <?php
     session_start();
-    if( isset( $_SESSION[ 'idNivel' ] ) AND isset( $_SESSION[ 'idPerfil' ] ) ):
+    if( isset( $_SESSION[ 'usuario' ] ) AND isset( $_SESSION[ 'idPerfil' ] ) ):
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +28,7 @@
             </svg>
         </div>
     </div>
-    {{ tipo }}
+
     <!-- Navegacion-->
     <a id="menu-toggle" href="#" class="btn btn-dark btn-md toggle"><span class="glyphicon glyphicon-list"></span></a>
     <nav id="sidebar-wrapper">

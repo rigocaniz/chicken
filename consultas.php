@@ -235,11 +235,6 @@ switch ( $data->opcion )
 		echo json_encode( $usuario->lstEstadoUsuario() );
 		break;
 
-	case 'lstNiveles':				// CONSULTA NIVELES
-		$usuario = new Usuario();
-		echo json_encode( $usuario->lstNiveles() );
-		break;
-
 	case 'lstPerfiles':				// CONSULTA PERFILES
 		$usuario = new Usuario();
 		echo json_encode( $usuario->lstPerfiles() );

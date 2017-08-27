@@ -32,12 +32,6 @@ class Sesion
 	}
 
 
-	function getIdNivel()
-	{
-		return (int)$this->getVariable( 'idNivel' );
-	}
-
-
 	function getIdPerfil()
 	{
 		return (int)$this->getVariable( 'idPerfil' );

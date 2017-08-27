@@ -2,7 +2,7 @@
 //var_dump( $_POST );
 session_start();
 
-if( !isset( $_SESSION['idPerfil'] ) AND !isset( $_SESSION['idNivel'] ) ) {
+if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
 
     if ( isset( $_POST['usuario'] ) AND isset( $_POST[ 'clave' ] ) )
     {
