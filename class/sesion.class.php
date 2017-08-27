@@ -18,7 +18,6 @@ class Sesion
 		return $_SESSION[ $var ] = $valor;
 	}
 
-
 	// OBTENER VARIABEL
 	private function getVariable( $var )
 	{
@@ -31,6 +30,10 @@ class Sesion
 		return $this->getVariable( 'usuario' );
 	}
 
+	function getNombre()
+	{
+		return $this->getVariable( 'nombre' );
+	}
 
 	function getIdPerfil()
 	{

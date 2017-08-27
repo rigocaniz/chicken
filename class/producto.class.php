@@ -248,7 +248,6 @@ class Producto
 			 		// REALIZAR CONSULTA
 					$sql = "CALL consultaCierreDiarioProducto( '{$accion}', {$idCierreDiario}, {$idProducto}, {$cantidad}, {$actualizarDisponibilidad} );";
 
-					//echo $sql;
 			 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 			 			$this->siguienteResultado();
 
