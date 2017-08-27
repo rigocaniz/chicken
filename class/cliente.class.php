@@ -117,7 +117,7 @@ class Cliente
  		}
 
 	 	$sql = "SELECT * FROM vstCliente where $where ;";
-// echo $sql;
+	 	
 	 	if( $rs = $this->con->query( $sql ) )
 	 		while( $row = $rs->fetch_object() )
 	 			$lstClientes[] = $row;
