@@ -50,15 +50,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 		$scope.dialCambiarEstadoUsuario.show();
 	};
 
-	$scope.lstNiveles = [];
-	$scope.cargarLstNiveles = function(){
-		$http.post('consultas.php',{
-			opcion : 'lstNiveles'
-		}).success(function(data){
-			console.log( data );
-			$scope.lstNiveles = data;
-		});
-	};
 
 	$scope.lstPerfiles = [];
 	$scope.cargarLstPerfiles = function(){
@@ -82,7 +73,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 	($scope.inicio = function(){
 		$scope.cargarLstEstadoUsuario();
-		$scope.cargarLstNiveles();
 		$scope.cargarLstPerfiles();
 		$scope.cargarLstUsuarios();
 	})();
@@ -95,7 +85,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 		$scope.usuario = {
 			usuario         : '',
 			idEstadoUsuario : 1,
-			idNivel         : 1,
 			idPerfil        : 1,
 			codigo          : null,
 			clave           : '',
@@ -119,10 +108,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 		var usuario = $scope.usuario;
 
-		if( !(usuario.idNivel && usuario.idNivel > 0 ) )
-			alertify.notify( 'Seleccione el nivel del Usuario', 'warning', 4 );
-
-		else if( !(usuario.idPerfil && usuario.idPerfil > 0 ) )
+		if( !(usuario.idPerfil && usuario.idPerfil > 0 ) )
 			alertify.notify( 'Seleccione el perfil del Usuario', 'warning', 4 );
 
 		else if( !(usuario.usuario && usuario.usuario.length >=8 ) )
@@ -161,10 +147,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			});
 
 		}
-
-
 	};
-
 
 	// CONSULTA USUARIO => INSERT // UPDATE
 	$scope.resetearClave = function( usuario ){
@@ -181,12 +164,10 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	$scope.resetValores = function( accion ){
 		$scope.accion = 'insert';
 
-		if( accion == 'usuario' )
-		{
+		if( accion == 'usuario' ) {
 			$scope.usuario = {
 				usuario         : '',
 				idEstadoUsuario : 1,
-				idNivel         : 1,
 				idPerfil        : 1,
 				codigo          : null,
 				clave           : '',
@@ -194,7 +175,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 				apellidos       : ''
 			};
 		}
-
 	};
 
 });

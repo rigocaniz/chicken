@@ -63,7 +63,6 @@
 											<th class="text-center col-sm-2">Apellidos</th>
 											<th class="text-center col-sm-2">Usuario</th>
 											<th class="text-center col-sm-2">Código</th>
-											<th class="text-center col-sm-2">Nivel</th>
 											<th class="text-center col-sm-2">Estado</th>
 										</tr>
 									</thead>
@@ -74,7 +73,6 @@
 											<td>{{ usuario.apellidos }}</td>
 											<td class="text-center">{{ usuario.usuario }}</td>
 											<td class="text-center">{{ usuario.codigo }}</td>
-											<td class="text-center">{{ usuario.nivel }}</td>
 											<td class="text-center">{{ usuario.estadoUsuario }}</td>
 											<td class="text-center">
 												<div class="menu-contenedor">
@@ -123,7 +121,7 @@
 				<div class="modal-body">
 					<form class="form-horizontal" novalidate autocomplete="off">
 						<div class="form-group">
-							<div class="col-sm-3">
+							<div class="col-sm-4">
 								<label>USUARIO</label>
 								<div>
 									{{ user.usuario }}
@@ -133,12 +131,6 @@
 								<label>CODIGO</label>
 								<div>
 									{{ user.codigo }}
-								</div>
-							</div>
-							<div class="col-sm-3">
-								<label>NIVEL</label>
-								<div>
-									{{ user.nivel }}
 								</div>
 							</div>
 							<div class="col-sm-3">
@@ -196,7 +188,7 @@
 <!-- DIALOGO ADMINISTRACIÓN USUARIO => INSERT / UPDATE -->
 <script type="text/ng-template" id="dial.adminUsuario.html">
 	<div class="modal" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog">
 			<div class="modal-content" ng-class="{'panel-success': accion == 'insert', 'panel-info': accion == 'update'}">
 				<div class="modal-header panel-heading text-center">
 					<button type="button" class="close" ng-click="resetValores( 'usuario' );$hide()">&times;</button>
@@ -217,42 +209,25 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<div class="col-sm-5">
-								<label>SELECCIONE NIVEL</label>
-								<div>
-									<div class="btn-group btn-group-sm" role="group"	>
-									  	<button type="button" class="btn btn-default" ng-click="usuario.idNivel = nivel.idNivel" ng-repeat="nivel in lstNiveles">
-									  		<span class="glyphicon" ng-class="{'glyphicon-check': usuario.idNivel == nivel.idNivel, 'glyphicon-unchecked': usuario.idNivel != nivel.idNivel}"></span>
-									  		{{ nivel.nivel }}
-									  	</button>
-									</div>
-								</div>
-							</div>
-							<div class="col-sm-7">
+							<div class="col-sm-10">
 								<label>SELECCIONE PERFIL</label>
-								<div>
-									<div class="btn-group btn-group-sm" role="group"	>
-									  	<button type="button" class="btn btn-default" ng-click="usuario.idPerfil = perfil.idPerfil" ng-repeat="perfil in lstPerfiles">
-									  		<span class="glyphicon" ng-class="{'glyphicon-check': usuario.idPerfil == perfil.idPerfil, 'glyphicon-unchecked': usuario.idPerfil != perfil.idPerfil}"></span>
-									  		{{ perfil.perfil }}
-									  	</button>
-									</div>
+								<div class="btn-group btn-group-sm" role="group"	>
+								  	<button type="button" class="btn btn-default" ng-click="usuario.idPerfil = perfil.idPerfil" ng-repeat="perfil in lstPerfiles">
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': usuario.idPerfil == perfil.idPerfil, 'glyphicon-unchecked': usuario.idPerfil != perfil.idPerfil}"></span>
+								  		{{ perfil.perfil }}
+								  	</button>
 								</div>
 							</div>
 						</div>
 
 						<div class="form-group">
+							<label class="col-sm-2 control-label">USUARIO</label>
 							<div class="col-sm-4">
-								<label>USUARIO</label>
-								<div>
-									<input type="text" class="form-control" ng-model="usuario.usuario" maxlength="15" placeholder="Usuario" ng-pattern="/^[a-zA-Z0-9]*$/" ng-trim="false">	
-								</div>
+								<input type="text" class="form-control" ng-model="usuario.usuario" maxlength="15" placeholder="Usuario" ng-pattern="/^[a-zA-Z0-9]*$/" ng-trim="false">	
 							</div>
-							<div class="col-sm-4">
-								<label>CODIGO</label>
-								<div>
-									<input type="number" class="form-control" ng-model="usuario.codigo" placeholder="Código" ng-pattern="/^[0-9]+?$/" min="1" max="9999" step="any">	
-								</div>
+							<label class="col-sm-2 control-label">CÓDIGO</label>
+							<div class="col-sm-3">
+								<input type="number" class="form-control" ng-model="usuario.codigo" placeholder="Código" ng-pattern="/^[0-9]+?$/" min="1" max="9999" step="any">
 							</div>
 						</div>
 						<div class="form-group">
