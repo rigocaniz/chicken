@@ -225,7 +225,7 @@ class Usuario
  			$this->mensaje   = $validar->getMsj();
  		else:
 
-			$sql = "CALL login( '{$usuario}', '{$clave}' )";
+			$sql = "CALL login( '{$usuario}', '{$clave}' );";
 			
 			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 				$this->siguienteResultado();

@@ -76,8 +76,6 @@ class Cliente
 
  		else:
  			$sql = "CALL consultaCliente( '{$accion}',{$idCliente},'{$nit}', '{$nombre}', '{$cui}', '{$correo}', '{$telefono}', '{$direccion}', {$idTipoCliente} )";
-
- 		echo $sql;
  		
  			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
  				$this->siguienteResultado();
@@ -119,7 +117,7 @@ class Cliente
  		}
 
 	 	$sql = "SELECT * FROM vstCliente where $where ;";
-// echo $sql;
+
 	 	if( $rs = $this->con->query( $sql ) )
 	 		while( $row = $rs->fetch_object() )
 	 			$lstClientes[] = $row;

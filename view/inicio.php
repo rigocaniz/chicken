@@ -6,6 +6,15 @@
                     <span class="glyphicon glyphicon-th"></span>
                     MENU
                 </h2>
+                <label class="label label-danger titulo-nombre">
+                    <span class="glyphicon glyphicon-user"></span>
+                    <?php
+                        session_start();
+                        include '../class/sesion.class.php';
+                        $session = new Sesion();
+                        echo $session->getNombre();
+                    ?>
+                </label>
             </div>
             <div class="col-xs-6 col-sm-5 col-md-4">
                 <div class="pull-right">

@@ -802,3 +802,8 @@ tr.tr_alert{
     -webkit-border-radius: 0px 0px 7px 7px;
 }
 
+.titulo-nombre{
+    font-size: 15px;
+    padding: 4px 18px;
+    border-radius: 25px;
+}
