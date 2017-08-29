@@ -44,8 +44,13 @@ class Cliente
  		$cliente->nombre        = isset( $cliente->nombre ) 			? (string)$cliente->nombre 		: NULL;
  		$cliente->nombre        = strlen( $cliente->nombre ) 			? (string)$cliente->nombre 		: NULL;
 
+<<<<<<< HEAD
  		//$cliente->cui           = isset( $cliente->cui )				? (string)(int)$cliente->cui 	: NULL;
  		$cliente->cui           = strlen( $cliente->cui ) >= 1			? $cliente->cui 	        : NULL;
+=======
+		$cliente->cui 			= isset( $cliente->cui ) ? (string)gmp_init( $cliente->cui ) : NULL;
+		$cliente->cui 			= strlen( (string)gmp_init( $cliente->cui ) ) > 1 ? gmp_init( $cliente->cui ) : NULL;
+>>>>>>> 996af69a8e4304a4c7a807bb3dedb5a75a0839c7
 
  		$cliente->correo        = isset( $cliente->correo ) 			? (string)$cliente->correo 		: NULL;
  		$cliente->correo        = strlen( $cliente->correo ) 			? (string)$cliente->correo 		: NULL;
@@ -76,7 +81,7 @@ class Cliente
 
  		else:
  			$sql = "CALL consultaCliente( '{$accion}',{$idCliente},'{$nit}', '{$nombre}', '{$cui}', '{$correo}', '{$telefono}', '{$direccion}', {$idTipoCliente} )";
- 		
+
  			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
  				$this->siguienteResultado();
 
@@ -117,7 +122,7 @@ class Cliente
  		}
 
 	 	$sql = "SELECT * FROM vstCliente where $where ;";
-
+	 	
 	 	if( $rs = $this->con->query( $sql ) )
 	 		while( $row = $rs->fetch_object() )
 	 			$lstClientes[] = $row;
