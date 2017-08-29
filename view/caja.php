@@ -28,7 +28,7 @@
 					<div class="panel" ng-class="{'panel-warning' : !caja.idCaja, 'panel-success': caja.idCaja }">
 						<div class="panel-heading">
 							<h3 class="panel-title">
-								{{ !caja.idCaja ? 'APERTURAR' : 'CERRAR' }} CAJA
+								APERTURA / CIERRE CAJA
 							</h3>
 						</div>
 						<div class="panel-body">
@@ -45,7 +45,7 @@
 								</p>
 							</div>
 							<fieldset class="fieldset">
-								<legend class="legend success">APERTURA DE CAJA</legend>
+								<legend class="legend info">APERTURA DE CAJA</legend>
 								<form class="form-horizontal" autocomplete="off" novalidate>
 									<div class="text-right">
 										<strong>ESTADO:</strong>
@@ -57,23 +57,23 @@
 									<div class="form-group" ng-show="accionCaja=='aperturarCaja' || accionCaja=='cierreCaja'">
 										<label class="col-sm-3 col-md-2 control-label">CAJERO</label>
 										<div class="col-sm-6 col-md-5 col-lg-4">
-											<input type="text" class="form-control" ng-model="caja.cajero" placeholder="Cajero" readonly>
+											<input type="text" class="form-control" ng-model="caja.cajero" placeholder="Cajero" disabled>
 										</div>
 									</div>
 									<div class="form-group" ng-show="accionCaja=='aperturarCaja' || accionCaja=='cierreCaja'">
 										<label class="col-sm-3 col-md-2 control-label">OPERADOR</label>
 										<div class="col-sm-3 col-md-3 col-lg-2">
-											<input type="text" class="form-control" ng-model="caja.cajero" placeholder="Cajero" readonly>
+											<input type="text" class="form-control" ng-model="caja.cajero" placeholder="Cajero" disabled>
 										</div>
 										<label class="col-sm-3 col-md-2 control-label">USUARIO</label>
 										<div class="col-sm-3 col-md-3 col-lg-2">
-											<input type="text" class="form-control" ng-model="caja.usuario" placeholder="Cajero" readonly>
+											<input type="text" class="form-control" ng-model="caja.usuario" placeholder="Cajero" disabled>
 										</div>
 									</div>
 									<div class="form-group" ng-show="accionCaja=='aperturarCaja' || accionCaja=='cierreCaja'">
 										<label class="col-sm-3 col-md-2 control-label">FECHA DE APERTURA</label>
 										<div class="col-sm-4 col-md-3 col-lg-2">
-											<input type="text" class="form-control" ng-model="caja.fechaApertura" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker readonly>
+											<input type="text" class="form-control" ng-model="caja.fechaApertura" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker disabled>
 										</div>
 									</div>
 									<div class="form-group" ng-show="accionCaja=='aperturarCaja' || accionCaja=='cierreCaja'">
@@ -93,6 +93,10 @@
 										<div class="col-sm-4 col-md-3 col-lg-2">
 											<kbd class="numEfectivo">Q. {{ caja.efectivoFinal | number:2 }}</kbd>
 										</div>
+										<label class="col-sm-2 control-label">EFECTIVO</label>
+										<div class="col-sm-4 col-md-3 col-lg-2">
+											<label class="label label-success numEfectivo">Q. {{ caja.efectivoInicial + caja.efectivoFinal | number:2 }}</label>
+										</div>
 									</div>
 									<div class="form-group" ng-show="accionCaja=='cierreCaja'">
 										<label class="col-sm-3 col-md-2 control-label">EFECTIVO SOBRANTE</label>
@@ -104,7 +108,7 @@
 										</div>
 									</div>
 									<div class="form-group" ng-show="accionCaja=='cierreCaja'">
-										<label class="col-sm-3 col-md-2 control-label">EFECTIVO FLOTANTE</label>
+										<label class="col-sm-3 col-md-2 control-label">EFECTIVO FALTANTE</label>
 										<div class="col-sm-4 col-md-3 col-lg-2">
 											<input type="text" class="form-control" ng-model="caja.efectivoFaltante" placeholder="Efectivo Flotante">
 										</div>

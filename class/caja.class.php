@@ -52,6 +52,7 @@ class Caja
  		$sql = "SELECT 
 				    idCaja,
 				    usuario,
+				    fechaApertura,
 				    efectivoInicial,
 				    efectivoFinal,
 				    efectivoSobrante,
@@ -69,6 +70,7 @@ class Caja
 	 			$datos = array(
 	 					'idCaja'           => (int)$row->idCaja,
 	 					'usuario'          => $row->usuario,
+	 					'fechaApertura'    => $row->fechaApertura,
 	 					'efectivoInicial'  => (double)$row->efectivoInicial,
 	 					'efectivoFinal'    => (double)$row->efectivoFinal,
 	 					'efectivoSobrante' => (double)$row->efectivoSobrante,
