@@ -63,10 +63,10 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	};
 
 	$scope.compras = {
-		noFactura       : 123,
+		noFactura       : null,
 		fechaFactura    : null,
 		idProveedor     : 1,
-		proveedor       : 'PROVEEDOR 1',
+		proveedor       : '',
 		idEstadoFactura : 1,
 		comentario      : '',
 		lstProductos    : []
@@ -328,13 +328,13 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		var prod = $scope.prod;
 
 		if( !(prod.idProducto && prod.idProducto > 0) )
-			alertify.notify( 'El código del Producto no es válido', 'danger', 5 );
+			alertify.notify( 'El código del Producto no es válido', 'danger', 3 );
 
 		else if( !(prod.cantidad && prod.cantidad > 0) )
-			alertify.notify( 'La cantidad ingresada debe ser mayor a 0', 'danger', 5 );
+			alertify.notify( 'La cantidad ingresada debe ser mayor a 0', 'danger', 4 );
 
 		else if( !(prod.costo && prod.costo > 0) )
-			alertify.notify( 'Ingrese el precio Unitario del producto', 'danger', 5 );
+			alertify.notify( 'Ingrese el precio total de compra', 'danger', 3 );
 
 		else{
 			$scope.compras.lstProductos.push({
@@ -345,7 +345,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			});
 
 			$scope.cancelarIngreso( 1 );
-			alertify.notify( 'Agregado a la lista', 'success', 3 );
+			alertify.notify( 'Agregado a la lista', 'success', 2 );
 			$scope.lstProductos = [];
 		}
 	};
@@ -379,7 +379,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 		if( !($scope.compras.lstProductos.length) && $scope.accion == 'insert' ){
 			error = true;
-			alertify.notify( 'No ha ingresado ningun producto, verifique', 'info', 5 );
+			alertify.notify( 'No ha ingresado ningun producto, verifique', 'info', 4 );
 		}
 		else if( $scope.accion == 'insert' ){
 			for (var i = 0; i < $scope.compras.lstProductos.length; i++) {
@@ -391,7 +391,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 					break;
 				}
 				else if( !(prod.cantidad && prod.cantidad > 0 ) ){
-					alertify.notify( 'La cantidad debe ser mayor a 0', 'warning', 5 );
+					alertify.notify( 'La cantidad debe ser mayor a 0', 'warning', 4 );
 					error = true;
 					break;
 				}

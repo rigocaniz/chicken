@@ -33,14 +33,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
         }
     };
 
-	$scope.nuevoCliente = function(valor,evento){
-		if ( evento == 1 ) {
-			$scope.dialCliente.show();
-		}else{
-			$scope.$parent.buscarCliente(valor,1);
-			$scope.dialCliente.show();
-		}
-	}
+
 	$scope.lstDetalleTicket = [];
 	$scope.facturacion = {
 		datosCliente : {
@@ -54,7 +47,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	
 	$scope.$watch('accionCliente', function(){
 		if( $scope.accionCliente == 'agregar' ){
-			$scope.$parent.resetValores( 'cliente' );
+			$scope.resetValores( 'cliente' );
 			$scope.accion = 'insert';
 		}
 
@@ -101,11 +94,11 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
                 alertify.notify( data.mensaje,data.respuesta, data.tiempo );
                 if ( data.respuesta == "success" )
                 {
-                	$scope.facturacion.datosCliente = angular.copy( $scope.$parent.cliente );
+                	$scope.facturacion.datosCliente = angular.copy( $scope.cliente );
                 	if( $scope.accion == 'insert' )
                 		$scope.facturacion.datosCliente.idCliente = data.data;
 
-                    $scope.$parent.resetValores( 'cliente' );
+                    $scope.resetValores( 'cliente' );
                     $scope.dialAccionCliente.hide();
                     $scope.txtCliente = '';
                     $( '#ticket' ).focus();
@@ -127,7 +120,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
     $scope.editarCliente = function( cliente, accion ){
     	$scope.accionCliente = 'actualizar';
     	$scope.accion        = 'update';
-    	$scope.$parent.cliente = angular.copy( cliente );
+    	$scope.cliente = angular.copy( cliente );
     	if( accion == 'mostrar' )
     		$scope.dialAccionCliente.show();
     }

@@ -188,7 +188,7 @@
 														</button>
 													</td>
 													<td class="text-center" ng-class="{'danger': retornarTotalReajuste( inv.disponibilidad, inv.cantidad, inv.esIncremento ) < 0}" ng-show="realizarReajuste">
-														<b>{{ retornarTotalReajuste( inv.disponibilidad, inv.cantidad, inv.esIncremento ) }}</b>
+														<b style="font-size: 18px;">{{ retornarTotalReajuste( inv.disponibilidad, inv.cantidad, inv.esIncremento ) }}</b>
 													</td>
 													<td class="text-center">
 														{{ inv.medida }}
@@ -377,9 +377,9 @@
 						</div>
 						<div class="panel-body">
 							<div class="text-right">
-								<h3 class="total">
-									TOTAL: Q.{{ subTotalQuetzales( 1 ) | number: 2 }} 
-								</h3>
+								<strong style="font-size: 24px;">
+									TOTAL Q. {{ subTotalQuetzales( 1 ) | number: 2 }}
+								</strong>
 							</div>
 							<!-- COMPRAS -->
 							<form class="form-horizontal" novalidate autocomplete="off">
@@ -447,7 +447,7 @@
 													</div>
 												</td>
 												<td class="text-center">
-													<input type="number" min="0.01" ng-model="prod.cantidad" id="cantidad" class="form-control" ng-keydown="$event.keyCode == 27 && cancelarIngreso( 1 );" placeholder="Cantidad" ng-disabled="!prod.seleccionado">
+													<input type="number" min="0.01" ng-model="prod.cantidad" id="cantidad" class="form-control" ng-keydown="( $event.keyCode == 13 && agregarIngresoProducto() ) || ( $event.keyCode == 27 && cancelarIngreso( 1 ) )" placeholder="Cantidad" ng-disabled="!prod.seleccionado">
 												</td>
 												<td class="text-left">
 													<input type="number" class="form-control" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" ng-keydown="( $event.keyCode == 13 && agregarIngresoProducto() ) || ( $event.keyCode == 27 && cancelarIngreso( 1 ) )" step="0.01" ng-model="prod.costo" placeholder="Total" ng-disabled="!prod.seleccionado">
@@ -511,7 +511,9 @@
 											</tr>
 											<tr id="tb-title" ng-show="compras.lstProductos.length">
 												<td colspan="4" class="text-right">
-													<strong> TOTAL {{ subTotalQuetzales( 1 ) | number: 2 }}</strong>
+													<strong style="font-size: 20px;">
+														TOTAL Q. {{ subTotalQuetzales( 1 ) | number: 2 }}
+													</strong>
 												</td>
 												<td></td>
 											</tr>
@@ -835,7 +837,7 @@
 								  	<span class="input-group-addon">
     									<span class="fa fa-calendar"></span>
 								  	</span>
-    								<input type="text" class="form-control"  ng-model="fechaCierre" ng-change="cargarFechaCierre( fechaCierre )" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker>
+    								<input type="text" class="form-control" ng-model="fechaCierre" ng-change="cargarFechaCierre( fechaCierre )" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker>
 								</div>
 							</div>	
 						</div>
@@ -847,7 +849,7 @@
 									<div class="input-group">
 									  	{{ fechaCierreP.fechaCierre }}
 									</div>
-								</div>	
+								</div>s
 								<div class="col-sm-3 col-xs-6">
 									<label class="control-label">REALIZADO POR:</label>
 									<div>
@@ -919,9 +921,6 @@
 			
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-warning" ng-click="consultaCierreDiario()" ng-disabled="loading">
-						<span class="glyphicon glyphicon-saved"></span> REALIZAR CIERRE
-					</button>
 					<button type="button" class="btn btn-default" ng-click="$hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
 						<b>Salir</b>

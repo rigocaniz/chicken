@@ -73,6 +73,10 @@ class Combo
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
+				
+				if( $row->imagen != '' )
+					$row->imagen = file_exists( $row->imagen ) ? $row->imagen : 'img-menu/notFound.png';
+
 				$combo = array(
 						'idCombo'      => (int)$row->idCombo,
 						'combo'        => $row->combo,
@@ -276,6 +280,9 @@ class Combo
  			// SI ES UN UNICO COMBO
  			if ( !IS_NULL( $idCombo ) AND $idCombo > 0 ) {
 	 			if( $row = $rs->fetch_object() ) {
+	 				if( $row->imagen != '' )
+						$row->imagen = file_exists( $row->imagen ) ? $row->imagen : 'img-menu/notFound.png';
+
 					$row->imagen = $row->imagen == '' ? 'img-menu/notFound.png' : $row->imagen;
 					$lstCombo    = $row;
  				}
@@ -284,6 +291,9 @@ class Combo
  			// SI ES UN LISTADO COMBO
  			else{
 	 			while( $row = $rs->fetch_object() ){
+	 				if( $row->imagen != '' )
+						$row->imagen = file_exists( $row->imagen ) ? $row->imagen : 'img-menu/notFound.png';
+
 	 				$row->imagen = $row->imagen == '' ? 'img-menu/notFound.png' : $row->imagen;
 	 				$lstCombo[] = $row;
 	 			}

@@ -80,7 +80,6 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
 			alertify.notify( 'Ingrese un dato para consultar', 'info', 3 );
 	};
 
-
    	// CONSULTA CLIENTE => INSERT // UPDATE
 	$scope.consultaCliente = function(){
         var cliente = $scope.cliente;
@@ -113,7 +112,6 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
             });
         }
     };
-
 
 	$scope.seleccionarCliente = function( cliente ){
         $scope.cliente = angular.copy( cliente );

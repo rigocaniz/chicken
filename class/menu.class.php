@@ -261,6 +261,9 @@ class Menu
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
+				if( $row->imagen != '' )
+					$row->imagen = file_exists( $row->imagen ) ? $row->imagen : 'img-menu/notFound.png';
+
 				$menu = array(
 						'idMenu'        => (int)$row->idMenu,
 						'menu'          => $row->menu,
@@ -327,6 +330,8 @@ class Menu
  			// SI ES UN MENU
  			if ( !is_null( $idMenu ) AND $idMenu > 0 ) {
  				if( $row = $rs->fetch_object() ){
+ 					if( $row->imagen != '' )
+						$row->imagen = file_exists( $row->imagen ) ? $row->imagen : 'img-menu/notFound.png';
 					$row->imagen = $row->imagen == '' ? 'img-menu/notFound.png' : $row->imagen;
 					$lstMenu     = $row;
 	 			}
@@ -335,6 +340,9 @@ class Menu
  			// SI SON TODOS LOS MENU
  			else{
 	 			while( $row = $rs->fetch_object() ){
+	 				if( $row->imagen != '' )
+						$row->imagen = file_exists( $row->imagen ) ? $row->imagen : 'img-menu/notFound.png';
+					
 					$row->imagen = $row->imagen == '' ? 'img-menu/notFound.png' : $row->imagen;
 					$lstMenu[]   = $row;
 	 			}

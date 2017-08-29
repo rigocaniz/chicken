@@ -1,6 +1,12 @@
-<div class="container">
+<div class="contenedor">
 	<div class="row">
 		<div class="col-sm-12">
+			<div class="pull-right">
+				<a href="#/" >
+	            	<img class="img-responsive" src="img/logo_churchil.png" style="height: 56px;">
+	            </a>
+	        </div>
+
 			<!-- TABS -->
 			<ul class="nav nav-tabs tabs-title" role="tablist">
 				<li role="presentation">
@@ -25,7 +31,7 @@
 				<div class="panel panel-primary">
 					<div class="panel-body">
 						<div class="row">
-							<label class="col-xs-12 col-sm-3 col-md-2">BUSCAR CLIENTE</label>
+							<label class="col-xs-12 col-sm-3 col-md-2 control-label">BUSCAR CLIENTE</label>
 							<div class="col-xs-9 col-sm-6 col-md-5">
 								<input type="text" class="form-control" ng-model="txtCliente" ng-keypress="$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )" placeholder="NIT / DPI / NOMBRE" capitalize>
 							</div>

@@ -153,7 +153,6 @@
                                             	<button type="button" class="btn btn-info" ng-click="detalleTicket( item.idOrdenCliente )">
                                             		<span class="glyphicon glyphicon-chevron-righ"></span> Seleccionar
                                             	</button>
-                                            	
                                             </td>
                                         </tr>
                                     </tbody>
@@ -187,7 +186,7 @@
                     <div class="row">
                     	<div class="col-sm-12 text-right" ng-show="$parent.accionCliente=='ninguna'">
 	                    	<button type="button" class="btn btn-info" ng-click="buscarCliente( 'CF', 'cf' ); $parent.accionCliente='ninguna'">
-	                    		<span class="glyphicon glyphicon-user"></span> C/F
+	                    		<span class="glyphicon glyphicon-user"></span> CONSUMIDOR FINAL
 	                    	</button>
 	                    	<button type="button" class="btn btn-success" ng-click="$parent.accionCliente='agregar'">
 	                    		<span class="glyphicon glyphicon-plus"></span> AGREGAR CLIENTE
@@ -242,7 +241,7 @@
                     	<div class="col-sm-12" ng-show="$parent.accionCliente=='agregar' || $parent.accionCliente=='actualizar'">
                         	<form class="form-horizontal" autocomplete="off" novalidate>
 								<div class="form-group">
-									<label class="col-sm-2">NIT</label>
+									<label class="col-sm-2 control-label">NIT</label>
 									<div class="col-sm-3">
 										<input type="text" ng-model="$parent.cliente.nit" class="form-control" id="nit" maxlength="15" autofocus>
 									</div>
@@ -257,13 +256,13 @@
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Nombre</label>
 									<div class="col-sm-9 col-md-8">
-										<input type="text" class="form-control" ng-model="$parent.cliente.nombre" maxlength="65" capitalize>
+										<input type="text" class="form-control" ng-model="$parent.cliente.nombre" maxlength="65">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Cui (DPI)</label>
 									<div class="col-sm-4 col-md-3">
-										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="$parent.cliente.cui" capitalize>
+										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="$parent.cliente.cui">
 									</div>
 									<label class="col-sm-2 control-label">Correo</label>
 									<div class="col-sm-4 col-md-3">
@@ -288,7 +287,7 @@
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Dirección</label>
 									<div class="col-sm-9 col-md-8">
-										<input type="text" class="form-control"  maxlength="95" ng-model="$parent.cliente.direccion" ng-keypress="$event.keyCode==13 && consultaCliente()">
+										<input type="text" class="form-control" maxlength="95" ng-model="$parent.cliente.direccion" ng-keypress="$event.keyCode==13 && consultaCliente()">
 									</div>
 								</div>
 								<div class="col-sm-12 text-center">
