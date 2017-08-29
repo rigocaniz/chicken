@@ -17,13 +17,16 @@
 			</div>
 		</div>
 		<div class="col-xs-5">
-			<div class="col-xs-12">
+			<div class="col-xs-7 text-right">
 				<button type="button" class="btn btn-sm btn-default" title="Menú { ESPACIO }" ng-click="dialogoConsultaPersonal( 'menu' )">
 					<span class="glyphicon glyphicon-cutlery"></span> 
 					<b>{{user.nombres}} {{user.apellidos}}</b>
-					<span class="label label-success" ng-show="user.idDestinoMenu==1">C</span>
-					<span class="label label-primary" ng-show="user.idDestinoMenu==2">B</span>
 				</button>
+			</div>
+			<div class="col-xs-5">
+				<select class="form-control input-sm" ng-model="idDestinoMenu">
+					<option value="{{item.idDestinoMenu}}" ng-repeat="item in user.lstDestinos">{{item.destinoMenu}}</option>
+				</select>
 			</div>
 		</div>
 		<div class="col-xs-3">

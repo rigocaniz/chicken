@@ -24,7 +24,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		},
 	};
 
-	$scope.idDestinoMenu = 1; // 1:cocina, 2:barra
+	$scope.idDestinoMenu = ''; // 1:cocina, 2:barra
 	$scope.agruparPor  = '';
 	$scope.user = {};
 
@@ -38,6 +38,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		if ( data.usuario != undefined ) {
 			$scope.user           = data.usuario;
 			$scope.lstDestinoMenu = data.usuario.lstDestinos;
+			$timeout(function () {
+				if ( $scope.lstDestinoMenu.length )
+					$scope.idDestinoMenu = $scope.lstDestinoMenu[ 0 ].idDestinoMenu;
+			});
 		}
 	});
 
