@@ -44,8 +44,8 @@ class Cliente
  		$cliente->nombre        = isset( $cliente->nombre ) 			? (string)$cliente->nombre 		: NULL;
  		$cliente->nombre        = strlen( $cliente->nombre ) 			? (string)$cliente->nombre 		: NULL;
 
- 		$cliente->cui           = isset( $cliente->cui )				? (string)(int)$cliente->cui 	: NULL;
- 		$cliente->cui           = strlen( (string)(int)$cliente->cui ) > 1	? (int)$cliente->cui 	        : NULL;
+ 		//$cliente->cui           = isset( $cliente->cui )				? (string)(int)$cliente->cui 	: NULL;
+ 		$cliente->cui           = strlen( $cliente->cui ) >= 1			? $cliente->cui 	        : NULL;
 
  		$cliente->correo        = isset( $cliente->correo ) 			? (string)$cliente->correo 		: NULL;
  		$cliente->correo        = strlen( $cliente->correo ) 			? (string)$cliente->correo 		: NULL;

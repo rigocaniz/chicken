@@ -72,12 +72,7 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
                 alertify.notify( data.mensaje,data.respuesta, data.tiempo );
                 if ( data.respuesta == "success" )
                 {
-                	$scope.facturacion.datosCliente = angular.copy( $scope.$parent.cliente );
-                	if( $scope.accion == 'insert' )
-                		$scope.facturacion.datosCliente.idCliente = data.data;
-
                     $scope.$parent.resetValores( 'cliente' );
-                    $scope.dialAccionCliente.hide();
                     $scope.txtCliente = '';
                     $( '#ticket' ).focus();
                 }

@@ -560,19 +560,23 @@ class Orden
  		);
  	}
 
- 	public function lstDetalleDestinos( $idEstadoDetalleOrden, $idDestinoMenu, $usuarioResponsableDetalle = NULL, $limite = 20 )
+ 	public function lstDetalleDestinos( $idEstadoDetalleOrden, $idDestinoMenu, $agruparPor, $usuario )
  	{
 		$idEstadoDetalleOrden = (int)$idEstadoDetalleOrden;
 		$idDestinoMenu        = (int)$idDestinoMenu;
-		$where = $limit 	  = "";
-		$lst                  = array();
+		$where    = $limit 	  = "";
+
+		$lst = (object)array(
+			'lstTicket' => array(),
+			'lstMenu'   => array(),
+		);
 
 		// SI ESTA DEFINIDO EL USUARIO RESPONSABLE
-		if ( isset( $usuarioResponsableDetalle ) AND strlen( $usuarioResponsableDetalle ) > 3 )
-			$where = " AND responsableDetalle = '$usuarioResponsableDetalle' ";
+		if ( isset( $usuario ) AND strlen( $usuario ) > 3 )
+			$where = " AND ( responsableDetalle = '$usuario' OR usuarioDetalle = '$usuario' ) ";
 
-		if ( ( $idEstadoDetalleOrden != 1 OR $idEstadoDetalleOrden != 2 ) AND $limite > 0 )
-			$limit = " LIMIT  " . $limite;
+		if ( ( $idEstadoDetalleOrden != 1 OR $idEstadoDetalleOrden != 2 ) )
+			$limit = " LIMIT 20";
 
  		$sql = "SELECT 
 					idDetalleOrdenMenu,
@@ -593,6 +597,7 @@ class Orden
 				    idDestinoMenu,
 					destinoMenu,
 				    responsableDetalle,
+				    usuarioDetalle,
 				    responsableOrden,
 				    fechaRegistro,
 				    tiempoAlerta
@@ -602,10 +607,128 @@ class Orden
 				ORDER BY idDetalleOrdenMenu ASC " . $limit;
 
 		if( $rs = $this->con->query( $sql ) ) {
-			while ( $row = $rs->fetch_object() ) {
+			while ( $row = $rs->fetch_object() ):
+
 				$row->perteneceCombo = (bool)$row->perteneceCombo;
-				$lst[] = $row;
-			}
+
+				// SI ES POR MENU O ES TODO
+				if ( $agruparPor == 'menu' OR $agruparPor == '' ):
+
+					$ixMenu = -1;
+
+					foreach ( $lst->lstMenu as $ix => $item ) {
+						if ( $item->idMenu == $row->idMenu ) {
+							$ixMenu = $ix;
+							break;
+						}
+					}
+				
+					// SI NO EXISTE SE CREA DATOS MENU
+					if ( $ixMenu == -1 ) {
+						$ixMenu = count( $lst->lstMenu );
+
+						$lst->lstMenu[] = (object)array(
+							'idMenu'       => $row->idMenu,
+							'codigoMenu'   => $row->codigoMenu,
+							'menu'         => $row->menu,
+							'imagen'       => $row->imagen,
+							'tiempoAlerta' => $row->tiempoAlerta,
+							'numMenus'     => 0,
+							'primerTiempo' => $row->fechaRegistro,
+							'detalle'      => array(),
+						);
+					}
+					
+					// AGREGA DETALL AL MENU
+					$lst->lstMenu[ $ixMenu ]->detalle[] = (object)array(
+						'perteneceCombo'      => $row->perteneceCombo,
+						'idMenu'              => $row->idMenu,
+						'idDetalleOrdenMenu'  => $row->idDetalleOrdenMenu,
+						'cantidad'            => $row->cantidad,
+						'fechaRegistro'       => $row->fechaRegistro,
+						'tipoServicio'        => $row->tipoServicio,
+						'idTipoServicio'      => $row->idTipoServicio,
+						'idCombo'             => $row->idCombo,
+						'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo,
+						'imagenCombo'         => $row->imagenCombo,
+					);
+
+					$lst->lstMenu[ $ixMenu ]->numMenus += (int)$row->cantidad;
+				endif;
+
+
+				// SI ES POR TICKET O ES TODO
+				if ( $agruparPor == 'ticket' OR $agruparPor == '' ):
+
+					$ixTicket = -1;
+
+					foreach ( $lst->lstTicket as $ix => $item ) {
+						if ( $item->idOrdenCliente == $row->idOrdenCliente ) {
+							$ixTicket = $ix;
+							break;
+						}
+					}
+				
+					// SI NO EXISTE SE CREA DATOS TICKET
+					if ( $ixTicket == -1 ) {
+						$ixTicket = count( $lst->lstTicket );
+
+						$lst->lstTicket[] = (object)array(
+							'idOrdenCliente'   => $row->idOrdenCliente,
+							'numeroTicket'     => $row->numeroTicket,
+							'responsableOrden' => $row->responsableOrden,
+							'numMenus'         => 0,
+							'lstMenu'          => array(),
+						);
+					}
+					
+					$ixMenu = -1;
+
+					// VERIFICAR SI EXISTE MENU
+					foreach ( $lst->lstTicket[ $ixTicket ]->lstMenu as $ix => $item ):
+
+						if ( 
+							$item->idTipoServicio == $row->idTipoServicio AND 
+							( $row->perteneceCombo ? $item->idCombo == $row->idCombo : $item->idMenu == $row->idMenu ) ) 
+						{
+							$ixMenu = $ix;
+							break;
+						}
+
+					endforeach;
+
+					// AGREGA MENU AL TICKET
+					if ( $ixMenu == -1 ):
+						$ixMenu = count( $lst->lstTicket[ $ixTicket ]->lstMenu );
+						
+						$lst->lstTicket[ $ixTicket ]->lstMenu[] = (object)array(
+							'perteneceCombo' => $row->perteneceCombo,
+							'idMenu'         => $row->idMenu,
+							'menu'           => $row->menu,
+							'imagen'         => $row->imagen,
+							'idCombo'        => $row->idCombo,
+							'combo'          => $row->combo,
+							'imagenCombo'    => $row->imagenCombo,
+							'cantidad'       => 0,
+							'tipoServicio'   => $row->tipoServicio,
+							'idTipoServicio' => $row->idTipoServicio,
+							'detalle'        => array(),
+						);
+						
+						$lst->lstTicket[ $ixTicket ]->numMenus += (int)$row->cantidad;
+					endif;
+
+
+					$lst->lstTicket[ $ixTicket ]->lstMenu[ $ixMenu ]->cantidad += (int)$row->cantidad;
+					$lst->lstTicket[ $ixTicket ]->lstMenu[ $ixMenu ]->detalle[] = (object)array(
+						'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo,
+						'idDetalleOrdenMenu'  => $row->idDetalleOrdenMenu,
+						'fechaRegistro'       => $row->fechaRegistro,
+						'tiempoAlerta'        => $row->tiempoAlerta,
+					);
+				endif;
+
+			endwhile;
 		}
 
 		return $lst;

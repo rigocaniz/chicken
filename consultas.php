@@ -48,7 +48,6 @@ switch ( $data->opcion )
 		
 		echo json_encode( $datos );
 		break;
-		
 
 	/////////////////////////
 	//***** CONSULTA DATOS

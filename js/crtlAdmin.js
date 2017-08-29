@@ -2,7 +2,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 	$scope.adminMenu       = 'usuarios';
 	$scope.accion          = 'insert';
-
 	$scope.filtroUsuario   = 'activos';
 
 	$scope.dialAdminUsuario         = $modal({scope: $scope,template:'dial.adminUsuario.html', show: false, backdrop: 'static', keyboard: false});
@@ -33,9 +32,8 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			console.log( data );
 			alertify.set('notifier','position', 'top-right');
 			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
-			if( data.respuesta == 'success' )
-			{
-				$scope.cargarLstEstadoUsuario();
+			if( data.respuesta == 'success' ) {
+				$scope.filtroUsuario = 'activos';
 				$scope.user = {};
 				$scope.dialCambiarEstadoUsuario.hide();
 			}

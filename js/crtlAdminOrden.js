@@ -1,12 +1,15 @@
 app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.lstMenu        = [];
 	$scope.minutosAlerta  = 20;
-	$scope.idEstadoOrden  = 0;
-	$scope.tipoVista      = 'ticket';
+	$scope.idEstadoOrden  = 1;
+	$scope.tipoVista      = 'dividido';
 	$scope.ixMenuActual   = -1;
+	$scope.ixTicketActual = -1;
+	$scope.lstDestinoMenu = [];
 	$scope.lstMenus       = [];
 	$scope.lstTickets     = [];
 	$scope.lstMenusMaster = [];
+	$scope.codigoPersonal = '';
 	$scope.seleccionMenu  = {
 		si     : false,
 		menu   : '',
@@ -19,25 +22,102 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		},
 	};
 
-	// CONSULTA INFORMACION DE ORDENES
-	$scope.consultaOrden = function () {
-		if ( !( $scope.idEstadoOrden > 0 ) ) return false;
-
-		$scope.$parent.loading = true; // cargando...
-		$scope.lstMenusMaster = [];
-		$http.post('consultas.php', { 
-			opcion               : 'lstDetalleDestinos',
-			idEstadoDetalleOrden : $scope.idEstadoOrden
-		})
-		.success(function (data) {
-			$scope.$parent.loading = false; // cargando...
-			$scope.lstMenusMaster = data;
-			$timeout(function () {
-				$scope.lstPorMenu();
-				$scope.lstPorTicket();
-			});
-		});
+	$scope.idDestinoMenu = '';
+	$scope.agruparPor  = '';
+	$scope.cocinero = {
+		nombre       : 'Todos',
+		usuario      : '',
+		agruparPor : 'cocinero'
 	};
+
+	$scope.mesero = {
+		nombre       : 'Todos',
+		usuario      : '',
+		agruparPor : 'mesero'
+	};
+
+	$scope.dConsultaPersonal = $modal({scope: $scope,template:'consulta.personal.html', show: false, backdrop:false, keyboard: true });
+
+	// CONSULTA DESTINOS
+	$http.post('consultas.php', { opcion : 'catDestinoMenu' })
+	.success(function (data) { 
+		console.log( data );
+		if ( Array.isArray( data ) && data.length ) {
+			$scope.lstDestinoMenu = data; 
+			$timeout(function () {
+				$scope.idDestinoMenu = data[ 0 ].idDestinoMenu;
+			});
+		}
+	});
+
+
+	// DIALOGO DE PERSONAL SELECCIONADO
+	$scope.dialogoConsultaPersonal = function ( agruparPor ) {
+		$scope.codigoPersonal = '';
+		$scope.agruparPor   = agruparPor;
+		$scope.dConsultaPersonal.show();
+		$timeout(function () {
+			document.getElementById('codigoPersonal').focus();
+		},50);
+	};
+
+	// CONSULTA INFORMACION DE PERSONAL
+	$scope.consultarPersonal = function () {
+		console.log( $scope.codigoPersonal, $scope.idDestinoMenu );
+	};
+
+
+
+
+	// CONSULTA INFORMACION DE ORDENES
+	$scope.consultaOrden = function ( usuario, agruparPor ) {
+		if ( $scope.$parent.loading ) return false;
+
+		if ( $scope.idEstadoOrden > 0 && $scope.idDestinoMenu > 0 ) {
+
+			var datos = { 
+				opcion               : 'lstDetalleDestinos',
+				idEstadoDetalleOrden : $scope.idEstadoOrden,
+				usuario				 : '',
+				idDestinoMenu        : $scope.idDestinoMenu,
+				agruparPor         : ''
+			};
+
+			if ( usuario != undefined && usuario.length )
+				datos.usuario = usuario;
+
+			if ( agruparPor != undefined && agruparPor.length )
+				datos.agruparPor = agruparPor;
+
+			$scope.$parent.loading = true; // cargando...
+			$scope.lstMenusMaster = [];
+			$http.post('consultas.php', datos)
+			.success(function (data) {
+				$scope.$parent.loading = false; // cargando...
+
+				if ( Array.isArray( data.lstMenu ) ) {
+					$scope.ixMenuActual = -1;
+					$scope.lstMenus     = data.lstMenu;
+				}
+
+				if ( Array.isArray( data.lstTicket ) )
+					$scope.ixTicketActual = -1;
+					$scope.lstTickets = data.lstTicket;
+
+				//$scope.lstMenusMaster = data;
+				$timeout(function () {
+					//$scope.lstPorMenu();
+					//$scope.lstPorTicket();
+				});
+			});
+		}
+	};
+
+
+	// SI CAMBIA EL ESTADO DE ORDEN
+	$scope.$watch('idEstadoOrden', function (_new) {
+		$scope.consultaOrden();
+	});
 
 	// CLASIFICA ORDEN EN MENUS DE <==== lstMenusMaster
 	$scope.lstPorMenu = function () {
@@ -60,6 +140,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 					codigoMenu   : $scope.lstMenusMaster[ ip ].codigoMenu,
 					menu         : $scope.lstMenusMaster[ ip ].menu,
 					imagen       : $scope.lstMenusMaster[ ip ].imagen,
+					tiempoAlerta : $scope.lstMenusMaster[ ip ].tiempoAlerta,
 					numMenus     : 0,
 					primerTiempo : $scope.lstMenusMaster[ ip ].fechaRegistro,
 					detalle      : []
@@ -147,7 +228,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		}
 	};
 
-	$timeout(function () { $scope.cambioEstadoOrden( 1 ); });
+	//$timeout(function () { $scope.cambioEstadoOrden( 1 ); });
 
 
 	/* ************************** AUXILIARES ********************** */
@@ -319,13 +400,15 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope._keyInicio = function ( key, altDerecho ) {
 		console.log( key, altDerecho );
 
-		// ATAJO PRIMEROS 9 ELEMENTOS
-		if ( altDerecho && key >= 49 && key <= 57 && $scope.permitirAccion() ) { // {1-9}
-			var elemento = key - 49;
+		// SELECCIONAR COCINERO
+		if ( !altDerecho && key == 32 && $scope.permitirAccion( true ) ) // {TAB}
+			$scope.dialogoConsultaPersonal( 'cocinero' );
 
-			if ( $scope.lstMenus.length && elemento < $scope.lstMenus.length )
-				$scope.ixMenuActual = elemento;
-		}
+		// SELECCIONAR MESERO
+		else if ( altDerecho && key == 32 && $scope.permitirAccion( true ) ) // {ALT+TAB}
+			$scope.dialogoConsultaPersonal( 'mesero' );
+
+		// SELECCION DE MENUS
 		else if ( key == 40 && $scope.permitirAccion( true ) ) { // {DOWN}
 			if ( $scope.lstMenus.length && $scope.ixMenuActual == -1 )
 				$scope.ixMenuActual = 0;
@@ -352,17 +435,17 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			$scope.selItemKey( false );
 
 		// CAMBIO DE ESTADO
-		else if ( altDerecho && key == 80 ) // {p}
+		else if ( altDerecho && key == 80 ) // {P}
 			$scope.cambioEstadoOrden( 1 );
 
-		else if ( altDerecho && key == 69 ) // {E}
+		else if ( altDerecho && key == 67 ) // {C}
 			$scope.cambioEstadoOrden( 2 );
 
-		else if ( altDerecho && key == 70 ) // {F}
+		else if ( altDerecho && key == 76 ) // {L}
 			$scope.cambioEstadoOrden( 3 );
 
-		else if ( altDerecho && key == 67 ) // {C}
-			$scope.cambioEstadoOrden( 10 );
+		else if ( altDerecho && key == 83 ) // {S}
+			$scope.cambioEstadoOrden( 4 );
 	};
 
 	// TECLA PARA ATAJOS RAPIDOS
