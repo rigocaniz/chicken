@@ -72,8 +72,19 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			alertify.set('notifier','position', 'top-right');
 			alertify.notify( data.mensaje, data.respuesta, 4 );
 
-			if ( data.respuesta == 'success' )
+			if ( data.respuesta == 'success' ) {
 				$scope.dConsultaPersonal.hide();
+
+				if ( data.usuario != undefined ) {
+					$scope.user           = data.usuario;
+					$scope.lstDestinoMenu = data.usuario.lstDestinos;
+					$scope.idDestinoMenu = '';
+					$timeout(function () {
+						if ( $scope.lstDestinoMenu.length )
+							$scope.idDestinoMenu = $scope.lstDestinoMenu[ 0 ].idDestinoMenu;
+					});
+				}
+			}
 
 			else
 				document.getElementById('codigoPersonal').focus();
@@ -84,57 +95,50 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 
 	// CONSULTA INFORMACION DE ORDENES
-	$scope.consultaOrden = function ( usuario, agruparPor, idEstadoOrden ) {
+	$scope.consultaOrden = function () {
 		if ( $scope.$parent.loading ) return false;
 
-		if ( idEstadoOrden > 0 && $scope.idDestinoMenu > 0 ) {
+		if ( $scope.idEstadoOrden > 0 && $scope.idDestinoMenu > 0 ) {
 
 			var datos = { 
 				opcion               : 'lstDetalleDestinos',
-				idEstadoDetalleOrden : idEstadoOrden,
-				usuario				 : '',
-				idDestinoMenu        : $scope.idDestinoMenu,
-				agruparPor         : ''
+				idEstadoDetalleOrden : $scope.idEstadoOrden,
+				usuario				 : $scope.user.usuario,
+				idDestinoMenu        : $scope.idDestinoMenu
 			};
 
-			if ( usuario != undefined && usuario.length )
-				datos.usuario = usuario;
-
-			if ( agruparPor != undefined && agruparPor.length )
-				datos.agruparPor = agruparPor;
-
 			$scope.$parent.loading = true; // cargando...
-			$scope.lstMenusMaster = [];
 			$http.post('consultas.php', datos)
 			.success(function (data) {
 				$scope.$parent.loading = false; // cargando...
 
-				if ( Array.isArray( data.lstMenu ) && ( datos.agruparPor == '' || datos.agruparPor == 'menu' ) ) 
+				if ( Array.isArray( data.lstMenu ) ) 
 				{
 					$scope.ixMenuActual = -1;
 					$scope.lstMenus     = data.lstMenu;
 				}
 
-				if ( Array.isArray( data.lstTicket ) && ( datos.agruparPor == '' || datos.agruparPor == 'ticket' ) ) 
+				if ( Array.isArray( data.lstTicket ) ) 
 				{
 					$scope.ixTicketActual = -1;
 					$scope.lstTickets = data.lstTicket;
 				}
-
-				//$scope.lstMenusMaster = data;
-				$timeout(function () {
-					//$scope.lstPorMenu();
-					//$scope.lstPorTicket();
-				});
 			});
 		}
 	};
 
 
+	// SI CAMBIA EL DESTINO DE MENU
+	$scope.$watch('idDestinoMenu', function (_new) {
+		$scope.consultaOrden();
+	});
+
 	// SI CAMBIA EL ESTADO DE ORDEN
 	$scope.$watch('idEstadoOrden', function (_new) {
-		//$scope.consultaOrden();
+		$scope.consultaOrden();
 	});
+
+
 
 	// CLASIFICA ORDEN EN MENUS DE <==== lstMenusMaster
 	$scope.lstPorMenu = function () {
@@ -236,23 +240,11 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 	/* ************************** CAMBIO DE ESTADO ********************** */
 	// SI CAMBIA ESTADO DE ORDEN
-	$scope.cambioEstadoOrden = function ( idEstadoOrden, porMenu ) {
+	$scope.cambioEstadoOrden = function ( idEstadoOrden ) {
 		if ( $scope.$parent.loading ) return false;
 
-		if ( $scope.permitirAccion() ) {
-			if ( porMenu ) {
-				$scope.idEstadoOrden = idEstadoOrden;
-				var usuario          = $scope.cocinero.usuario;
-				var agruparPor       = 'menu';
-			}
-			else {
-				$scope.idEstadoOrdenTk = idEstadoOrden;
-				var usuario          = $scope.mesero.usuario;
-				var agruparPor       = 'ticket';
-			}
-
-			$scope.consultaOrden( usuario, agruparPor, idEstadoOrden );
-		}
+		if ( $scope.permitirAccion() )
+			$scope.idEstadoOrden = idEstadoOrden;
 	};
 
 	//$timeout(function () { $scope.cambioEstadoOrden( 1 ); });
@@ -463,16 +455,16 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 		// CAMBIO DE ESTADO
 		else if ( !altDerecho && key == 80 ) // {P}
-			$scope.cambioEstadoOrden( 1, true );
+			$scope.cambioEstadoOrden( 1 );
 
 		else if ( !altDerecho && key == 67 ) // {C}
-			$scope.cambioEstadoOrden( 2, true );
+			$scope.cambioEstadoOrden( 2 );
 
 		else if ( !altDerecho && key == 76 ) // {L}
-			$scope.cambioEstadoOrden( 3, true );
+			$scope.cambioEstadoOrden( 3 );
 
 		else if ( !altDerecho && key == 83 ) // {S}
-			$scope.cambioEstadoOrden( 4, true );
+			$scope.cambioEstadoOrden( 4 );
 	};
 
 	// FOCUS NEXT ELEMENT

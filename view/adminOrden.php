@@ -33,32 +33,35 @@
             <input type="number" class="form-control" ng-model="buscarTicket" id="buscarTicket" ng-class="{'input-focus':buscarTicket>0}"
                 placeholder="# Ticket" style="font-size:19px;padding: 1px 14px;font-weight:normal">
 		</div>
+
+		<!-- ESTADO DE ORDEN -->
+		<div class="col-xs-12 text-center" style="margin-top:4px">
+			<div class="btn-orden">
+				<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="cambioEstadoOrden( 1 )">
+					<span class="glyphicon glyphicon-time"></span>
+					<span class="hidden-xs"><u>P</u>endiente</span>
+				</button>
+				<button class="bt-success" ng-class="{'active':idEstadoOrden==2}" ng-click="cambioEstadoOrden( 2 )">
+					<span class="glyphicon glyphicon-play"></span>
+					<span class="hidden-xs"><u>C</u>ocinando</span>
+				</button>
+				<button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="cambioEstadoOrden( 3 )">
+					<span class="glyphicon glyphicon-ok"></span>
+					<span class="hidden-xs"><u>L</u>isto</span>
+				</button>
+				<button class="bt-danger" ng-class="{'active':idEstadoOrden==4}" ng-click="cambioEstadoOrden( 4 )">
+					<span class="glyphicon glyphicon-flag"></span>
+					<span class="hidden-xs"><u>S</u>ervido</span>
+				</button>
+			</div>
+		</div>
+
 	</div>
-	<div class="row" style="margin-top:7px">
+	<div class="row" style="margin-top:3px">
 		
 		<!-- VISTA POR MENU -->
 		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='menu'}" ng-hide="tipoVista=='ticket'">
-			<!-- ESTADO DE ORDEN -->
-			<div class="col-xs-12">
-				<div class="btn-orden">
-					<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="cambioEstadoOrden( 1, true )">
-						<span class="glyphicon glyphicon-time"></span>
-						<span class="hidden-xs"><u>P</u>endiente</span>
-					</button>
-					<button class="bt-success" ng-class="{'active':idEstadoOrden==2}" ng-click="cambioEstadoOrden( 2, true )">
-						<span class="glyphicon glyphicon-play"></span>
-						<span class="hidden-xs"><u>C</u>ocinando</span>
-					</button>
-					<button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="cambioEstadoOrden( 3, true )">
-						<span class="glyphicon glyphicon-ok"></span>
-						<span class="hidden-xs"><u>L</u>isto</span>
-					</button>
-					<button class="bt-danger" ng-class="{'active':idEstadoOrden==4}" ng-click="cambioEstadoOrden( 4, true )">
-						<span class="glyphicon glyphicon-flag"></span>
-						<span class="hidden-xs"><u>S</u>ervido</span>
-					</button>
-				</div>
-			</div>
+			<h4 class="alert alert-info" ng-hide="lstMenus.length">No existe información</h4>
 
 			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index" ng-class="{'inactivo':ixMenuActual!=$index&&seleccionMenu.si}">
 				<div class="encabezado">
@@ -121,33 +124,13 @@
 		
 		<!-- VISTA POR TICKET -->
 		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='ticket'}" ng-hide="tipoVista=='menu'">
-			<!-- ESTADO DE ORDEN -->
-			<div class="col-xs-12">
-				<div class="btn-orden">
-					<button class="bt-info" ng-class="{'active':idEstadoOrdenTk==1}" ng-click="cambioEstadoOrden( 1, false )">
-						<span class="glyphicon glyphicon-time"></span>
-						<span class="hidden-xs"><u>P</u>endiente</span>
-					</button>
-					<button class="bt-success" ng-class="{'active':idEstadoOrdenTk==2}" ng-click="cambioEstadoOrden( 2, false )">
-						<span class="glyphicon glyphicon-play"></span>
-						<span class="hidden-xs"><u>C</u>ocinando</span>
-					</button>
-					<button class="bt-primary" ng-class="{'active':idEstadoOrdenTk==3}" ng-click="cambioEstadoOrden( 3, false )">
-						<span class="glyphicon glyphicon-ok"></span>
-						<span class="hidden-xs"><u>L</u>isto</span>
-					</button>
-					<button class="bt-danger" ng-class="{'active':idEstadoOrdenTk==4}" ng-click="cambioEstadoOrden( 4, false )">
-						<span class="glyphicon glyphicon-flag"></span>
-						<span class="hidden-xs"><u>S</u>ervido</span>
-					</button>
-				</div>
-			</div>
+			<h4 class="alert alert-info" ng-hide="lstTickets.length">No existe información</h4>
 
 			<div class="panel-menu" ng-repeat="ticket in lstTickets track by $index" ng-class="{'inactivo':ixTicketActual!=$index&&seleccionMenu.si}">
 				<div class="encabezado">
 					<div class="col-xs-6">
 						<button type="button" class="btn" ng-click="$parent.ixTicketActual = ( seleccionMenu.si ? $parent.ixTicketActual : $index )"
-							ng-class="{'danger':(difMinutos( ticket.primerTiempo )>ticket.tiempoAlerta && ( idEstadoOrdenTk==1 || idEstadoOrdenTk==2 ) )}">
+							ng-class="{'danger':(difMinutos( ticket.primerTiempo )>ticket.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}">
 							<span class="glyphicon glyphicon-chevron-down"></span>
 							<!--<span class="badge">{{ticket.numMenus}}</span>-->
 							{{ticket.numeroTicket}} 
@@ -176,7 +159,7 @@
 								</thead>
 								<tbody>
 									<tr ng-repeat="item in ticket.lstMenu track by $index" style="cursor:pointer" 
-										ng-class="{'success':item.selected, 'tr_alert':(difMinutos( item.fechaRegistro )>ticket.tiempoAlerta && ( idEstadoOrdenTk==1 || idEstadoOrdenTk==2 ) )}"
+										ng-class="{'success':item.selected, 'tr_alert':(difMinutos( item.fechaRegistro )>ticket.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}"
 										ng-click="selItemTicket( !item.selected, $index )">
 										<td>{{item.cantidad}}</td>
 										<td>

@@ -476,7 +476,7 @@ switch ( $data->opcion )
 	case 'lstDetalleDestinos':
 		$orden = new Orden();
 		echo json_encode( 
-			$orden->lstDetalleDestinos( $data->idEstadoDetalleOrden, $data->idDestinoMenu, $data->agruparPor, $data->usuario )
+			$orden->lstDetalleDestinos( $data->idEstadoDetalleOrden, $data->idDestinoMenu, $data->usuario )
 		);
 		break;
 
