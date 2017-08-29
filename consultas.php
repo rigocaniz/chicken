@@ -33,8 +33,15 @@ switch ( $data->opcion )
 		break;
 
 	case 'login':
+
+		if ( !isset( $data->codigoPersonal ) )
+			$data->codigoPersonal = 'NULL';
+
+		if ( !isset( $data->usuario ) )
+			$data->usuario = 'NULL';
+
 		$usuario = new Usuario();
-		echo json_encode( $usuario->login( $data->usuario, $data->clave ) );
+		echo json_encode( $usuario->login( $data->usuario, $data->clave, $data->codigoPersonal ) );
 		break;
 
 	/////////////////////////

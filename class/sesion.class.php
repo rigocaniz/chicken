@@ -44,6 +44,16 @@ class Sesion
 		return (int)$this->getVariable( 'idPerfil' );
 	}
 
+	function getNombreCorto()
+	{
+		return $this->getVariable( 'nombreCorto' );
+	}
+
+	function getCodigoUsuario()
+	{
+		return (int)$this->getVariable( 'codigoUsuario' );
+	}
+
 }
 
 $sesion = new Sesion();
