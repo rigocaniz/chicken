@@ -687,13 +687,21 @@ class Orden
 					// VERIFICAR SI EXISTE MENU
 					foreach ( $lst->lstTicket[ $ixTicket ]->lstMenu as $ix => $item ):
 
-						if ( 
+						if ( $item->idTipoServicio == $row->idTipoServicio AND 
+							$item->perteneceCombo == $row->perteneceCombo AND 
+							$item->idMenu == $row->idMenu ) 
+						{
+							$ixMenu = $ix;
+							break;
+						}
+
+						/*if ( 
 							$item->idTipoServicio == $row->idTipoServicio AND 
 							( $row->perteneceCombo ? $item->idCombo == $row->idCombo : $item->idMenu == $row->idMenu ) ) 
 						{
 							$ixMenu = $ix;
 							break;
-						}
+						}*/
 
 					endforeach;
 

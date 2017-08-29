@@ -213,19 +213,25 @@ class Usuario
 
 
 	// LOGIN USUARIO
-	function login( $usuario, $clave )
+	function login( $usuario, $clave, $codigo )
 	{
 		$validar = new Validar();
+		$sesion = new Sesion();
 
-		$usuario = $this->con->real_escape_string( $validar->validarTexto( $usuario, NULL, TRUE, 8, 16, "USUARIO" ) );
-		$clave   = $this->con->real_escape_string( $validar->validarTexto( $clave, NULL, TRUE, 6, 16, "CONTRASEÑA" ) );
+		$clave = $this->con->real_escape_string( $validar->validarTexto( $clave, NULL, TRUE, 4, 16, "CONTRASEÑA" ) );
+
+		if ( $codigo === 'NULL' )
+			$usuario = $this->con->real_escape_string( $validar->validarTexto( $usuario, NULL, TRUE, 8, 16, "USUARIO" ) );
+
+		else
+			$codigo = $this->con->real_escape_string( $validar->validarNumero( $codigo, NULL, TRUE, 1, 4, "CODIGO" ) );
 
 		if( $validar->getIsError() ):
  			$this->respuesta = 'danger';
  			$this->mensaje   = $validar->getMsj();
  		else:
 
-			$sql = "CALL login( '{$usuario}', '{$clave}' );";
+			$sql = "CALL login( '{$usuario}', '{$clave}', {$codigo} );";
 			
 			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 				$this->siguienteResultado();
@@ -234,11 +240,14 @@ class Usuario
 				$this->mensaje   = $row->mensaje;
 				if( $this->respuesta == 'success' ){
 					// 	CREAR SESION
-					$sesion = new Sesion();
 					$sesion->setVariable( 'nombre', $row->nombre );
+					$sesion->setVariable( 'nombreCorto', $row->nombreCorto );
 					$sesion->setVariable( 'idPerfil', (int)$row->idPerfil );
-					$sesion->setVariable( 'usuario', $usuario );
-					header( "Location: index.php" );
+					$sesion->setVariable( 'usuario', $row->usuario );
+					$sesion->setVariable( 'codigoUsuario', $row->codigoUsuario );
+					
+					if ( $codigo === 'NULL' )
+						header( "Location: index.php" );
 				}
 			}
 			else{
@@ -247,7 +256,60 @@ class Usuario
 			}
  		endif;
 
- 		return $this->getRespuesta();
+		if ( $codigo === 'NULL' )
+ 			return $this->getRespuesta();
+
+ 		else
+ 			return array_merge(
+ 				$this->getRespuesta(),
+ 				array( 'usuario' => $this->getUsuario( $sesion->getUsuario() ) )
+ 			);
+	}
+
+	// CONSULTA INFORMACION DE USUARIO
+	function getUsuario( $usuario )
+	{
+		$user = NULL;
+
+		$sql = "SELECT
+					u.usuario,
+				    u.codigo,
+				    u.nombres,
+				    u.idEstadoUsuario,
+				    u.estadoUsuario,
+				    u.idPerfil,
+				    u.perfil,
+				    dm.idDestinoMenu,
+				    dm.destinoMenu
+				FROM vUsuario AS u
+					LEFT JOIN destinoMenuUsuario AS dmu
+						ON u.usuario = dmu.usuario
+					LEFT JOIN destinoMenu AS dm
+						ON dmu.idDestinoMenu = dm.idDestinoMenu
+				WHERE u.usuario = '{$usuario}' ";
+			
+		$rs = $this->con->query( $sql );
+
+		while( $rs AND $row = $rs->fetch_object() ){
+			if ( is_null( $user ) )
+				$user = (object)array(
+					'usuario'         => $row->usuario,
+					'codigo'          => $row->codigo,
+					'nombres'         => $row->nombres,
+					'idEstadoUsuario' => $row->idEstadoUsuario,
+					'estadoUsuario'   => $row->estadoUsuario,
+					'idPerfil'        => $row->idPerfil,
+					'perfil'          => $row->perfil,
+					'lstDestinos'     => array(),
+				);
+			
+			$user->lstDestinos[] = (object)array(
+				'idDestinoMenu' => $row->idDestinoMenu,
+				'destinoMenu'   => $row->destinoMenu,
+			);
+		}
+		
+		return $user;
 	}
 
 

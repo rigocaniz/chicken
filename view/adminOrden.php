@@ -1,6 +1,6 @@
 <div class="col-xs-12" style="margin-top:5px">
 	<div class="row">
-		<div class="col-xs-4">
+		<div class="col-xs-3">
 			<div class="btn-group" role="group">
 				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='menu', 'btn-default':tipoVista!='menu'}" 
 					ng-click="cambiarVista( 'menu' )" title="Menú: M">
@@ -16,13 +16,21 @@
 				</button>
 			</div>
 		</div>
-		<div class="col-xs-4">
-			<p title="Cocinero { ESPACIO }" ng-click="dialogoConsultaPersonal( 'menu' )" style="cursor:pointer">
-				<span class="glyphicon glyphicon-cutlery"></span> <b>{{cocinero.nombre}}</b>
-			</p>
-			<p title="Mesero { alt + ESPACIO }" style="margin-bottom:0;cursor:pointer" ng-click="dialogoConsultaPersonal( 'ticket' )">
-				<span class="glyphicon glyphicon-user"></span> <b>{{mesero.nombre}}</b>
-			</p>
+		<div class="col-xs-5">
+			<div class="col-xs-12">
+				<button type="button" class="btn btn-sm btn-default" title="Menú { ESPACIO }" ng-click="dialogoConsultaPersonal( 'menu' )">
+					<span class="glyphicon glyphicon-cutlery"></span> 
+					<b>{{cocinero.nombre}}</b>
+					<span class="label label-success" ng-show="cocinero.idDestinoMenu==1">C</span>
+					<span class="label label-primary" ng-show="cocinero.idDestinoMenu==2">B</span>
+				</button>
+				<button type="button" class="btn btn-sm btn-default" title="Ticket { alt + ESPACIO }" ng-click="dialogoConsultaPersonal( 'ticket' )">
+					<span class="glyphicon glyphicon-bookmark"></span> 
+					<b>{{mesero.nombre}}</b>
+					<span class="label label-success" ng-show="mesero.idDestinoMenu==1">C</span>
+					<span class="label label-primary" ng-show="mesero.idDestinoMenu==2">B</span>
+				</button>
+			</div>
 		</div>
 		<div class="col-xs-3">
             <input type="number" class="form-control" ng-model="buscarTicket" id="buscarTicket" ng-class="{'input-focus':buscarTicket>0}"
@@ -36,19 +44,19 @@
 			<!-- ESTADO DE ORDEN -->
 			<div class="col-xs-12">
 				<div class="btn-orden">
-					<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="cambioEstadoOrden( 1 )">
+					<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="cambioEstadoOrden( 1, true )">
 						<span class="glyphicon glyphicon-time"></span>
 						<span class="hidden-xs"><u>P</u>endiente</span>
 					</button>
-					<button class="bt-success" ng-class="{'active':idEstadoOrden==2}" ng-click="cambioEstadoOrden( 2 )">
+					<button class="bt-success" ng-class="{'active':idEstadoOrden==2}" ng-click="cambioEstadoOrden( 2, true )">
 						<span class="glyphicon glyphicon-play"></span>
 						<span class="hidden-xs"><u>C</u>ocinando</span>
 					</button>
-					<button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="cambioEstadoOrden( 3 )">
+					<button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="cambioEstadoOrden( 3, true )">
 						<span class="glyphicon glyphicon-ok"></span>
 						<span class="hidden-xs"><u>L</u>isto</span>
 					</button>
-					<button class="bt-danger" ng-class="{'active':idEstadoOrden==4}" ng-click="cambioEstadoOrden( 4 )">
+					<button class="bt-danger" ng-class="{'active':idEstadoOrden==4}" ng-click="cambioEstadoOrden( 4, true )">
 						<span class="glyphicon glyphicon-flag"></span>
 						<span class="hidden-xs"><u>S</u>ervido</span>
 					</button>
@@ -119,19 +127,19 @@
 			<!-- ESTADO DE ORDEN -->
 			<div class="col-xs-12">
 				<div class="btn-orden">
-					<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="cambioEstadoOrden( 1 )">
+					<button class="bt-info" ng-class="{'active':idEstadoOrdenTk==1}" ng-click="cambioEstadoOrden( 1, false )">
 						<span class="glyphicon glyphicon-time"></span>
 						<span class="hidden-xs"><u>P</u>endiente</span>
 					</button>
-					<button class="bt-success" ng-class="{'active':idEstadoOrden==2}" ng-click="cambioEstadoOrden( 2 )">
+					<button class="bt-success" ng-class="{'active':idEstadoOrdenTk==2}" ng-click="cambioEstadoOrden( 2, false )">
 						<span class="glyphicon glyphicon-play"></span>
 						<span class="hidden-xs"><u>C</u>ocinando</span>
 					</button>
-					<button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="cambioEstadoOrden( 3 )">
+					<button class="bt-primary" ng-class="{'active':idEstadoOrdenTk==3}" ng-click="cambioEstadoOrden( 3, false )">
 						<span class="glyphicon glyphicon-ok"></span>
 						<span class="hidden-xs"><u>L</u>isto</span>
 					</button>
-					<button class="bt-danger" ng-class="{'active':idEstadoOrden==4}" ng-click="cambioEstadoOrden( 4 )">
+					<button class="bt-danger" ng-class="{'active':idEstadoOrdenTk==4}" ng-click="cambioEstadoOrden( 4, false )">
 						<span class="glyphicon glyphicon-flag"></span>
 						<span class="hidden-xs"><u>S</u>ervido</span>
 					</button>
@@ -142,11 +150,11 @@
 				<div class="encabezado">
 					<div class="col-xs-6">
 						<button type="button" class="btn" ng-click="$parent.ixTicketActual = ( seleccionMenu.si ? $parent.ixTicketActual : $index )"
-							ng-class="{'danger':(difMinutos( ticket.primerTiempo )>ticket.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}">
+							ng-class="{'danger':(difMinutos( ticket.primerTiempo )>ticket.tiempoAlerta && ( idEstadoOrdenTk==1 || idEstadoOrdenTk==2 ) )}">
 							<span class="glyphicon glyphicon-chevron-down"></span>
-							<span class="badge">{{ticket.numMenus}}</span>
-	                        <span class="glyphicon glyphicon-bookmark"></span>
+							<!--<span class="badge">{{ticket.numMenus}}</span>-->
 							{{ticket.numeroTicket}} 
+	                        <span class="glyphicon glyphicon-bookmark"></span>
 						</button>
 					</div>
 					<div class="col-xs-6 text-right">
@@ -166,13 +174,12 @@
 									<tr>
 										<th>Cantidad</th>
 										<th>Orden</th>
-										<th>Combo</th>
 										<th>Tipo Servicio</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr ng-repeat="item in ticket.lstMenu track by $index" style="cursor:pointer" 
-										ng-class="{'success':item.selected, 'tr_alert':(difMinutos( item.fechaRegistro )>ticket.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}"
+										ng-class="{'success':item.selected, 'tr_alert':(difMinutos( item.fechaRegistro )>ticket.tiempoAlerta && ( idEstadoOrdenTk==1 || idEstadoOrdenTk==2 ) )}"
 										ng-click="selItemTicket( !item.selected, $index )">
 										<td>{{item.cantidad}}</td>
 										<td>
@@ -181,9 +188,7 @@
 	                                            <span ng-show="item.idTipoServicio==3">D</span>
 	                                            <span ng-show="item.idTipoServicio==1">L</span>
 	                                        </span>
-											{{item.perteneceCombo?item.combo:item.menu}}
-										</td>
-										<td>
+											{{item.menu}}
 											<span class="label label-warning" ng-show="item.perteneceCombo">
 												<span class="glyphicon glyphicon-gift"></span>
 											</span>
@@ -234,30 +239,39 @@
             <div class="modal-content panel-primary">
                 <div class="modal-header panel-heading">
                     <button type="button" class="close" ng-click="$hide()">&times;</button>
-                    <span ng-show="agruparPor=='menu'">
-						<span class="glyphicon glyphicon-cutlery"></span>
-                    	Cambiar Cocinero
-                    </span>
-                    <span ng-show="agruparPor=='ticket'">
-						<span class="glyphicon glyphicon-user"></span>
-                    	Cambiar Mesero
-                    </span>
+					<span class="glyphicon glyphicon-user"></span>
+                	Cambiar Usuario
                 </div>
                 <div class="modal-body">
                 	<div class="row">
-	                    <label class="col-xs-2">Destino</label>
-	                    <div class="col-xs-4">
-	                    	<select ng-model="idDestinoMenu" class="form-control">
-	                    		<option value="{{item.idDestinoMenu}}" ng-repeat="item in lstDestinoMenu">{{item.destinoMenu}}</option>
-	                    	</select>
-	                    </div>
-	                    <label class="col-xs-2">Código</label>
-	                    <div class="col-xs-3">
-	                    	<input type="text" class="form-control" id="codigoPersonal" ng-model="$parent.codigoPersonal" ng-keydown="$event.keyCode==13 && consultarPersonal()">
-	                    </div>
+	                    <div class="col-xs-10 col-xs-offset-2">
+		                    <label class="col-xs-3">
+								<span class="glyphicon glyphicon-user"></span>
+		                    	Código
+		                    </label>
+		                    <div class="col-xs-4">
+		                    	<input type="number" class="form-control" id="codigoPersonal" ng-model="$parent.codigoPersonal" 
+		                    		ng-keydown="$event.keyCode==13 && nextElement()">
+		                    </div>
+		                </div>
+		            </div>
+                	<div class="row" style="margin-top:5px">
+	                    <div class="col-xs-10 col-xs-offset-2">
+		                    <label class="col-xs-3">
+								<span class="glyphicon glyphicon-lock"></span>
+		                    	Clave
+		                    </label>
+		                    <div class="col-xs-4">
+		                    	<input type="password" class="form-control" id="clave" ng-model="$parent.clave" ng-keydown="$event.keyCode==13 && consultarPersonal()">
+		                    </div>
+		                </div>
                 	</div>
                 </div>
                 <div class="modal-footer">
+                	<button type="button" class="btn btn-success" ng-click="consultarPersonal()">
+                        <span class="glyphicon glyphicon-log-in"></span>
+                        <b>Cambiar Usuario</b>
+                    </button>
                     <button type="button" class="btn btn-default" ng-click="$hide()">
                         <span class="glyphicon glyphicon-log-out"></span>
                         <b>Salir</b>
