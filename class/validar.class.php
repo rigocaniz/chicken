@@ -189,6 +189,39 @@ class Validar
 		}
 	}
 
+
+	// VALIDAR CANTIDAD MONETARIA
+	function validarDinero( $valor = 0, $default = NULL, $required = TRUE,  $msj = '' )
+	{
+		if( $this->error )
+			return $valor;
+		
+		$warning = FALSE;
+		$valor   = (double)$valor;
+		$msj = "";
+
+		if ( !is_numeric( $valor ) ):
+			$warning = TRUE;
+			$msj     = "El valor ingresado en {$msj} no es númerico, verifique.";
+
+		elseif( $valor <= 0 ):
+			$warning = TRUE;
+			$msj     = "El valor ingresado debe ser mayor a 0, verifique.";
+
+		endif;
+
+		if ( !$required AND $warning ):
+			$valor = $default;
+
+		elseif( $warning AND $required ):
+			$this->error   = TRUE;
+			$this->mensaje = $msj;
+
+		endif;
+
+		return $valor;
+	}
+
 	
 	// VALIDAR CORREO
 	function validarCorreo( $valor = '', $default = NULL, $required = TRUE )
@@ -215,7 +248,7 @@ class Validar
 
 	
 	// VALIDAR ENTERO
-	function validarCantidad( $valor = 0, $default = NULL, $required = TRUE, $minimo = 0, $maximo = 50000,  $msj = '' )
+	function validarCantidad( $valor = 0, $default = NULL, $required = TRUE, $minimo = 0, $maximo = 999999,  $msj = '' )
 	{
 		if( $this->error )
 			return $valor;

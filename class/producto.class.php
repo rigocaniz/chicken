@@ -467,7 +467,7 @@ class Producto
  		}
 
 		$comentario   = $this->con->real_escape_string( $data->comentario );
-		$fechaFactura = substr( $data->fechaFactura, 0, -14);;
+		$fechaFactura = substr( $data->fechaFactura, 0, -14);
 		
 		// OBTENER RESULTADO DE VALIDACIONES
  		if( $validar->getIsError() ):
