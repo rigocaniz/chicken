@@ -37,7 +37,7 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 			$scope.caja.efectivoSobrante = data.dataCaja.efectivoSobrante;
 			$scope.caja.efectivoFaltante = data.dataCaja.efectivoFaltante;
 			$scope.caja.idCaja           = data.dataCaja.idCaja;
-			
+
 			if( !($scope.caja.idCaja > 0) ){
 				$scope.accion = 'insert';
 			}
@@ -56,7 +56,9 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 		.success(function(data){
 			console.log(data);
 			alertify.set('notifier','position', 'top-right');
-			alertify.notify( data.mensaje,data.respuesta, data.tiempo );
+			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+			if( data.respuesta == 'success' )
+				$scope.inicioCaja();
 		});
 
 	};
