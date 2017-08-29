@@ -20,15 +20,9 @@
 			<div class="col-xs-12">
 				<button type="button" class="btn btn-sm btn-default" title="Menú { ESPACIO }" ng-click="dialogoConsultaPersonal( 'menu' )">
 					<span class="glyphicon glyphicon-cutlery"></span> 
-					<b>{{cocinero.nombre}}</b>
-					<span class="label label-success" ng-show="cocinero.idDestinoMenu==1">C</span>
-					<span class="label label-primary" ng-show="cocinero.idDestinoMenu==2">B</span>
-				</button>
-				<button type="button" class="btn btn-sm btn-default" title="Ticket { alt + ESPACIO }" ng-click="dialogoConsultaPersonal( 'ticket' )">
-					<span class="glyphicon glyphicon-bookmark"></span> 
-					<b>{{mesero.nombre}}</b>
-					<span class="label label-success" ng-show="mesero.idDestinoMenu==1">C</span>
-					<span class="label label-primary" ng-show="mesero.idDestinoMenu==2">B</span>
+					<b>{{user.nombres}} {{user.apellidos}}</b>
+					<span class="label label-success" ng-show="user.idDestinoMenu==1">C</span>
+					<span class="label label-primary" ng-show="user.idDestinoMenu==2">B</span>
 				</button>
 			</div>
 		</div>
