@@ -811,3 +811,8 @@ tr.tr_alert{
     padding: 4px 18px;
     border-radius: 25px;
 }
+
+.numEfectivo{
+    font-size: 24px;
+    background-color: #1b1b1b;
+}

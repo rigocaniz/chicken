@@ -43,7 +43,12 @@ app.config(function($routeProvider) {
     .when('/factura',{
         templateUrl:'view/factura.php',
         controller:'facturaCtrl'
-    })	.otherwise({
+    })
+    .when('/caja',{
+        templateUrl : 'view/caja.php',
+        controller  : 'ctrlCaja'
+    })
+    .otherwise({
         redirectTo:'/'
     });
 

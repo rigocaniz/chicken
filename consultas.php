@@ -5,6 +5,7 @@ $data = json_decode( file_get_contents("php://input") );
 
 include 'class/conexion.class.php';
 include 'class/cliente.class.php';
+include 'class/caja.class.php';
 include 'class/combo.class.php';
 include 'class/consulta.class.php';
 include 'class/medida.class.php';
@@ -46,7 +47,26 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** INICIOS
 	////////////////////////
-	case 'inicioAdmin':			// DATOS MEDIDA
+	case 'inicioCaja':			// DATOS MEDIDA
+		$consulta = new Consulta();
+		$caja     = new Caja();
+
+		//$datos[ 'usuario' ]  = $sesion->getUsuario();
+		$datos[ 'cajero' ]   = $sesion->getNombre();
+		$datos[ 'operador' ] = $sesion->getOperador();
+		$datos[ 'dataCaja' ] = $caja->consultarEstadoCaja();
+
+		echo json_encode( $datos );
+		break;
+
+	case '':
+		
+		break;
+
+	/////////////////////////
+	//***** CAJA
+	////////////////////////
+	/*case 'inicioCaja':			// DATOS MEDIDA
 		$consulta = new Consulta();
 		$datos[ 'lstDestinoMenu' ]   = $consulta->catDestinoMenu();
 		$datos[ 'lsTipoMenu' ]       = $consulta->catTipoMenu();
@@ -55,6 +75,15 @@ switch ( $data->opcion )
 		
 		echo json_encode( $datos );
 		break;
+	*/
+
+	case 'consultaCaja':			// CONSULTA CAJA => INSERT // STATUS
+		$caja = new Caja();
+
+		echo json_encode( $caja->consultaCaja( $data->accion, $data->data ) );
+		break;
+
+		
 
 	/////////////////////////
 	//***** CONSULTA DATOS
