@@ -50,8 +50,7 @@ switch ( $data->opcion )
 	case 'inicioCaja':			// DATOS MEDIDA
 		$consulta = new Consulta();
 		$caja     = new Caja();
-
-		//$datos[ 'usuario' ]  = $sesion->getUsuario();
+		
 		$datos[ 'cajero' ]   = $sesion->getNombre();
 		$datos[ 'operador' ] = $sesion->getOperador();
 		$datos[ 'dataCaja' ] = $caja->consultarEstadoCaja();
