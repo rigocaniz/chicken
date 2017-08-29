@@ -1,12 +1,42 @@
 app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
 	
    	$scope.menuCliente = 'ingresar';
+    $scope.accion = 'insert';
+	
+	$scope.cliente  = {
+        'nit'           : null,
+        'nombre'        : '',
+        'cui'           : null,
+        'correo'        : '',
+        'telefono'      : null,
+        'direccion'     : '',
+        'idTipoCliente' : 1,
+    };  
+
+    $scope.resetValores = function( accion ){
+        $scope.accion = 'insert';
+        if( accion == 'cliente' ) {
+            $scope.cliente  = {
+                'nit'           : null,
+                'nombre'        : '',
+                'cui'           : null,
+                'correo'        : '',
+                'telefono'      : null,
+                'direccion'     : '',
+                'idTipoCliente' : 1,
+            };
+        }
+        if( accion == 'lstClientes' ) {
+            $scope.lstClientes = [];
+        }
+    };
 
    	$scope.dialBuscarCliente = $modal({scope: $scope,template:'dial.buscarCliente.html', show: false, backdrop: 'static'});
 
 	$scope.txtCliente  = '';
 	$scope.lstClientes = [];
 	$scope.buscarCliente = function( valor, accion ){
+		console.log( valor, accion );
 		if( valor.length == 0 && accion == 'principal'  ) {
 			$scope.txtCliente = '';
 			$scope.lstClientes = [];
@@ -28,7 +58,8 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
 	            	alertify.notify( 'No se encontraron resultados', 'info', 3 );
 	            }
 	        	else if( data.length == 1 ){
-	        		$scope.$parent.cliente = data[ 0 ];
+	        		$scope.accion = 'update';
+	        		$scope.cliente = data[ 0 ];
 	        		$scope.dialBuscarCliente.hide();
 	        		$scope.txtCliente = '';
 	        		$scope.menuCliente = 'ingresar';
@@ -72,7 +103,7 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
                 alertify.notify( data.mensaje,data.respuesta, data.tiempo );
                 if ( data.respuesta == "success" )
                 {
-                    $scope.$parent.resetValores( 'cliente' );
+                    $scope.resetValores( 'cliente' );
                     $scope.txtCliente = '';
                     $( '#ticket' ).focus();
                 }
@@ -84,9 +115,8 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
     };
 
 
-	$scope.seleccionarCliente = function(cliente)
-    {
-        $scope.$parent.cliente = angular.copy( cliente );
+	$scope.seleccionarCliente = function( cliente ){
+        $scope.cliente = angular.copy( cliente );
         $scope.resetValores( 'lstClientes' );
         $scope.txtCliente  = '';
         $scope.menuCliente = 'ingresar';

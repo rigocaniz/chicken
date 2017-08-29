@@ -1,9 +1,37 @@
 app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	
 	$scope.dialAccionCliente = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: false });
-	$scope.accionCliente     = 'ninguna';
+	$scope.accionCliente = 'ninguna';
+	$scope.menuFactura   = 'facturar';
+	$scope.accion        = 'insert';
+	
+	$scope.cliente  = {
+        'nit'           : null,
+        'nombre'        : '',
+        'cui'           : null,
+        'correo'        : '',
+        'telefono'      : null,
+        'direccion'     : '',
+        'idTipoCliente' : 1,
+    };  
 
-	$scope.menuFactura = 'facturar';
+    $scope.resetValores = function( accion ){
+        $scope.accion = 'insert';
+        if( accion == 'cliente' ) {
+            $scope.cliente  = {
+                'nit'           : null,
+                'nombre'        : '',
+                'cui'           : null,
+                'correo'        : '',
+                'telefono'      : null,
+                'direccion'     : '',
+                'idTipoCliente' : 1,
+            };
+        }
+        if( accion == 'lstClientes' ) {
+            $scope.lstClientes = [];
+        }
+    };
 
 	$scope.nuevoCliente = function(valor,evento){
 		if ( evento == 1 ) {

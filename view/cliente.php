@@ -45,7 +45,7 @@
 								<div class="form-group">
 									<label class="col-sm-2 control-label">NIT</label>
 									<div class="col-sm-3">
-										<input type="text" ng-model="$parent.cliente.nit" class="form-control" id="nit" maxlength="15" autofocus>
+										<input type="text" ng-model="cliente.nit" class="form-control" id="nit" maxlength="15" autofocus>
 									</div>
 									<div class="col-sm-6">
 										<div class="text-right">
@@ -58,29 +58,29 @@
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Nombre</label>
 									<div class="col-sm-9 col-md-8">
-										<input type="text" class="form-control" ng-model="$parent.cliente.nombre" maxlength="65" capitalize>
+										<input type="text" class="form-control" ng-model="cliente.nombre" maxlength="65" capitalize>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Cui (DPI)</label>
 									<div class="col-sm-4 col-md-3">
-										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="$parent.cliente.cui" capitalize>
+										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="cliente.cui" capitalize>
 									</div>
 									<label class="col-sm-2 control-label">Correo</label>
 									<div class="col-sm-4 col-md-3">
-										<input type="email" class="form-control"  maxlength="65" ng-model="$parent.cliente.correo">
+										<input type="email" class="form-control"  maxlength="65" ng-model="cliente.correo">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Telefono</label>
 									<div class="col-sm-4 col-md-3">
-										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="8" ng-model="$parent.cliente.telefono">
+										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="8" ng-model="cliente.telefono">
 									</div>
 									<label class="col-sm-2 control-label">Tipo Cliente</label>
 									<div class="col-sm-4">
 										<div class="btn-group" role="group" aria-label="">
-										  	<button type="button" class="btn btn-default" ng-repeat="tc in lstTipoCliente" ng-click="$parent.cliente.idTipoCliente = tc.idTipoCliente" ng-class="{'btn-warning': tc.idTipoCliente == $parent.cliente.idTipoCliente}">
-										  		<span class="glyphicon" ng-class="{'glyphicon-check': tc.idTipoCliente == $parent.cliente.idTipoCliente, 'glyphicon-unchecked': tc.idTipoCliente != $parent.cliente.idTipoCliente}"></span>
+										  	<button type="button" class="btn btn-default" ng-repeat="tc in lstTipoCliente" ng-click="cliente.idTipoCliente = tc.idTipoCliente" ng-class="{'btn-warning': tc.idTipoCliente == cliente.idTipoCliente}">
+										  		<span class="glyphicon" ng-class="{'glyphicon-check': tc.idTipoCliente == cliente.idTipoCliente, 'glyphicon-unchecked': tc.idTipoCliente != cliente.idTipoCliente}"></span>
 										  		{{ tc.tipoCliente }}
 										  	</button>
 										</div>
@@ -89,14 +89,14 @@
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Dirección</label>
 									<div class="col-sm-9 col-md-8">
-										<input type="text" class="form-control"  maxlength="95" ng-model="$parent.cliente.direccion" ng-keypress="$event.keyCode==13 && consultaCliente()">
+										<input type="text" class="form-control"  maxlength="95" ng-model="cliente.direccion" ng-keypress="$event.keyCode==13 && consultaCliente()">
 									</div>
 								</div>
 								<div class="col-sm-12 text-center">
 									<button type="button" class="btn btn-success" ng-click="consultaCliente()">
 										<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }} cliente
 									</button>
-									<button type="button" class="btn btn-default" ng-click="$parent.resetValores( 'cliente' )"> 
+									<button type="button" class="btn btn-default" ng-click="resetValores( 'cliente' )"> 
 										<span class="glyphicon glyphicon-log-out"></span> Cancelar
 									</button>
 								</div>
@@ -170,7 +170,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="cliente in $parent.lstClientes | filter: filtroCliente" ng-class="{'border-info': cliente.idTipoCliente == 1, 'border-warning': cliente.idTipoCliente == 2}">
+                                <tr ng-repeat="cliente in lstClientes | filter: filtroCliente" ng-class="{'border-info': cliente.idTipoCliente == 1, 'border-warning': cliente.idTipoCliente == 2}" ng-show="cliente.idCliente > 1">
                                     <td>{{ cliente.nombre}}</td>
                                     <td class="text-center">{{ cliente.nit }}</td>
                                     <td class="text-center">{{ cliente.cui }}</td>

@@ -67,10 +67,9 @@ class Validar
 
 		$warning = FALSE;
 
-		if( !(strlen( $valor ) == 13) ):
+		if( strlen( $valor ) AND !(preg_match('/^[0-9-\s]{13,15}$/', $valor ) AND strlen( $valor) >= 13 AND strlen( $valor) <= 15) ):
 			$warning = TRUE;
 		endif;
-
 
 		if( $warning AND $required ):
 			$this->error   = TRUE;

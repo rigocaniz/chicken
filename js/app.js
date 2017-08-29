@@ -217,49 +217,18 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
 
     
     /*CLIENTES*/
-    $scope.clienteMenu = 1;
-    $scope.catTipoCliente = function(){
+    ($scope.catTipoCliente = function(){
         $http.post('consultas.php',{
-            opcion:'catTiposCliente'
+            opcion : 'catTiposCliente'
         }).success(function(data){
+            console.log( data );
             $scope.lstTipoCliente = data;
         })
-    };  
+    })();  
 
-    $scope.catTipoCliente();
+    //$scope.catTipoCliente();
 
-    $scope.cliente  = {
-        'nit'           : null,
-        'nombre'        : '',
-        'cui'           : null,
-        'correo'        : '',
-        'telefono'      : null,
-        'direccion'     : '',
-        'idTipoCliente' : 1,
-    };  
-
-    $scope.resetValores = function( accion ){
-        $scope.accion = 'insert';
-        if( accion == 'cliente' )
-        {
-            $scope.cliente  = {
-                'nit'           : null,
-                'nombre'        : '',
-                'cui'           : null,
-                'correo'        : '',
-                'telefono'      : null,
-                'direccion'     : '',
-                'idTipoCliente' : 1,
-            };
-        }
-        if( accion == 'lstClientes' )
-        {
-            $scope.lstClientes = [];
-        }
-
-    };
-
-    $scope.accion = 'insert';
-    $scope.tipo = null;
+    //$scope.clienteMenu = 1;
+    //$scope.tipo = null;
 
 });

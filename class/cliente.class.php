@@ -38,31 +38,19 @@ class Cliente
  		endif;
 
  		// SETEO DE VARIABLES
- 		$cliente->nit           = isset( $cliente->nit )  				? (string)$cliente->nit 		: NULL;
- 		$cliente->nit           = strlen( $cliente->nit )  				? (string)$cliente->nit 		: NULL;
-
- 		$cliente->nombre        = isset( $cliente->nombre ) 			? (string)$cliente->nombre 		: NULL;
- 		$cliente->nombre        = strlen( $cliente->nombre ) 			? (string)$cliente->nombre 		: NULL;
-
-<<<<<<< HEAD
- 		//$cliente->cui           = isset( $cliente->cui )				? (string)(int)$cliente->cui 	: NULL;
- 		$cliente->cui           = strlen( $cliente->cui ) >= 1			? $cliente->cui 	        : NULL;
-=======
-		$cliente->cui 			= isset( $cliente->cui ) ? (string)gmp_init( $cliente->cui ) : NULL;
-		$cliente->cui 			= strlen( (string)gmp_init( $cliente->cui ) ) > 1 ? gmp_init( $cliente->cui ) : NULL;
->>>>>>> 996af69a8e4304a4c7a807bb3dedb5a75a0839c7
-
- 		$cliente->correo        = isset( $cliente->correo ) 			? (string)$cliente->correo 		: NULL;
- 		$cliente->correo        = strlen( $cliente->correo ) 			? (string)$cliente->correo 		: NULL;
-
- 		$cliente->telefono      = isset( $cliente->telefono ) 			? (int)$cliente->telefono 		: NULL;
- 		$cliente->telefono      = strlen( $cliente->telefono ) > 1 		? (int)$cliente->telefono 		: NULL;
-
- 		$cliente->direccion     = isset( $cliente->direccion ) 			? (string)$cliente->direccion 	: NULL;
- 		$cliente->direccion     = strlen( $cliente->direccion ) 		? (string)$cliente->direccion 	: NULL;
-
- 		$cliente->idTipoCliente = isset( $cliente->idTipoCliente ) 		? (int)$cliente->idTipoCliente 	 : NULL;
- 		$cliente->idTipoCliente = (int)$cliente->idTipoCliente > 0 		? (int)$cliente->idTipoCliente 	 : NULL;
+ 		$cliente->nit           = isset( $cliente->nit )  					? (string)$cliente->nit 			: NULL;
+ 		$cliente->nit           = strlen( $cliente->nit )  					? (string)$cliente->nit 			: NULL;
+ 		$cliente->nombre        = isset( $cliente->nombre ) 				? (string)$cliente->nombre 			: NULL;
+ 		$cliente->nombre        = strlen( $cliente->nombre ) 				? (string)$cliente->nombre 			: NULL;
+		$cliente->cui 			= isset( $cliente->cui ) 					? (string)$cliente->cui 			: NULL;
+ 		$cliente->correo        = isset( $cliente->correo ) 				? (string)$cliente->correo 			: NULL;
+ 		$cliente->correo        = strlen( $cliente->correo ) 				? (string)$cliente->correo 			: NULL;
+ 		$cliente->telefono      = isset( $cliente->telefono ) 				? (int)$cliente->telefono 			: NULL;
+ 		$cliente->telefono      = (int)$cliente->telefono > 0 				? (int)$cliente->telefono 			: NULL;
+ 		$cliente->direccion     = isset( $cliente->direccion ) 				? (string)$cliente->direccion 		: NULL;
+ 		$cliente->direccion     = strlen( $cliente->direccion ) 			? (string)$cliente->direccion 		: NULL;
+ 		$cliente->idTipoCliente = isset( $cliente->idTipoCliente ) 			? (int)$cliente->idTipoCliente 	 	: NULL;
+ 		$cliente->idTipoCliente = (int)$cliente->idTipoCliente > 0 			? (int)$cliente->idTipoCliente 	 	: NULL;
 
  		// VALIDAR
 		$nit           = $validar->validarNit( $cliente->nit, NULL, !esNulo( $cliente->nit ) );
@@ -103,7 +91,6 @@ class Cliente
 
  	function consultarCliente( $valor )
  	{
- 		//var_dump( $valor );
  		$lstClientes = [];
  		$where = "";
 
