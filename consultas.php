@@ -503,6 +503,12 @@ switch ( $data->opcion )
 		echo json_encode( $orden->cambiarServicio( $data->idOrdenCliente, $data->lstDetalle, $data->idTipoServicio ) );
 		break;
 
+	// INI - ADMIN. ORDEN
+	case 'iniOrdenAdmin':				// CARGAR CATALOGO DESTINO MENU
+		$usuario = new Usuario();
+		echo json_encode( array( 'usuario' => $usuario->getUsuario( $sesion->getUsuario() ) ) );
+		break;
+
 
 	/////////////////////////
 	/////////////////////////
