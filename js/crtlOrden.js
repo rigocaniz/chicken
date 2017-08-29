@@ -701,6 +701,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		// BUSQUEDA POR TICKET
 		if ( key >= 48 && key <= 57 && !$("#buscarTicket").is(":focus") ) // {0-9}
 			$scope.auxKeyTicket( 'number', ( key - 48 ), 'buscarTicket' );
+
+		if ( key >= 96 && key <= 105 && !$("#buscarTicket").is(":focus") ) // {0-9}
+			$scope.auxKeyTicket( 'number', ( key - 96 ), 'buscarTicket' );
 		
 		if ( key == 46 ) // {SUPR}
 			$scope.auxKeyTicket( 'supr', 0, 'buscarTicket' );
@@ -722,6 +725,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 		if ( key >= 48 && key <= 57 && !$("#noTicket").is(":focus") ) // {0-9}
 			$scope.auxKeyTicket( 'number', ( key - 48 ), 'noTicket' );
+
+		if ( key >= 96 && key <= 105 && !$("#noTicket").is(":focus") ) // {0-9}
+			$scope.auxKeyTicket( 'number', ( key - 96 ), 'noTicket' );
 		
 		if ( key == 46 ) // {SUPR}
 			$scope.auxKeyTicket( 'supr', 0, 'noTicket' );
@@ -744,6 +750,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		// TECLA PARA CODIGO RAPIDO
 		if ( key >= 48 && key <= 57 ) // {0-9}
 			$scope.auxKeyTicket( 'number', ( key - 48 ), 'codigoRapido' );
+
+		if ( key >= 96 && key <= 105 ) // {0-9}
+			$scope.auxKeyTicket( 'number', ( key - 96 ), 'codigoRapido' );
 		
 		if ( key == 46 || key == 8 ) // {SUPR} || {BACK}
 			$scope.auxKeyTicket( 'supr', 0, 'codigoRapido' );
@@ -759,10 +768,10 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		if ( key == 65 || key == 13 ) // {A} || {ENTER}
 			$scope.agregarAPedido();
 
-		else if ( key == 189 && $scope.menuActual.cantidad > 1 ) // {-}
+		else if ( ( key == 109 || key == 189 ) && $scope.menuActual.cantidad > 1 ) // {-}
 			$scope.menuActual.cantidad--;
 
-		else if ( key == 187 ) { // {+}
+		else if ( key == 107 || key == 187 ) { // {+}
 			if ( isNaN( $scope.menuActual.cantidad ) )
 				$scope.menuActual.cantidad = 0;
 
@@ -786,6 +795,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 		else if ( key >= 48 && key <= 57 && !$("#cantidad_menu").is(":focus") ) // {0-9}
 			$scope.auxKeyTicket( 'number', ( key - 48 ), 'menuActual', 'cantidad' );
+
+		else if ( key >= 96 && key <= 105 && !$("#cantidad_menu").is(":focus") ) // {0-9}
+			$scope.auxKeyTicket( 'number', ( key - 96 ), 'menuActual', 'cantidad' );
 		
 		else if ( key == 46 ) // {SUPR}
 			$scope.auxKeyTicket( 'supr', 0, 'menuActual', 'cantidad' );
