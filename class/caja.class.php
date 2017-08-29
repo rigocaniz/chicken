@@ -120,7 +120,7 @@ class Caja
  			$data->efectivoInicial = isset( $data->efectivoInicial ) 	? (double)$data->efectivoInicial : NULL;
  			$data->efectivoInicial = (double)$data->efectivoInicial > 0 ? (double)$data->efectivoInicial : NULL;
 
- 			$efectivoInicial = $validar->validarDinero( $data->efectivoInicial, NULL, TRUE, 'el efectivo inicial' );
+ 			$efectivoInicial = $validar->validarDinero( $data->efectivoInicial, NULL, TRUE, 'el EFECTIVO INICIAL' );
  		endif;
 
 
@@ -130,11 +130,11 @@ class Caja
 	 		$this->mensaje   = $validar->getMsj();
 	 		$this->tiempo    = $validar->getTiempo();
  		else:
-	 		var_dump( $data );
+	 		//var_dump( $data );
 
 	 		$sql = "CALL consultaCaja( '{$accion}', {$idCaja}, {$idEstadoCaja}, {$efectivoInicial}, {$efectivoFinal}, {$efectivoSobrante}, {$efectivoFaltante} )";
 
-	 		echo $sql;
+	 		//echo $sql;
 	 		
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 	 			

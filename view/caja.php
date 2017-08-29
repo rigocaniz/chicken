@@ -25,10 +25,10 @@
 
 				<!--  PRODUCTOS DEL INVENTARIO -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuCaja=='verCaja'}" ng-show="menuCaja=='verCaja'">
-					<div class="panel panel-info">
+					<div class="panel" ng-class="{'panel-warning' : !caja.idCaja, 'panel-success': caja.idCaja }">
 						<div class="panel-heading">
 							<h3 class="panel-title">
-								APERTURA / CIERRE DE CAJA
+								{{ !caja.idCaja ? 'APERTURAR' : 'CERRAR' }} CAJA
 							</h3>
 						</div>
 						<div class="panel-body">
@@ -48,12 +48,18 @@
 								<legend class="legend success">APERTURA DE CAJA</legend>
 								<form class="form-horizontal" autocomplete="off" novalidate>
 									<div class="text-right">
-										<strong>CAJERO:</strong>
-										<label class="label label-warning" style="font-size: 16px;">
-											 {{ caja.cajero }}	
+										<strong>ESTADO:</strong>
+										<label class="label" ng-class="{'label-danger': caja.idEstadoCaja == 4, 'label-success': caja.idEstadoCaja==1}" style="font-size: 18px;">
+											 {{ caja.estadoCaja }}	
 										</label>
 									</div>
 									<br>
+									<div class="form-group" ng-show="accionCaja=='aperturarCaja' || accionCaja=='cierreCaja'">
+										<label class="col-sm-3 col-md-2 control-label">CAJERO</label>
+										<div class="col-sm-6 col-md-5 col-lg-4">
+											<input type="text" class="form-control" ng-model="caja.cajero" placeholder="Cajero" readonly>
+										</div>
+									</div>
 									<div class="form-group" ng-show="accionCaja=='aperturarCaja' || accionCaja=='cierreCaja'">
 										<label class="col-sm-3 col-md-2 control-label">OPERADOR</label>
 										<div class="col-sm-3 col-md-3 col-lg-2">

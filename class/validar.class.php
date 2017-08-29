@@ -191,7 +191,7 @@ class Validar
 
 
 	// VALIDAR CANTIDAD MONETARIA
-	function validarDinero( $valor = 0, $default = NULL, $required = TRUE,  $msj = '' )
+	function validarDinero( $valor = 0, $default = NULL, $required = TRUE,  $mensaje = '' )
 	{
 		if( $this->error )
 			return $valor;
@@ -202,11 +202,11 @@ class Validar
 
 		if ( !is_numeric( $valor ) ):
 			$warning = TRUE;
-			$msj     = "El valor ingresado en {$msj} no es númerico, verifique.";
+			$msj     = "El valor ingresado en {$mensaje} no es númerico";
 
 		elseif( $valor <= 0 ):
 			$warning = TRUE;
-			$msj     = "El valor ingresado debe ser mayor a 0, verifique.";
+			$msj     = "El valor ingresado en {$mensaje} debe ser mayor a 0";
 
 		endif;
 
