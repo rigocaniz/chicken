@@ -17,7 +17,11 @@ if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
         $clave    = $conexion->real_escape_string( $_POST[ 'clave' ] );
         $usuario = new Usuario();
 <<<<<<< HEAD
+<<<<<<< HEAD
         $data = $usuario->login( $username, $clave, 'NULL' );
+=======
+        $data = $usuario->login( $username, $clave );
+>>>>>>> 9eeff0623117390618796cfe75ce32fb64c75452
 =======
         $data = $usuario->login( $username, $clave );
 >>>>>>> 9eeff0623117390618796cfe75ce32fb64c75452
