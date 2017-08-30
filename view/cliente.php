@@ -51,7 +51,7 @@
 								<div class="form-group">
 									<label class="col-sm-2 control-label">NIT</label>
 									<div class="col-sm-3">
-										<input type="text" ng-model="cliente.nit" class="form-control" id="nit" maxlength="15" autofocus>
+										<input type="text" ng-model="cliente.nit" class="form-control" id="nit" ng-pattern="/^[0-9-\s]+?$/" maxlength="15" autofocus>
 									</div>
 									<div class="col-sm-6">
 										<div class="text-right">
