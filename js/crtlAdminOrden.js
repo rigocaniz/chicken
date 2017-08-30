@@ -467,10 +467,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		else if ( !altDerecho && key == 78 ) // {N}  => DESELECCIONAR TODOS
 			$scope.selItemMenu( false );
 
-		else if ( !altDerecho && key == 187 ) // {+}
+		else if ( !altDerecho && ( key == 187 || key == 107 ) ) // {+}
 			$scope.selItemKey( true );
 
-		else if ( !altDerecho && key == 189 ) // {-}
+		else if ( !altDerecho && ( key == 189 || key == 109 ) ) // {-}
 			$scope.selItemKey( false );
 
 		// CAMBIO DE ESTADO
