@@ -30,11 +30,11 @@
 								</h3>
 							</div>
 							<div class="panel-body">
-								<form class="form-horizontal" role="form">
+								<form class="form-horizontal" role="form" autocomplete="off" novalidate>
 									<div class="form-group">
 										<label class="col-sm-2 control-label">BUSCAR CLIENTE</label>
 										<div class="col-sm-4">
-											<input type="text" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )">
+											<input type="text" id="searchPrincipal" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )">
 										</div>
 										<div class="col-sm-4">
 											<button type="button" class="btn btn-info" ng-click="buscarCliente( facturacion.datosCliente.nit, 'principal' );">
@@ -186,10 +186,10 @@
                     <div class="row">
                     	<div class="col-sm-12 text-right" ng-show="$parent.accionCliente=='ninguna'">
 	                    	<button type="button" class="btn btn-info" ng-click="buscarCliente( 'CF', 'cf' ); $parent.accionCliente='ninguna'">
-	                    		<span class="glyphicon glyphicon-user"></span> CONSUMIDOR FINAL
+	                    		<span class="glyphicon glyphicon-user"></span> <u><strong>C</strong></u>ONSUMIDOR FINAL
 	                    	</button>
 	                    	<button type="button" class="btn btn-success" ng-click="$parent.accionCliente='agregar'">
-	                    		<span class="glyphicon glyphicon-plus"></span> AGREGAR CLIENTE
+	                    		<span class="glyphicon glyphicon-plus"></span> <u><strong>A</strong></u>GREGAR CLIENTE
 	                    	</button>
                     	</div>
                     	<div class="col-sm-12" ng-show="$parent.accionCliente!='agregar' && $parent.accionCliente!='actualizar'">
@@ -198,7 +198,7 @@
                             <div class="row">
                                 <label class="col-xs-12 col-sm-2 col-md-3 control-label">BUSCAR CLIENTE</label>
                                 <div class="col-xs-9 col-sm-6 col-md-5">
-                                    <input type="text" class="form-control" id="buscador" ng-model="$parent.txtCliente" ng-change="$parent.lstClientes=[]" ng-keypress="$event.keyCode== 13 && buscarCliente( $parent.txtCliente, 'busqueda' )" placeholder="NIT / DPI / NOMBRE" capitalize>
+                                    <input type="text" class="form-control" id="buscador" ng-model="$parent.txtCliente" ng-change="$parent.lstClientes=[]" ng-keypress="$event.keyCode== 13 && buscarCliente( $parent.txtCliente, 'busqueda' )" placeholder="NIT / DPI / NOMBRE">
                                 </div>
                                 <div class="col-xs-3 col-sm-4 col-md-3">
                                     <button class="btn btn-sm btn-primary" ng-click="buscarCliente( $parent.txtCliente, 'busqueda' )">

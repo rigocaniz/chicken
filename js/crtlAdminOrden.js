@@ -419,11 +419,11 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope._keyInicio = function ( key, altDerecho ) {
 		console.log( key, altDerecho );
 
-		// SELECCIONAR COCINERO
-		if ( !altDerecho && key == 32 && $scope.permitirAccion( true ) ) // {TAB}
-			$scope.dialogoConsultaPersonal( 'cocinero' );
+		// IR AL INICIO DE LA APLICACION
+		if ( altDerecho && key == 36 && $scope.permitirAccion( true ) )
+			window.location.href = './#';
 
-		// SELECCIONAR MESERO
+		// CAMBIO DE USUARIO RAPIDO
 		else if ( altDerecho && key == 32 && $scope.permitirAccion( true ) ) // {ALT+TAB}
 			$scope.dialogoConsultaPersonal( 'mesero' );
 

@@ -16,6 +16,23 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 		efectivoFaltante : null
 	};
 
+	// TECLA PARA ATAJOS RAPIDOS
+	$scope.$on('keyPress', function( event, key, altDerecho )
+	{
+		console.log( event, key, altDerecho );
+		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
+		if ( $scope.$parent.loading )
+			return false;
+
+		// TECLA A
+		if ( altDerecho && key == 65 ){
+			if( $scope.accion == 'insert' )
+			{
+				
+			}
+		}
+	});
+
 
 	($scope.inicioCaja = function(){
 		$http.post('consultas.php',{
@@ -28,6 +45,7 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 
 			$scope.caja.idCaja           = data.dataCaja.idCaja;
 			$scope.caja.usuario          = data.dataCaja.usuario;
+			$scope.caja.codigoUsuario    = data.dataCaja.codigoUsuario;
 			$scope.caja.idEstadoCaja     = data.dataCaja.idEstadoCaja;
 			$scope.caja.estadoCaja       = data.dataCaja.estadoCaja;
 			$scope.caja.fechaApertura    = moment( data.dataCaja.fechaApertura );
@@ -38,9 +56,11 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 			$scope.caja.efectivoFaltante = data.dataCaja.efectivoFaltante;
 			$scope.caja.idCaja           = data.dataCaja.idCaja;
 
-			if( !($scope.caja.idCaja > 0) ){
+			if( !($scope.caja.idCaja > 0) )
 				$scope.accion = 'insert';
-			}
+			else
+				$scope.accion = 'cierre';
+
 			$scope.accionCaja = 'aperturarCaja';
 		});
 	})();
@@ -48,6 +68,9 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 
 	$scope.consultaCaja = function()
 	{
+		console.log( $scope.caja );
+		var caja = $scope.caja;
+		/*
 		$http.post('consultas.php',{
 			opcion : 'consultaCaja',
 			accion : $scope.accion,
@@ -60,6 +83,7 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 			if( data.respuesta == 'success' )
 				$scope.inicioCaja();
 		});
+		*/
 
 	};
 

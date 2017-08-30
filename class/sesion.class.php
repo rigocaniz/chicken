@@ -23,11 +23,6 @@ class Sesion
 	{
 		return @$_SESSION[ $var ];
 	}
-	
-	function getOperador()
-	{
-		return $this->getVariable( 'operador' );
-	}
 
 	function getUsuario()
 	{

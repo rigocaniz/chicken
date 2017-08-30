@@ -33,7 +33,7 @@
 						<div class="row">
 							<label class="col-xs-12 col-sm-3 col-md-2 control-label">BUSCAR CLIENTE</label>
 							<div class="col-xs-9 col-sm-6 col-md-5">
-								<input type="text" class="form-control" ng-model="txtCliente" ng-keypress="$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )" placeholder="NIT / DPI / NOMBRE" capitalize>
+								<input type="text" class="form-control" ng-model="txtCliente" ng-keypress="$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )" placeholder="NIT / DPI / NOMBRE">
 							</div>
 							<div class="col-xs-3 col-sm-3 col-md-2">
 								<button type="button" class="btn btn-sm btn-primary" ng-click="buscarCliente( txtCliente, 'principal' )">
@@ -64,13 +64,13 @@
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Nombre</label>
 									<div class="col-sm-9 col-md-8">
-										<input type="text" class="form-control" ng-model="cliente.nombre" maxlength="65" capitalize>
+										<input type="text" class="form-control" ng-model="cliente.nombre" maxlength="65">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Cui (DPI)</label>
 									<div class="col-sm-4 col-md-3">
-										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="cliente.cui" capitalize>
+										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="cliente.cui">
 									</div>
 									<label class="col-sm-2 control-label">Correo</label>
 									<div class="col-sm-4 col-md-3">
@@ -142,7 +142,7 @@
                             <div class="row">
                                 <label class="col-xs-12 col-sm-3 col-md-2">BUSCAR CLIENTE</label>
                                 <div class="col-xs-9 col-sm-6 col-md-5">
-                                    <input type="text" class="form-control" id="buscador" ng-model="$parent.txtCliente" ng-keypress="$event.keyCode == 13 && buscarCliente( $parent.txtCliente )" ng-change="$parent.lstClientes=[]" placeholder="NIT / DPI / NOMBRE" capitalize>
+                                    <input type="text" class="form-control" id="buscador" ng-model="$parent.txtCliente" ng-keypress="$event.keyCode == 13 && buscarCliente( $parent.txtCliente )" ng-change="$parent.lstClientes=[]" placeholder="NIT / DPI / NOMBRE">
                                 </div>
                                 <div class="col-xs-3 col-sm-3 col-md-2">
                                     <button class="btn btn-sm btn-primary" ng-click="buscarCliente( txtCliente, 1 )">

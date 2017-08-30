@@ -76,7 +76,7 @@ var socket = io.connect('http://127.0.0.1:8080', { 'forceNew': true });
 /****CONTROLADORES****/
 
 // CONTROLADOR PRINCIPAL
-app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $modal ){
+app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $modal, $window ){
     
     $scope.loading     = false;
     $scope.loadingText = "Cargando...";
@@ -138,8 +138,11 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
 
     // CAPTURA TECLA PARA ATAJOS RAPIDOS
     $scope.pressKey = function ( key, altDerecho ) {
-        if ( key != 17 && key != 18 ) {
+        if ( key != 17 && key != 18 && key != 92 && key != 91 ) {
             $rootScope.$broadcast('keyPress', key, altDerecho );
+        }
+        else if( altDerecho && ( key == 92 || key == 91 ) ) {
+            $window.location.href = "#/";
         }
     };
 

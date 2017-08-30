@@ -213,7 +213,7 @@ class Usuario
 
 
 	// LOGIN USUARIO
-	function login( $usuario, $clave, $codigo )
+	function login( $usuario, $clave, $codigo = 'NULL' )
 	{
 		$validar = new Validar();
 		$sesion = new Sesion();
@@ -247,7 +247,7 @@ class Usuario
 					$sesion->setVariable( 'codigoUsuario', $row->codigoUsuario );
 					
 					if ( $codigo === 'NULL' )
-						header( "Location: index.php" );
+						header( "Location: ./" );
 				}
 			}
 			else{

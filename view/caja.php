@@ -45,8 +45,8 @@
 								<form class="form-horizontal" autocomplete="off" novalidate>
 									<div class="text-right">
 										<strong>ESTADO:</strong>
-										<label class="label" ng-class="{'label-danger': caja.idEstadoCaja == 2, 'label-success': caja.idEstadoCaja==1}" style="font-size: 18px;">
-											 {{ caja.estadoCaja }}	
+										<label class="label" ng-class="{'label-danger': caja.idEstadoCaja == 2, 'label-success': caja.idEstadoCaja==1}" style="font-size: 17px;">
+											 {{ caja.estadoCaja | uppercase }}	
 										</label>
 									</div>
 									<br>
@@ -57,9 +57,9 @@
 										</div>
 									</div>
 									<div class="form-group" ng-show="accionCaja=='aperturarCaja' || accionCaja=='cierreCaja'">
-										<label class="col-sm-3 col-md-2 control-label">OPERADOR</label>
+										<label class="col-sm-3 col-md-2 control-label">CODIGO OPERADOR</label>
 										<div class="col-sm-3 col-md-3 col-lg-2">
-											<input type="text" class="form-control" ng-model="caja.cajero" placeholder="Cajero" disabled>
+											<input type="text" class="form-control" ng-model="caja.codigoUsuario" placeholder="Cajero" disabled>
 										</div>
 										<label class="col-sm-3 col-md-2 control-label">USUARIO</label>
 										<div class="col-sm-3 col-md-3 col-lg-2">
@@ -75,54 +75,51 @@
 									<div class="form-group" ng-show="accionCaja=='aperturarCaja' || accionCaja=='cierreCaja'">
 										<label class="col-sm-3 col-md-2 control-label">EFECTIVO INICIAL</label>
 										<div class="col-sm-4 col-md-3 col-lg-2">
-											<input type="text" class="form-control" ng-model="caja.efectivoInicial" placeholder="Efectivo Inicial" ng-disabled="caja.idCaja">
+											<input type="text" class="form-control" ng-model="caja.efectivoInicial" placeholder="Efectivo Inicial" ng-disabled="caja.idCaja" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/">
 										</div>
-										<div class="col-sm-4 col-md-3 col-lg-2" ng-show="caja.efectivoInicial">
+										<div class="col-sm-4 col-md-3 col-lg-2  text-right" ng-show="caja.efectivoInicial">
 											<kbd class="numEfectivo">Q. {{ caja.efectivoInicial | number:2 }}</kbd>
 										</div>
 									</div>
 									<div class="form-group" ng-show="accionCaja=='cierreCaja'">
 										<label class="col-sm-3 col-md-2 control-label">EFECTIVO FINAL</label>
 										<div class="col-sm-4 col-md-3 col-lg-2">
-											<input type="number" class="form-control" ng-model="caja.efectivoFinal" placeholder="Efectivo Inicial">
+											<input type="number" class="form-control" ng-model="caja.efectivoFinal" placeholder="Efectivo Incial"  ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/">
 										</div>
-										<div class="col-sm-4 col-md-3 col-lg-2">
+										<div class="col-sm-4 col-md-3 col-lg-2 text-right">
 											<kbd class="numEfectivo">Q. {{ caja.efectivoFinal | number:2 }}</kbd>
-										</div>
-										<label class="col-sm-2 control-label">EFECTIVO</label>
-										<div class="col-sm-4 col-md-3 col-lg-2">
-											<label class="label label-success numEfectivo">Q. {{ caja.efectivoInicial + caja.efectivoFinal | number:2 }}</label>
 										</div>
 									</div>
 									<div class="form-group" ng-show="accionCaja=='cierreCaja'">
 										<label class="col-sm-3 col-md-2 control-label">EFECTIVO SOBRANTE</label>
 										<div class="col-sm-4 col-md-3 col-lg-2">
-											<input type="text" class="form-control" ng-model="caja.efectivoSobrante" placeholder="Efectivo Sobrante" ng-disabled="caja.efectivoFaltante">
+											<input type="text" class="form-control" ng-model="caja.efectivoSobrante" min="0" placeholder="Efectivo Sobrante" ng-disabled="caja.efectivoFaltante > 0" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/">
 										</div>
-										<div class="col-sm-4 col-md-3 col-lg-2">
+										<div class="col-sm-4 col-md-3 col-lg-2 text-right">
 											<kbd class="numEfectivo">Q. {{ caja.efectivoSobrante | number:2 }}</kbd>
 										</div>
 									</div>
 									<div class="form-group" ng-show="accionCaja=='cierreCaja'">
 										<label class="col-sm-3 col-md-2 control-label">EFECTIVO FALTANTE</label>
 										<div class="col-sm-4 col-md-3 col-lg-2">
-											<input type="text" class="form-control" ng-model="caja.efectivoFaltante" placeholder="Efectivo Flotante" ng-disabled="caja.efectivoSobrante">
+											<input type="text" class="form-control" ng-model="caja.efectivoFaltante" min="0" placeholder="Efectivo Flotante" ng-disabled="caja.efectivoSobrante > 0" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/">
 										</div>
-										<div class="col-sm-4 col-md-3 col-lg-2">
+										<div class="col-sm-4 col-md-3 col-lg-2 text-right">
 											<kbd class="numEfectivo">Q. {{ caja.efectivoFaltante | number:2 }}</kbd>
 										</div>
 									</div>
 									<div class="form-group text-center">
 										<button type="button" class="btn btn-success btn-lg" ng-show="caja.idCaja == 0" ng-click="consultaCaja()">
-											<span class="glyphicon glyphicon-folder-open"></span> REALIZAR APERTURA
+											<span class="glyphicon glyphicon-folder-open"></span> <u><strong>A</strong></u>perturar Caja
 										</button>
-
 										<button type="button" class="btn btn-warning btn-lg" ng-show="accionCaja=='cierreCaja'" ng-click="consultaCaja()">
-											<span class="glyphicon glyphicon-folder-close"></span> REALIZAR CIERRE
+											<span class="glyphicon glyphicon-folder-close"></span> <u><strong>C</strong></u>errar Caja
 										</button>
 									</div>
 								</form>
 							</fieldset>
+
+							{{accion}}
 						</div>
 					</div>
 				</div>

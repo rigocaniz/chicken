@@ -4,6 +4,38 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	$scope.accionCliente = 'ninguna';
 	$scope.menuFactura   = 'facturar';
 	$scope.accion        = 'insert';
+
+
+	// TECLA PARA ATAJOS RAPIDOS
+	$scope.$on('keyPress', function( event, key ) {
+
+		console.log( 'event::: ', event, ' key::: ', key );
+		/*
+		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
+		if ( $scope.$parent.loading )
+			return false;
+
+		if( key == 67 ) {
+			//$scope.accion = 'insert';
+			$scope.buscarCliente( 'CF', 'cf' );
+		}
+		else if( key == 65 ) {
+			$scope.accionCliente = 'agregar';
+			$timeout(function(){
+				$( '#nit' ).focus();
+			});
+		}
+		else if( key == 71 ) {
+			$scope.consultaCliente();
+		}
+		*/
+
+	});
+
+
+	$timeout(function(){
+		$('#searchPrincipal').focus();
+	}, 150);
 	
 	$scope.cliente  = {
         'nit'           : null,
@@ -13,7 +45,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
         'telefono'      : null,
         'direccion'     : '',
         'idTipoCliente' : 1,
-    };  
+    };
 
     $scope.resetValores = function( accion ){
         $scope.accion = 'insert';

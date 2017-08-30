@@ -50,16 +50,10 @@ switch ( $data->opcion )
 	case 'inicioCaja':			// DATOS MEDIDA
 		$consulta = new Consulta();
 		$caja     = new Caja();
-		
 		$datos[ 'cajero' ]   = $sesion->getNombre();
-		$datos[ 'operador' ] = $sesion->getOperador();
 		$datos[ 'dataCaja' ] = $caja->consultarEstadoCaja();
 
 		echo json_encode( $datos );
-		break;
-
-	case '':
-		
 		break;
 
 	/////////////////////////

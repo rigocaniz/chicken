@@ -1,6 +1,11 @@
 <?php
     session_start();
     if( isset( $_SESSION[ 'usuario' ] ) AND isset( $_SESSION[ 'idPerfil' ] ) ):
+    /*
+        echo "<pre>";
+        var_dump( $_SESSION );
+        echo "</pre>";
+    */
 ?>
 
 <!DOCTYPE html>

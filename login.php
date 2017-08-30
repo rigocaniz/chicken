@@ -11,11 +11,16 @@ if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
         include 'class/sesion.class.php';
         include 'class/usuario.class.php';
         include 'class/validar.class.php';
+        include 'class/funciones.php';
 
         $username = $conexion->real_escape_string( $_POST[ 'usuario' ] );
         $clave    = $conexion->real_escape_string( $_POST[ 'clave' ] );
         $usuario = new Usuario();
-        $data = $usuario->login( $username, $clave, NULL );
+<<<<<<< HEAD
+        $data = $usuario->login( $username, $clave, 'NULL' );
+=======
+        $data = $usuario->login( $username, $clave );
+>>>>>>> 9eeff0623117390618796cfe75ce32fb64c75452
     }
 
 ?>
