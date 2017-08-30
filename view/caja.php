@@ -38,25 +38,30 @@
 									<button type="button" class="btn btn-warning" ng-click="accionCaja='cierreCaja'" ng-show="caja.idCaja">
 										<span class="glyphicon glyphicon-flag"></span> CERRAR CAJA
 									</button>
+									<button type="button" class="btn btn-success" ng-click="accionCaja='aperturarCaja'" ng-show="!caja.idCaja">
+										<span class="glyphicon glyphicon-flag"></span> APERTURAR CAJA
+									</button>
+									<button type="button" class="btn btn-danger" ng-click="accionCaja=''" ng-show="accionCaja!=''" title="CANCELAR ACCIÓN" data-toggle="tooltip" data-placement="top" tooltip>
+										<span class="glyphicon glyphicon-remove"></span>
+									</button>
 								</p>
 							</div>
 							<fieldset class="fieldset">
 								<legend class="legend info">APERTURA DE CAJA</legend>
 								<form class="form-horizontal" autocomplete="off" novalidate>
 									<div class="text-right">
-										<strong>ESTADO:</strong>
 										<label class="label" ng-class="{'label-danger': caja.idEstadoCaja == 2, 'label-success': caja.idEstadoCaja==1}" style="font-size: 17px;">
-											 {{ caja.estadoCaja | uppercase }}	
+											ESTADO {{ caja.estadoCaja | uppercase }}
 										</label>
 									</div>
 									<br>
-									<div class="form-group" ng-show="accionCaja=='aperturarCaja' || accionCaja=='cierreCaja'">
+									<div class="form-group">
 										<label class="col-sm-3 col-md-2 control-label">CAJERO</label>
 										<div class="col-sm-6 col-md-5 col-lg-4">
 											<input type="text" class="form-control" ng-model="caja.cajero" placeholder="Cajero" disabled>
 										</div>
 									</div>
-									<div class="form-group" ng-show="accionCaja=='aperturarCaja' || accionCaja=='cierreCaja'">
+									<div class="form-group">
 										<label class="col-sm-3 col-md-2 control-label">CODIGO OPERADOR</label>
 										<div class="col-sm-3 col-md-3 col-lg-2">
 											<input type="text" class="form-control" ng-model="caja.codigoUsuario" placeholder="Cajero" disabled>
@@ -66,7 +71,7 @@
 											<input type="text" class="form-control" ng-model="caja.usuario" placeholder="Cajero" disabled>
 										</div>
 									</div>
-									<div class="form-group" ng-show="accionCaja=='aperturarCaja' || accionCaja=='cierreCaja'">
+									<div class="form-group">
 										<label class="col-sm-3 col-md-2 control-label">FECHA DE APERTURA</label>
 										<div class="col-sm-4 col-md-3 col-lg-2">
 											<input type="text" class="form-control" ng-model="caja.fechaApertura" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker disabled>
@@ -75,7 +80,7 @@
 									<div class="form-group" ng-show="accionCaja=='aperturarCaja' || accionCaja=='cierreCaja'">
 										<label class="col-sm-3 col-md-2 control-label">EFECTIVO INICIAL</label>
 										<div class="col-sm-4 col-md-3 col-lg-2">
-											<input type="text" class="form-control" ng-model="caja.efectivoInicial" placeholder="Efectivo Inicial" ng-disabled="caja.idCaja" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/">
+											<input type="text" id="efectivoInicio" class="form-control" ng-model="caja.efectivoInicial" placeholder="Efectivo Inicial" ng-disabled="caja.idCaja" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/">
 										</div>
 										<div class="col-sm-4 col-md-3 col-lg-2  text-right" ng-show="caja.efectivoInicial">
 											<kbd class="numEfectivo">Q. {{ caja.efectivoInicial | number:2 }}</kbd>
@@ -84,7 +89,7 @@
 									<div class="form-group" ng-show="accionCaja=='cierreCaja'">
 										<label class="col-sm-3 col-md-2 control-label">EFECTIVO FINAL</label>
 										<div class="col-sm-4 col-md-3 col-lg-2">
-											<input type="number" class="form-control" ng-model="caja.efectivoFinal" placeholder="Efectivo Incial"  ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/">
+											<input type="number" id="efectivoFinal" class="form-control" ng-model="caja.efectivoFinal" placeholder="Efectivo Incial"  ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/">
 										</div>
 										<div class="col-sm-4 col-md-3 col-lg-2 text-right">
 											<kbd class="numEfectivo">Q. {{ caja.efectivoFinal | number:2 }}</kbd>
@@ -109,7 +114,7 @@
 										</div>
 									</div>
 									<div class="form-group text-center">
-										<button type="button" class="btn btn-success btn-lg" ng-show="caja.idCaja == 0" ng-click="consultaCaja()">
+										<button type="button" class="btn btn-success btn-lg" ng-show="accionCaja=='aperturarCaja'" ng-click="consultaCaja()">
 											<span class="glyphicon glyphicon-folder-open"></span> <u><strong>A</strong></u>perturar Caja
 										</button>
 										<button type="button" class="btn btn-warning btn-lg" ng-show="accionCaja=='cierreCaja'" ng-click="consultaCaja()">
@@ -120,6 +125,7 @@
 							</fieldset>
 
 							{{accion}}
+							{{accionCaja}}
 						</div>
 					</div>
 				</div>
