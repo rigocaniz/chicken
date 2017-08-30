@@ -71,7 +71,6 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 			$scope.caja.idEstadoCaja     = data.dataCaja.idEstadoCaja;
 			$scope.caja.estadoCaja       = data.dataCaja.estadoCaja;
 			$scope.caja.fechaApertura    = moment( data.dataCaja.fechaApertura );
-			
 			$scope.caja.efectivoInicial  = data.dataCaja.efectivoInicial;
 			$scope.caja.efectivoFinal    = data.dataCaja.efectivoFinal;
 			$scope.caja.efectivoSobrante = data.dataCaja.efectivoSobrante;
@@ -87,8 +86,6 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 			else{
 				$scope.accion = 'cierre';
 			}
-
-			//$scope.accionCaja = 'aperturarCaja';
 		});
 	})();
 
@@ -112,7 +109,6 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 				data   : $scope.caja
 			})
 			.success(function(data){
-				console.log(data);
 				alertify.set('notifier','position', 'top-right');
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 				if( data.respuesta == 'success' ){

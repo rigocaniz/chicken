@@ -91,7 +91,7 @@ class Validar
 			return $valor;
 
 		$warning = FALSE;
-		if( !(strlen( $valor ) >= 5) AND ( $valor != 'CF' AND $valor != 'C/F' ) ):
+		if( !(preg_match('/^[0-9-\s]{7,10}$/', $valor ) AND strlen( $valor ) >= 7  AND strlen( $valor ) <= 10) AND ( $valor != 'CF' AND $valor != 'C/F' ) ):
 			$warning = TRUE;
 		endif;
 

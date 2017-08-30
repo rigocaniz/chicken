@@ -48,7 +48,7 @@
 											<input type="text" class="form-control" ng-model="facturacion.datosCliente.nit" ng-disabled="facturacion.datosCliente.idCliente!=1">
 										</div>
 										<div class="col-sm-2 col-md-1">
-											<button type="button" class="btn btn-warning" ng-click="editarCliente( facturacion.datosCliente, 'mostrar' );" ng-show="facturacion.datosCliente.idCliente && facturacion.datosCliente.idCliente != 1">
+											<button type="button" class="btn btn-warning" ng-click="editarCliente( facturacion.datosCliente, 'mostrar' );" ng-show="facturacion.datosCliente.idCliente && facturacion.datosCliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
 												<span class="glyphicon glyphicon-pencil"></span>
 											</button>
 										</div>

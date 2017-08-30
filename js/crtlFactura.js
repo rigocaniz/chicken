@@ -7,30 +7,78 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 
 
 	// TECLA PARA ATAJOS RAPIDOS
-	$scope.$on('keyPress', function( event, key ) {
-
-		console.log( 'event::: ', event, ' key::: ', key );
-		/*
+	$scope.$on('keyPress', function( event, key, altDerecho )
+	{
+		//console.log( event, key, altDerecho );
 		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
 		if ( $scope.$parent.loading )
 			return false;
 
-		if( key == 67 ) {
-			//$scope.accion = 'insert';
-			$scope.buscarCliente( 'CF', 'cf' );
+
+		console.log( !$scope.modalOpen() );
+		// TECLA C
+		if ( altDerecho && key == 67 ) {
+			$scope.buscarCliente( 'CF', 'cf' )
 		}
-		else if( key == 65 ) {
+		// TECLA A
+		else if( altDerecho && key == 65 ){
 			$scope.accionCliente = 'agregar';
+			if( !$scope.modalOpen() )
+				$scope.dialAccionCliente.show();
+
 			$timeout(function(){
-				$( '#nit' ).focus();
-			});
+				$('#nit').focus();
+			},175);
+			
 		}
-		else if( key == 71 ) {
-			$scope.consultaCliente();
+		// TECLA E  (EDITAR)
+		else if( altDerecho && key == 65 ){
+			$scope.accionCliente = 'agregar';
+			if( !$scope.modalOpen() )
+				$scope.dialAccionCliente.show();
+
+			$timeout(function(){
+				$('#nit').focus();
+			},175);
+			
 		}
-		*/
+
+		else if( !$scope.modalOpen() ) {
+			console.log( "prueba" );
+			/*
+			// MODO PANTALLA
+			if ( altDerecho && key == 65 ){
+				$scope.dialAccionCliente.show();
+			}
+			*/
+
+			/*
+			else if ( altDerecho && key == 68 ) $scope.cambiarVista( 'dividido' );
+			else if ( altDerecho && key == 84 ) $scope.cambiarVista( 'ticket' );
+
+			else{
+				$scope._keyInicio( key, altDerecho );
+			}
+			*/
+		}
+
+		// CUANDO ESTE ABIERTO ALGUN CUADRO DE DIALOGO
+		else{
+			// CUANDO EL DIALOGO DE NUEVA ORDEN ESTE ABIERTA
+			if ( $scope.modalOpen( 'dial_orden_cliente' ) ) {
+				
+			}
+		}
 
 	});
+
+
+	$scope.modalOpen = function ( _name ) {
+		if ( _name == undefined )
+			return $("body>div").hasClass('modal') && $("body>div").hasClass('top');
+		else
+			return !!( $( '#' + _name ).data() && $( '#' + _name ).data().$scope.$isShown );
+	};
 
 
 	$timeout(function(){
