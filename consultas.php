@@ -465,11 +465,19 @@ switch ( $data->opcion )
 		echo json_encode( $orden->lstDetalleOrdenCliente( $data->idOrdenCliente, $todo ) );
 		break;
 
-	// LISTA DE ORDENES DETALL => POR DESTINO
-	case 'lstDetalleDestinos':
+	// LISTA DE ORDENES DETALLE => POR DESTINO
+	case 'lstOrdenPorMenu':
 		$orden = new Orden();
-		echo json_encode( 
-			$orden->lstDetalleDestinos( $data->idEstadoDetalleOrden, $data->idDestinoMenu, $data->usuario )
+		echo json_encode(
+			array( 'lstMenu' => $orden->lstOrdenPorMenu( $data->idEstadoDetalleOrden, $data->idDestinoMenu ) )
+		);
+		break;
+
+	// LISTA DE ORDENES DETALLE => POR TICKET
+	case 'lstOrdenPorTicket':
+		$orden = new Orden();
+		echo json_encode(
+			array( 'lstTicket' => $orden->lstOrdenPorTicket( $data->idEstadoOrden, $data->idDestinoMenu, $data->idEstadoDetalleOrden ) )
 		);
 		break;
 

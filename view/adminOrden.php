@@ -69,7 +69,7 @@
 				ng-class="{'inactivo':ixMenuActual!=$index&&seleccionMenu.si,'active-key':$parent.keyPanel=='left'}">
 				<div class="encabezado">
 					<div class="col-xs-6">
-						<button type="button" class="btn" ng-click="$parent.ixMenuActual=($parent.ixMenuActual==$index ? -1 : $index)"
+						<button type="button" class="btn" ng-click="$parent.ixMenuActual=($parent.ixMenuActual==$index?-1:$index)" ng-disabled="seleccionMenu.si"
 							ng-class="{'danger':(difMinutos( menu.primerTiempo )>menu.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}">
 							<span class="glyphicon" ng-class="{'glyphicon-chevron-down':$parent.ixMenuActual==$index, 'glyphicon-chevron-right':$parent.ixMenuActual!=$index}"></span>
 							<span class="badge">{{menu.numMenus}}</span>
@@ -132,15 +132,11 @@
 				<div class="btn-orden">
 					<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="cambioEstadoOrden( 1 )">
 						<span class="glyphicon glyphicon-time"></span>
-						<span class="hidden-xs"><u>P</u>endientes</span>
-					</button>
-					<button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="cambioEstadoOrden( 3 )">
-						<span class="glyphicon glyphicon-ok"></span>
-						<span class="hidden-xs"><u>L</u>isto</span>
+						<span class="hidden-xs">Tic<u>k</u>ets Pendientes</span>
 					</button>
 					<button class="bt-danger" ng-class="{'active':idEstadoOrden==4}" ng-click="cambioEstadoOrden( 4 )">
 						<span class="glyphicon glyphicon-flag"></span>
-						<span class="hidden-xs"><u>S</u>ervido</span>
+						<span class="hidden-xs"><u>F</u>inalizados</span>
 					</button>
 				</div>
 			</div>

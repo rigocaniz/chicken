@@ -96,7 +96,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
 
     // LISTEN INFO NODE
     socket.on('mensaje', function(data) {  
-        console.log(data);
+        //console.log(data);
     });
 
     socket.on('info', function(data) {  

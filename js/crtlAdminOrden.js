@@ -103,15 +103,15 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		if ( $scope.idEstadoOrden > 0 && $scope.idDestinoMenu > 0 ) {
 
 			var datos = { 
-				opcion               : 'lstDetalleDestinos',
+				opcion               : 'lstOrdenPorMenu',
 				idEstadoDetalleOrden : $scope.idEstadoOrden,
-				usuario				 : $scope.user.usuario,
 				idDestinoMenu        : $scope.idDestinoMenu
 			};
 
 			$scope.$parent.loading = true; // cargando...
 			$http.post('consultas.php', datos)
 			.success(function (data) {
+				console.log( 'menu::', data );
 				$scope.$parent.loading = false; // cargando...
 
 				if ( Array.isArray( data.lstMenu ) ) 
@@ -119,6 +119,29 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 					$scope.ixMenuActual = -1;
 					$scope.lstMenus     = data.lstMenu;
 				}
+				
+				$scope.consultaOrdenTicket();
+			});
+		}
+	};
+
+	$scope.consultaOrdenTicket = function () {
+		if ( $scope.$parent.loading ) return false;
+
+		if ( $scope.idEstadoOrden > 0 && $scope.idDestinoMenu > 0 ) {
+
+			var datos = { 
+				opcion               : 'lstOrdenPorTicket',
+				idEstadoOrden        : 'valid',
+				idEstadoDetalleOrden : 'valid',
+				idDestinoMenu        : $scope.idDestinoMenu
+			};
+
+			$scope.$parent.loading = true; // cargando...
+			$http.post('consultas.php', datos)
+			.success(function (data) {
+				console.log( 'ticket::', data );
+				$scope.$parent.loading = false; // cargando...
 
 				if ( Array.isArray( data.lstTicket ) ) 
 				{
