@@ -15,7 +15,7 @@ if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
         $username = $conexion->real_escape_string( $_POST[ 'usuario' ] );
         $clave    = $conexion->real_escape_string( $_POST[ 'clave' ] );
         $usuario = new Usuario();
-        $data = $usuario->login( $username, $clave, NULL );
+        $data = $usuario->login( $username, $clave );
     }
 
 ?>
