@@ -55,11 +55,8 @@ switch ( $data->opcion )
 
 		echo json_encode( $datos );
 		break;
-
-	/////////////////////////
-	//***** CAJA
-	////////////////////////
-	/*case 'inicioCaja':			// DATOS MEDIDA
+	
+	case 'inicioAdmin':			// DATOS MEDIDA
 		$consulta = new Consulta();
 		$datos[ 'lstDestinoMenu' ]   = $consulta->catDestinoMenu();
 		$datos[ 'lsTipoMenu' ]       = $consulta->catTipoMenu();
@@ -68,8 +65,10 @@ switch ( $data->opcion )
 		
 		echo json_encode( $datos );
 		break;
-	*/
 
+	/////////////////////////
+	//***** CAJA
+	////////////////////////
 	case 'consultaCaja':			// CONSULTA CAJA => INSERT // STATUS
 		$caja = new Caja();
 

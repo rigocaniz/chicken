@@ -16,6 +16,79 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	$scope.dialAdminCombo   = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static', keyboard: false});
 	$scope.dialDetalleCombo = $modal({scope: $scope,template:'dial.detalleCombo.html', show: false, backdrop: 'static', keyboard: false});
 
+
+	// TECLA PARA ATAJOS RAPIDOS
+	$scope.$on('keyPress', function( event, key, altDerecho )
+	{
+		//console.log( event, key, altDerecho );
+		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
+		if ( $scope.$parent.loading )
+			return false;
+
+		console.log( !$scope.modalOpen() );
+		// TECLA C
+		if( altDerecho && key == 65 )
+		{
+			if( !$scope.modalOpen() )
+			{
+				if( $scope.menuTab == 'menu' )
+					$scope.agregarMenuCombo( 'menu' );
+				if( $scope.menuTab == 'combo' )
+					$scope.agregarMenuCombo( 'combo' );
+			}
+			else
+				alertify.notify('Acción no válida', 'info', 3);
+
+			$timeout(function(){
+				$('#nit').focus();
+			},175);
+		}
+		// TECLA G
+		else if( altDerecho && key == 71 )
+		{
+			if( $scope.modalOpen() )
+			{
+				if( $scope.menuTab == 'menu' )
+					$scope.consultaMenu();
+				else if( $scope.menuTab == 'combo' )
+					$scope.consultaCombo();
+			}
+			else
+				alertify.notify('Acción no válida', 'info', 3);
+		}
+
+		else if( !$scope.modalOpen() ) {
+			console.log( "prueba" );
+			/*
+			// MODO PANTALLA
+			else if ( altDerecho && key == 68 ) $scope.cambiarVista( 'dividido' );
+			else if ( altDerecho && key == 84 ) $scope.cambiarVista( 'ticket' );
+
+			else{
+				$scope._keyInicio( key, altDerecho );
+			}
+			*/
+		}
+
+		// CUANDO ESTE ABIERTO ALGUN CUADRO DE DIALOGO
+		else{
+			// CUANDO EL DIALOGO DE NUEVA ORDEN ESTE ABIERTA
+			if ( $scope.modalOpen( 'dial_orden_cliente' ) ) {
+				
+			}
+		}
+
+	});
+
+
+	$scope.modalOpen = function ( _name ) {
+		if ( _name == undefined )
+			return $("body>div").hasClass('modal') && $("body>div").hasClass('top');
+		else
+			return !!( $( '#' + _name ).data() && $( '#' + _name ).data().$scope.$isShown );
+	};
+
+
 	$scope.$on('cargarLista', function( event, data ){
 		console.log( ":::", event, ":::", data );
 		if( data == 'menu' )
@@ -353,7 +426,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				};
 
 				$('#cantidad').focus();
-
 			}
 
 		}
@@ -395,6 +467,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
         $http.post('consultas.php',{
             opcion : 'inicioAdmin'
         }).success(function(data){
+        	console.log( 'inicioAdmin', data );
             $scope.lstDestinoMenu  = data.lstDestinoMenu || [];
             $scope.lstTipoMenu     = data.lsTipoMenu || [];
             $scope.lstTipoServicio = data.lstTiposServicio || [];
@@ -498,6 +571,9 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			};
 
 			$scope.dialAdminMenu.show();
+			$timeout(function(){
+				$('#nombreMenu').focus();
+			}, 175);
 		}
 
 		else if( tipo == 'combo' ){
@@ -510,6 +586,9 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				'lstPrecios'   : angular.copy( $scope.lstTipoServicio )
 			}
 			$scope.dialAdminCombo.show();
+			$timeout(function(){
+				$('#nombreCombo').focus();
+			}, 175);
 		}
 
 	};
@@ -692,7 +771,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 
 	// REGISTRAR COMBO
-	$scope.registraCombo = function(){
+	$scope.consultaCombo = function(){
 		var combo = $scope.combo, error = false;
 
 		if( $scope.accion == 'update' && !(combo.idCombo && combo.idCombo > 0) ){

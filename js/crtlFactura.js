@@ -5,7 +5,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	$scope.menuFactura   = 'facturar';
 	$scope.accion        = 'insert';
 
-
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key, altDerecho )
 	{
@@ -24,11 +23,9 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			if( !$scope.modalOpen() )
 			{
 				if( $scope.facturacion.datosCliente.idCliente == 1 )
-					alertify.notify('Acción no válida para el tipo de cliente', 'warning', 4);
-				else{
+					alertify.notify('Acción no válida para el tipo de cliente', 'info', 4);
+				else
 					$scope.editarCliente( $scope.facturacion.datosCliente, 'mostrar' );
-				}
-				//$scope.dialAccionCliente.show();
 			}
 			else
 				alertify.notify('Acción no válida', 'info', 3);

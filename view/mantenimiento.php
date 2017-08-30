@@ -45,8 +45,8 @@
 						<div class="panel-body">
 							<div class="text-right">
 								<p>
-									<button type="button" class="btn btn-success btn-sm" ng-click="agregarMenuCombo( 'menu' )">
-										<span class="glyphicon glyphicon-plus"></span> INGRESAR MENU
+									<button type="button" class="btn btn-success" ng-click="agregarMenuCombo( 'menu' )">
+										<span class="glyphicon glyphicon-plus"></span> <strong><u>A</u></strong>GREGAR MENU
 									</button>
 								</p>
 							</div>
@@ -94,8 +94,8 @@
 						<div class="panel-body">
 							<div class="text-right">
 								<p>
-									<button type="button" class="btn btn-success btn-sm" ng-click="agregarMenuCombo( 'combo' )">
-										<span class="glyphicon glyphicon-plus"></span> INGRESAR COMBO
+									<button type="button" class="btn btn-success" ng-click="agregarMenuCombo( 'combo' )">
+										<span class="glyphicon glyphicon-plus"></span> <strong><u>A</u></strong>GREGAR COMBO
 									</button>
 								</p>
 							</div>
@@ -202,7 +202,7 @@
 							<div class="form-group">
 								<div class="col-xs-5 col-sm-6 col-md-5">
 									<label class="control-label">NOMBRE DEL MENU</label>
-									<input type="text" class="form-control" ng-model="menu.menu" maxlength="40" required>
+									<input type="text" id="nombreMenu" class="form-control" ng-model="menu.menu" maxlength="40" required>
 								</div>
 								<div class="col-xs-4 col-sm-3 col-md-3">
 									<label class="control-label">DESTINO DEL MENU</label>
@@ -217,7 +217,7 @@
 								</div>
 								<div class="col-xs-3 col-sm-3 col-md-3">
 									<label class="control-label">CÓDIGO DEL MENÚ</label>
-									<input type="text" class="form-control" ng-model="menu.codigo" maxlength="10" required>
+									<input type="text" class="form-control" ng-pattern="/^[0-9]+?$/" ng-model="menu.codigo" maxlength="10" ng-trim="false" required>
 								</div>
 							</div>
 							<div class="form-group">
@@ -239,7 +239,6 @@
 										<input type="number" min="0" class="form-control" ng-pattern="/^[0-9]+?$/" ng-model="menu.tiempoAlerta" max="60" required>
 									  	<span class="input-group-addon">Minutos</span>
 									</div>
-
 								</div>						
 							</div>
 							<div class="form-group">
@@ -275,7 +274,7 @@
 												<!--
 												<input type="number" min="0" ng-init="accion== 'update' ? lp.precio : lp.precio=0" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+?$/" step="any" required>
 												-->
-												<input type="number" min="0" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
+												<input type="number" min="0" max="999" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
 											</td>
 											<td class="text-right">
 												<kbd>Q. {{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>
@@ -289,7 +288,7 @@
 				</div>
 				<div class="modal-footer">
 					<button class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMenu()">
-						<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
+						<span class="glyphicon glyphicon-saved"></span> <strong><u>G</u></strong>uardar
 					</button>
 					<button type="button" class="btn btn-default" ng-click="resetValores( 'menu' ); $hide();">
 						<span class="glyphicon glyphicon-log-out"></span>
@@ -657,11 +656,11 @@
 							<div class="form-group">
 								<div class="col-sm-8 col-md-7">
 									<label class="control-label">NOMBRE DEL COMBO</label>
-									<input type="text" class="form-control" ng-model="combo.combo" maxlength="45" required>
+									<input type="text" id="nombreCombo" class="form-control" ng-model="combo.combo" maxlength="45" required>
 								</div>
 								<div class="col-sm-4 col-md-5">
 									<label class="control-label">CÓDIGO DEL COMBO</label>
-									<input type="text" class="form-control" ng-model="combo.codigo" maxlength="10" required>
+									<input type="text" class="form-control" ng-model="combo.codigo" ng-pattern="/^[0-9]+?$/" maxlength="10" ng-trim="false" required>
 								</div>
 							</div>
 							<div class="form-group">
@@ -694,7 +693,7 @@
 												{{ lp.tipoServicio }}
 											</td>
 											<td class="text-right">
-												<input type="number" min="0" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
+												<input type="number" min="0" max="999" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
 											</td>
 											<td class="text-right">
 												<kbd>Q. {{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>
@@ -707,8 +706,8 @@
 					</fieldset>
 				</div>
 				<div class="modal-footer">
-					<button class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="registraCombo()">
-						<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
+					<button class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaCombo()">
+						<span class="glyphicon glyphicon-saved"></span> <strong><u>G</u></strong>uardar
 					</button>
 					<button type="button" class="btn btn-default" ng-click="resetValores( 'combo' ); $hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
