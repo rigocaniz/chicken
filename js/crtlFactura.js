@@ -14,17 +14,24 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		if ( $scope.$parent.loading )
 			return false;
 
-
 		console.log( !$scope.modalOpen() );
 		// TECLA C
 		if ( altDerecho && key == 67 ) {
 			$scope.buscarCliente( 'CF', 'cf' )
 		}
 		// TECLA A
-		else if( altDerecho && key == 65 ){
-			$scope.accionCliente = 'agregar';
+		else if( altDerecho && key == 69 ){
 			if( !$scope.modalOpen() )
-				$scope.dialAccionCliente.show();
+			{
+				if( $scope.facturacion.datosCliente.idCliente == 1 )
+					alertify.notify('Acción no válida para el tipo de cliente', 'warning', 4);
+				else{
+					$scope.editarCliente( $scope.facturacion.datosCliente, 'mostrar' );
+				}
+				//$scope.dialAccionCliente.show();
+			}
+			else
+				alertify.notify('Acción no válida', 'info', 3);
 
 			$timeout(function(){
 				$('#nit').focus();
