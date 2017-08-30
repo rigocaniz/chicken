@@ -97,7 +97,7 @@ class Cliente
  		if( strlen($valor) >= 2  AND strtoupper( $valor ) == 'CF' OR strtoupper( $valor ) == 'C/F' )
  			$where = "nit = 'CF'";
 
- 		else if( preg_match('/^[0-9-\s]{7,10}$/', $valor ) AND strlen( $valor ) >= 7  AND strlen( $valor ) <= 10 )
+ 		else if( preg_match('/^[0-9-\s]{5,10}$/', $valor ) AND strlen( $valor ) >= 5  AND strlen( $valor ) <= 10 )
  			$where = "nit = '$valor'";
 
  		elseif( preg_match('/^[0-9-\s]{13,15}$/', $valor ) AND strlen( $valor) >= 13 AND strlen( $valor) <= 15 )

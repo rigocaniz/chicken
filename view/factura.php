@@ -48,7 +48,7 @@
 											<input type="text" class="form-control" ng-model="facturacion.datosCliente.nit" ng-disabled="facturacion.datosCliente.idCliente!=1">
 										</div>
 										<div class="col-sm-2 col-md-1">
-											<button type="button" class="btn btn-warning" ng-click="editarCliente( facturacion.datosCliente, 'mostrar' );" ng-show="facturacion.datosCliente.idCliente && facturacion.datosCliente.idCliente != 1">
+											<button type="button" class="btn btn-warning" ng-click="editarCliente( facturacion.datosCliente, 'mostrar' );" ng-show="facturacion.datosCliente.idCliente && facturacion.datosCliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
 												<span class="glyphicon glyphicon-pencil"></span>
 											</button>
 										</div>
@@ -243,7 +243,7 @@
 								<div class="form-group">
 									<label class="col-sm-2 control-label">NIT</label>
 									<div class="col-sm-3">
-										<input type="text" ng-model="$parent.cliente.nit" class="form-control" id="nit" maxlength="15" autofocus>
+										<input type="text" ng-model="$parent.cliente.nit" class="form-control" id="nit" ng-pattern="/^[0-9-\s]+?$/" maxlength="15">
 									</div>
 									<div class="col-sm-6">
 										<div class="text-right">

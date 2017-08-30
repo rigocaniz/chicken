@@ -114,7 +114,6 @@ class Caja
  		$efectivoSobrante = 0;
  		$efectivoFaltante = 0;
 
- 		//echo $accion;
  		// SETEO VARIABLES GENERALES
  		$data->combo        = isset( $data->combo ) 		? (string)$data->combo 			: NULL;
  		$data->codigo       = isset( $data->codigo ) 		? (string)$data->codigo 		: NULL;
@@ -122,14 +121,16 @@ class Caja
  		$data->idEstadoMenu = isset( $data->idEstadoMenu ) 	? (int)$data->idEstadoMenu 		: NULL;
  		
  		$validar = new Validar();
+		
+		$data->efectivoInicial = isset( $data->efectivoInicial ) 	? (double)$data->efectivoInicial : NULL;
+		$data->efectivoInicial = (double)$data->efectivoInicial > 0 ? (double)$data->efectivoInicial : NULL;
+
+		$efectivoInicial = $validar->validarDinero( $data->efectivoInicial, NULL, TRUE, 'el EFECTIVO INICIAL' );
  		// VALIDACIONES
- 		if( $accion == 'insert' ):
- 			$data->efectivoInicial = isset( $data->efectivoInicial ) 	? (double)$data->efectivoInicial : NULL;
- 			$data->efectivoInicial = (double)$data->efectivoInicial > 0 ? (double)$data->efectivoInicial : NULL;
+ 		if( $accion == 'cierre' ):
+			$data->idCaja           = isset( $data->idCaja ) 				? (int)$data->idCaja 				: NULL;
+			$data->idCaja           = (int)$data->idCaja > 0 				? (int)$data->idCaja 				: NULL;
 
- 			$efectivoInicial = $validar->validarDinero( $data->efectivoInicial, NULL, TRUE, 'el EFECTIVO INICIAL' );
-
- 		elseif( $accion == 'cierre' ):
 			$data->idEstadoCaja     = isset( $data->idEstadoCaja ) 			? (int)$data->idEstadoCaja 			: NULL;
 			$data->idEstadoCaja     = (int)$data->idEstadoCaja > 0 			? (int)$data->idEstadoCaja 			: NULL;
 
@@ -140,16 +141,16 @@ class Caja
 			$data->efectivoFinal    = (double)$data->efectivoFinal > 0 		? (double)$data->efectivoFinal 		: NULL;
 
 			$data->efectivoSobrante = isset( $data->efectivoSobrante ) 		? (double)$data->efectivoSobrante 	: NULL;
-			$data->efectivoSobrante = (double)$data->efectivoSobrante > 0 	? (double)$data->efectivoSobrante 	: NULL;
+			$data->efectivoSobrante = (double)$data->efectivoSobrante;
 
 			$data->efectivoFaltante = isset( $data->efectivoFaltante ) 		? (double)$data->efectivoFaltante 	: NULL;
-			$data->efectivoFaltante = (double)$data->efectivoFaltante > 0 	? (double)$data->efectivoFaltante 	: NULL;
-
-			$idEstadoCaja     = $validar->validarEntero( $data->idEstadoCaja, NULL, TRUE, 'El ID del ESTADO CAJA no es válido' );
-
+			$data->efectivoFaltante = (double)$data->efectivoFaltante;
+ 		
+			$idCaja           = $validar->validarEntero( $data->idCaja, NULL, TRUE, 'El ID de la CAJA no es válido' );
+			$idEstadoCaja     = 2;
 			$efectivoFinal    = $validar->validarDinero( $data->efectivoFinal, NULL, TRUE, 'el EFECTIVO FINAL' );
-			$efectivoSobrante = $validar->validarDinero( $data->efectivoSobrante, NULL, !esNulo( $data->efectivoSobrante ), 'el EFECTIVO SOBRANTE' );
-			$efectivoFaltante = $validar->validarDinero( $data->efectivoFaltante, NULL, !esNulo( $data->efectivoFaltante ), 'el EFECTIVO FALTANTE' );
+			$efectivoSobrante = $data->efectivoSobrante;
+			$efectivoFaltante = $data->efectivoFaltante;
 
  		endif;
 
@@ -159,11 +160,9 @@ class Caja
 	 		$this->mensaje   = $validar->getMsj();
 	 		$this->tiempo    = $validar->getTiempo();
  		else:
-	 		//var_dump( $data );
 
 	 		$sql = "CALL consultaCaja( '{$accion}', {$idCaja}, {$idEstadoCaja}, {$efectivoInicial}, {$efectivoFinal}, {$efectivoSobrante}, {$efectivoFaltante} )";
 
-	 		//echo $sql;
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 	 			
 	 				$this->respuesta = $row->respuesta;

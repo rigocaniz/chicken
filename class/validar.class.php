@@ -91,13 +91,13 @@ class Validar
 			return $valor;
 
 		$warning = FALSE;
-		if( !(strlen( $valor ) >= 5) AND ( $valor != 'CF' AND $valor != 'C/F' ) ):
+		if( !(preg_match('/^[0-9-\s]{5,10}$/', $valor ) AND strlen( $valor ) >= 5  AND strlen( $valor ) <= 10) AND ( $valor != 'CF' AND $valor != 'C/F' ) ):
 			$warning = TRUE;
 		endif;
 
 		if( $warning AND $required ):
 			$this->error   = TRUE;
-			$this->mensaje = 'No. de NIT inválido, verifique que tenga mas de 4 dígitos.';
+			$this->mensaje = 'No. de NIT inválido, verifique que tenga entre 5 y 10 dígitos.';
 			$this->tiempo  = 4;
 
 		elseif( !$required AND $warning ):
