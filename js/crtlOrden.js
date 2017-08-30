@@ -592,6 +592,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 		// SI CAMBIA EL TIPO DE SERVICIO
+	
 	$scope.watchPrecio = function () {
 		$scope.menuActual.precio = 0;
 

@@ -575,8 +575,8 @@ class Orden
 		if ( isset( $usuario ) AND strlen( $usuario ) > 3 )
 			$where = " AND ( responsableDetalle = '$usuario' OR usuarioDetalle = '$usuario' ) ";
 
-		if ( ( $idEstadoDetalleOrden != 1 OR $idEstadoDetalleOrden != 2 ) )
-			$limit = " LIMIT 20";
+		if ( ( $idEstadoDetalleOrden != 1 AND $idEstadoDetalleOrden != 2 ) )
+			$limit = " LIMIT 50";
 
  		$sql = "SELECT 
 					idDetalleOrdenMenu,

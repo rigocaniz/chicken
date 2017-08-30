@@ -744,15 +744,22 @@ tr.tr_alert{
     -webkit-border-radius: 7px 7px 7px 7px;
 }
 
+.panel-menu.active-key{
+    border: solid 1px #88b7fa;
+    box-shadow: 0px 0px 3px #b8d5ff;
+    -moz-box-shadow: 0px 0px 3px #b8d5ff;
+    -webkit-box-shadow: 0px 0px 3px #b8d5ff;
+}
+
 .panel-menu .encabezado{
     background-color: #f6f6f6;
     float: left;
     width: 100%;
     padding-bottom: 5px;
     padding-top: 5px;
-    border-radius: 7px 7px 0px 0px;
-    -moz-border-radius: 7px 7px 0px 0px;
-    -webkit-border-radius: 7px 7px 0px 0px;
+    border-radius: 7px 7px 7px 7px;
+    -moz-border-radius: 7px 7px 7px 7px;
+    -webkit-border-radius: 7px 7px 7px 7px;
 }
 
 .panel-menu.inactivo{
@@ -815,3 +822,64 @@ tr.tr_alert{
 .numEfectivo{
     font-size: 24px;
 }
+
+.estado-menu{
+    padding: 1px 0px 0px 7px;
+    border: solid 1px #ccc;
+    font-size: 15px;
+    border-radius: 13px 13px 13px 13px;
+    -moz-border-radius: 13px 13px 13px 13px;
+    -webkit-border-radius: 13px 13px 13px 13px;
+    background-color: #fff;
+    color: #828282;
+}
+
+.estado-menu .badge{
+    background-color: #dfdfdf;
+    padding: 3px 7px;
+    color: #3d3d3d;
+    margin-top: -4px;
+    font-size: 13px;
+    margin-right: -1px;
+}
+
+.estado-menu.default{
+}
+
+.estado-menu.info{
+    border-color: #12a4d0;
+    color: #14a1c7;
+}
+
+.estado-menu.info .badge{
+    background-color: #12a4d0;
+    color: #fff;
+}
+
+.estado-menu.primary{
+    border-color: #0b5cdb;
+    color: #1b5abf;
+}
+
+.estado-menu.primary .badge{
+    background-color: #0b5cdb;
+    color: #fff;
+}
+
+.estado-menu.success{
+    border-color: #22be5c;
+    color: #10b34d;
+}
+
+.estado-menu.success .badge{
+    background-color: #22be5c;
+    color: #fff;
+}
+
+
+
+
+
+
+
+

@@ -33,51 +33,54 @@
             <input type="number" class="form-control" ng-model="buscarTicket" id="buscarTicket" ng-class="{'input-focus':buscarTicket>0}"
                 placeholder="# Ticket" style="font-size:19px;padding: 1px 14px;font-weight:normal">
 		</div>
-
-		<!-- ESTADO DE ORDEN -->
-		<div class="col-xs-12 text-center" style="margin-top:4px">
-			<div class="btn-orden">
-				<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="cambioEstadoOrden( 1 )">
-					<span class="glyphicon glyphicon-time"></span>
-					<span class="hidden-xs"><u>P</u>endiente</span>
-				</button>
-				<button class="bt-success" ng-class="{'active':idEstadoOrden==2}" ng-click="cambioEstadoOrden( 2 )">
-					<span class="glyphicon glyphicon-play"></span>
-					<span class="hidden-xs"><u>C</u>ocinando</span>
-				</button>
-				<button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="cambioEstadoOrden( 3 )">
-					<span class="glyphicon glyphicon-ok"></span>
-					<span class="hidden-xs"><u>L</u>isto</span>
-				</button>
-				<button class="bt-danger" ng-class="{'active':idEstadoOrden==4}" ng-click="cambioEstadoOrden( 4 )">
-					<span class="glyphicon glyphicon-flag"></span>
-					<span class="hidden-xs"><u>S</u>ervido</span>
-				</button>
-			</div>
-		</div>
-
 	</div>
-	<div class="row" style="margin-top:3px">
-		
-		<!-- VISTA POR MENU -->
-		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='menu'}" ng-hide="tipoVista=='ticket'">
-			<h4 class="alert alert-info" ng-hide="lstMenus.length">No existe información</h4>
 
-			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index" ng-class="{'inactivo':ixMenuActual!=$index&&seleccionMenu.si}">
+	<div class="row" style="margin-top:3px">
+		<!-- ############ VISTA POR MENU ############ -->
+		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='menu'}" ng-hide="tipoVista=='ticket'">
+			<!-- ESTADO DE ORDEN -->
+			<div class="col-xs-12 text-center" style="margin-top:4px">
+				<div class="btn-orden">
+					<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="cambioEstadoOrden( 1 )">
+						<span class="glyphicon glyphicon-time"></span>
+						<span class="hidden-xs"><u>P</u>endiente</span>
+					</button>
+					<button class="bt-success" ng-class="{'active':idEstadoOrden==2}" ng-click="cambioEstadoOrden( 2 )">
+						<span class="glyphicon glyphicon-play"></span>
+						<span class="hidden-xs"><u>C</u>ocinando</span>
+					</button>
+					<button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="cambioEstadoOrden( 3 )">
+						<span class="glyphicon glyphicon-ok"></span>
+						<span class="hidden-xs"><u>L</u>isto</span>
+					</button>
+					<button class="bt-danger" ng-class="{'active':idEstadoOrden==4}" ng-click="cambioEstadoOrden( 4 )">
+						<span class="glyphicon glyphicon-flag"></span>
+						<span class="hidden-xs"><u>S</u>ervido</span>
+					</button>
+				</div>
+			</div>
+
+			<!-- SI NO SE ENCONTRO INFORMACION -->
+			<div class="col-sm-12" ng-hide="lstMenus.length">
+				<h4 class="alert alert-info">No existe información</h4>
+			</div>
+
+			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index" 
+				ng-class="{'inactivo':ixMenuActual!=$index&&seleccionMenu.si,'active-key':$parent.keyPanel=='left'}">
 				<div class="encabezado">
 					<div class="col-xs-6">
-						<button type="button" class="btn" ng-click="$parent.ixMenuActual = ( seleccionMenu.si ? $parent.ixMenuActual : $index )"
+						<button type="button" class="btn" ng-click="$parent.ixMenuActual=($parent.ixMenuActual==$index ? -1 : $index)"
 							ng-class="{'danger':(difMinutos( menu.primerTiempo )>menu.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}">
-							<span class="glyphicon glyphicon-chevron-down"></span>
+							<span class="glyphicon" ng-class="{'glyphicon-chevron-down':$parent.ixMenuActual==$index, 'glyphicon-chevron-right':$parent.ixMenuActual!=$index}"></span>
 							<span class="badge">{{menu.numMenus}}</span>
 							{{menu.menu}} 
 						</button>
 					</div>
 					<div class="col-xs-6 text-right">
-						<button type="button" class="btn btn-default" ng-click="selItemMenu( true )" ng-disabled="ixMenuActual!=$index" title="TODOS">
+						<button type="button" class="btn btn-sm btn-default" ng-click="selItemMenu( true )" ng-disabled="ixMenuActual!=$index" title="TODOS">
 							<span class="glyphicon glyphicon-check"></span>
 						</button>
-						<button type="button" class="btn btn-default" ng-click="selItemMenu( false )" ng-disabled="ixMenuActual!=$index" title="NINGUNO">
+						<button type="button" class="btn btn-sm btn-default" ng-click="selItemMenu( false )" ng-disabled="ixMenuActual!=$index" title="NINGUNO">
 							<span class="glyphicon glyphicon-unchecked"></span>
 						</button>
 					</div>
@@ -122,13 +125,34 @@
 			</div>
 		</div>
 		
-		<!-- VISTA POR TICKET -->
+		<!-- ############ VISTA POR TICKET ############ -->
 		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='ticket'}" ng-hide="tipoVista=='menu'">
-			<h4 class="alert alert-info" ng-hide="lstTickets.length">No existe información</h4>
+			<!-- ESTADO DE ORDEN -->
+			<div class="col-xs-12 text-center" style="margin-top:4px">
+				<div class="btn-orden">
+					<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="cambioEstadoOrden( 1 )">
+						<span class="glyphicon glyphicon-time"></span>
+						<span class="hidden-xs"><u>P</u>endientes</span>
+					</button>
+					<button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="cambioEstadoOrden( 3 )">
+						<span class="glyphicon glyphicon-ok"></span>
+						<span class="hidden-xs"><u>L</u>isto</span>
+					</button>
+					<button class="bt-danger" ng-class="{'active':idEstadoOrden==4}" ng-click="cambioEstadoOrden( 4 )">
+						<span class="glyphicon glyphicon-flag"></span>
+						<span class="hidden-xs"><u>S</u>ervido</span>
+					</button>
+				</div>
+			</div>
 
-			<div class="panel-menu" ng-repeat="ticket in lstTickets track by $index" ng-class="{'inactivo':ixTicketActual!=$index&&seleccionMenu.si}">
+			<div class="col-sm-12" ng-hide="lstTickets.length">
+				<h4 class="alert alert-info" ng-hide="lstTickets.length">No existe información</h4>
+			</div>
+
+			<div class="panel-menu" ng-repeat="ticket in lstTickets track by $index" 
+				ng-class="{'inactivo':ixTicketActual!=$index&&seleccionMenu.si, 'active-key':$parent.keyPanel=='right'}">
 				<div class="encabezado">
-					<div class="col-xs-6">
+					<div class="col-xs-4">
 						<button type="button" class="btn" ng-click="$parent.ixTicketActual = ( seleccionMenu.si ? $parent.ixTicketActual : $index )"
 							ng-class="{'danger':(difMinutos( ticket.primerTiempo )>ticket.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}">
 							<span class="glyphicon glyphicon-chevron-down"></span>
@@ -137,11 +161,16 @@
 	                        <span class="glyphicon glyphicon-bookmark"></span>
 						</button>
 					</div>
-					<div class="col-xs-6 text-right">
-						<button type="button" class="btn btn-default" ng-click="selItemTicket( true )" ng-disabled="ixTicketActual!=$index" title="TODOS">
+					<div class="col-xs-8 text-right">
+						<span class="estado-menu default">P <span class="badge">0</span></span>
+						<span class="estado-menu info">C <span class="badge">2</span></span>
+						<span class="estado-menu primary">L <span class="badge">1</span></span>
+						<span class="estado-menu success">S <span class="badge">4</span></span>
+
+						<button type="button" class="btn btn-sm btn-default" ng-click="selItemTicket( true )" ng-disabled="ixTicketActual!=$index" title="TODOS">
 							<span class="glyphicon glyphicon-check"></span>
 						</button>
-						<button type="button" class="btn btn-default" ng-click="selItemTicket( false )" ng-disabled="ixTicketActual!=$index" title="NINGUNO">
+						<button type="button" class="btn btn-sm btn-default" ng-click="selItemTicket( false )" ng-disabled="ixTicketActual!=$index" title="NINGUNO">
 							<span class="glyphicon glyphicon-unchecked"></span>
 						</button>
 					</div>

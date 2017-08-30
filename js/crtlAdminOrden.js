@@ -12,6 +12,8 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.lstMenusMaster = [];
 	$scope.codigoPersonal = '';
 	$scope.clave 		  = '';
+	$scope.keyPanel 	  = '';
+
 	$scope.seleccionMenu  = {
 		si     : false,
 		menu   : '',
@@ -30,7 +32,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 	$scope.dConsultaPersonal = $modal({scope: $scope,template:'consulta.personal.html', show: false, backdrop:false, keyboard: true });
 
-	// CONSULTA DESTINOS
+	// CONSULTA INFORMACION DE PERSONA
 	$http.post('consultas.php', { opcion : 'iniOrdenAdmin' })
 	.success(function (data) { 
 		console.log( data );
@@ -136,6 +138,20 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	// SI CAMBIA EL ESTADO DE ORDEN
 	$scope.$watch('idEstadoOrden', function (_new) {
 		$scope.consultaOrden();
+	});
+
+	$scope.$watch('tipoVista', function (_new) {
+		if ( _new == 'menu' ) {
+			$scope.keyPanel = 'left';
+		}
+		else if ( _new == 'ticket' ) {
+			$scope.keyPanel = 'right';
+		}
+		else if ( _new == 'dividido' && $scope.keyPanel != 'left' && $scope.keyPanel != 'right' ) {
+			$scope.keyPanel = 'left';
+		}
+		
+		console.log( $scope.keyPanel );
 	});
 
 
@@ -419,9 +435,13 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope._keyInicio = function ( key, altDerecho ) {
 		console.log( key, altDerecho );
 
-		// IR AL INICIO DE LA APLICACION
-		if ( altDerecho && key == 36 && $scope.permitirAccion( true ) )
-			window.location.href = './#';
+		// ENFOCA TAB IZQUIERDO
+		if ( altDerecho && key == 37 && $scope.tipoVista == 'dividido' && $scope.permitirAccion( true ) )
+			$scope.keyPanel = 'left';
+
+		// ENFOCA TAB DERECHO
+		else if ( altDerecho && key == 39 && $scope.tipoVista == 'dividido' && $scope.permitirAccion( true ) )
+			$scope.keyPanel = 'right';
 
 		// CAMBIO DE USUARIO RAPIDO
 		else if ( altDerecho && key == 32 && $scope.permitirAccion( true ) ) // {ALT+TAB}
