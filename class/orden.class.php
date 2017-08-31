@@ -747,12 +747,12 @@ class Orden
 							'listos'     => 0,
 							'servidos'   => 0,
 						),
-						'lstMenu'          => array(),
+						'detalle' => array(),
 					);
 				}
 
 				
-				$lst[ $ixTicket ]->lstMenu[] = (object)array(
+				$lst[ $ixTicket ]->detalle[] = (object)array(
 					'idDetalleOrdenMenu'   => $row->idDetalleOrdenMenu,
 					'idDetalleOrdenCombo'  => $row->idDetalleOrdenCombo,
 					'idEstadoDetalleOrden' => $row->idEstadoDetalleOrden,

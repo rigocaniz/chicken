@@ -917,6 +917,18 @@ div.inactive-key{
     margin-top: 93px;
 }
 
+.tr_focus:after{
+    content: '';
+    position: absolute;
+    display: block;
+    border-right: solid 13px rgba(0, 0, 0, 0.43);
+    border-top: solid 10px transparent;
+    border-bottom: solid 10px transparent;
+    right: 15px;
+    margin-top: 9px;
+}
+
+
 
 
 

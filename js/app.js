@@ -139,12 +139,8 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     // CAPTURA TECLA PARA ATAJOS RAPIDOS
     $scope.pressKey = function ( key, altDerecho, event ) {
 
-        // SI ES SUBIR O BAJAR EVITAR ACCION
-        if ( key == 38 || key == 40 )
-            event.preventDefault();
-
         if ( key != 17 && key != 18 && key != 92 && key != 91 ) {
-            $rootScope.$broadcast('keyPress', key, altDerecho );
+            $rootScope.$broadcast('keyPress', key, altDerecho, event );
         }
         else if( altDerecho && ( key == 92 || key == 91 ) ) {
             $window.location.href = "#/";
