@@ -183,6 +183,11 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** CONSULTA CATALOGOS
 	////////////////////////
+	case 'catFormasPago':				// CARGAR CATALOGO FORMAS DE PAGO
+		$consulta = new Consulta();
+		echo json_encode( $consulta->catFormasPago() );
+		break;
+
 	case 'catEstadosFactura':			// CARGAR CATALOGO TIPOS DE SERVICIOS
 		$consulta = new Consulta();
 		echo json_encode( $consulta->catEstadosFactura() );

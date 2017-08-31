@@ -19,7 +19,6 @@
 					</a>
 				</li>
 			</ul>
-
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuFactura=='facturar'}" ng-show="menuFactura=='facturar'">
 					<div class="col-md-12">
@@ -76,9 +75,22 @@
 											Buscar
 										</button>
 									</div>
-								</form>
+                                    <fieldset class="fieldset">
+                                        <legend class="legend info">FORMAS DE PAGO</legend>
+                                        <div class="form-group" ng-repeat="formaPago in facturacion.lstFormasPago">
+                                            <label class="col-sm-2 col-md-1 control-label">{{ formaPago.formaPago }}</label>
+                                            <div class="col-sm-4 col-md-3">
+                                                <input type="number" class="form-control" ng-model="buscarTicket">
+                                            </div>
+                                            {{ formaPago | json }}
+                                        </div>
+                                    </fieldset>
+                                </form>
 
-<legend class="legend2">Menús Ordenados</legend>
+
+
+
+            <legend class="legend2">Menús Ordenados</legend>
             <div class="row">
                 <div class="col-xs-12">
                     <div class="table-responsive">

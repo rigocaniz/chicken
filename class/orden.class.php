@@ -496,6 +496,8 @@ class Orden
 				$row->perteneceCombo = (int)$row->perteneceCombo;
 				$img = ( $row->perteneceCombo ? $row->imagenCombo : $row->imagen );
 
+				$img = file_exists( $img ) ? $img : 'img-menu/notFound.png';
+
 				// SI PERTENECE A COMBO
 				if ( $row->perteneceCombo ) {
 					$row->idMenu             = 0;

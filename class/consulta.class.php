@@ -16,7 +16,31 @@ class Consulta
  	}
 
 
- 	// LST CATALOGo ESTADOS FACTURA
+	// CATALOGO FORMAS PAGO
+ 	function catFormasPago()
+ 	{
+ 		$lstFormasPago = [];
+
+ 		$sql = "SELECT 
+				    idFormaPago, 
+				    formaPago, 
+				    porcentajeRecargo, 
+				    montoRecargo
+					FROM
+						formaPago
+					ORDER BY idFormaPago;";
+ 		
+ 		if( $rs = $this->con->query( $sql ) ){
+ 			while( $row = $rs->fetch_object() ){
+ 				$lstFormasPago[] = $row;
+ 			}
+ 		}
+
+ 		return $lstFormasPago;
+ 	}
+
+
+ 	// LST CATALOGO ESTADOS FACTURA
  	function catEstadosFactura()
  	{
  		$lstEstadosFactura = array();

@@ -19,29 +19,6 @@ class Caja
  		$this->sess = $sesion;
  	}
 
- 	// CATALOGO FORMAS PAGO
- 	function catFormasPago()
- 	{
- 		$lstFormasPago = [];
-
- 		$sql = "SELECT 
-				    idFormaPago, 
-				    formaPago, 
-				    porcentajeRecargo, 
-				    montoRecargo
-					FROM
-						formaPago
-					ORDER BY idFormaPago;";
- 		
- 		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() ){
- 				$lstFormasPago[] = $row;
- 			}
- 		}
-
- 		return $lstFormasPago;
- 	}
-
 
  	// CONSULTAR ESTADO CAJA
  	function consultarEstadoCaja()

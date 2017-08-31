@@ -5,6 +5,27 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	$scope.accion            = 'insert';
 	$scope.buscarTicket      = null;
 
+	$scope.facturacion = {
+		datosCliente : {
+			nit          : '',
+			nombre       : '',
+			direccion    : '',
+		},
+		ticket        : null,
+		noFactura     : null,
+		lstFormasPago : []
+	};
+
+	($scope.catFormasPago = function(){
+		$http.post('consultas.php',{
+		    opcion : "catFormasPago"
+		}).success(function(data){
+		    console.log(data);
+		    $scope.lstFormasPago = data;
+		    $scope.facturacion.lstFormasPago = data;
+		})
+	})();
+
 	$scope.dialAccionCliente = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenBusqueda = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
 
@@ -189,17 +210,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 
 
 	$scope.lstDetalleTicket = [];
-	$scope.facturacion = {
-		datosCliente : {
-			nit          : '',
-			nombre       : '',
-			direccion    : '',
-		},
-		ticket       : null,
-		noFactura    : null,
-		lstPago      : []
-	};
-	
 	$scope.$watch('accionCliente', function(){
 		if( $scope.accionCliente == 'agregar' ){
 			$scope.resetValores( 'cliente' );
