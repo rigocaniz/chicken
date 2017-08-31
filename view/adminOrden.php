@@ -90,8 +90,8 @@
 				<h4 class="alert alert-info">No existe información</h4>
 			</div>
 
-			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index" 
-				ng-class="{'inactivo':ixMenuActual!=$index&&seleccionMenu.si}">
+			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index" ng-class="{'inactivo':ixMenuActual!=$index&&seleccionMenu.si}" 
+				ng-hide="ixMenuActual!=$index && ixMenuActual!=-1" id="ixm_{{$index}}">
 				<div class="encabezado">
 					<div class="col-xs-6">
 						<button type="button" class="btn" ng-click="$parent.ixMenuActual=($parent.ixMenuActual==$index?-1:$index)" ng-disabled="seleccionMenu.si"
@@ -151,14 +151,15 @@
 		</div>
 		
 		<!-- ############ VISTA POR TICKET ############ -->
-		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='ticket','active-key':keyPanel=='right','inactive-key':keyPanel!='right'}" ng-hide="tipoVista=='menu'">
+		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='ticket','active-key':keyPanel=='right','inactive-key':keyPanel!='right'}" 
+			ng-hide="tipoVista=='menu'">
 			<!-- SI NO SE ENCONTRO INFORMACION -->
 			<div class="col-sm-12" ng-hide="lstTickets.length">
 				<h4 class="alert alert-info" ng-hide="lstTickets.length">No existe información</h4>
 			</div>
 
 			<div class="panel-menu" ng-repeat="ticket in lstTickets track by $index" 
-				ng-class="{'inactivo':ixTicketActual!=$index&&seleccionMenu.si}">
+				ng-class="{'inactivo':ixTicketActual!=$index&&seleccionMenu.si}" id="ixt_{{$index}}">
 				<div class="encabezado">
 					<div class="col-xs-4">
 						<button type="button" class="btn" ng-click="$parent.ixTicketActual = ( seleccionMenu.si ? $parent.ixTicketActual : $index )"

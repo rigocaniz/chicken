@@ -178,6 +178,47 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	});
 
 
+	// CAMBIO DE FOCUS DE PANEL 
+	$scope.aux = {
+		'array' : 'lstMenus',
+		'index' : 'ixMenuActual'
+	};
+
+	$scope.$watch('keyPanel', function (_new) {
+		if ( _new == 'left' ) {
+			$scope.aux.array = 'lstMenus';
+			$scope.aux.index = 'ixMenuActual';
+		}
+		else if ( _new == 'right' ) {
+			$scope.aux.array = 'lstTickets';
+			$scope.aux.index = 'ixTicketActual';
+		}
+	});
+
+	// ------------- SCROLL ELEMENT -----------------
+	$scope.$watch('ixTicketActual', function (_new) {
+		$scope.scroll( 'ixt_', _new );
+	});
+
+	$scope.$watch('ixMenuActual', function (_new) {
+		$scope.scroll( 'ixm_', _new );
+	});
+
+	// AUTO-SCROLL
+	$scope.scroll = function ( pref, index ) {
+		// SI EL INDEX ES MAYOR O IGUAL A CEREO
+		if ( index >= 0 ) {
+			var position = 0;
+			
+			// SI ES MAYOR AL PRIMERO (0)
+			if ( index > 0 )
+				position = $( '#' + pref + index ).offset().top;
+
+			$(window).scrollTop( position );
+		}
+	};
+
+
 
 	// CLASIFICA ORDEN EN MENUS DE <==== lstMenusMaster
 	$scope.lstPorMenu = function () {
@@ -467,21 +508,28 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			$scope.keyPanel = 'right';
 
 		// CAMBIO DE USUARIO RAPIDO
-		else if ( altDerecho && key == 32 && $scope.permitirAccion( true ) ) // {ALT+TAB}
+		else if ( altDerecho && key == 32 && $scope.permitirAccion( true ) ) // {ALT+SPACE}
 			$scope.dialogoConsultaPersonal( 'mesero' );
 
 		// SELECCION DE MENUS
-		else if ( !altDerecho && key == 40 && $scope.permitirAccion( true ) ) { // {DOWN}
-			if ( $scope.lstMenus.length && $scope.ixMenuActual == -1 )
-				$scope.ixMenuActual = 0;
+		else if ( !altDerecho && key == 39 && $scope.permitirAccion( true ) ) { // {LEFT}
+			if ( $scope[ $scope.aux.array ].length && $scope[ $scope.aux.index ] == -1 )
+				$scope[ $scope.aux.index ] = 0;
 
-			else if ( ( $scope.ixMenuActual + 1 ) < $scope.lstMenus.length )
-				$scope.ixMenuActual++;
+			else if ( ( $scope[ $scope.aux.index ] + 1 ) < $scope[ $scope.aux.array ].length )
+				$scope[ $scope.aux.index ]++;
 		}
-		else if ( !altDerecho && key == 38 && $scope.permitirAccion( true ) ) { // {UP}
-			if ( $scope.ixMenuActual != -1 && $scope.ixMenuActual > 0 )
-				$scope.ixMenuActual--;
+		else if ( !altDerecho && key == 37 && $scope.permitirAccion( true ) ) { // {RIGHT}
+			if ( $scope[ $scope.aux.index ] != -1 && $scope[ $scope.aux.index ] > 0 )
+				$scope[ $scope.aux.index ]--;
+			
+			else if ( $scope[ $scope.aux.index ] == -1 )
+				$scope[ $scope.aux.index ] = $scope[ $scope.aux.array ].length - 1;
 		}
+		else if ( !altDerecho && key == 8 && $scope.permitirAccion( true ) && $scope[ $scope.aux.index ] != -1 ) { // {SPACE}
+			$scope[ $scope.aux.index ] = -1;
+		}
+
 
 		// PARA SELECCION DE ORDENES
 		else if ( !altDerecho && key == 84 ) // {T}  => SELECCIONAR TODOS
