@@ -1,4 +1,4 @@
-<div class="col-xs-12" style="margin-top:5px">
+<div class="div-fixed">
 	<div class="row">
 		<div class="col-xs-3">
 			<div class="btn-group" role="group">
@@ -34,7 +34,6 @@
                 placeholder="# Ticket" style="font-size:19px;padding: 1px 14px;font-weight:normal">
 		</div>
 	</div>
-
 	<div class="row" style="margin-top:3px">
 		<!-- ############ VISTA POR MENU ############ -->
 		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='menu'}" ng-hide="tipoVista=='ticket'">
@@ -59,6 +58,32 @@
 					</button>
 				</div>
 			</div>
+		</div>
+
+		<!-- ############ VISTA POR TICKET ############ -->
+		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='ticket'}" ng-hide="tipoVista=='menu'">
+			<!-- ESTADO DE ORDEN -->
+			<div class="col-xs-12 text-center" style="margin-top:4px">
+				<div class="btn-orden">
+					<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="cambioEstadoOrden( 1 )">
+						<span class="glyphicon glyphicon-time"></span>
+						<span class="hidden-xs">Tic<u>k</u>ets Pendientes</span>
+					</button>
+					<button class="bt-danger" ng-class="{'active':idEstadoOrden==4}" ng-click="cambioEstadoOrden( 4 )">
+						<span class="glyphicon glyphicon-flag"></span>
+						<span class="hidden-xs"><u>F</u>inalizados</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- INFORMACION DE: MENU | TICKET -->
+<div class="col-xs-12 contenido-admin-orden">
+	<div class="row">
+		<!-- ############ VISTA POR MENU ############ -->
+		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='menu','active-key':keyPanel=='left','inactive-key':keyPanel!='left'}" ng-hide="tipoVista=='ticket'">
 
 			<!-- SI NO SE ENCONTRO INFORMACION -->
 			<div class="col-sm-12" ng-hide="lstMenus.length">
@@ -66,7 +91,7 @@
 			</div>
 
 			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index" 
-				ng-class="{'inactivo':ixMenuActual!=$index&&seleccionMenu.si,'active-key':$parent.keyPanel=='left'}">
+				ng-class="{'inactivo':ixMenuActual!=$index&&seleccionMenu.si}">
 				<div class="encabezado">
 					<div class="col-xs-6">
 						<button type="button" class="btn" ng-click="$parent.ixMenuActual=($parent.ixMenuActual==$index?-1:$index)" ng-disabled="seleccionMenu.si"
@@ -126,27 +151,14 @@
 		</div>
 		
 		<!-- ############ VISTA POR TICKET ############ -->
-		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='ticket'}" ng-hide="tipoVista=='menu'">
-			<!-- ESTADO DE ORDEN -->
-			<div class="col-xs-12 text-center" style="margin-top:4px">
-				<div class="btn-orden">
-					<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="cambioEstadoOrden( 1 )">
-						<span class="glyphicon glyphicon-time"></span>
-						<span class="hidden-xs">Tic<u>k</u>ets Pendientes</span>
-					</button>
-					<button class="bt-danger" ng-class="{'active':idEstadoOrden==4}" ng-click="cambioEstadoOrden( 4 )">
-						<span class="glyphicon glyphicon-flag"></span>
-						<span class="hidden-xs"><u>F</u>inalizados</span>
-					</button>
-				</div>
-			</div>
-
+		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='ticket','active-key':keyPanel=='right','inactive-key':keyPanel!='right'}" ng-hide="tipoVista=='menu'">
+			<!-- SI NO SE ENCONTRO INFORMACION -->
 			<div class="col-sm-12" ng-hide="lstTickets.length">
 				<h4 class="alert alert-info" ng-hide="lstTickets.length">No existe información</h4>
 			</div>
 
 			<div class="panel-menu" ng-repeat="ticket in lstTickets track by $index" 
-				ng-class="{'inactivo':ixTicketActual!=$index&&seleccionMenu.si, 'active-key':$parent.keyPanel=='right'}">
+				ng-class="{'inactivo':ixTicketActual!=$index&&seleccionMenu.si}">
 				<div class="encabezado">
 					<div class="col-xs-4">
 						<button type="button" class="btn" ng-click="$parent.ixTicketActual = ( seleccionMenu.si ? $parent.ixTicketActual : $index )"
@@ -158,10 +170,10 @@
 						</button>
 					</div>
 					<div class="col-xs-8 text-right">
-						<span class="estado-menu default">P <span class="badge">0</span></span>
-						<span class="estado-menu info">C <span class="badge">2</span></span>
-						<span class="estado-menu primary">L <span class="badge">1</span></span>
-						<span class="estado-menu success">S <span class="badge">4</span></span>
+						<span class="estado-menu default">P <span class="badge">{{ticket.total.pendientes}}</span></span>
+						<span class="estado-menu info">C <span class="badge">{{ticket.total.cocinando}}</span></span>
+						<span class="estado-menu primary">L <span class="badge">{{ticket.total.listos}}</span></span>
+						<span class="estado-menu success">S <span class="badge">{{ticket.total.servidos}}</span></span>
 
 						<button type="button" class="btn btn-sm btn-default" ng-click="selItemTicket( true )" ng-disabled="ixTicketActual!=$index" title="TODOS">
 							<span class="glyphicon glyphicon-check"></span>
@@ -177,7 +189,7 @@
 							<table class="table table-hover">
 								<thead>
 									<tr>
-										<th>Cantidad</th>
+										<th></th>
 										<th>Orden</th>
 										<th>Tipo Servicio</th>
 									</tr>
@@ -186,14 +198,21 @@
 									<tr ng-repeat="item in ticket.lstMenu track by $index" style="cursor:pointer" 
 										ng-class="{'success':item.selected, 'tr_alert':(difMinutos( item.fechaRegistro )>ticket.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}"
 										ng-click="selItemTicket( !item.selected, $index )">
-										<td>{{item.cantidad}}</td>
+										<td>
+											<span class="label label-default" ng-show="item.idEstadoDetalleOrden==1">
+												<span class="glyphicon glyphicon-triangle-right"></span>
+											</span>
+											<span class="estado-menu info" ng-show="item.idEstadoDetalleOrden==2">C</span>
+											<span class="estado-menu primary" ng-show="item.idEstadoDetalleOrden==3">L</span>
+											<span class="estado-menu success" ng-show="item.idEstadoDetalleOrden==4">S</span>
+										</td>
 										<td>
 											<span class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}">
 	                                            <span ng-show="item.idTipoServicio==2">R</span>
 	                                            <span ng-show="item.idTipoServicio==3">D</span>
 	                                            <span ng-show="item.idTipoServicio==1">L</span>
 	                                        </span>
-											{{item.menu}}
+											{{item.descripcion}}
 											<span class="label label-warning" ng-show="item.perteneceCombo">
 												<span class="glyphicon glyphicon-gift"></span>
 											</span>
@@ -206,34 +225,34 @@
 					</div>
 				</div>
 			</div>
-			
 		</div>
 	</div>
+</div>
 
-	<!-- SI TIENE SELECCIONADO ALGUN MENU -->
-	<div class="acciones" ng-show="seleccionMenu.si">
-		<div class="btn-accion">
-			<!-- SELECCION POR TIPO DE SERVICIO -->
-			<div class="tipo-servicio">
-                <span ng-show="seleccionMenu.count.llevar>0" class="label label-primary">
-                	L <span class="badge">{{seleccionMenu.count.llevar}}</span>
-                </span>
-				<span ng-show="seleccionMenu.count.restaurante>0" class="label label-success">
-					R <span class="badge">{{seleccionMenu.count.restaurante}}</span>
-				</span>
-                <span ng-show="seleccionMenu.count.domicilio>0" class="label label-warning">
-                	D <span class="badge">{{seleccionMenu.count.domicilio}}</span>
-                </span>
-			</div>
-			<button type="button" class="btn btn-lg btn-success">
-				<span class="glyphicon glyphicon-play"></span>
-				Preparar
-				<span class="badge" style="font-size:16px">{{seleccionMenu.count.total}}</span>
-				<b><u>{{seleccionMenu.menu}}</u></b>
-			</button>
+
+<!-- SI TIENE SELECCIONADO ALGUN MENU -->
+<div class="acciones" ng-show="seleccionMenu.si">
+	<div class="btn-accion">
+		<!-- SELECCION POR TIPO DE SERVICIO -->
+		<div class="tipo-servicio">
+            <span ng-show="seleccionMenu.count.llevar>0" class="label label-primary">
+            	L <span class="badge">{{seleccionMenu.count.llevar}}</span>
+            </span>
+			<span ng-show="seleccionMenu.count.restaurante>0" class="label label-success">
+				R <span class="badge">{{seleccionMenu.count.restaurante}}</span>
+			</span>
+            <span ng-show="seleccionMenu.count.domicilio>0" class="label label-warning">
+            	D <span class="badge">{{seleccionMenu.count.domicilio}}</span>
+            </span>
 		</div>
-		<img ng-src="{{seleccionMenu.imagen}}">
+		<button type="button" class="btn btn-lg btn-success">
+			<span class="glyphicon glyphicon-play"></span>
+			Preparar
+			<span class="badge" style="font-size:16px">{{seleccionMenu.count.total}}</span>
+			<b><u>{{seleccionMenu.menu}}</u></b>
+		</button>
 	</div>
+	<img ng-src="{{seleccionMenu.imagen}}">
 </div>
 
 

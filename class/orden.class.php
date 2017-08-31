@@ -715,11 +715,86 @@ class Orden
 				    fechaRegistro
 				FROM vOrdenes 
 				WHERE TRUE $where
-				ORDER BY idDetalleOrdenMenu ASC " . $limit;
+				ORDER BY idDetalleOrdenCombo ASC, idDetalleOrdenMenu ASC " . $limit;
 
 		if( $rs = $this->con->query( $sql ) ) {
 			while ( $row = $rs->fetch_object() ):
 				$row->perteneceCombo = (bool)$row->perteneceCombo;
+				$img = ( $row->perteneceCombo ? $row->imagenCombo : $row->imagen );
+
+				// AGRUPA POR TICKET //////////////////
+				$ixTicket = -1;
+
+				foreach ( $lst as $ix => $item ) {
+					if ( $item->idOrdenCliente == $row->idOrdenCliente ) {
+						$ixTicket = $ix;
+						break;
+					}
+				}
+			
+				// SI NO EXISTE SE CREA DATOS TICKET
+				if ( $ixTicket == -1 ) {
+					$ixTicket = count( $lst );
+
+					$lst[] = (object)array(
+						'idOrdenCliente'   => $row->idOrdenCliente,
+						'numeroTicket'     => $row->numeroTicket,
+						'responsableOrden' => $row->responsableOrden,
+						'total' 		   => (object)array(
+							'total'      => 0,
+							'pendientes' => 0,
+							'cocinando'  => 0,
+							'listos'     => 0,
+							'servidos'   => 0,
+						),
+						'lstMenu'          => array(),
+					);
+				}
+
+				
+				$lst[ $ixTicket ]->lstMenu[] = (object)array(
+					'idDetalleOrdenMenu'   => $row->idDetalleOrdenMenu,
+					'idDetalleOrdenCombo'  => $row->idDetalleOrdenCombo,
+					'idEstadoDetalleOrden' => $row->idEstadoDetalleOrden,
+					'idCombo'              => $row->idCombo,
+					'idMenu'               => $row->idMenu,
+					'esCombo'              => $row->perteneceCombo,
+					'descripcion'          => ( $row->perteneceCombo ? $row->menu . " (" . $row->combo . ")" : $row->menu ),
+					'imagen'               => ( strlen( (string)$img ) ? $img : 'img-menu/notFound.png' ),
+					'idTipoServicio'       => $row->idTipoServicio,
+					'tipoServicio'         => $row->tipoServicio,
+				);
+
+				$lst[ $ixTicket ]->total->total++;
+
+				if ( $row->idEstadoDetalleOrden == 1 )
+					$lst[ $ixTicket ]->total->pendientes++;
+
+				else if ( $row->idEstadoDetalleOrden == 2 )
+					$lst[ $ixTicket ]->total->cocinando++;
+
+				else if ( $row->idEstadoDetalleOrden == 3 )
+					$lst[ $ixTicket ]->total->listos++;
+
+				else if ( $row->idEstadoDetalleOrden == 4 )
+					$lst[ $ixTicket ]->total->servidos++;
+
+
+				//$lst[ $ixTicket ]->lstMenu[ $index ]->cantidad += $row->cantidad;
+
+				/*
+				// AGREGA DETALLE DE ORDEN
+				$lst[ $ixTicket ]->lstMenu[ $index ]->lstDetalle[] = (object)array(
+					'idDetalleOrdenMenu' => $row->idDetalleOrdenMenu,
+					'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo,
+				);*/
+
+
+
+
+
+
+				/*
 
 				// AGRUPA POR TICKET //////////////////
 				$ixTicket = -1;
@@ -788,6 +863,7 @@ class Orden
 					'fechaRegistro'       => $row->fechaRegistro,
 					'tiempoAlerta'        => $row->tiempoAlerta,
 				);
+				*/
 
 			endwhile;
 		}
