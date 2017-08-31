@@ -396,9 +396,9 @@
 									<thead>
 										<tr>
 											<th class="text-center col-sm-4">Producto</th>
-											<th class="text-center col-sm-1">Medida</th>
 											<th class="text-center col-sm-2">Tipo de Producto</th>
 											<th class="text-center col-sm-3">Cantidad</th>
+											<th class="text-center col-sm-1">Medida</th>
 											<th class="text-center col-sm-1">Editar</th>
 											<th class="text-center col-sm-1">Eliminar</th>
 										</tr>
@@ -420,13 +420,13 @@
 												</div>
 											</td>
 											<td class="text-center">
-												{{ receta.medida }}
-											</td>
-											<td class="text-center">
 												{{ receta.tipoProducto }}
 											</td>
 											<td class="text-right">
 												<input type="number" min="0" class="form-control" ng-model="receta.cantidad" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required ng-disabled="!receta.editar">
+											</td>
+											<td class="text-center">
+												{{ receta.medida }}
 											</td>
 											<td class="text-center">
 												<button type="button" class="btn btn-info btn-sm" ng-click="receta.editar=!receta.editar">

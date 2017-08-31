@@ -19,6 +19,63 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			$scope.lstProductosInventario();
 	});
 
+
+		// TECLA PARA ATAJOS RAPIDOS
+	$scope.$on('keyPress', function( event, key, altDerecho ) {
+		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
+		if ( $scope.$parent.loading )
+			return false;
+
+		console.log( !$scope.modalOpen() );
+		// TECLA A
+		if( altDerecho && key == 65 )
+		{
+			if( !$scope.modalOpen() ) {
+				$scope.editarAccion( null, 'insert', null );
+			}
+			else
+				alertify.notify('Acción no válida', 'info', 3);
+
+			$timeout(function(){
+				$('#nit').focus();
+			},175);
+		}
+		// TECLA / G / S / T / M
+		else if( altDerecho && ( key == 71 || key == 83 || key == 84 || key == 77 ) )
+		{
+			if( $scope.modalOpen() ) {
+				$scope.consultaProducto();
+			}
+			else if( !$scope.modalOpen() && key == 71 )
+			{
+				alertify.notify('Acción no válida', 'info', 3);
+			}
+			else if( !$scope.modalOpen() && ( key == 83 || key == 84 || key == 77 ) )
+			{
+				if( $scope.inventarioMenu == 'inventario' ) {
+					if( key == 83 )
+						$scope.groupBy = 'sinFiltro';
+					else if( key == 84 )
+						$scope.groupBy = 'tipoProducto';
+					else if( key == 77 )
+						$scope.groupBy = 'medida';
+				}
+				else
+					alertify.notify('Acción no válida', 'info', 3);
+			}
+		}
+
+	});
+
+
+	$scope.modalOpen = function ( _name ) {
+		if ( _name == undefined )
+			return $("body>div").hasClass('modal') && $("body>div").hasClass('top');
+		else
+			return !!( $( '#' + _name ).data() && $( '#' + _name ).data().$scope.$isShown );
+	};
+
+
 	$scope.dialIngreso                 = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
 	$scope.dialAdministrar             = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
 	$scope.dialCierreDiario            = $modal({scope: $scope,template:'dial.cierreDiario.html', show: false, backdrop: 'static'});
@@ -99,13 +156,12 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	$scope.cancelarReajuste = function()
 	{
 		alertify.confirm('CONFIRMAR CANCELACIÓN', 'Esta seguro(a) de cancelar el reajuste másivo de los productos?', 
-			function(){
-				$scope.realizarReajuste = false;
-				$scope.groupBy = 'sinFiltro';
-				$scope.lstProductosInventario();
-			}
-            , function(){});
-
+		function(){
+			$scope.realizarReajuste = false;
+			$scope.groupBy = 'sinFiltro';
+			$scope.lstProductosInventario();
+		}
+        , function(){});
 	};
 
 
@@ -136,6 +192,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 	// GUARDAR REAJUSTE MASIVO
 	$scope.guardarReajusteMasivo = function(){
+		
+		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
+		if ( $scope.$parent.loading )
+			return false;
+
 		var invProductos = $scope.lstInventario[ 0 ].lstProductos, error = false, totalCambios = 0;
 
 		if( !( invProductos.length ) ){
@@ -180,11 +241,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		}
 
 		console.log( totalCambios );
-
 		if( !error )
 		{
-			if( totalCambios > 0 )
-			{
+			if( totalCambios > 0 ) {
 				$scope.$parent.showLoading( 'Guardando...' );
 
 				$http.post('consultas.php',{
@@ -229,6 +288,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 
 	$scope.consultaCierreDiario = function(){
+		if ( $scope.$parent.loading )
+			return false;
+
 		var cierreDiario = $scope.cierreDiario;
 
 		if( $scope.accion == 'update' && !(cierreDiario.idCierreDiario && cierreDiario.idCierreDiario > 0) )
@@ -374,7 +436,10 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 	// CONSULTA FACTURA
 	$scope.consultaFactura = function( accion ){
-		var error = false;
+		if ( $scope.$parent.loading )
+			return false;
+
+		var error     = false;
 		$scope.accion = accion;
 
 		if( !($scope.compras.lstProductos.length) && $scope.accion == 'insert' ){
@@ -444,6 +509,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 	$scope.editarFacturaCompra = function( facturaCompra, accion )
 	{
+		if ( $scope.$parent.loading )
+			return false;
+
 		$scope.facturaCompra = angular.copy( facturaCompra );
 		$scope.facturaCompra.fechaFactura = moment( facturaCompra.fechaFactura );
 		$scope.dialLstFacturaCompra.hide();
@@ -470,6 +538,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	// LST FACTURAS COMPRA
 	$scope.detalleFacturaCompra = [];
 	$scope.cargarLstFacturaCompra = function(){
+		if ( $scope.$parent.loading )
+			return false;
+
 		$scope.$parent.showLoading( 'Cargando...' );
 		$http.post('consultas.php',{
 			opcion : 'cargarLstFacturaCompra'
@@ -529,8 +600,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	};
 
 	$scope.buscarTipoProducto = '';
-	$scope.resetValores = function( accion )
-	{
+	$scope.resetValores = function( accion ) {
 
 		$scope.accion             = 'insert';
 		$scope.buscarTipoProducto = '';
@@ -558,21 +628,18 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				esIncremento   : true
 			};
 		}
-
 		else if( accion == 4 ){
 			$scope.tp = {
 				idTipoProducto : null,
 				tipoProducto   : ''
 			};
 		}
-
 		else if( accion == 6 ){
 			$scope.medidaProd = {
 				idMedida : null,
 				medida   : ''
 			};
 		}
-
 		else if( accion == 'cierreDiario' )
 		{
 			$scope.cierreDiario = {
@@ -582,7 +649,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				lstProductos   : []
 			};
 		}
-
 		else if( accion == 'compras' )
 		{
 			$scope.compras = {
@@ -605,20 +671,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		$scope.resetValores( 1 );
 	})();
 
-	/*$scope.filtro        = {
-		filter : [
-			{ filter: 'idMedida', value : 8 },
-			{ filter: 'idTipoProducto', value : 2 },
-		],
-		order : [
-			{ by: 'idMedia', order: 'asc' },
-			{ by: 'idTipoProducto', order: 'desc' }
-		],
-		limit : 15,
-		page : 1,
-	};*/
-
-
 	$scope.filtro = {
 		filter : [
 			{ filter: 'idProducto', value : 8 }
@@ -638,47 +690,50 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		$scope.accion = accion;
 
 		if ( $scope.id > 0 ){
-
+			$scope.accion = 'update';
 			$http.post('consultas.php',{
 				opcion     : 'cargarProducto',
 				idProducto : $scope.id
 			}).success(function(data){
-				console.log(data);
 				$scope.producto = data;
 			})
-
-			$scope.accion = 'update';
 		}
 
 		$scope.dialAdministrarAbrir();
+		$timeout(function(){
+			$('#nombreProducto').focus();
+		}, 160);
 	};
 
 
 	// INSERTAR / ACTUALIZAR PRODUCTO
 	$scope.consultaProducto = function(){
+		if ( $scope.$parent.loading )
+			return false;
+
 		var producto = $scope.producto, accion = $scope.accion;
 
-		if( accion == 'update' && !(producto.idProducto > 0) ){
+		if( accion == 'update' && !(producto.idProducto > 0) )
 			alertify.notify( 'No. de producto no definido', 'warning', 5 );
-		}
-		else if( !(producto.producto && producto.producto.length >= 3) ){
+		
+		else if( !(producto.producto && producto.producto.length >= 3) )
 			alertify.notify( 'El nombre del producto debe ser mayor a 3 caracteres', 'warning', 5 );
-		}
-		else if( !(producto.idTipoProducto && producto.idTipoProducto > 0) ){
+		
+		else if( !(producto.idTipoProducto && producto.idTipoProducto > 0) )
 			alertify.notify( 'Seleccione el tipo de producto', 'warning', 5 );	
-		}
-		else if( !(producto.idMedida && producto.idMedida > 0) ){
+		
+		else if( !(producto.idMedida && producto.idMedida > 0) )
 			alertify.notify( 'Seleccione la medida', 'warning', 5 );	
-		}
-		else if( !(producto.cantidadMinima && producto.cantidadMinima > 0) ){
+	
+		else if( !(producto.cantidadMinima && producto.cantidadMinima > 0) )
 			alertify.notify( 'La cantidad mínima debe ser mayor a 0', 'warning', 5 );	
-		}
-		else if( !(producto.cantidadMinima && producto.cantidadMinima > 0) ){
+		
+		else if( !(producto.cantidadMinima && producto.cantidadMinima > 0) )
 			alertify.notify( 'La cantidad máxima debe ser mayor a 0', 'warning', 5 );	
-		}
-		else if( !(producto.disponibilidad && producto.disponibilidad > 0) ){
+		
+		else if( !(producto.disponibilidad && producto.disponibilidad > 0) )
 			alertify.notify( 'La disponibilidad debe ser mayor a 0', 'warning', 5 );	
-		}
+		
 		else{
 
 			$scope.$parent.showLoading( 'Guardando...' );
@@ -705,13 +760,18 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 
 	$scope.lstProductosInventario = function(){
+		if ( $scope.$parent.loading )
+			return false;
+
+		$scope.$parent.showLoading( 'Cargando...' );
 		$http.post('consultas.php',{
 			opcion  : 'lstProductos',
 			groupBy : $scope.groupBy
 		}).success(function(data){
 			console.log( "::::", data );
 			$scope.lstInventario = data;
-		})
+			$scope.$parent.hideLoading();
+		});
 	};
 
 
@@ -729,16 +789,18 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 	// INSERT / UPDATE TIPO PRODUCTO
 	$scope.consultaTipoProducto = function( tipoProducto ){
+		if ( $scope.$parent.loading )
+			return false;
+
 		var tp = $scope.tp;
 
-		if( $scope.accion == 'update' && !(tp.idTipoProducto && tp.idTipoProducto > 0 ) ){
+		if( $scope.accion == 'update' && !(tp.idTipoProducto && tp.idTipoProducto > 0 ) )
 			alertify.notify( 'El No. del Tipo de producto no es válido', 'warning', 5 );
-		}
-		else if( !(tp.tipoProducto && tp.tipoProducto.length > 3 ) ){
+		
+		else if( !(tp.tipoProducto && tp.tipoProducto.length > 3 ) )
 			alertify.notify( 'La descripción del tipo de producto debe ser mayor a 3 caracteres', 'warning', 5 );
-		}
-		else
-		{
+		
+		else {
 			$scope.$parent.showLoading( 'Guardando...' );
 
 			$http.post('consultas.php',{
@@ -773,6 +835,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 	// INSERTAR / ACTUALIZAR MEDIDA
 	$scope.consultaMedida = function(){
+		if ( $scope.$parent.loading )
+			return false;
+
 		var medida = $scope.medidaProd;
 
 		if( $scope.accion == 'update' && !(medida.idMedida && medida.idMedida > 0 ) )
@@ -780,8 +845,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 		else if( !(medida.medida && medida.medida.length > 3 ) )
 			alertify.notify( 'La descripcion de la medida debe ser mayor a 3 caracteres', 'warning', 5 );
-		else
-		{
+
+		else {
 			$scope.$parent.showLoading( 'Guardando...' );
 
 			$http.post('consultas.php',{

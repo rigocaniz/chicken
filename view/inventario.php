@@ -39,8 +39,8 @@
 			<div class="tab-content">
 				<div class="text-right">
 					<p>
-						<button type="button" class="btn btn-success" ng-click="editarAccion( null, 'insert' )">
-							<span class="glyphicon glyphicon-plus"></span> Ingresar Producto
+						<button type="button" class="btn btn-success" ng-click="editarAccion( null, 'insert', null )">
+							<span class="glyphicon glyphicon-plus"></span> <strong><u>A</u></strong>gregar Producto
 						</button>
 						<button type="button" class="btn btn-info noBorde" ng-click="cargarLstFacturaCompra()" ng-show="inventarioMenu=='compras'">
 							<span class="glyphicon glyphicon-th-list"></span> VER INGRESOS
@@ -1147,7 +1147,7 @@
 							<div class="form-group">
 								<div class="col-sm-7">
 									<label class="control-label">Nombre Producto</label>
-									<input type="text" class="form-control" ng-model="producto.producto" maxlength="45" required>
+									<input type="text" id="nombreProducto" class="form-control" ng-model="producto.producto" maxlength="45" required>
 								</div>
 								<div class="col-sm-3" ng-show="accion!='insert'">
 									<label class="control-label">No. Producto</label>

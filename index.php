@@ -138,7 +138,6 @@
     <script src="js/directivas.js"></script>
     <script src="js/crtlCliente.js"></script>
     <script src="js/crtlInventario.js"></script>
-    <script src="js/crtlNuevoEdita.js"></script>
     <script src="js/crtlAdmin.js"></script>
     <script src="js/crtlAdminOrden.js"></script>
     <script src="js/crtlOrden.js"></script>
