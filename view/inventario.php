@@ -39,7 +39,7 @@
 			<div class="tab-content">
 				<div class="text-right">
 					<p>
-						<button type="button" class="btn btn-success" ng-click="editarAccion( null, 'insert', null )">
+						<button type="button" class="btn btn-success" ng-click="editarAccion( 'insert', null )">
 							<span class="glyphicon glyphicon-plus"></span> <strong><u>A</u></strong>gregar Producto
 						</button>
 						<button type="button" class="btn btn-info noBorde" ng-click="cargarLstFacturaCompra()" ng-show="inventarioMenu=='compras'">
@@ -62,24 +62,23 @@
 							<div class="pull-right">
 								<div class="btn-group btn-group-sm" role="group">
 									<button type="button" class="btn btn-default" ng-click="groupBy='sinFiltro'">
-								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='sinFiltro', 'glyphicon-unchecked': groupBy!='sinFiltro'}"></span> Sin Filtro
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='sinFiltro', 'glyphicon-unchecked': groupBy!='sinFiltro'}"></span> <strong><u>S</u></strong>in Filtro
 								  	</button>
 								  	<button type="button" class="btn btn-default" ng-click="groupBy='tipoProducto'" ng-disabled="realizarReajuste">
-								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='tipoProducto', 'glyphicon-unchecked': groupBy!='tipoProducto'}"></span> Tipo de Producto
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='tipoProducto', 'glyphicon-unchecked': groupBy!='tipoProducto'}"></span> <strong><u>T</u></strong>ipo de Producto
 								  	</button>
 								  	<button type="button" class="btn btn-default" ng-click="groupBy='medida'" ng-disabled="realizarReajuste">
-								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='medida', 'glyphicon-unchecked': groupBy!='medida'}"></span> Medidas
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='medida', 'glyphicon-unchecked': groupBy!='medida'}"></span> <strong><u>M</u></strong>edidas
 								  	</button>
 								</div>
 							</div>
 							<div class="text-left">
-								<button class="btn btn-danger" ng-click="realizarCierre()" ng-disabled="realizarReajuste">
-									<span class="glyphicon glyphicon-list-alt"></span> REALIZAR CIERRE
+								<button type="button" class="btn btn-danger" ng-click="realizarCierre()" ng-disabled="realizarReajuste">
+									<span class="glyphicon glyphicon-list-alt"></span> <strong><u>C</u></strong>IERRE DE PRODUCTOS
 								</button>
-								<button class="btn btn-primary" ng-click="realizarReajusteMasivo()" ng-show="!realizarReajuste">
-									<span class="glyphicon glyphicon-edit"></span> REAJUSTE MASIVO
+								<button type="button" class="btn btn-primary" ng-click="realizarReajusteMasivo()" ng-show="!realizarReajuste">
+									<span class="glyphicon glyphicon-edit"></span> <strong><u>R</u></strong>EAJUSTE MASIVO
 								</button>
-
 								<button type="button" class="btn btn-danger" ng-click="cancelarReajuste()" ng-show="realizarReajuste">
 									<span class="glyphicon glyphicon-remove"></span> CANCELAR REAJUSTE
 								</button>
@@ -153,7 +152,7 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr ng-repeat="inv in inventario.lstProductos | filter: filtroProducto" ng-class="{'danger border-danger': inv.alertaStock == 1 && !realizarReajuste, 'warning border-warning':  inv.alertaStock == 2 && !realizarReajuste, 'border-success':  inv.alertaStock == 3 && !realizarReajuste}">
+												<tr ng-repeat="inv in inventario.lstProductos | filter: filtroProducto" ng-class="{'danger border-danger': inv.alertaStock == 1 && !realizarReajuste, 'warning border-warning':  inv.alertaStock == 2 && !realizarReajuste, 'border-success':  inv.alertaStock == 3 && !realizarReajuste}" ng-dblclick="editarAccion( 'update', inv )">
 													<td class="text-right">
 														{{ $index + 1 }}
 													</td>
@@ -183,7 +182,7 @@
 														<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.cantidad">
 													</td>
 													<td class="text-center" ng-show="realizarReajuste">
-														<button class="btn btn-xs" ng-class="{'btn-success': inv.esIncremento, 'btn-danger': !inv.esIncremento}" ng-click="inv.esIncremento=!inv.esIncremento" title="Clic para {{ inv.esIncremento ? 'DISMINUIR' : 'INCREMENTAR' }}" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="!inv.cantidad">
+														<button type="button" class="btn btn-xs" ng-class="{'btn-success': inv.esIncremento, 'btn-danger': !inv.esIncremento}" ng-click="inv.esIncremento=!inv.esIncremento" title="Clic para {{ inv.esIncremento ? 'DISMINUIR' : 'INCREMENTAR' }}" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="!inv.cantidad">
 															<span class="glyphicon" ng-class="{'glyphicon-plus-sign': inv.esIncremento, 'glyphicon-minus-sign': !inv.esIncremento}"></span>
 														</button>
 													</td>
@@ -199,7 +198,7 @@
 														</button>
 													</td>
 													<td class="text-center" ng-hide="realizarReajuste">
-														<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( inv.idProducto, 'update', producto )">
+														<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( 'update', inv )">
 															<span class="glyphicon glyphicon-pencil"></span>
 														</button>
 													</td>
@@ -239,12 +238,12 @@
 							</div>
 							<div class="panel-body">
 								<div class="row">
-									<label class="col-sm-1 col-md-2">Tipo</label>
-									<div class="col-sm-6">
+									<label class="col-xs-1 col-sm-2 col-md-2 control-label">Tipo</label>
+									<div class="col-xs-6 col-sm-6">
 										<input type="text" id="tipoProducto" ng-keyup="$event.keyCode == 13 && consultaTipoProducto()" class="form-control" ng-model="tp.tipoProducto" maxlength="45" ng-disabled="loading">
 									</div>
-									<div class="col-sm-5 col-md-4">
-										<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaTipoProducto()" ng-disabled="loading">
+									<div class="col-xs-5 col-sm-4 col-md-4">
+										<button type="button" class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaTipoProducto()" ng-disabled="loading">
 											<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 										</button>
 										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 4 )">
@@ -279,11 +278,11 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr ng-repeat="tp in lstResultTipos = (lstTipoProducto | filter: buscarTipoProducto)">
+										<tr ng-repeat="tp in lstResultTipos = (lstTipoProducto | filter: buscarTipoProducto)" ng-dblclick="editarTipoProducto( tp )">
 											<td class="text-center">{{ $index + 1 }}</td>
 											<td>{{ tp.tipoProducto }}</td>
 											<td class="text-center">
-												<button class="btn btn-info btn-sm" ng-click="editarTipoProducto( tp )">
+												<button type="button" class="btn btn-info btn-sm" ng-click="editarTipoProducto( tp )">
 													<span class="glyphicon glyphicon-pencil"></span>
 												</button>
 											</td>
@@ -307,12 +306,12 @@
 							</div>
 							<div class="panel-body">
 								<div class="row">
-									<label class="col-sm-1 col-md-2">Medida</label>
-									<div class="col-sm-6">
+									<label class="col-xs-1 col-sm-2 col-md-2 control-label">Medida</label>
+									<div class="col-xs-6 col-sm-6">
 										<input type="text" id="medida" ng-keyup="$event.keyCode == 13 && consultaMedida()" class="form-control" ng-model="medidaProd.medida" maxlength="45" ng-disabled="loading">
 									</div>
-									<div class="col-sm-5 col-md-4">
-										<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMedida()" ng-disabled="loading">
+									<div class="col-xs-5 col-sm-4 col-md-4">
+										<button type="button" class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMedida()" ng-disabled="loading">
 											<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
 										</button>
 										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 6 )">
@@ -347,11 +346,11 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr ng-repeat="medida in lstResultMedida = (lstMedidas | filter: buscarMedida)">
+										<tr ng-repeat="medida in lstResultMedida = (lstMedidas | filter: buscarMedida)" ng-dblclick="editarMedida( medida )">
 											<td class="text-center">{{ $index + 1 }}</td>
 											<td>{{ medida.medida }}</td>
 											<td class="text-center">
-												<button class="btn btn-info btn-sm" ng-click="editarMedida( medida )">
+												<button type="button" class="btn btn-info btn-sm" ng-click="editarMedida( medida )">
 													<span class="glyphicon glyphicon-pencil"></span>
 												</button>
 											</td>
@@ -722,7 +721,6 @@
 	</div>
 </script>
 
-
 <!-- DIALOGO LST FACTURAS COMPRAS -->
 <script type="text/ng-template" id="dial.lstFacturaCompra.html">
 	<div class="modal" tabindex="-1" role="dialog">
@@ -816,7 +814,6 @@
 		</div>
 	</div>
 </script>
-
 
 <!-- DIALOGO CONSULTAR CIERRE DIARIO -->
 <script type="text/ng-template" id="dial.verCierreDiario.html">
@@ -1026,7 +1023,7 @@
 			
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-warning" ng-click="consultaCierreDiario()" ng-disabled="loading">
+					<button type="button" class="btn btn-warning" ng-click="consultaCierreDiario()" ng-disabled="loading">
 						<span class="glyphicon glyphicon-saved"></span> REALIZAR CIERRE
 					</button>
 					<button type="button" class="btn btn-default" ng-click="$hide()">
@@ -1039,7 +1036,6 @@
 	</div>
 </script>
 
-	
 <!-- DIALOGO INGRESO REAJUSTE EXISTENCIA -->
 <script type="text/ng-template" id="dial.ingreso.html">
 	<div class="modal" tabindex="-1" role="dialog">
@@ -1113,7 +1109,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-warning" ng-click="consultaReajusteInventario()">
+					<button type="button" class="btn btn-warning" ng-click="consultaReajusteInventario()">
 						<span class="glyphicon glyphicon-saved"></span> Guardar
 					</button>
 					<button type="button" class="btn btn-default" ng-click="$hide()">
@@ -1125,7 +1121,6 @@
 		</div>
 	</div>
 </script>
-
 
 <!-- MODAL AGREGAR / EDITAR PRODUCTO -->
 <script type="text/ng-template" id="dialAdmin.producto.html">
@@ -1151,7 +1146,7 @@
 								</div>
 								<div class="col-sm-3" ng-show="accion!='insert'">
 									<label class="control-label">No. Producto</label>
-									<input type="text" class="form-control" ng-model="producto.idProducto" readonly>
+									<input type="text" class="form-control" ng-model="producto.idProducto" disabled>
 								</div>
 							</div>
 							<div class="form-group">
@@ -1204,8 +1199,8 @@
 					</fieldset>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaProducto()" ng-disabled="loading">
-						<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
+					<button type="button" class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaProducto()" ng-disabled="loading">
+						<span class="glyphicon glyphicon-saved"></span> <strong><u>G</u></strong>uardar
 					</button>
 					<button type="button" class="btn btn-default" ng-click="resetValores( 1 ); $hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
