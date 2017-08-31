@@ -90,8 +90,7 @@
 				<h4 class="alert alert-info">No existe información</h4>
 			</div>
 
-			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index" 
-				ng-class="{'inactivo':ixMenuActual!=$index&&seleccionMenu.si}">
+			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index" ng-class="{'inactivo':ixMenuActual!=$index&&seleccionMenu.si}" id="ixm_{{$index}}">
 				<div class="encabezado">
 					<div class="col-xs-6">
 						<button type="button" class="btn" ng-click="$parent.ixMenuActual=($parent.ixMenuActual==$index?-1:$index)" ng-disabled="seleccionMenu.si"
@@ -123,7 +122,7 @@
 								</thead>
 								<tbody>
 									<tr ng-repeat="item in menu.detalle track by $index" style="cursor:pointer" 
-										ng-class="{'success':item.selected, 'tr_alert':(difMinutos( item.fechaRegistro )>menu.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}"
+										ng-class="{'success':item.selected, 'tr_alert':(difMinutos( item.fechaRegistro )>menu.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) ),'tr_focus':$parent.ixMenuFocus==$index}"
 										ng-click="selItemMenu( !item.selected, $index )">
 										<td>
 											<span class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}">
@@ -151,17 +150,18 @@
 		</div>
 		
 		<!-- ############ VISTA POR TICKET ############ -->
-		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='ticket','active-key':keyPanel=='right','inactive-key':keyPanel!='right'}" ng-hide="tipoVista=='menu'">
+		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='ticket','active-key':keyPanel=='right','inactive-key':keyPanel!='right'}" 
+			ng-hide="tipoVista=='menu'">
 			<!-- SI NO SE ENCONTRO INFORMACION -->
 			<div class="col-sm-12" ng-hide="lstTickets.length">
 				<h4 class="alert alert-info" ng-hide="lstTickets.length">No existe información</h4>
 			</div>
 
 			<div class="panel-menu" ng-repeat="ticket in lstTickets track by $index" 
-				ng-class="{'inactivo':ixTicketActual!=$index&&seleccionMenu.si}">
+				ng-class="{'inactivo':ixTicketActual!=$index&&seleccionTicket.si}" id="ixt_{{$index}}">
 				<div class="encabezado">
 					<div class="col-xs-4">
-						<button type="button" class="btn" ng-click="$parent.ixTicketActual = ( seleccionMenu.si ? $parent.ixTicketActual : $index )"
+						<button type="button" class="btn" ng-click="$parent.ixTicketActual=($parent.ixTicketActual==$index?-1:$index)"
 							ng-class="{'danger':(difMinutos( ticket.primerTiempo )>ticket.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}">
 							<span class="glyphicon glyphicon-chevron-down"></span>
 							<!--<span class="badge">{{ticket.numMenus}}</span>-->
@@ -195,8 +195,10 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="item in ticket.lstMenu track by $index" style="cursor:pointer" 
-										ng-class="{'success':item.selected, 'tr_alert':(difMinutos( item.fechaRegistro )>ticket.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}"
+									<tr ng-repeat="item in ticket.detalle track by $index" style="cursor:pointer" 
+										ng-class="{'success':item.selected, 
+											'tr_alert':(difMinutos( item.fechaRegistro )>ticket.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) ),
+											'tr_focus':$parent.ixTicketFocus==$index}"
 										ng-click="selItemTicket( !item.selected, $index )">
 										<td>
 											<span class="label label-default" ng-show="item.idEstadoDetalleOrden==1">

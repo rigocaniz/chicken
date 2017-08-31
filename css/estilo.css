@@ -776,6 +776,10 @@ div.inactive-key{
     opacity: 0.75;
 }
 
+.encabezado.activo{
+    position: fixed;
+}
+
 .panel-menu .encabezado .btn{
     background-color: rgb(252, 252, 252);
     border: solid 1px rgba(212, 212, 212, 0.57);
@@ -813,6 +817,8 @@ div.inactive-key{
 }
 
 .panel-menu .body{
+    max-height: 300px;
+    overflow-y: auto;
     border-top: solid 1px #ccc;
     background-color: #fff;
     float: left;
@@ -910,6 +916,18 @@ div.inactive-key{
 .contenido-admin-orden{
     margin-top: 93px;
 }
+
+.tr_focus:after{
+    content: '';
+    position: absolute;
+    display: block;
+    border-right: solid 13px rgba(0, 0, 0, 0.43);
+    border-top: solid 10px transparent;
+    border-bottom: solid 10px transparent;
+    right: 15px;
+    margin-top: 9px;
+}
+
 
 
 

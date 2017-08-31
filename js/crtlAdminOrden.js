@@ -6,6 +6,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.tipoVista      = 'dividido';
 	$scope.ixMenuActual   = -1;
 	$scope.ixTicketActual = -1;
+
+	$scope.ixMenuFocus   = -1;
+	$scope.ixTicketFocus = -1;
+
 	$scope.lstDestinoMenu = [];
 	$scope.lstMenus       = [];
 	$scope.lstTickets     = [];
@@ -15,6 +19,18 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.keyPanel 	  = '';
 
 	$scope.seleccionMenu  = {
+		si     : false,
+		menu   : '',
+		imagen : null,
+		count  : {
+			total 		: 0,
+			llevar      : 0,
+			restaurante : 0,
+			domicilio   : 0
+		},
+	};
+
+	$scope.seleccionTicket  = {
 		si     : false,
 		menu   : '',
 		imagen : null,
@@ -176,6 +192,54 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		
 		console.log( $scope.keyPanel );
 	});
+
+
+	// CAMBIO DE FOCUS DE PANEL 
+	$scope.panel = {
+		'array'     : 'lstMenus',
+		'index'     : 'ixMenuActual',
+		'seleccion' : 'seleccionMenu'
+	};
+
+	$scope.$watch('keyPanel', function (_new) {
+		if ( _new == 'left' ) {
+			$scope.panel.array     = 'lstMenus';
+			$scope.panel.index     = 'ixMenuActual';
+			$scope.panel.seleccion = 'seleccionMenu';
+			$scope.panel.focus     = 'ixMenuFocus';
+		}
+		else if ( _new == 'right' ) {
+			$scope.panel.array     = 'lstTickets';
+			$scope.panel.index     = 'ixTicketActual';
+			$scope.panel.seleccion = 'seleccionTicket';
+			$scope.panel.focus     = 'ixTicketFocus';
+		}
+	});
+
+	// ------------- SCROLL ELEMENT -----------------
+	$scope.$watch('ixTicketActual', function (_new) {
+		$scope.ixTicketFocus = -1;
+		$scope.scroll( 'ixt_', _new );
+	});
+
+	$scope.$watch('ixMenuActual', function (_new) {
+		$scope.ixMenuFocus = -1;
+		$scope.scroll( 'ixm_', _new );
+	});
+
+	// AUTO-SCROLL
+	$scope.scroll = function ( pref, index ) {
+		// SI EL INDEX ES MAYOR O IGUAL A CEREO
+		if ( index >= 0 ) {
+			var position = 0;
+			
+			// SI ES MAYOR AL PRIMERO (0)
+			if ( index > 0 )
+				position = $( '#' + pref + index ).offset().top;
+
+			$(window).scrollTop( position );
+		}
+	};
 
 
 
@@ -452,12 +516,171 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 
+	/* ************************** SELECCION DE TICKETS ********************** */
+	// SELECCIONA O DESELECCIONA TODOS
+	$scope.selItemTicket = function ( seleccionado, ixDetalle ) {
+		if ( !( $scope.ixTicketActual >= 0 ) )
+			return false;
+
+		$scope.seleccionTicket.menu   = $scope.lstTickets[ $scope.ixTicketActual ].menu;
+		$scope.seleccionTicket.imagen = $scope.lstTickets[ $scope.ixTicketActual ].imagen;
+		$scope.seleccionTicket.si     = false;
+
+		// SI ES INDIVIDUAL
+		if ( ixDetalle != undefined ) {
+			var valor          = -1;
+			var idTipoServicio = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ ixDetalle ].idTipoServicio;
+
+			if ( seleccionado )
+				valor = 1;
+
+			if ( idTipoServicio == 1 )
+				$scope.seleccionTicket.count.llevar += valor;
+
+			else if ( idTipoServicio == 2 )
+				$scope.seleccionTicket.count.restaurante += valor;
+
+			else if ( idTipoServicio == 3 )
+				$scope.seleccionTicket.count.domicilio += valor;
+				
+			$scope.seleccionTicket.count.total += valor;
+
+			// SELECCION O DESELECCION
+			$scope.lstTickets[ $scope.ixTicketActual ].detalle[ ixDetalle ].selected = seleccionado;
+
+			// SI EL TOTAL ES MAYOR A CERO
+			if ( $scope.seleccionTicket.count.total )
+				$scope.seleccionTicket.si = true;
+		}
+		// SI ES PARA TODOS
+		else if ( $scope.lstTickets[ $scope.ixTicketActual ] ) {
+			$scope.seleccionTicket.count.llevar      = 0;
+			$scope.seleccionTicket.count.restaurante = 0;
+			$scope.seleccionTicket.count.domicilio   = 0;
+			$scope.seleccionTicket.count.total  	   = 0;
+
+			for (var i = 0; i < $scope.lstTickets[ $scope.ixTicketActual ].detalle.length; i++) {
+				if ( seleccionado ) {
+					var idTipoServicio = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ i ].idTipoServicio;
+
+					if ( idTipoServicio == 1 )
+						$scope.seleccionTicket.count.llevar++;
+
+					else if ( idTipoServicio == 2 )
+						$scope.seleccionTicket.count.restaurante++;
+
+					else if ( idTipoServicio == 3 )
+						$scope.seleccionTicket.count.domicilio++;
+
+					$scope.seleccionTicket.count.total++;
+				}
+
+				$scope.lstTickets[ $scope.ixTicketActual ].detalle[ i ].selected = seleccionado;
+			}
+
+			if ( seleccionado )
+				$scope.seleccionTicket.si = true;
+		}
+	};
+
+	// SELECCIONA O DESELECCIONA TECLA -+
+	$scope.selItemKeyTicket = function ( seleccionar ) {
+		if ( !( $scope.ixTicketActual >= 0 ) )
+			return false;
+
+		// INFORMACION DE MENU
+		$scope.seleccionTicket.menu   = $scope.lstTickets[ $scope.ixTicketActual ].menu;
+		$scope.seleccionTicket.imagen = $scope.lstTickets[ $scope.ixTicketActual ].imagen;
+
+		// SI EXISTE AL MENOS UN ELEMENTO
+		if ( $scope.lstTickets[ $scope.ixTicketActual ].detalle.length ) {
+			var index = -1;
+
+			// BUSCAR EL PROXIMO PRIMER ELEMENTO SIN SELECCIONAR
+			if ( seleccionar ) {
+				for (var ix = 0; ix < $scope.lstTickets[ $scope.ixTicketActual ].detalle.length; ix++)
+				{
+					var itemSel = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ ix ].selected;
+
+					if ( !itemSel ) {
+						index = ix;
+						break;
+					}
+				}
+
+			}
+			// BUSCAR EL ULTIMO PRIMER ELEMENTO SELECCIONADO
+			else {
+				for (var ix = ( $scope.lstTickets[ $scope.ixTicketActual ].detalle.length - 1 ); ix >= 0; ix--)
+				{
+					var itemSel = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ ix ].selected;
+
+					if ( itemSel ) {
+						index = ix;
+						break;
+					}
+				}
+			}
+
+			// SI SE ENCONTRO ELEMENTO
+			if ( index >= 0 ) {
+				// CAMBIA VALOR DE SELECTED
+				$scope.lstTickets[ $scope.ixTicketActual ].detalle[ index ].selected = seleccionar;
+
+				// CONSULTA EL TIPO DE SERVICIO
+				var idTipoServicio = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ index ].idTipoServicio;
+				var valor = seleccionar ? 1 : -1;
+
+				// SUMA O RESTA A TOTAL
+				$scope.seleccionTicket.count.total += valor;
+
+				// SUMA O RESTA POR TIPO DE SERVICIO
+				if ( idTipoServicio == 1 )
+					$scope.seleccionTicket.count.llevar += valor;
+
+				else if ( idTipoServicio == 2 )
+					$scope.seleccionTicket.count.restaurante += valor;
+
+				else if ( idTipoServicio == 3 )
+					$scope.seleccionTicket.count.domicilio += valor;
+
+				// SI EXISTE MENU SELECCIONADO
+				if ( $scope.seleccionTicket.count.total > 0 )
+					$scope.seleccionTicket.si = true;
+
+				else
+					$scope.seleccionTicket.si = false;
+
+			}
+		}
+	};
+
+
+
+	$scope.focusElement = function ( next ) {
+		if ( $scope[ $scope.panel.array ][ $scope[ $scope.panel.index ] ] && $scope[ $scope.panel.array ][ $scope[ $scope.panel.index ] ].detalle.length ) 
+		{
+			var count = $scope[ $scope.panel.array ][ $scope[ $scope.panel.index ] ].detalle.length - 1;
+
+			if ( next && $scope[ $scope.panel.focus ] < count ) {
+				$scope[ $scope.panel.focus ]++;
+			}
+			else if ( !next && $scope[ $scope.panel.focus ] > 0 ) {
+				$scope[ $scope.panel.focus ]--;
+			}
+		}
+	};
+
+
+
 	/* ************************** ATAJOS CON TECLADO ********************** */
 
 	// AUX -> ATAJO INICIO
 	$scope._keyInicio = function ( key, altDerecho ) {
 		console.log( key, altDerecho );
 
+		/************ PANELES ************ 
+		*********************************/
 		// ENFOCA TAB IZQUIERDO
 		if ( altDerecho && key == 37 && $scope.tipoVista == 'dividido' && $scope.permitirAccion( true ) )
 			$scope.keyPanel = 'left';
@@ -466,36 +689,87 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		else if ( altDerecho && key == 39 && $scope.tipoVista == 'dividido' && $scope.permitirAccion( true ) )
 			$scope.keyPanel = 'right';
 
-		// CAMBIO DE USUARIO RAPIDO
-		else if ( altDerecho && key == 32 && $scope.permitirAccion( true ) ) // {ALT+TAB}
+		
+		/************ CAMBIO DE USUARIO RAPIDO ************ 
+		*********************************/
+		else if ( altDerecho && key == 85 && $scope.permitirAccion( true ) ) // {ALT+U}
 			$scope.dialogoConsultaPersonal( 'mesero' );
 
-		// SELECCION DE MENUS
-		else if ( !altDerecho && key == 40 && $scope.permitirAccion( true ) ) { // {DOWN}
-			if ( $scope.lstMenus.length && $scope.ixMenuActual == -1 )
-				$scope.ixMenuActual = 0;
 
-			else if ( ( $scope.ixMenuActual + 1 ) < $scope.lstMenus.length )
-				$scope.ixMenuActual++;
-		}
-		else if ( !altDerecho && key == 38 && $scope.permitirAccion( true ) ) { // {UP}
-			if ( $scope.ixMenuActual != -1 && $scope.ixMenuActual > 0 )
-				$scope.ixMenuActual--;
-		}
+		/************ SELECCION DE MENUS ************ 
+		*********************************/
+		// SELECCIONA EL ELEMENTO ANTERIOR
+		else if ( !altDerecho && key == 39 && $scope.permitirAccion( true ) ) { // {LEFT}
+			// si no se ha seleccionado escoge el primero
+			if ( $scope[ $scope.panel.array ].length && $scope[ $scope.panel.index ] == -1 )
+				$scope[ $scope.panel.index ] = 0;
 
+			// suma en uno el index
+			else if ( ( $scope[ $scope.panel.index ] + 1 ) < $scope[ $scope.panel.array ].length )
+				$scope[ $scope.panel.index ]++;
+		}
+		// SELECCIONA EL ELEMENTO SIGUIENTE
+		else if ( !altDerecho && key == 37 && $scope.permitirAccion( true ) ) { // {RIGHT}
+			if ( $scope[ $scope.panel.index ] != -1 && $scope[ $scope.panel.index ] > 0 )
+				$scope[ $scope.panel.index ]--;
+			
+			else if ( $scope[ $scope.panel.index ] == -1 )
+				$scope[ $scope.panel.index ] = $scope[ $scope.panel.array ].length - 1;
+		}
+		// DESELECCIONA ELEMENTO ACTUAL
+		else if ( !altDerecho && key == 8 && $scope.permitirAccion( true ) && $scope[ $scope.panel.index ] != -1 ) { // {BACKSPACE}
+			$scope[ $scope.panel.index ] = -1;
+		}
 		// PARA SELECCION DE ORDENES
 		else if ( !altDerecho && key == 84 ) // {T}  => SELECCIONAR TODOS
-			$scope.selItemMenu( true );
+		{
+			if ( $scope.keyPanel == 'left' )
+				$scope.selItemMenu( true );
+
+			else
+				$scope.selItemTicket( true );
+		}
 		
 		else if ( !altDerecho && key == 78 ) // {N}  => DESELECCIONAR TODOS
-			$scope.selItemMenu( false );
+		{
+			if ( $scope.keyPanel == 'left' )
+				$scope.selItemMenu( false );
 
+			else
+				$scope.selItemTicket( false );
+		}
+
+		// SELECCIONA EL SIGUIENTE NO SELECCIONADO
 		else if ( !altDerecho && ( key == 187 || key == 107 ) ) // {+}
-			$scope.selItemKey( true );
+		{
+			if ( $scope.keyPanel == 'left' )
+				$scope.selItemKey( true );
 
+			else
+				$scope.selItemKeyTicket( true );
+		}
+
+		// DESELECCIONA EL ULTIMO SELECCIONADO
 		else if ( !altDerecho && ( key == 189 || key == 109 ) ) // {-}
-			$scope.selItemKey( false );
+		{
+			if ( $scope.keyPanel == 'left' )
+				$scope.selItemKey( false );
 
+			else
+				$scope.selItemKeyTicket( false );
+		}
+
+		// FOCUS ELEMENTO SIGUIENTE
+		else if ( !altDerecho && key == 40 && $scope[ $scope.panel.index ] >= 0 && $scope.permitirAccion( true ) ) // {DOWN}
+			$scope.focusElement( true );
+
+		// FOCUS ELEMENTO ANTERIOR
+		else if ( !altDerecho && key == 38 && $scope[ $scope.panel.index ] >= 0 && $scope.permitirAccion( true ) ) // {UP}
+			$scope.focusElement( false );
+
+
+		/************ CONSULTA POR ESTADO ************ 
+		**********************************************/
 		// CAMBIO DE ESTADO
 		else if ( !altDerecho && key == 80 ) // {P}
 			$scope.cambioEstadoOrden( 1 );
@@ -516,7 +790,11 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 	// TECLA PARA ATAJOS RAPIDOS
-	$scope.$on('keyPress', function( event, key, altDerecho ) {
+	$scope.$on('keyPress', function( event, key, altDerecho, evento ) {
+
+		// PREVENIR: SPACE, UP, DOWN
+		if ( key == 32 || key == 38 || key == 40 )
+			evento.preventDefault();
 
 		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
 		if ( $scope.$parent.loading )
