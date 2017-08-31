@@ -123,9 +123,6 @@
 									</div>
 								</form>
 							</fieldset>
-
-							{{accion}}
-							{{accionCaja}}
 						</div>
 					</div>
 				</div>

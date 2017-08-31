@@ -70,14 +70,71 @@
 									<div class="form-group">
 										<label class="col-sm-1 control-label">TICKET</label>
 										<div class="col-sm-4">
-											<input type="text" id="ticket" class="form-control" ng-model="facturacion.ticket">
+											<input type="text" id="ticket" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="buscarTicket">
 										</div>
 										<button type="button" class="btn btn-primary" ng-click="buscarOrdenTicket()">
 											Buscar
 										</button>
 									</div>
 								</form>
+
+<legend class="legend2">Menús Ordenados</legend>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Cantidad</th>
+                                    <th>Orden</th>
+                                    <th>Subtotal</th>
+                                    <th width="35px"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in infoOrden.lstOrden track by $index">
+                                    <td><img ng-src="{{item.imagen}}" style="height:40px"></td>
+                                    <td>{{item.cantidad}}</td>
+                                    <td>
+                                    	{{ item | json }}
+                                        <button type="button" class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}"
+                                            ng-click="item.showTipoServicio=!item.showTipoServicio">
+                                            <span ng-show="item.idTipoServicio==2">R</span>
+                                            <span ng-show="item.idTipoServicio==3">D</span>
+                                            <span ng-show="item.idTipoServicio==1">L</span>
+                                            <span class="lst_servicio" ng-show="item.showTipoServicio">
+                                                <ul>
+                                                    <li class="list-group-item" ng-hide="item.idTipoServicio==2" ng-click="cambiarServicio( infoOrden.idOrdenCliente, item.lstDetalle, 2 )">Restaurante</li>
+                                                    <li class="list-group-item" ng-hide="item.idTipoServicio==3" ng-click="cambiarServicio( infoOrden.idOrdenCliente, item.lstDetalle, 3 )">A Domicilio</li>
+                                                    <li class="list-group-item" ng-hide="item.idTipoServicio==1" ng-click="cambiarServicio( infoOrden.idOrdenCliente, item.lstDetalle, 1 )">Para Llevar</li>
+                                                </ul>
+                                            </span>
+                                        </button>
+                                        <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
+                                        <span>{{item.descripcion}}</span>
+                                    </td>
+                                    <td>{{item.subTotal | number:2}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarDetalle( item.lstDetalle )">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td><td></td><td>TOTAL</td>
+                                    <td><b>Q. {{infoOrden.total | number:2}}</b></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+           </div>
 								{{ facturacion | json }}
+
+								<br><br>
+								{{ infoOrden | json }}
 								<!--
 								<table class="table table-hover">
 									<thead>
@@ -149,11 +206,6 @@
                                             <td>{{ item.usuarioResponsable }}</td>
                                             <td>{{ item.estadoOrden }}</td>
                                             <td>{{ tiempoTranscurrido( item.fechaRegistro ) }}</td>
-                                            <td>
-                                            	<button type="button" class="btn btn-info" ng-click="detalleTicket( item.idOrdenCliente )">
-                                            		<span class="glyphicon glyphicon-chevron-righ"></span> Seleccionar
-                                            	</button>
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
