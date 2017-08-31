@@ -31,7 +31,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		if( altDerecho && key == 65 )
 		{
 			if( !$scope.modalOpen() ) {
-				$scope.editarAccion( null, 'insert', null );
+				$scope.editarAccion( 'insert', null );
 			}
 			else
 				alertify.notify('Acción no válida', 'info', 3);
@@ -40,17 +40,17 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				$('#nit').focus();
 			},175);
 		}
-		// TECLA / G / S / T / M
-		else if( altDerecho && ( key == 71 || key == 83 || key == 84 || key == 77 ) )
+		// TECLA / G / S / T / M / R
+		else if( altDerecho && ( key == 71 || key == 83 || key == 84 || key == 77 || key == 82 || key == 67 ) )
 		{
-			if( $scope.modalOpen() ) {
+			if( $scope.modalOpen() && key == 71 ) {
 				$scope.consultaProducto();
 			}
 			else if( !$scope.modalOpen() && key == 71 )
 			{
 				alertify.notify('Acción no válida', 'info', 3);
 			}
-			else if( !$scope.modalOpen() && ( key == 83 || key == 84 || key == 77 ) )
+			else if( !$scope.modalOpen() && ( key == 83 || key == 84 || key == 77 || key == 82 || key == 67 ) )
 			{
 				if( $scope.inventarioMenu == 'inventario' ) {
 					if( key == 83 )
@@ -59,6 +59,10 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 						$scope.groupBy = 'tipoProducto';
 					else if( key == 77 )
 						$scope.groupBy = 'medida';
+					else if( key == 82 )
+						$scope.realizarReajusteMasivo();
+					else if( key == 67 && $scope.realizarReajuste )
+						$scope.cancelarReajuste();
 				}
 				else
 					alertify.notify('Acción no válida', 'info', 3);
@@ -682,21 +686,13 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		page : 1,
 	};
 
-
-	$scope.editarAccion = function( id, accion, producto ){
-		console.log( 'producto::: ', producto );
-
-		$scope.id     = id;
+	$scope.editarAccion = function( accion, producto ){
 		$scope.accion = accion;
 
-		if ( $scope.id > 0 ){
-			$scope.accion = 'update';
-			$http.post('consultas.php',{
-				opcion     : 'cargarProducto',
-				idProducto : $scope.id
-			}).success(function(data){
-				$scope.producto = data;
-			})
+		if ( accion == 'update' ){
+			$scope.producto = angular.copy( producto );
+			$scope.producto.idMedida       = $scope.producto.idMedida.toString();
+			$scope.producto.idTipoProducto = $scope.producto.idTipoProducto.toString();
 		}
 
 		$scope.dialAdministrarAbrir();

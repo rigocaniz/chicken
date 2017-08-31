@@ -22,7 +22,7 @@ $sql = "CALL definirSesion( '{$sesion->getUsuario()}' );";
 $conexion->query( $sql );
 
 $datos = array();
-sleep( 2 );
+//sleep( 1 );
 
 switch ( $data->opcion )
 {
