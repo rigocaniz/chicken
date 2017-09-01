@@ -3,7 +3,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.minutosAlerta  = 20;
 	$scope.idEstadoOrden  = 1;
 	$scope.idEstadoOrdenTk = 1;
-	$scope.tipoVista      = 'dividido';
+	$scope.tipoVista      = 'menu';
 	$scope.ixMenuActual   = -1;
 	$scope.ixTicketActual = -1;
 
@@ -169,6 +169,31 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 
+
+	// CAMBIA ESTADO ACTUAL A PROCESO SIGUIENTE, SELECCION
+	$scope.continuarProcesoMenu = function () {
+		if ( !$scope.seleccionMenu.si ) return false;
+
+		var lst = [], idEstadoDestino = 0;
+
+		if ( $scope.idEstadoOrden >= 1 && $scope.idEstadoOrden <= 1 ) 
+			idEstadoDestino = $scope.idEstadoOrden + 1;
+
+		for (var i = 0; i < $scope.lstMenus[ $scope.ixMenuActual ].detalle.length; i++) {
+			var item = $scope.lstMenus[ $scope.ixMenuActual ].detalle[ i ];
+
+			// SI ESTA SELECCIONADO
+			if ( item.selected )
+				lst.push({
+					cantidad            : item.cantidad,
+					idDetalleOrdenMenu  : item.idDetalleOrdenMenu,
+					idDetalleOrdenCombo : item.idDetalleOrdenCombo
+				});
+		}
+
+		console.log( idEstadoDestino, lst );
+	};
+
 	// SI CAMBIA EL DESTINO DE MENU
 	$scope.$watch('idDestinoMenu', function (_new) {
 		$scope.consultaOrden();
@@ -198,7 +223,8 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.panel = {
 		'array'     : 'lstMenus',
 		'index'     : 'ixMenuActual',
-		'seleccion' : 'seleccionMenu'
+		'seleccion' : 'seleccionMenu',
+		'focus'     : 'ixMenuFocus'
 	};
 
 	$scope.$watch('keyPanel', function (_new) {
@@ -227,17 +253,39 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		$scope.scroll( 'ixm_', _new );
 	});
 
+	// ------------- SCROLL ELEMENT -----------------
+	$scope.$watch('ixTicketFocus', function (_new) {
+		$scope.scroll( 'ixt_item_', _new );
+	});
+
+	$scope.$watch('ixMenuFocus', function (_new) {
+		$scope.scroll( 'ixm_item_', _new );
+	});
+
 	// AUTO-SCROLL
 	$scope.scroll = function ( pref, index ) {
 		// SI EL INDEX ES MAYOR O IGUAL A CEREO
 		if ( index >= 0 ) {
-			var position = 0;
+			var position = 0, id = index;
 			
-			// SI ES MAYOR AL PRIMERO (0)
-			if ( index > 0 )
-				position = $( '#' + pref + index ).offset().top;
+			$timeout(function () {
 
-			$(window).scrollTop( position );
+				if ( pref === 'ixm_item_' || pref === 'ixt_item_' )
+					id = $scope[ $scope.panel.array ][ $scope[ $scope.panel.index ] ].detalle[ index ].idDetalleOrdenMenu;
+
+				// SI ES MAYOR AL PRIMERO (0)
+				if ( index > 0 )
+					position = $( '#' + pref + id ).position().top;
+
+				if ( pref === 'ixm_item_' )
+					$('.body_lst_menu').animate( { scrollTop : position }, 120 );
+
+				else if ( pref === 'ixt_item_' )
+					$('.body_lst_ticket').animate( { scrollTop : position }, 120 );
+
+				else
+					$(".contenido-lst-orden").animate( { scrollTop : position }, 120 );
+			});
 		}
 	};
 
@@ -357,10 +405,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	// SI SE PERMITE ACCION
 	$scope.permitirAccion = function ( noMostrarAlerta ) {
 		var respuesta = true;
-		if ( $scope.seleccionMenu.si ) {
+		if ( $scope.seleccionMenu.si || $scope.seleccionTicket.si ) {
 			if ( !noMostrarAlerta ) {
 				alertify.set('notifier','position', 'top-right');
-				alertify.notify( "Existen menús seleccionados", 'info', 2 );
+				alertify.notify( "Existen elementos seleccionados", 'info', 2 );
 			}
 
 			respuesta = false;
@@ -390,6 +438,9 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		if ( ixDetalle != undefined ) {
 			var valor          = -1;
 			var idTipoServicio = $scope.lstMenus[ $scope.ixMenuActual ].detalle[ ixDetalle ].idTipoServicio;
+
+			// REALIZA FOCUS AL ELEMENTO SELECCIONADO
+			$scope[ $scope.panel.focus ] = ixDetalle;
 
 			if ( seleccionado )
 				valor = 1;
@@ -484,6 +535,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 			// SI SE ENCONTRO ELEMENTO
 			if ( index >= 0 ) {
+
+				// ENFOCA EL ELEMENTO ACTUAL
+				$scope[ $scope.panel.focus ] = index;
+
 				// CAMBIA VALOR DE SELECTED
 				$scope.lstMenus[ $scope.ixMenuActual ].detalle[ index ].selected = seleccionar;
 
@@ -530,6 +585,9 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		if ( ixDetalle != undefined ) {
 			var valor          = -1;
 			var idTipoServicio = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ ixDetalle ].idTipoServicio;
+
+			// REALIZA FOCUS AL ELEMENTO SELECCIONADO
+			$scope[ $scope.panel.focus ] = ixDetalle;
 
 			if ( seleccionado )
 				valor = 1;
@@ -624,6 +682,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 			// SI SE ENCONTRO ELEMENTO
 			if ( index >= 0 ) {
+
+				// ENFOCA EL ELEMENTO ACTUAL
+				$scope[ $scope.panel.focus ] = index;
+
 				// CAMBIA VALOR DE SELECTED
 				$scope.lstTickets[ $scope.ixTicketActual ].detalle[ index ].selected = seleccionar;
 
@@ -759,12 +821,26 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				$scope.selItemKeyTicket( false );
 		}
 
+		// SELECCIONA EL ELMENTO ENFOCADO
+		else if ( !altDerecho && key == 32 && $scope[ $scope.panel.focus ] >= 0 ) // {TAB}
+		{
+			var item = $scope[ $scope.panel.array ][ $scope[ $scope.panel.index ] ].detalle[ $scope[ $scope.panel.focus ] ];
+
+			if ( $scope.keyPanel == 'left' )
+				$scope.selItemMenu( !item.selected, $scope[ $scope.panel.focus ] );
+
+			else if ( $scope.keyPanel == 'right' )
+				$scope.selItemTicket( !item.selected, $scope[ $scope.panel.focus ] );
+		}
+
+
+
 		// FOCUS ELEMENTO SIGUIENTE
-		else if ( !altDerecho && key == 40 && $scope[ $scope.panel.index ] >= 0 && $scope.permitirAccion( true ) ) // {DOWN}
+		else if ( !altDerecho && key == 40 && $scope[ $scope.panel.index ] >= 0 ) // {DOWN}
 			$scope.focusElement( true );
 
 		// FOCUS ELEMENTO ANTERIOR
-		else if ( !altDerecho && key == 38 && $scope[ $scope.panel.index ] >= 0 && $scope.permitirAccion( true ) ) // {UP}
+		else if ( !altDerecho && key == 38 && $scope[ $scope.panel.index ] >= 0 ) // {UP}
 			$scope.focusElement( false );
 
 
@@ -838,4 +914,12 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		else
 			return !!( $( '#' + _name ).data() && $( '#' + _name ).data().$scope.$isShown );
 	};
+
+	// DEFINE EL TAMAÑO DEL CONTENEDOR MENU O TICKET
+	$(function(){
+		$(".contenido-lst-orden").attr( 'style', "height:" + ( $(window).height() - 100 ) + "px" );
+		$(window).resize(function (){
+			$(".contenido-lst-orden").attr( 'style', "height:" + ( $(this).height() - 100 ) + "px" );
+		}) 
+	});
 });

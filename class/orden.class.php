@@ -639,6 +639,7 @@ class Orden
 				// AGREGA DETALL AL MENU
 				$lst[ $ixMenu ]->detalle[] = (object)array(
 					'perteneceCombo'      => $row->perteneceCombo,
+					'numeroTicket'        => $row->numeroTicket,
 					'idMenu'              => $row->idMenu,
 					'idDetalleOrdenMenu'  => $row->idDetalleOrdenMenu,
 					'cantidad'            => $row->cantidad,
