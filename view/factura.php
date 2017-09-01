@@ -75,79 +75,82 @@
 											Buscar
 										</button>
 									</div>
-                                    <fieldset class="fieldset">
-                                        <legend class="legend info">FORMAS DE PAGO</legend>
-                                        <div class="form-group" ng-repeat="formaPago in facturacion.lstFormasPago">
-                                            <label class="col-sm-2 col-md-1 control-label">{{ formaPago.formaPago }}</label>
-                                            <div class="col-sm-4 col-md-3">
-                                                <input type="number" class="form-control" ng-model="buscarTicket">
-                                            </div>
-                                            {{ formaPago | json }}
+
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <fieldset class="fieldset">
+                                                <legend class="legend info">FORMAS DE PAGO</legend>
+                                                <div class="form-group">
+                                                    <label class="col-md-4 col-lg-3 control-label">TOTAL A COBRAR</label>
+                                                    <div class="col-md-6 col-lg-5 monto">
+                                                        <input type="number" class="form-control" ng-model="infoOrden.total" disabled>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" ng-repeat="formaPago in facturacion.lstFormasPago">
+                                                    <label class="col-md-4 col-lg-3 control-label">{{ formaPago.formaPago }}</label>
+                                                    <div class="col-md-6 col-lg-5 monto">
+                                                        <input type="number" class="form-control" ng-model="formaPago.monto">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-md-4 col-lg-3 control-label">VUELTO</label>
+                                                    <div class="col-md-6 col-lg-5">
+                                                        <div class="total">
+                                                        {{ totalVuelto() }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="text-center">
+                                                        <button type="button" class="btn btn-info">
+                                                            <span class="glyphicon glyphicon-saved"></span> FACTURAR
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
                                         </div>
-                                    </fieldset>
+                                        <div class="col-sm-6">
+                                            <fieldset class="fieldset">
+                                                <legend class="legend2">DETALLE ORDEN</legend>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center">Cant.</th>
+                                                                <th class="text-center">Orden</th>
+                                                                <th class="text-center">Subtotal</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="item in infoOrden.lstOrden track by $index">
+                                                                <td class="text-center">{{item.cantidad}}</td>
+                                                                <td>
+                                                                    <button type="button" class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}"
+                                                                        ng-click="item.showTipoServicio=!item.showTipoServicio">
+                                                                        <span ng-show="item.idTipoServicio==2">R</span>
+                                                                        <span ng-show="item.idTipoServicio==3">D</span>
+                                                                        <span ng-show="item.idTipoServicio==1">L</span>
+                                                                    </button>
+                                                                    <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
+                                                                    <span>{{item.descripcion}}</span>
+                                                                </td>
+                                                                <td class="text-right">{{item.subTotal | number:2}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td></td><td class="text-right"><strong>TOTAL</strong></td>
+                                                                <td class="text-right"><b>Q. {{infoOrden.total | number:2}}</b></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
                                 </form>
-
-
-
-
-            <legend class="legend2">Menús Ordenados</legend>
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Cantidad</th>
-                                    <th>Orden</th>
-                                    <th>Subtotal</th>
-                                    <th width="35px"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="item in infoOrden.lstOrden track by $index">
-                                    <td><img ng-src="{{item.imagen}}" style="height:40px"></td>
-                                    <td>{{item.cantidad}}</td>
-                                    <td>
-                                    	{{ item | json }}
-                                        <button type="button" class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}"
-                                            ng-click="item.showTipoServicio=!item.showTipoServicio">
-                                            <span ng-show="item.idTipoServicio==2">R</span>
-                                            <span ng-show="item.idTipoServicio==3">D</span>
-                                            <span ng-show="item.idTipoServicio==1">L</span>
-                                            <span class="lst_servicio" ng-show="item.showTipoServicio">
-                                                <ul>
-                                                    <li class="list-group-item" ng-hide="item.idTipoServicio==2" ng-click="cambiarServicio( infoOrden.idOrdenCliente, item.lstDetalle, 2 )">Restaurante</li>
-                                                    <li class="list-group-item" ng-hide="item.idTipoServicio==3" ng-click="cambiarServicio( infoOrden.idOrdenCliente, item.lstDetalle, 3 )">A Domicilio</li>
-                                                    <li class="list-group-item" ng-hide="item.idTipoServicio==1" ng-click="cambiarServicio( infoOrden.idOrdenCliente, item.lstDetalle, 1 )">Para Llevar</li>
-                                                </ul>
-                                            </span>
-                                        </button>
-                                        <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
-                                        <span>{{item.descripcion}}</span>
-                                    </td>
-                                    <td>{{item.subTotal | number:2}}</td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarDetalle( item.lstDetalle )">
-                                            <span class="glyphicon glyphicon-remove"></span>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td></td><td></td><td>TOTAL</td>
-                                    <td><b>Q. {{infoOrden.total | number:2}}</b></td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-           </div>
+                                <br><br>
+                                <!--
+                                {{ infoOrden | json }}
 								{{ facturacion | json }}
-
-								<br><br>
-								{{ infoOrden | json }}
-								<!--
 								<table class="table table-hover">
 									<thead>
 										<tr>

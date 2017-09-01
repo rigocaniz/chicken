@@ -33,18 +33,18 @@ if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
 
     <style type="text/css" media="screen">
 
-    body{
-        background: url('img/ejemplo.jpg') no-repeat fixed center center;
-        background-size: cover;
-    }
+        body{
+            background: url('img/ejemplo.jpg') no-repeat fixed center center;
+            background-size: cover;
+        }
         
     </style>
 </head>
 <body>
     <div class="back-login">
         <div class="login-block">
-            <img class="text-center" src="img/Logo_Churchil.png">
-            <div class="text-center">
+            <div class="">
+                <img class="img-rounded" src="img/Logo_Churchil.png">
                 <h3>INGRESAR</h3>
             </div>
             <p>

@@ -11,6 +11,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			nombre       : '',
 			direccion    : '',
 		},
+		importe: null,
 		ticket        : null,
 		noFactura     : null,
 		lstFormasPago : []
@@ -25,6 +26,23 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		    $scope.facturacion.lstFormasPago = data;
 		})
 	})();
+
+	$scope.totalVuelto = function(){
+		var vuelto = 0, total = 0;
+		if( $scope.infoOrden.total > 0 ){
+			for (var i = 0; i < $scope.facturacion.lstFormasPago.length; i++) {
+				var pago = $scope.facturacion.lstFormasPago[ i ];
+				if( pago.monto && pago.monto > 0 ){
+					total += pago.monto;
+				}
+			}
+		}
+
+		if( total > 0 )
+			vuelto = total - ( $scope.infoOrden.total > 0 ? $scope.infoOrden.total : 0 );
+
+		return vuelto;
+	};
 
 	$scope.dialAccionCliente = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenBusqueda = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
