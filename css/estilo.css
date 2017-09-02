@@ -949,11 +949,14 @@ div.inactive-key{
     content: '';
     position: absolute;
     display: block;
-    border-right: solid 11px rgba(0, 0, 0, 0.35);
-    border-top: solid 10px transparent;
-    border-bottom: solid 10px transparent;
-    right: 15px;
-    margin-top: 9px;
+    right: 16px;
+    margin-top: 4px;
+    border-right: solid 13px rgba(0, 0, 0, 0.27);
+    border-top: solid 15px transparent;
+    border-bottom: solid 15px transparent;
+    border-radius: 7px;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
 }
 
 

@@ -30,8 +30,9 @@
 			</div>
 		</div>
 		<div class="col-xs-3">
+			<!--
             <input type="number" class="form-control" ng-model="buscarTicket" id="buscarTicket" ng-class="{'input-focus':buscarTicket>0}"
-                placeholder="# Ticket" style="font-size:19px;padding: 1px 14px;font-weight:normal">
+                placeholder="# Ticket" style="font-size:19px;padding: 1px 14px;font-weight:normal">-->
 		</div>
 	</div>
 	<div class="row" style="margin-top:3px">
@@ -65,11 +66,11 @@
 			<!-- ESTADO DE ORDEN -->
 			<div class="col-xs-12 text-center" style="margin-top:4px">
 				<div class="btn-orden">
-					<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="cambioEstadoOrden( 1 )">
+					<button class="bt-info" ng-class="{'active':idEstadoOrdenTk==1}" ng-click="cambioEstadoOrden( 1, 'ticket' )">
 						<span class="glyphicon glyphicon-time"></span>
 						<span class="hidden-xs">Tic<u>k</u>ets Pendientes</span>
 					</button>
-					<button class="bt-danger" ng-class="{'active':idEstadoOrden==4}" ng-click="cambioEstadoOrden( 4 )">
+					<button class="bt-danger" ng-class="{'active':idEstadoOrdenTk==4}" ng-click="cambioEstadoOrden( 4, 'ticket' )">
 						<span class="glyphicon glyphicon-flag"></span>
 						<span class="hidden-xs"><u>F</u>inalizados</span>
 					</button>
@@ -205,9 +206,7 @@
 										ng-click="selItemTicket( !item.selected, $index )"
 										id="ixt_item_{{item.idDetalleOrdenMenu}}">
 										<td>
-											<span class="label label-default" ng-show="item.idEstadoDetalleOrden==1">
-												<span class="glyphicon glyphicon-triangle-right"></span>
-											</span>
+											<span class="estado-menu default" ng-show="item.idEstadoDetalleOrden==1">P</span>
 											<span class="estado-menu info" ng-show="item.idEstadoDetalleOrden==2">C</span>
 											<span class="estado-menu primary" ng-show="item.idEstadoDetalleOrden==3">L</span>
 											<span class="estado-menu success" ng-show="item.idEstadoDetalleOrden==4">S</span>

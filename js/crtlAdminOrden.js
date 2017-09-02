@@ -112,7 +112,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 
 
-	// CONSULTA INFORMACION DE ORDENES
+	// CONSULTA INFORMACION DE ORDENES POR MENU
 	$scope.consultaOrden = function () {
 		if ( $scope.$parent.loading ) return false;
 
@@ -127,7 +127,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			$scope.$parent.loading = true; // cargando...
 			$http.post('consultas.php', datos)
 			.success(function (data) {
-				console.log( 'menu::', data );
 				$scope.$parent.loading = false; // cargando...
 
 				if ( Array.isArray( data.lstMenu ) ) 
@@ -136,16 +135,16 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 					$scope.lstMenus     = data.lstMenu;
 				}
 				
-				$scope.consultaOrdenTicket();
 			});
 		}
 	};
 
-	$scope.consultaOrdenTicket = function () {
-		if ( $scope.$parent.loading ) return false;
+	// CONSULTA INFORMACION DE ORDENES POR TICKET
+	$scope.consultaOrdenTicket = function ( ignoreWait ) {
+		if ( $scope.$parent.loading && !ignoreWait ) return false;
 
-		if ( $scope.idEstadoOrden > 0 && $scope.idDestinoMenu > 0 ) {
-
+		if ( $scope.idEstadoOrdenTk > 0 && $scope.idDestinoMenu > 0 ) {
+			//$scope.idEstadoOrdenTk
 			var datos = { 
 				opcion               : 'lstOrdenPorTicket',
 				idEstadoOrden        : 'valid',
@@ -172,11 +171,11 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 	// CAMBIA ESTADO ACTUAL A PROCESO SIGUIENTE, SELECCION
 	$scope.continuarProcesoMenu = function () {
-		if ( !$scope.seleccionMenu.si ) return false;
+		if ( !$scope.seleccionMenu.si || $scope.$parent.loading ) return false;
 
 		var lst = [], idEstadoDestino = 0;
 
-		if ( $scope.idEstadoOrden >= 1 && $scope.idEstadoOrden <= 1 ) 
+		if ( $scope.idEstadoOrden > 1 && $scope.idEstadoOrden <= 4 ) 
 			idEstadoDestino = $scope.idEstadoOrden + 1;
 
 		for (var i = 0; i < $scope.lstMenus[ $scope.ixMenuActual ].detalle.length; i++) {
@@ -185,18 +184,74 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			// SI ESTA SELECCIONADO
 			if ( item.selected )
 				lst.push({
+					idMenu              : item.idMenu,
 					cantidad            : item.cantidad,
 					idDetalleOrdenMenu  : item.idDetalleOrdenMenu,
 					idDetalleOrdenCombo : item.idDetalleOrdenCombo
 				});
 		}
 
-		console.log( idEstadoDestino, lst );
+		console.log( lst );
+
+		// REALIZA CONSULTA HACIA EL SERVIDOR
+		if ( idEstadoDestino > 0 && lst.length ) 
+		{
+
+			var datos = { 
+				opcion        : 'cambioEstadoDetalleOrden',
+				idEstadoOrden : idEstadoDestino,
+				lstOrdenes    : lst
+			};
+
+			$scope.$parent.loading = true; // cargando...
+
+			$http.post('consultas.php', datos)
+			.success(function (data) {
+				$scope.$parent.loading = false; // cargando...
+
+				alertify.set('notifier','position', 'top-right');
+				alertify.notify( data.mensaje, data.respuesta, 4 );
+
+				// SI LA RESPUESTA ES SUCCESS
+				if ( data.respuesta == 'success' ) 
+					$scope.reset();
+			});
+		}
+	};
+
+	$scope.reset = function () {
+		$scope.seleccionMenu  = {
+			si     : false,
+			menu   : '',
+			imagen : null,
+			count  : {
+				total 		: 0,
+				llevar      : 0,
+				restaurante : 0,
+				domicilio   : 0
+			},
+		};
+
+		$scope.seleccionTicket  = {
+			si     : false,
+			menu   : '',
+			imagen : null,
+			count  : {
+				total 		: 0,
+				llevar      : 0,
+				restaurante : 0,
+				domicilio   : 0
+			},
+		};
+
+		$scope.ixMenuFocus   = -1;
+		$scope.ixTicketFocus = -1;
 	};
 
 	// SI CAMBIA EL DESTINO DE MENU
 	$scope.$watch('idDestinoMenu', function (_new) {
 		$scope.consultaOrden();
+		$scope.consultaOrdenTicket( true );
 	});
 
 	// SI CAMBIA EL ESTADO DE ORDEN
@@ -275,7 +330,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 				// SI ES MAYOR AL PRIMERO (0)
 				if ( index > 0 )
-					position = $( '#' + pref + id ).position().top;
+					position = $( '#' + pref + id ).position().top - 19;
 
 				if ( pref === 'ixm_item_' )
 					$('.body_lst_menu').animate( { scrollTop : position }, 120 );
@@ -846,6 +901,12 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 		/************ CONSULTA POR ESTADO ************ 
 		**********************************************/
+		else if ( altDerecho && key == 13 ) // {CONTINUA CON EL PROCESO}
+			$scope.continuarProcesoMenu();
+		
+
+		/************ CONSULTA POR ESTADO ************ 
+		**********************************************/
 		// CAMBIO DE ESTADO
 		else if ( !altDerecho && key == 80 ) // {P}
 			$scope.cambioEstadoOrden( 1 );
@@ -902,6 +963,43 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	// INFORMACION DE NODEJS
 	$scope.$on('infoNode', function( event, datos ) {
 		console.log( 'DTS::', datos );
+
+		if ( datos.accion == 'cambioEstadoDetalleOrden'  ) 
+		{
+			var estadoAnterior = datos.data.idEstadoOrden - 1;
+
+			// CONSULTA LAS ORDENES PENDIENTES DEL ESTADO ANTERIOR
+			if ( $scope.idEstadoOrden == estadoAnterior )
+			{
+				for (var i = 0; i < datos.data.lstOrdenes.length; i++) 
+				{
+					var item = datos.data.lstOrdenes[ i ];
+
+					for (var im = 0; im < $scope.lstMenus.length; im++) 
+					{
+						var menu = $scope.lstMenus[ im ];
+						if ( menu.idMenu == item.idMenu  ) 
+						{
+							for (var id = 0; id < menu.detalle.length; id++) 
+							{
+								if ( menu.detalle[ id ].idDetalleOrdenMenu == item.idDetalleOrdenMenu ) {
+									$scope.lstMenus[ im ].numMenus--;
+									$scope.lstMenus[ im ].detalle.splice( id, 1 );
+									break;
+								}
+							}
+
+							if ( !$scope.lstMenus[ im ].detalle.length ) {
+								$scope.ixMenuActual = -1;
+								$scope.ixMenuFocus = -1;
+								$scope.lstMenus.splice( im, 1 );
+							}
+						}
+					}
+
+				}
+			}
+		}
 
 		$scope.$apply();
 	});

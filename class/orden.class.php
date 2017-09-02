@@ -1119,6 +1119,58 @@ class Orden
  		return $this->getRespuesta();
  	}
 
+ 	// CAMBIA ESTADO DE ORDENES
+ 	public function cambioEstadoOrden( $idEstadoOrden, $lstOrdenes )
+ 	{
+ 		$this->con->query( "START TRANSACTION" );
+
+		foreach ( $lstOrdenes as $ix => $item ):
+			$sql = "CALL consultaDetalleOrdenMenu( 'estado', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, {$idEstadoOrden}, NULL, NULL, NULL );";
+			
+	 		if( $rs = $this->con->query( $sql ) ){
+	 			@$this->con->next_result();
+	 			if( $row = $rs->fetch_object() ) {
+					$this->respuesta = $row->respuesta;
+					$this->mensaje   = $row->mensaje;
+	 			}
+	 		}
+	 		else{
+	 			$this->respuesta = 'danger';
+	 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+	 			break;
+	 		}
+	 		
+	 		if ( $this->respuesta == 'danger' )
+	 			break;
+
+		endforeach;
+
+		if ( $this->respuesta == 'success' ) {
+	 		$this->con->query( "COMMIT" );
+
+	 		// SI ES NUEVO
+		 	$infoNode = (object)array(
+				'accion' => 'cambioEstadoDetalleOrden',
+				'data'   => array( 
+					'lstOrdenes'    => $lstOrdenes,
+					'idEstadoOrden' => $idEstadoOrden,
+				),
+			);
+
+		 	// SI LA CLASE NO EXISTE SE LLAMA
+		 	if ( !class_exists( "Redis" ) )
+		 		include 'redis.class.php';
+
+		 	// ENVIA LOS DATOS POR MEDIO DE REDIS
+		 	$red = new Redis();
+			$red->messageRedis( $infoNode );
+		}
+	 	else
+	 		$this->con->query( "ROLLBACK" );
+
+	 	return $this->getRespuesta();
+ 	}
+
  	function getRespuesta()
  	{
  		return $respuesta = array( 

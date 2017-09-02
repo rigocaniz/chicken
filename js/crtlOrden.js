@@ -741,7 +741,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 	// ATAJOS DIALOGO ORDEN CLIENTE
-	$scope._keyDialOrden = function ( key ) {
+	$scope._keyDialOrden = function ( key, altDerecho ) {
 		if ( key == 77 ) // {M}
 			$scope.mostrarMenus('menu');
 
@@ -760,6 +760,10 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 		if ( key == 13 || key == 65 ) // {ENTER}
 			$scope.consultaMenuPorCodigo();
+
+		// CONFIRMA LA ORDEN DEL CLIENTE
+		if ( key == 13 && altDerecho ) // {ALT+ENTER}
+			$scope.guardarOrden();
 
 		if ( key == 27 && $scope.accionOrden == 'modificar' ) // {ESC}
 			$scope.dialOrdenCliente.hide();
@@ -808,7 +812,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 	// TECLA PARA ATAJOS RAPIDOS
-	$scope.$on('keyPress', function( event, key ) {
+	$scope.$on('keyPress', function( event, key, altDerecho ) {
 
 		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
 		if ( $scope.$parent.loading )
@@ -827,7 +831,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 			// ******** DIALOGO DE ORDEN DEL CLIENTE ********
 			if ( $scope.modalOpen( 'dial_orden_cliente' ) ) {
-				$scope._keyDialOrden( key );
+				$scope._keyDialOrden( key, altDerecho );
 			}
 
 			// ******** DIALOGO DE LISTADO DE MENUS ********
