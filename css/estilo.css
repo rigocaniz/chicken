@@ -361,6 +361,10 @@ input.ng-dirty.ng-invalid {
     background: #03a9f4;
 }
 
+.success {
+    background: #4caf50;
+}
+
 .warning {
     background: #f34a15;
 }
@@ -961,13 +965,14 @@ div.inactive-key{
 
 
 .total{
-    background: #00BCD4;
+    background: #eeeeee;
     font-size: 25px;
     font-weight: bold;
-    color: white;
+    color: #104290;
     text-align: right;
     padding: 0px 22px;
     border-radius: 4px;
+    border: 1px solid #cccccc;
 }
 
 .monto input[type=number] {

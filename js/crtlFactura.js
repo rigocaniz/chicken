@@ -27,19 +27,34 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		})
 	})();
 
+	$scope.retornarTotal = function() {
+		var total = 0;
+
+		if( $scope.infoOrden.lstOrden && $scope.infoOrden.lstOrden.length ){
+			for (var i = 0; i < $scope.infoOrden.lstOrden.length; i++) {
+				var orden = $scope.infoOrden.lstOrden[ i ];
+				if( orden.cobrarTodo )
+					total += ( orden.cantidad * orden.precio );
+				console.log( orden );
+			}
+		}
+
+		return total;
+	};
+
 	$scope.totalVuelto = function(){
 		var vuelto = 0, total = 0;
-		if( $scope.infoOrden.total > 0 ){
+		if( $scope.retornarTotal() > 0 ){
 			for (var i = 0; i < $scope.facturacion.lstFormasPago.length; i++) {
 				var pago = $scope.facturacion.lstFormasPago[ i ];
-				if( pago.monto && pago.monto > 0 ){
+				if( pago.monto && pago.monto > 0 && pago.idFormaPago == 1 ){
 					total += pago.monto;
 				}
 			}
 		}
 
 		if( total > 0 )
-			vuelto = total - ( $scope.infoOrden.total > 0 ? $scope.infoOrden.total : 0 );
+			vuelto = total - ( $scope.retornarTotal() > 0 ? $scope.retornarTotal() : 0 );
 
 		return vuelto;
 	};
@@ -51,15 +66,29 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		console.log( orden );
 		$scope.miIndex = -1;
 		$scope.dialOrdenBusqueda.hide();
+		$scope.facturacion.numeroTicket = angular.copy( parseInt( orden.numeroTicket ) );
 		$timeout(function () {
 			$scope.modalInfo( orden, true );
 		});
+	};
+
+	$scope.consultafacturacion = function(){
+		$http.post('consultas.php',{
+		    opcion : "consultaFacturacion",
+		    accion : $scope.accion,
+		    data   : $scope.facturacion
+		}).success(function(data){
+		    console.log(data);
+
+		    
+		})
 	};
 	
 	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% DIALOGO PARA MAS INFORMACION DE ORDEN %%%%%%%%%%%%%%%%%%%%%% */
 	$scope.infoOrden = {};
 	$scope.deBusqueda = false;
 	$scope.modalInfo = function ( orden, deBusqueda ) {
+		console.log("cargando");
 		if ( $scope.$parent.loading )
 			return false;
 
@@ -75,12 +104,17 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 
 		$scope.$parent.loading = true;
 		$scope.infoOrden = orden;
-		$http.post('consultas.php', { opcion : 'lstDetalleOrdenCliente', idOrdenCliente : orden.idOrdenCliente, todo : $scope.todoDetalle })
+		$http.post('consultas.php', { 
+			opcion         : 'lstDetalleOrden',
+			idOrdenCliente :
+			orden.idOrdenCliente, 
+			todo           : $scope.todoDetalle
+		})
 		.success(function (data) {
+			console.log( data );
 			$scope.$parent.loading    = false;
-			if ( data.lst ) {
-				$scope.infoOrden.lstOrden = data.lst;
-				$scope.infoOrden.total    = data.total;
+			if ( data.length ) {
+				$scope.infoOrden.lstOrden = data;
 			}
 		});
 	};

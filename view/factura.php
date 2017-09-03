@@ -19,13 +19,14 @@
 					</a>
 				</li>
 			</ul>
+
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuFactura=='facturar'}" ng-show="menuFactura=='facturar'">
 					<div class="col-md-12">
 						<div class="panel panel-primary">
 							<div class="panel-heading">
 								<h3 class="panel-title">
-									<span class="glyphicon glyphicon-list-alt"></span> Facturar
+									<span class="glyphicon glyphicon-list-alt"></span> FACTURAR
 								</h3>
 							</div>
 							<div class="panel-body">
@@ -36,7 +37,7 @@
 											<input type="text" id="searchPrincipal" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )">
 										</div>
 										<div class="col-sm-4">
-											<button type="button" class="btn btn-info" ng-click="buscarCliente( facturacion.datosCliente.nit, 'principal' );">
+											<button type="button" class="btn btn-info" ng-click="buscarCliente( facturacion.datosCliente.nit, 'principal' );" readonly>
 												<span class="glyphicon glyphicon-search"></span>
 											</button>
 										</div>
@@ -61,84 +62,105 @@
 										<div class="col-sm-4">
 											<input type="text" class="form-control" ng-model="facturacion.datosCliente.nombre" ng-disabled="facturacion.datosCliente.idCliente!=1">
 										</div>
-										<label class="col-sm-2 control-label">DIRECCION</label>
-										<div class="col-sm-5">
+										<label class="col-sm-2 col-lg-1 control-label">DIRECCION</label>
+										<div class="col-sm-5 col-lg-6">
 											<input type="text" class="form-control" ng-model="facturacion.datosCliente.direccion" ng-disabled="facturacion.datosCliente.idCliente!=1">
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="col-sm-1 control-label">TICKET</label>
-										<div class="col-sm-4">
+										<div class="col-sm-4 col-md-3 col-lg-2">
 											<input type="text" id="ticket" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="buscarTicket">
 										</div>
 										<button type="button" class="btn btn-primary" ng-click="buscarOrdenTicket()">
-											Buscar
+                                            <span class="glyphicon glyphicon-search"></span> Buscar
 										</button>
-									</div>
-
+                                        <button type="button" class="btn btn-danger" ng-click="buscarOrdenTicket()" ng-show="">
+                                            <span class="glyphicon glyphicon-refresh"></span> Cambiar
+                                        </button>
+									</div>                                    
                                     <div class="row">
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-6 col-md-5 col-lg-4">
                                             <fieldset class="fieldset">
                                                 <legend class="legend info">FORMAS DE PAGO</legend>
                                                 <div class="form-group">
-                                                    <label class="col-md-4 col-lg-3 control-label">TOTAL A COBRAR</label>
-                                                    <div class="col-md-6 col-lg-5 monto">
-                                                        <input type="number" class="form-control" ng-model="infoOrden.total" disabled>
+                                                    <label class="col-md-5 col-lg-5 control-label">TOTAL A COBRAR</label>
+                                                    <div class="col-md-6 col-lg-6 ">
+                                                        <div class="total">
+                                                            Q. {{ retornarTotal() | number: 2 }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group" ng-repeat="formaPago in facturacion.lstFormasPago">
-                                                    <label class="col-md-4 col-lg-3 control-label">{{ formaPago.formaPago }}</label>
-                                                    <div class="col-md-6 col-lg-5 monto">
+                                                    <label class="col-md-5 col-lg-5 control-label">{{ formaPago.formaPago }}</label>
+                                                    <div class="col-md-6 col-lg-6 monto">
                                                         <input type="number" class="form-control" ng-model="formaPago.monto">
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label class="col-md-4 col-lg-3 control-label">VUELTO</label>
-                                                    <div class="col-md-6 col-lg-5">
+                                                    <label class="col-md-5 col-lg-5 control-label">VUELTO</label>
+                                                    <div class="col-md-6 col-lg-6">
                                                         <div class="total">
-                                                        {{ totalVuelto() }}
+                                                        {{ totalVuelto() | number: 2 }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <div class="text-center">
-                                                        <button type="button" class="btn btn-info">
+                                                        <button type="button" class="btn btn-info" ng-click="consultafacturacion()">
                                                             <span class="glyphicon glyphicon-saved"></span> FACTURAR
                                                         </button>
                                                     </div>
                                                 </div>
                                             </fieldset>
                                         </div>
-                                        <div class="col-sm-6">
-                                            <fieldset class="fieldset">
-                                                <legend class="legend2">DETALLE ORDEN</legend>
+                                        <div class="col-sm-6 col-md-7 col-lg-8">
+                                            <fieldset class="fieldset" ng-show="infoOrden.lstOrden.length">
+                                                <legend class="legend info">DETALLE ORDEN</legend>
                                                 <div class="table-responsive">
-                                                    <table class="table table-hover">
+                                                    <table class="table table-hover table-striped">
                                                         <thead>
                                                             <tr>
-                                                                <th class="text-center">Cant.</th>
-                                                                <th class="text-center">Orden</th>
-                                                                <th class="text-center">Subtotal</th>
+                                                                <th class="text-center">Cobrar</th>
+                                                                <th class="text-center col-sm-4">Orden</th>
+                                                                <th class="text-center col-sm-2">Cant.</th>
+                                                                <th class="text-center col-sm-2">Precio</th>
+                                                                <th class="text-center col-sm-3">Subtotal</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr ng-repeat="item in infoOrden.lstOrden track by $index">
-                                                                <td class="text-center">{{item.cantidad}}</td>
+                                                            <tr ng-repeat="item in infoOrden.lstOrden track by $index" ng-class="{'warning': !item.cobrarTodo}">
+                                                                <td class="text-center">
+                                                                    <button type="button" class="btn btn-sm btn-default" ng-click="item.cobrarTodo=!item.cobrarTodo">
+                                                                        <span class="glyphicon " ng-class="{'glyphicon-check': item.cobrarTodo, 'glyphicon-unchecked': !item.cobrarTodo}"></span>
+                                                                    </button>
+                                                                </td>
                                                                 <td>
-                                                                    <button type="button" class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}"
-                                                                        ng-click="item.showTipoServicio=!item.showTipoServicio">
+                                                                    <div class="label-border btn-sm" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}" title="{{ item.tipoServicio }}" data-toggle="tooltip" data-placement="top" tooltip>
                                                                         <span ng-show="item.idTipoServicio==2">R</span>
                                                                         <span ng-show="item.idTipoServicio==3">D</span>
                                                                         <span ng-show="item.idTipoServicio==1">L</span>
-                                                                    </button>
+                                                                    </div>
                                                                     <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
-                                                                    <span>{{item.descripcion}}</span>
+                                                                    <span>{{ item.descripcion }}</span>
                                                                 </td>
-                                                                <td class="text-right">{{item.subTotal | number:2}}</td>
+                                                                <td class="text-center">
+                                                                    <input type="number" class="form-control" ng-model="item.cantidad" max="{{ item.maximo }}" min="1" ng-disabled="!item.cobrarTodo">
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    {{ item.precio | number: 2 }}
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    {{ item.cantidad * item.precio | number:2 }}
+                                                                </td>
                                                             </tr>
                                                             <tr>
-                                                                <td></td><td class="text-right"><strong>TOTAL</strong></td>
-                                                                <td class="text-right"><b>Q. {{infoOrden.total | number:2}}</b></td>
+                                                                <td colspan="4" class="text-right">
+                                                                    <strong>TOTAL</strong>
+                                                                </td>
+                                                                <td class="text-right" style="">
+                                                                    <strong>Q. {{ retornarTotal() | number: 2 }}</strong>
+                                                                </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -151,35 +173,6 @@
                                 <!--
                                 {{ infoOrden | json }}
 								{{ facturacion | json }}
-								<table class="table table-hover">
-									<thead>
-										<tr>
-											<th></th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td></td>
-										</tr>
-									</tbody>
-								</table>
-								<button type="button" class="btn btn-info">Descripción Personalizada</button>
-								<table class="table table-hover">
-									<thead>
-										<tr>
-											<th></th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td></td>
-										</tr>
-									</tbody>
-								</table>
-								<div class="text-center">
-									<button type="button" class="btn btn-success">Facturar</button>
-									<button type="button" class="btn btn-info">Cancelar</button>
-								</div>
 								-->
 							</div>
 						</div>
