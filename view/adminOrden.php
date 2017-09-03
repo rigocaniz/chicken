@@ -3,22 +3,22 @@
 		<div class="col-xs-3">
 			<div class="btn-group" role="group">
 				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='menu', 'btn-default':tipoVista!='menu'}" 
-					ng-click="cambiarVista( 'menu' )" title="Menú: M">
+					ng-click="cambiarVista( 'menu' )" title="{ ALT + M }">
 					<span class="glyphicon glyphicon-cutlery"></span>
 				</button>
 				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='dividido', 'btn-default':tipoVista!='dividido'}" 
-					ng-click="cambiarVista( 'dividido' )" title="Dividido: D">
+					ng-click="cambiarVista( 'dividido' )" title="{ ALT + D }">
 					<b>Dividido</b>
 				</button>
 				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='ticket', 'btn-default':tipoVista!='ticket'}" 
-					ng-click="cambiarVista( 'ticket' )" title="Ticket: T">
+					ng-click="cambiarVista( 'ticket' )" title="{ ALT + T }">
 					<span class="glyphicon glyphicon-bookmark"></span>
 				</button>
 			</div>
 		</div>
 		<div class="col-xs-5">
 			<div class="col-xs-7 text-right">
-				<button type="button" class="btn btn-sm btn-default" title="Menú { ESPACIO }" ng-click="dialogoConsultaPersonal( 'menu' )">
+				<button type="button" class="btn btn-sm btn-default" title="{ ALT + U }" ng-click="dialogoConsultaPersonal( 'menu' )">
 					<span class="glyphicon glyphicon-cutlery"></span> 
 					<b>{{user.nombres}} {{user.apellidos}}</b>
 				</button>
@@ -196,7 +196,7 @@
 									<tr>
 										<th></th>
 										<th>Orden</th>
-										<th>Tipo Servicio</th>
+										<th>Lapso</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -222,7 +222,9 @@
 												<span class="glyphicon glyphicon-gift"></span>
 											</span>
 										</td>
-										<td>{{item.tipoServicio}}</td>
+										<td>
+											<span>{{tiempoTranscurrido( item.fechaRegistro )}}</span>
+										</td>
 									</tr>
 								</tbody>
 							</table>
@@ -256,15 +258,6 @@
 		</button>
 		<!-- SELECCION POR TIPO DE SERVICIO -->
 		<div class="tipo-servicio">
-		<!--
-			<span class="estado-menu default">P <span class="badge">{{ticket.total.pendientes}}</span></span>
-			<span class="estado-menu info">C <span class="badge">{{ticket.total.cocinando}}</span></span>
-			<span class="estado-menu primary">L <span class="badge">{{ticket.total.listos}}</span></span>
-			<span class="estado-menu success">S <span class="badge">{{ticket.total.servidos}}</span></span>
-			<span ng-show="seleccionMenu.count.restaurante>0" class="label label-success">
-				R <span class="badge">{{seleccionMenu.count.restaurante}}</span>
-			</span>
-		-->
             <span class="estado-menu primary" ng-show="seleccionMenu.count.llevar>0">
             	L <span class="badge">{{seleccionMenu.count.llevar}}</span>
             </span>

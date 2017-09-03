@@ -766,9 +766,9 @@ div.active-key{
 
 div.inactive-key{
     border: solid 1px transparent;
-    filter: opacity(0.7);
-    -moz-filter: opacity(0.7);
-    -webkit-filter: opacity(0.7);
+    opacity: 0.7;
+    -moz-opacity: 0.7;
+    -webkit-opacity: 0.7;
 }
 
 .panel-menu .encabezado{

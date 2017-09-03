@@ -268,6 +268,7 @@ class Orden
 					$sql = "CALL consultaDetalleOrdenCombo( 'insert', NULL, {$idOrdenCliente}, {$item->idMenu}, {$item->cantidad}, NULL, {$item->idTipoServicio}, NULL, NULL );";
 
 		 		if( $rs = $this->con->query( $sql ) ){
+		 			echo $sql . "_";
 		 			@$this->con->next_result();
 		 			if( $row = $rs->fetch_object() ) {
 						$this->respuesta = $row->respuesta;
@@ -289,9 +290,7 @@ class Orden
 		 			break;
 		 		}
 		 		
-		 		if ( $this->respuesta == 'danger' )
-		 			break;
-
+		 		if ( $this->respuesta == 'danger' ) break;
 			endforeach;
 
 			if ( $this->respuesta == 'success' ) {
@@ -359,7 +358,6 @@ class Orden
 				    tipoServicio,
 				    idDestinoMenu,
 				    destinoMenu,
-				    usuarioResponsable,
 				    fechaRegistro,
 				    perteneceCombo,
     				idDetalleOrdenCombo,
@@ -500,13 +498,13 @@ class Orden
 
 				// SI PERTENECE A COMBO
 				if ( $row->perteneceCombo ) {
-					$row->idMenu             = 0;
-					$row->idDetalleOrdenMenu = 0;
+					//$row->idMenu             = 0;
+					//$row->idDetalleOrdenMenu = 0;
 					$precioMenu              = $row->precioCombo;
 				}
 				else{
-					$row->idCombo             = 0;
-					$row->idDetalleOrdenCombo = 0;
+					//$row->idCombo             = 0;
+					//$row->idDetalleOrdenCombo = 0;
 					$precioMenu               = $row->precio;
 				}
 
@@ -674,7 +672,7 @@ class Orden
 
 		//// VALIDA EL ESTADO DE ORDEN ////
 		if ( $idEstadoOrden == 'valid' )
-			$where .= " AND ( idEstadoOrden = 1 OR idEstadoOrden = 2 ) ";
+			$where .= " AND ( idEstadoOrden = 1 OR idEstadoOrden = 2 OR idEstadoOrden = 3 ) ";
 
 		else if ( $idEstadoOrden != 'all' )
 			$where .= " AND ( idEstadoOrden = {$idEstadoOrden} ) ";
@@ -766,6 +764,7 @@ class Orden
 					'imagen'               => ( strlen( (string)$img ) ? $img : 'img-menu/notFound.png' ),
 					'idTipoServicio'       => $row->idTipoServicio,
 					'tipoServicio'         => $row->tipoServicio,
+					'fechaRegistro'        => $row->fechaRegistro,
 				);
 
 				$lst[ $ixTicket ]->total->total++;
@@ -1033,6 +1032,7 @@ class Orden
 			(object)array(
 				'accion'         => 'ordenPrincipalCancelada',
 				'idOrdenCliente' => $idOrdenCliente,
+				'lstDetalle'     => $this->lstMenuAgregado( "", "", $idOrdenCliente ),
 			) 
 		);
  	}
