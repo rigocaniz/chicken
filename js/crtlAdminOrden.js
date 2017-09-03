@@ -175,7 +175,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 		var lst = [], idEstadoDestino = 0;
 
-		if ( $scope.idEstadoOrden > 1 && $scope.idEstadoOrden <= 4 ) 
+		if ( $scope.idEstadoOrden >= 1 && $scope.idEstadoOrden <= 3 ) 
 			idEstadoDestino = $scope.idEstadoOrden + 1;
 
 		for (var i = 0; i < $scope.lstMenus[ $scope.ixMenuActual ].detalle.length; i++) {
@@ -184,14 +184,13 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			// SI ESTA SELECCIONADO
 			if ( item.selected )
 				lst.push({
+					numeroTicket        : item.numeroTicket,
 					idMenu              : item.idMenu,
 					cantidad            : item.cantidad,
 					idDetalleOrdenMenu  : item.idDetalleOrdenMenu,
 					idDetalleOrdenCombo : item.idDetalleOrdenCombo
 				});
 		}
-
-		console.log( lst );
 
 		// REALIZA CONSULTA HACIA EL SERVIDOR
 		if ( idEstadoDestino > 0 && lst.length ) 
@@ -638,29 +637,35 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 		// SI ES INDIVIDUAL
 		if ( ixDetalle != undefined ) {
-			var valor          = -1;
-			var idTipoServicio = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ ixDetalle ].idTipoServicio;
 
-			// REALIZA FOCUS AL ELEMENTO SELECCIONADO
-			$scope[ $scope.panel.focus ] = ixDetalle;
+			// SOLO SI LA ORDEN ESTA LISTA => PASA A SERVIR
+			if ( $scope.lstTickets[ $scope.ixTicketActual ].detalle[ ixDetalle ].idEstadoDetalleOrden == 3 )
+			{
+				var valor          = -1;
+				var idTipoServicio = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ ixDetalle ].idTipoServicio;
 
-			if ( seleccionado )
-				valor = 1;
+				// REALIZA FOCUS AL ELEMENTO SELECCIONADO
+				$scope[ $scope.panel.focus ] = ixDetalle;
 
-			if ( idTipoServicio == 1 )
-				$scope.seleccionTicket.count.llevar += valor;
+				if ( seleccionado )
+					valor = 1;
 
-			else if ( idTipoServicio == 2 )
-				$scope.seleccionTicket.count.restaurante += valor;
+				if ( idTipoServicio == 1 )
+					$scope.seleccionTicket.count.llevar += valor;
 
-			else if ( idTipoServicio == 3 )
-				$scope.seleccionTicket.count.domicilio += valor;
-				
-			$scope.seleccionTicket.count.total += valor;
+				else if ( idTipoServicio == 2 )
+					$scope.seleccionTicket.count.restaurante += valor;
 
-			// SELECCION O DESELECCION
-			$scope.lstTickets[ $scope.ixTicketActual ].detalle[ ixDetalle ].selected = seleccionado;
+				else if ( idTipoServicio == 3 )
+					$scope.seleccionTicket.count.domicilio += valor;
+					
+				$scope.seleccionTicket.count.total += valor;
 
+				// SELECCION O DESELECCION
+				$scope.lstTickets[ $scope.ixTicketActual ].detalle[ ixDetalle ].selected = seleccionado;
+
+			}
+			
 			// SI EL TOTAL ES MAYOR A CERO
 			if ( $scope.seleccionTicket.count.total )
 				$scope.seleccionTicket.si = true;
@@ -670,28 +675,34 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			$scope.seleccionTicket.count.llevar      = 0;
 			$scope.seleccionTicket.count.restaurante = 0;
 			$scope.seleccionTicket.count.domicilio   = 0;
-			$scope.seleccionTicket.count.total  	   = 0;
+			$scope.seleccionTicket.count.total  	 = 0;
 
-			for (var i = 0; i < $scope.lstTickets[ $scope.ixTicketActual ].detalle.length; i++) {
-				if ( seleccionado ) {
-					var idTipoServicio = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ i ].idTipoServicio;
+			for (var i = 0; i < $scope.lstTickets[ $scope.ixTicketActual ].detalle.length; i++)
+			{
+				// SOLO SI ES ESTADO 3 (LISTO)
+				if ( $scope.lstTickets[ $scope.ixTicketActual ].detalle[ i ].idEstadoDetalleOrden == 3 ) 
+				{
+					if ( seleccionado ) {
+						var idTipoServicio = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ i ].idTipoServicio;
 
-					if ( idTipoServicio == 1 )
-						$scope.seleccionTicket.count.llevar++;
+						if ( idTipoServicio == 1 )
+							$scope.seleccionTicket.count.llevar++;
 
-					else if ( idTipoServicio == 2 )
-						$scope.seleccionTicket.count.restaurante++;
+						else if ( idTipoServicio == 2 )
+							$scope.seleccionTicket.count.restaurante++;
 
-					else if ( idTipoServicio == 3 )
-						$scope.seleccionTicket.count.domicilio++;
+						else if ( idTipoServicio == 3 )
+							$scope.seleccionTicket.count.domicilio++;
 
-					$scope.seleccionTicket.count.total++;
+						$scope.seleccionTicket.count.total++;
+					}
+
+					$scope.lstTickets[ $scope.ixTicketActual ].detalle[ i ].selected = seleccionado;
 				}
-
-				$scope.lstTickets[ $scope.ixTicketActual ].detalle[ i ].selected = seleccionado;
 			}
 
-			if ( seleccionado )
+			// SI EXISTE AL MENOS UN ELEMENTO SELECCIONADO
+			if ( $scope.seleccionTicket.count.total > 0 )
 				$scope.seleccionTicket.si = true;
 		}
 	};
@@ -735,8 +746,8 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				}
 			}
 
-			// SI SE ENCONTRO ELEMENTO
-			if ( index >= 0 ) {
+			// SI SE ENCONTRO ELEMENTO Y ESTA EN ESTADO LISTA => PARA SERVIR
+			if ( index >= 0 && $scope.lstTickets[ $scope.ixTicketActual ].detalle[ index ].idEstadoDetalleOrden == 3 ) {
 
 				// ENFOCA EL ELEMENTO ACTUAL
 				$scope[ $scope.panel.focus ] = index;
@@ -968,13 +979,13 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		{
 			var estadoAnterior = datos.data.idEstadoOrden - 1;
 
-			// CONSULTA LAS ORDENES PENDIENTES DEL ESTADO ANTERIOR
-			if ( $scope.idEstadoOrden == estadoAnterior )
+			for (var i = 0; i < datos.data.lstOrdenes.length; i++) 
 			{
-				for (var i = 0; i < datos.data.lstOrdenes.length; i++) 
-				{
-					var item = datos.data.lstOrdenes[ i ];
+				var item = datos.data.lstOrdenes[ i ];
 
+				// CONSULTA LAS ORDENES PENDIENTES DEL ESTADO ANTERIOR
+				if ( $scope.idEstadoOrden == estadoAnterior )
+				{
 					for (var im = 0; im < $scope.lstMenus.length; im++) 
 					{
 						var menu = $scope.lstMenus[ im ];
@@ -997,8 +1008,54 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 						}
 					}
 
-				}
+				} // FIN CAMBIO EN ESTADO ORDEN
+
+				// RECORRE TICKETS
+				for (var it = 0; it < $scope.lstTickets.length; it++) 
+				{
+					var ticket = $scope.lstTickets[ it ];
+
+					// SI EXISTE EL NUMERO DE TICKET
+					if ( ticket.numeroTicket == item.numeroTicket  ) 
+					{
+						var index = -1;
+
+						for (var id = 0; id < ticket.detalle.length; id++) 
+						{
+							if ( ticket.detalle[ id ].idDetalleOrdenMenu == item.idDetalleOrdenMenu ) {
+								index = id;
+								break;
+							}
+						}
+
+						if ( index >= 0 ) 
+						{
+							// CAMBIA DE ESTADO A DETALLE
+							$scope.lstTickets[ it ].detalle[ index ].idEstadoDetalleOrden = datos.data.idEstadoOrden;
+
+							// CAMBIO DE ESTADO
+							if ( estadoAnterior == 1 ) {
+								$scope.lstTickets[ it ].total.pendientes--;
+								$scope.lstTickets[ it ].total.cocinando++;
+							}
+							else if ( estadoAnterior == 2 ) {
+								$scope.lstTickets[ it ].total.cocinando--;
+								$scope.lstTickets[ it ].total.listos++;
+							}
+							else if ( estadoAnterior == 3 ) {
+								$scope.lstTickets[ it ].total.listos--;
+								$scope.lstTickets[ it ].total.servidos++;
+							}
+						}
+
+						// SI ES EL ELEMENTO ACTUAL CAMBIA IX FOCUS
+						if ( it == $scope.ixTicketActual )
+							$scope.ixMenuFocus = -1;
+					}
+				}				
+
 			}
+
 		}
 
 		$scope.$apply();

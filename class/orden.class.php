@@ -1119,7 +1119,7 @@ class Orden
  		return $this->getRespuesta();
  	}
 
- 	// CAMBIA ESTADO DE ORDENES
+ 	// CAMBIA ESTADO DE ORDENES ---> DETALLE
  	public function cambioEstadoOrden( $idEstadoOrden, $lstOrdenes )
  	{
  		$this->con->query( "START TRANSACTION" );
