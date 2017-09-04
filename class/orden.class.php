@@ -268,7 +268,6 @@ class Orden
 					$sql = "CALL consultaDetalleOrdenCombo( 'insert', NULL, {$idOrdenCliente}, {$item->idMenu}, {$item->cantidad}, NULL, {$item->idTipoServicio}, NULL, NULL );";
 
 		 		if( $rs = $this->con->query( $sql ) ){
-		 			echo $sql . "_";
 		 			@$this->con->next_result();
 		 			if( $row = $rs->fetch_object() ) {
 						$this->respuesta = $row->respuesta;

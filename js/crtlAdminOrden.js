@@ -991,159 +991,214 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.$on('infoNode', function( event, datos ) {
 		console.log( 'DTS::', datos );
 
-		if ( datos.accion == 'cambioEstadoDetalleOrden'  ) 
+
+		switch( datos.accion )
 		{
-			var estadoAnterior = datos.data.idEstadoOrden - 1;
+			// CANCELACION DE ORDEN PRINCIPAL
+			case 'ordenPrincipalCancelada':
+				var ixTicket = -1;
 
-			for (var i = 0; i < datos.data.lstOrdenes.length; i++) 
-			{
-				var item = datos.data.lstOrdenes[ i ];
-
-				// CONSULTA LAS ORDENES PENDIENTES DEL ESTADO ANTERIOR
-				if ( $scope.idEstadoOrden == estadoAnterior )
+				// RECORRE TICKETS
+				for (var it = 0; it < $scope.lstTickets.length; it++)
 				{
-					for (var im = 0; im < $scope.lstMenus.length; im++) 
+					if ( $scope.lstTickets[ it ].idOrdenCliente == datos.idOrdenCliente )
 					{
-						var menu = $scope.lstMenus[ im ];
-						if ( menu.idMenu == item.idMenu  ) 
+						ixTicket = it;
+						break;
+					}
+				}
+
+				// SI SE ENCONTRO EL TICKET CANCELADO
+				if ( ixTicket >= 0 ) 
+				{
+					// SI ES EL ACTUAL LO ELIMINA
+					if ( ixTicket == $scope.ixTicketActual )
+						$scope.ixTicketActual = -1;
+
+					$scope.lstTickets.splice( ixTicket, 1 );
+				}
+
+
+				// RECORRE DETALLE CANCELADO
+				for (var id = 0; id < datos.lstDetalle.length; id++) 
+				{
+					for (var ic = 0; ic < $scope.lstMenus.length; ic++) 
+					{
+						// SI SE ENCUENTRA EL MENU
+						if ( datos.lstDetalle[ id ].idMenu == $scope.lstMenus[ ic ].idMenu ) 
 						{
-							for (var id = 0; id < menu.detalle.length; id++) 
+							for (var im2 = 0; im2 < $scope.lstMenus[ ic ].detalle.length; im2++) 
 							{
-								if ( menu.detalle[ id ].idDetalleOrdenMenu == item.idDetalleOrdenMenu ) {
-									$scope.lstMenus[ im ].numMenus--;
-									$scope.lstMenus[ im ].detalle.splice( id, 1 );
+								if ( $scope.lstMenus[ ic ].detalle[ im2 ].idDetalleOrdenMenu == datos.lstDetalle[ id ].idDetalleOrdenMenu )
+								{
+									$scope.lstMenus[ ic ].detalle.splice( im2, 1 );
+
+									// SI NO EXISTE DETALLE SE ELIMINA EL MENU
+									if ( $scope.lstMenus[ ic ].detalle.length == 0 ) {
+										$scope.lstMenus.splice( ic, 1 );
+									}
+
+									break;
+								}
+							}
+						}
+					}
+				}
+			break;
+
+			// SI ES CAMBIO DE ESTADO DE ORDEN
+			case 'cambioEstadoDetalleOrden':
+				var estadoAnterior = datos.data.idEstadoOrden - 1;
+
+				for (var i = 0; i < datos.data.lstOrdenes.length; i++)
+				{
+					var item = datos.data.lstOrdenes[ i ];
+
+					// CONSULTA LAS ORDENES PENDIENTES DEL ESTADO ANTERIOR
+					if ( $scope.idEstadoOrden == estadoAnterior )
+					{
+						for (var im = 0; im < $scope.lstMenus.length; im++) 
+						{
+							var menu = $scope.lstMenus[ im ];
+							if ( menu.idMenu == item.idMenu  ) 
+							{
+								for (var id = 0; id < menu.detalle.length; id++) 
+								{
+									if ( menu.detalle[ id ].idDetalleOrdenMenu == item.idDetalleOrdenMenu ) {
+										$scope.lstMenus[ im ].numMenus--;
+										$scope.lstMenus[ im ].detalle.splice( id, 1 );
+										break;
+									}
+								}
+
+								if ( !$scope.lstMenus[ im ].detalle.length ) {
+									$scope.ixMenuActual = -1;
+									$scope.ixMenuFocus = -1;
+									$scope.lstMenus.splice( im, 1 );
+								}
+							}
+						}
+					} // FIN CAMBIO EN ESTADO ORDEN
+
+					// RECORRE TICKETS
+					for (var it = 0; it < $scope.lstTickets.length; it++) 
+					{
+						var ticket = $scope.lstTickets[ it ];
+
+						// SI EXISTE EL NUMERO DE TICKET
+						if ( ticket.numeroTicket == item.numeroTicket  ) 
+						{
+							var index = -1;
+
+							for (var id = 0; id < ticket.detalle.length; id++) 
+							{
+								if ( ticket.detalle[ id ].idDetalleOrdenMenu == item.idDetalleOrdenMenu ) {
+									index = id;
 									break;
 								}
 							}
 
-							if ( !$scope.lstMenus[ im ].detalle.length ) {
-								$scope.ixMenuActual = -1;
-								$scope.ixMenuFocus = -1;
-								$scope.lstMenus.splice( im, 1 );
+							if ( index >= 0 ) 
+							{
+								// CAMBIA DE ESTADO A DETALLE
+								$scope.lstTickets[ it ].detalle[ index ].idEstadoDetalleOrden = datos.data.idEstadoOrden;
+
+								// CAMBIO DE ESTADO
+								if ( estadoAnterior == 1 ) {
+									$scope.lstTickets[ it ].total.pendientes--;
+									$scope.lstTickets[ it ].total.cocinando++;
+								}
+								else if ( estadoAnterior == 2 ) {
+									$scope.lstTickets[ it ].total.cocinando--;
+									$scope.lstTickets[ it ].total.listos++;
+								}
+								else if ( estadoAnterior == 3 ) {
+									$scope.lstTickets[ it ].total.listos--;
+									$scope.lstTickets[ it ].total.servidos++;
+								}
 							}
+
+							// SI TODOS LOS MENUS ESTAN SERVIDOS, SE QUITA DE LOS TICKETS PENDIENTES
+							if ( $scope.lstTickets[ it ].total.servidos == $scope.lstTickets[ it ].total.total && $scope.idEstadoOrdenTk == 1 )
+							{
+								$scope.lstTickets.splice( it, 1 );
+								$scope.ixTicketActual = -1;
+							}
+
+							// SI ES EL ELEMENTO ACTUAL CAMBIA IX FOCUS
+							if ( it == $scope.ixTicketActual )
+								$scope.ixMenuFocus = -1;
 						}
-					}
-				} // FIN CAMBIO EN ESTADO ORDEN
+					}				
+				}
+			break;
+
+			// CAMBIO DE TIPO DE SERVICIO A LA ORDEN
+			case 'cambioTipoServicio':
+				var ixTicket = -1;
 
 				// RECORRE TICKETS
 				for (var it = 0; it < $scope.lstTickets.length; it++) 
 				{
-					var ticket = $scope.lstTickets[ it ];
-
-					// SI EXISTE EL NUMERO DE TICKET
-					if ( ticket.numeroTicket == item.numeroTicket  ) 
-					{
-						var index = -1;
-
-						for (var id = 0; id < ticket.detalle.length; id++) 
-						{
-							if ( ticket.detalle[ id ].idDetalleOrdenMenu == item.idDetalleOrdenMenu ) {
-								index = id;
-								break;
-							}
-						}
-
-						if ( index >= 0 ) 
-						{
-							// CAMBIA DE ESTADO A DETALLE
-							$scope.lstTickets[ it ].detalle[ index ].idEstadoDetalleOrden = datos.data.idEstadoOrden;
-
-							// CAMBIO DE ESTADO
-							if ( estadoAnterior == 1 ) {
-								$scope.lstTickets[ it ].total.pendientes--;
-								$scope.lstTickets[ it ].total.cocinando++;
-							}
-							else if ( estadoAnterior == 2 ) {
-								$scope.lstTickets[ it ].total.cocinando--;
-								$scope.lstTickets[ it ].total.listos++;
-							}
-							else if ( estadoAnterior == 3 ) {
-								$scope.lstTickets[ it ].total.listos--;
-								$scope.lstTickets[ it ].total.servidos++;
-							}
-						}
-
-						// SI TODOS LOS MENUS ESTAN SERVIDOS, SE QUITA DE LOS TICKETS PENDIENTES
-						if ( $scope.lstTickets[ it ].total.servidos == $scope.lstTickets[ it ].total.total && $scope.idEstadoOrdenTk == 1 )
-						{
-							$scope.lstTickets.splice( it, 1 );
-							$scope.ixTicketActual = -1;
-						}
-
-						// SI ES EL ELEMENTO ACTUAL CAMBIA IX FOCUS
-						if ( it == $scope.ixTicketActual )
-							$scope.ixMenuFocus = -1;
+					if ( $scope.lstTickets[ it ].idOrdenCliente == datos.data.idOrdenCliente ) {
+						ixTicket = it;
+						break;
 					}
-				}				
-			}
-		}
-
-		// CAMBIO DE TIPO DE SERVICIO A LA ORDEN
-		else if ( datos.accion == 'cambioTipoServicio' ) 
-		{
-			var ixTicket = -1;
-
-			// RECORRE TICKETS
-			for (var it = 0; it < $scope.lstTickets.length; it++) 
-			{
-				if ( $scope.lstTickets[ it ].idOrdenCliente == datos.data.idOrdenCliente ) {
-					ixTicket = it;
-					break;
 				}
-			}
 
-			// SI ENCONTRO LA ORDEN
-			if ( ixTicket >= 0 )
-			{
+				// SI ENCONTRO LA ORDEN
+				if ( ixTicket >= 0 )
+				{
+					var lstDet = datos.data.detalleOrdenCliente.lst;
+
+					for (var ip = 0; ip < lstDet.length; ip++) 
+					{
+						for (var ic = 0; ic < lstDet[ ip ].lstDetalle.length; ic++) 
+						{
+							var lst = $scope.lstTickets[ ixTicket ].detalle;
+							for (var ix = 0; ix < lst.length; ix++) 
+							{
+								if( lst[ ix ].idDetalleOrdenMenu == lstDet[ ip ].lstDetalle[ ic ].idDetalleOrdenMenu ) 
+								{
+									$scope.lstTickets[ ixTicket ].detalle[ ix ].idTipoServicio = lstDet[ ip ].idTipoServicio;
+									break;
+								}
+							}
+						}
+					}
+				}
+
+
 				var lstDet = datos.data.detalleOrdenCliente.lst;
 
 				for (var ip = 0; ip < lstDet.length; ip++) 
 				{
-					for (var ic = 0; ic < lstDet[ ip ].lstDetalle.length; ic++) 
+					var ixMenu = -1;
+					for (var im = 0; im < $scope.lstMenus.length; im++)
 					{
-						var lst = $scope.lstTickets[ ixTicket ].detalle;
-						for (var ix = 0; ix < lst.length; ix++) 
+						if ( lstDet[ ip ].idMenu == $scope.lstMenus[ im ].idMenu ) 
 						{
-							if( lst[ ix ].idDetalleOrdenMenu == lstDet[ ip ].lstDetalle[ ic ].idDetalleOrdenMenu ) 
+							ixMenu = im;
+							break
+						}
+					}
+
+					if ( ixMenu >= 0 ) 
+					{
+						for (var id = 0; id < lstDet[ ip ].lstDetalle.length; id++) 
+						{
+							for (var idm = 0; idm < $scope.lstMenus[ ixMenu ].detalle.length; idm++) 
 							{
-								$scope.lstTickets[ ixTicket ].detalle[ ix ].idTipoServicio = lstDet[ ip ].idTipoServicio;
-								break;
+								if ( lstDet[ ip ].lstDetalle[ id ].idDetalleOrdenMenu == $scope.lstMenus[ ixMenu ].detalle[ idm ].idDetalleOrdenMenu ) 
+								{
+									$scope.lstMenus[ ixMenu ].detalle[ idm ].idTipoServicio = lstDet[ ip ].idTipoServicio;
+									break;
+								}
 							}
 						}
 					}
 				}
-			}
-
-
-			var lstDet = datos.data.detalleOrdenCliente.lst;
-
-			for (var ip = 0; ip < lstDet.length; ip++) 
-			{
-				var ixMenu = -1;
-				for (var im = 0; im < $scope.lstMenus.length; im++)
-				{
-					if ( lstDet[ ip ].idMenu == $scope.lstMenus[ im ].idMenu ) 
-					{
-						ixMenu = im;
-						break
-					}
-				}
-
-				if ( ixMenu >= 0 ) 
-				{
-					for (var id = 0; id < lstDet[ ip ].lstDetalle.length; id++) 
-					{
-						for (var idm = 0; idm < $scope.lstMenus[ ixMenu ].detalle.length; idm++) 
-						{
-							if ( lstDet[ ip ].lstDetalle[ id ].idDetalleOrdenMenu == $scope.lstMenus[ ixMenu ].detalle[ idm ].idDetalleOrdenMenu ) 
-							{
-								$scope.lstMenus[ ixMenu ].detalle[ idm ].idTipoServicio = lstDet[ ip ].idTipoServicio;
-								break;
-							}
-						}
-					}
-				}
-			}
+			break;
 		}
 
 		$scope.$apply();
