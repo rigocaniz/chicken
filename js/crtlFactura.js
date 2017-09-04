@@ -35,7 +35,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 				var orden = $scope.infoOrden.lstOrden[ i ];
 				if( orden.cobrarTodo )
 					total += ( orden.cantidad * orden.precio );
-				console.log( orden );
 			}
 		}
 
@@ -120,38 +119,9 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	};
 
 
-	// => CAMBIAR SERVICIO DE ORDEN
-	$scope.cambiarServicio = function ( idOrdenCliente, lstDetalle, idTipoServicio ) {
-		console.log( idOrdenCliente, lstDetalle, idTipoServicio );
-		if ( $scope.$parent.loading )
-			return false;
-
-		$scope.$parent.loading = true; // cargando...
-
-		// CONSULTA PRECIOS DEL MENU
-		$http.post('consultas.php', { 
-			opcion         : 'cambiarServicio',
-			idOrdenCliente : idOrdenCliente,
-			lstDetalle     : lstDetalle,
-			idTipoServicio : idTipoServicio
-		})
-		.success(function (data) {
-			console.log( data );
-
-			$scope.$parent.loading = false; // cargando...
-
-			if ( data.mensaje != undefined ) {
-				alertify.set('notifier','position', 'top-right');
-				alertify.notify( data.mensaje, data.respuesta, 3 );
-			}
-		});
-	};
-
-
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key, altDerecho )
 	{
-		//console.log( event, key, altDerecho );
 		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
 		if ( $scope.$parent.loading )
 			return false;
@@ -189,32 +159,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			},175);
 			
 		}
-
 		else if( !$scope.modalOpen() ) {
 			console.log( "prueba" );
-			/*
-			// MODO PANTALLA
-			if ( altDerecho && key == 65 ){
-				$scope.dialAccionCliente.show();
-			}
-			*/
-
-			/*
-			else if ( altDerecho && key == 68 ) $scope.cambiarVista( 'dividido' );
-			else if ( altDerecho && key == 84 ) $scope.cambiarVista( 'ticket' );
-
-			else{
-				$scope._keyInicio( key, altDerecho );
-			}
-			*/
-		}
-
-		// CUANDO ESTE ABIERTO ALGUN CUADRO DE DIALOGO
-		else{
-			// CUANDO EL DIALOGO DE NUEVA ORDEN ESTE ABIERTA
-			if ( $scope.modalOpen( 'dial_orden_cliente' ) ) {
-				
-			}
 		}
 
 	});

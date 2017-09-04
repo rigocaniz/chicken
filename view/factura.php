@@ -118,7 +118,7 @@
                                             <fieldset class="fieldset" ng-show="infoOrden.lstOrden.length">
                                                 <legend class="legend info">DETALLE ORDEN</legend>
                                                 <div class="table-responsive">
-                                                    <table class="table table-hover table-striped">
+                                                    <table class="table table-hover table-condensed">
                                                         <thead>
                                                             <tr>
                                                                 <th class="text-center">Cobrar</th>
