@@ -487,6 +487,7 @@ class Orden
 				WHERE
 				    idOrdenCliente = {$idOrdenCliente} $where
 				GROUP BY IF( perteneceCombo, idDetalleOrdenCombo, idDetalleOrdenMenu ), perteneceCombo;";
+
 		if( $rs = $this->con->query( $sql ) ) {
 			while ( $row = $rs->fetch_object() ) {
 

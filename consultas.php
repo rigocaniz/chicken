@@ -8,6 +8,7 @@ include 'class/cliente.class.php';
 include 'class/caja.class.php';
 include 'class/combo.class.php';
 include 'class/consulta.class.php';
+include 'class/facturar.class.php';
 include 'class/medida.class.php';
 include 'class/menu.class.php';
 include 'class/orden.class.php';
@@ -468,6 +469,21 @@ switch ( $data->opcion )
 		$todo  = isset( $data->todo ) ? $data->todo : false ;
 		echo json_encode( $orden->lstDetalleOrdenCliente( $data->idOrdenCliente, $todo ) );
 		break;
+
+		/////////////////////////////////////
+		//////////////////////////////////
+	case 'lstDetalleOrden':// 	prueba
+		$factura = new Factura();
+		$todo  = isset( $data->todo ) ? $data->todo : false ;
+		echo json_encode( $factura->lstDetalleOrdenCliente( $data->idOrdenCliente, $todo ) );
+		break;
+
+	case 'consultaFacturacion':// 	prueba
+		$factura = new Factura();
+		echo json_encode( $factura->consultaFactura( $data->accion, $data ) );
+		break;
+		//////////////////////////////////
+		/////////////////////////////////////
 
 	// LISTA DE ORDENES DETALLE => POR DESTINO
 	case 'lstOrdenPorMenu':
