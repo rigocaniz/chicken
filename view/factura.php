@@ -70,17 +70,22 @@
 									<div class="form-group">
 										<label class="col-sm-1 control-label">TICKET</label>
 										<div class="col-sm-4 col-md-3 col-lg-2">
-											<input type="text" id="ticket" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="buscarTicket">
+                                            <div ng-show="!facturacion.numeroTicket">
+											     <input type="text" id="ticket" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="buscarTicket">
+                                            </div>
+                                            <div ng-show="facturacion.numeroTicket">
+                                                <input type="text" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="facturacion.numeroTicket" disabled>
+                                            </div>
 										</div>
-										<button type="button" class="btn btn-primary" ng-click="buscarOrdenTicket()">
+										<button type="button" class="btn btn-primary" ng-click="buscarOrdenTicket()" ng-show="!facturacion.numeroTicket">
                                             <span class="glyphicon glyphicon-search"></span> Buscar
 										</button>
-                                        <button type="button" class="btn btn-danger" ng-click="buscarOrdenTicket()" ng-show="">
+                                        <button type="button" class="btn btn-danger" ng-click="facturacion.numeroTicket=null;" ng-show="facturacion.numeroTicket">
                                             <span class="glyphicon glyphicon-refresh"></span> Cambiar
                                         </button>
-									</div>                                    
+									</div>
                                     <div class="row">
-                                        <div class="col-sm-6 col-md-5 col-lg-4">
+                                        <div class="col-xs-4 col-sm-5 col-md-5 col-lg-4">
                                             <fieldset class="fieldset">
                                                 <legend class="legend info">FORMAS DE PAGO</legend>
                                                 <div class="form-group">
@@ -114,8 +119,8 @@
                                                 </div>
                                             </fieldset>
                                         </div>
-                                        <div class="col-sm-6 col-md-7 col-lg-8">
-                                            <fieldset class="fieldset" ng-show="infoOrden.lstOrden.length">
+                                        <div class="col-xs-8 col-sm-7 col-md-7 col-lg-8">
+                                            <fieldset class="fieldset" ng-show="facturacion.lstOrden.length">
                                                 <legend class="legend info">DETALLE ORDEN</legend>
                                                 <div class="table-responsive">
                                                     <table class="table table-hover table-condensed">
@@ -129,7 +134,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr ng-repeat="item in infoOrden.lstOrden track by $index" ng-class="{'warning': !item.cobrarTodo}">
+                                                            <tr ng-repeat="item in facturacion.lstOrden track by $index" ng-class="{'warning': !item.cobrarTodo}">
                                                                 <td class="text-center">
                                                                     <button type="button" class="btn btn-sm btn-default" ng-click="item.cobrarTodo=!item.cobrarTodo">
                                                                         <span class="glyphicon " ng-class="{'glyphicon-check': item.cobrarTodo, 'glyphicon-unchecked': !item.cobrarTodo}"></span>
@@ -171,7 +176,7 @@
                                 </form>
                                 <br><br>
                                 <!--
-                                {{ infoOrden | json }}
+                                {{ facturacion | json }}
 								{{ facturacion | json }}
 								-->
 							</div>

@@ -11,17 +11,26 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			nombre       : '',
 			direccion    : '',
 		},
-		importe: null,
-		ticket        : null,
+		importe       : null,
+		numeroTicket  : null,
 		noFactura     : null,
-		lstFormasPago : []
+		lstFormasPago : [],
+		lstOrden      : [],
 	};
+
+	$scope.$watch('buscarTicket', function( _new, _old ){
+		console.log( "new:::", _new, " old:::", _old );
+		if( _old != _new ) {
+			$scope.numeroTicket = null;
+			$scope.facturacion.lstOrden = [];
+		}
+	});
 
 	($scope.catFormasPago = function(){
 		$http.post('consultas.php',{
 		    opcion : "catFormasPago"
 		}).success(function(data){
-		    console.log(data);
+//		    console.log(data);
 		    $scope.lstFormasPago = data;
 		    $scope.facturacion.lstFormasPago = data;
 		})
@@ -30,9 +39,9 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	$scope.retornarTotal = function() {
 		var total = 0;
 
-		if( $scope.infoOrden.lstOrden && $scope.infoOrden.lstOrden.length ){
-			for (var i = 0; i < $scope.infoOrden.lstOrden.length; i++) {
-				var orden = $scope.infoOrden.lstOrden[ i ];
+		if( $scope.facturacion.lstOrden && $scope.facturacion.lstOrden.length ){
+			for (var i = 0; i < $scope.facturacion.lstOrden.length; i++) {
+				var orden = $scope.facturacion.lstOrden[ i ];
 				if( orden.cobrarTodo )
 					total += ( orden.cantidad * orden.precio );
 			}
@@ -77,9 +86,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		    accion : $scope.accion,
 		    data   : $scope.facturacion
 		}).success(function(data){
-		    console.log(data);
-
-		    
+		    console.log(data);		    
 		})
 	};
 	
@@ -87,7 +94,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	$scope.infoOrden = {};
 	$scope.deBusqueda = false;
 	$scope.modalInfo = function ( orden, deBusqueda ) {
-		console.log("cargando");
+		console.log("cargandoORDEN::: " , orden);
 		if ( $scope.$parent.loading )
 			return false;
 
@@ -113,7 +120,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			console.log( data );
 			$scope.$parent.loading    = false;
 			if ( data.length ) {
-				$scope.infoOrden.lstOrden = data;
+				$scope.facturacion.lstOrden = data;
 			}
 		});
 	};
@@ -126,7 +133,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		if ( $scope.$parent.loading )
 			return false;
 
-		console.log( !$scope.modalOpen() );
+		//console.log( !$scope.modalOpen() );
 		// TECLA C
 		if ( altDerecho && key == 67 ) {
 			$scope.buscarCliente( 'CF', 'cf' )
@@ -158,9 +165,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 				$('#nit').focus();
 			},175);
 			
-		}
-		else if( !$scope.modalOpen() ) {
-			console.log( "prueba" );
 		}
 
 	});
@@ -299,11 +303,13 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			.success(function (data) {
 				console.log( data );
 				$scope.$parent.loading = false; // cargando...
-
 				if ( Array.isArray( data ) && data.length ) {
-					$scope.buscarTicket = 0;
+					//$scope.buscarTicket = 0;
 					$scope.lstTicketBusqueda = data;
-					$scope.dialOrdenBusqueda.show();
+					if( $scope.lstTicketBusqueda.length == 1 )
+						$scope.seleccionarDeBusqueda( $scope.lstTicketBusqueda[ 0 ] );
+					else
+						$scope.dialOrdenBusqueda.show();
 				}
 				else{
 					alertify.set('notifier','position', 'top-right');
