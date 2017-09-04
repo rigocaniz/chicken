@@ -332,13 +332,13 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 					position = $( '#' + pref + id ).position().top - 19;
 
 				if ( pref === 'ixm_item_' )
-					$('.body_lst_menu').animate( { scrollTop : position }, 120 );
+					$('.body_lst_menu').animate( { scrollTop : position }, 100 );
 
 				else if ( pref === 'ixt_item_' )
-					$('.body_lst_ticket').animate( { scrollTop : position }, 120 );
+					$('.body_lst_ticket').animate( { scrollTop : position }, 100 );
 
 				else
-					$(".contenido-lst-orden").animate( { scrollTop : position }, 120 );
+					$(".contenido-lst-orden").animate( { scrollTop : position }, 100 );
 			});
 		}
 	};
@@ -953,6 +953,28 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		document.getElementById('clave').focus();
 	};
 
+
+	// *** RETORNA INDEX DE ARREGLO
+	$scope.indexArray = function ( arr, cmp, _value ) {
+		var index = -1, arreglo = [];
+
+		if ( Array.isArray( arr ) )
+			arreglo = arr;
+
+		else
+			arreglo = $scope[ arr ];
+
+		for (var i = 0; i < arreglo.length; i++) {
+			if ( arreglo[ i ][ cmp ] == _value ) {
+				index = i;
+				break;
+			}
+		}	
+
+		return index;
+	};
+
+
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key, altDerecho, evento ) {
 
@@ -991,22 +1013,101 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.$on('infoNode', function( event, datos ) {
 		console.log( 'DTS::', datos );
 
-
 		switch( datos.accion )
 		{
-			// CANCELACION DE ORDEN PRINCIPAL
-			case 'ordenPrincipalCancelada':
-				var ixTicket = -1;
+			// NUEVA ORDEN
+			case 'ordenNueva':
+			case 'ordenAgregar':
+				var lstDetalle = [], ixTicket = -1;
+				for (var id = 0; id < datos.data.lstMenuAgregado.length; id++) {
 
-				// RECORRE TICKETS
-				for (var it = 0; it < $scope.lstTickets.length; it++)
-				{
-					if ( $scope.lstTickets[ it ].idOrdenCliente == datos.idOrdenCliente )
+					// SI ES DEL MISMO DESTINO
+					if ( $scope.idDestinoMenu == datos.data.lstMenuAgregado[ id ].idDestinoMenu ) 
 					{
-						ixTicket = it;
-						break;
+						var item = datos.data.lstMenuAgregado[ id ];
+						var detalleActual = {
+							esCombo              : item.perteneceCombo,
+							descripcion          : ( item.perteneceCombo ? item.menu + ' (' + item.combo + ')' : item.menu ),
+							fechaRegistro        : item.fechaRegistro,
+							idCombo              : null,
+							idDetalleOrdenCombo  : item.idDetalleOrdenCombo,
+							idDetalleOrdenMenu   : item.idDetalleOrdenMenu,
+							idEstadoDetalleOrden : item.idEstadoDetalleOrden,
+							idMenu               : item.idMenu,
+							idTipoServicio       : item.idTipoServicio,
+							imagen               : item.imagen,
+							tipoServicio         : item.tipoServicio,
+							numeroTicket         : item.numeroTicket,
+							perteneceCombo       : item.perteneceCombo,
+							imagenCombo          : null,
+							cantidad             : 1
+						};
+
+						// AGREGA DETALLE
+						lstDetalle.push( detalleActual );
+
+						// OBTIENE INDEX SI EXISTE EL MENU
+						var ixMenu = $scope.indexArray( 'lstMenus', 'idMenu', item.idMenu );
+
+						// SI NO ESTA EL MENU SE AGREGA
+						if ( ixMenu == -1 ) 
+						{
+							ixMenu = $scope.lstMenus.length;
+							$scope.lstMenus.push({
+								codigoMenu   : item.codigoMenu,
+								idMenu       : item.idMenu,
+								imagen       : item.imagen,
+								menu         : item.menu,
+								numMenus     : 0,
+								primerTiempo : item.fechaRegistro,
+								tiempoAlerta : item.tiempoAlerta,
+								detalle      : []
+							});
+						}
+
+						$scope.lstMenus[ ixMenu ].numMenus++;
+						$scope.lstMenus[ ixMenu ].detalle.push( detalleActual );
+
+						// BUSCA EN LISTA DE TICKET INDEX, Y ORDEN ES AGREGAR
+						if ( ixTicket == -1 && datos.accion == 'ordenAgregar' )
+							ixTicket = $scope.indexArray( 'lstTickets', 'idOrdenCliente', item.idOrdenCliente );
 					}
 				}
+
+				// SI EXISTE AL MENOS UN DETALLE PARA EL TICKET
+				if ( lstDetalle.length )
+				{
+					if ( datos.accion == 'ordenNueva' ) {
+						$scope.lstTickets.push({
+							idOrdenCliente   : datos.data.ordenCliente.idOrdenCliente,
+							numeroTicket     : datos.data.ordenCliente.numeroTicket,
+							responsableOrden : datos.data.ordenCliente.usuarioResponsable,
+							total : {
+								pendientes : lstDetalle.length,
+								cocinando  : 0,
+								listos     : 0,
+								servidos   : 0,
+								total      : lstDetalle.length
+							},
+							detalle : lstDetalle
+						});
+					}
+
+					// SI EXISTE EL TICKET
+					if ( ixTicket >= 0 )
+					{
+						$scope.lstTickets[ ixTicket ].detalle          = $scope.lstTickets[ ixTicket ].detalle.concat( lstDetalle );
+						$scope.lstTickets[ ixTicket ].total.total      += lstDetalle.length;
+						$scope.lstTickets[ ixTicket ].total.pendientes += lstDetalle.length;
+					}
+				}
+			break;
+
+			// CANCELACION DE ORDEN PRINCIPAL
+			case 'ordenPrincipalCancelada':
+
+				// RETORNA INDEX DE TICKET SI EXISTE
+				var ixTicket = $scope.indexArray( 'lstTickets', 'idOrdenCliente', datos.idOrdenCliente );
 
 				// SI SE ENCONTRO EL TICKET CANCELADO
 				if ( ixTicket >= 0 ) 
@@ -1022,24 +1123,22 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				// RECORRE DETALLE CANCELADO
 				for (var id = 0; id < datos.lstDetalle.length; id++) 
 				{
-					for (var ic = 0; ic < $scope.lstMenus.length; ic++) 
+					// SI SE ENCUENTRA EL MENU
+					var ic = $scope.indexArray( 'lstMenus', 'idMenu', datos.lstDetalle[ id ].idMenu );
+					
+					if ( ic >= 0 ) 
 					{
-						// SI SE ENCUENTRA EL MENU
-						if ( datos.lstDetalle[ id ].idMenu == $scope.lstMenus[ ic ].idMenu ) 
+						var im2 = $scope.indexArray( $scope.lstMenus[ ic ].detalle, 'idDetalleOrdenMenu', datos.lstDetalle[ id ].idDetalleOrdenMenu );
+
+						// SI SE ENCUENTRA DETALLE
+						if ( im2 >= 0 )
 						{
-							for (var im2 = 0; im2 < $scope.lstMenus[ ic ].detalle.length; im2++) 
-							{
-								if ( $scope.lstMenus[ ic ].detalle[ im2 ].idDetalleOrdenMenu == datos.lstDetalle[ id ].idDetalleOrdenMenu )
-								{
-									$scope.lstMenus[ ic ].detalle.splice( im2, 1 );
+							$scope.lstMenus[ ic ].detalle.splice( im2, 1 );
+							$scope.lstMenus[ ic ].numMenus--;
 
-									// SI NO EXISTE DETALLE SE ELIMINA EL MENU
-									if ( $scope.lstMenus[ ic ].detalle.length == 0 ) {
-										$scope.lstMenus.splice( ic, 1 );
-									}
-
-									break;
-								}
+							// SI NO EXISTE DETALLE SE ELIMINA EL MENU
+							if ( $scope.lstMenus[ ic ].detalle.length == 0 ) {
+								$scope.lstMenus.splice( ic, 1 );
 							}
 						}
 					}
@@ -1057,95 +1156,72 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 					// CONSULTA LAS ORDENES PENDIENTES DEL ESTADO ANTERIOR
 					if ( $scope.idEstadoOrden == estadoAnterior )
 					{
-						for (var im = 0; im < $scope.lstMenus.length; im++) 
-						{
-							var menu = $scope.lstMenus[ im ];
-							if ( menu.idMenu == item.idMenu  ) 
-							{
-								for (var id = 0; id < menu.detalle.length; id++) 
-								{
-									if ( menu.detalle[ id ].idDetalleOrdenMenu == item.idDetalleOrdenMenu ) {
-										$scope.lstMenus[ im ].numMenus--;
-										$scope.lstMenus[ im ].detalle.splice( id, 1 );
-										break;
-									}
-								}
+						var im = $scope.indexArray( 'lstMenus', 'idMenu', item.idMenu );
 
-								if ( !$scope.lstMenus[ im ].detalle.length ) {
-									$scope.ixMenuActual = -1;
-									$scope.ixMenuFocus = -1;
-									$scope.lstMenus.splice( im, 1 );
-								}
+						// SI SE ENCUENTRA EL MENU
+						if ( im >= 0 )
+						{
+							var id = $scope.indexArray( $scope.lstMenus[ im ].detalle, 'idDetalleOrdenMenu', item.idDetalleOrdenMenu );
+							if ( id >= 0 )
+							{
+								$scope.lstMenus[ im ].numMenus--;
+								$scope.lstMenus[ im ].detalle.splice( id, 1 );
+							}
+
+							if ( $scope.lstMenus[ im ].detalle.length == 0 )
+							{
+								$scope.ixMenuActual = -1;
+								$scope.ixMenuFocus = -1;
+								$scope.lstMenus.splice( im, 1 );
 							}
 						}
 					} // FIN CAMBIO EN ESTADO ORDEN
 
-					// RECORRE TICKETS
-					for (var it = 0; it < $scope.lstTickets.length; it++) 
+
+					var it = $scope.indexArray( 'lstTickets', 'numeroTicket', item.numeroTicket );
+					// SI EXISTE EL NUMERO DE TICKET
+					if ( it >= 0 )
 					{
-						var ticket = $scope.lstTickets[ it ];
+						var index = $scope.indexArray( $scope.lstTickets[ it ].detalle, 'idDetalleOrdenMenu', item.idDetalleOrdenMenu );
 
-						// SI EXISTE EL NUMERO DE TICKET
-						if ( ticket.numeroTicket == item.numeroTicket  ) 
+						if ( index >= 0 )
 						{
-							var index = -1;
+							// CAMBIA DE ESTADO A DETALLE
+							$scope.lstTickets[ it ].detalle[ index ].idEstadoDetalleOrden = datos.data.idEstadoOrden;
 
-							for (var id = 0; id < ticket.detalle.length; id++) 
-							{
-								if ( ticket.detalle[ id ].idDetalleOrdenMenu == item.idDetalleOrdenMenu ) {
-									index = id;
-									break;
-								}
+							// CAMBIO DE ESTADO
+							if ( estadoAnterior == 1 ) {
+								$scope.lstTickets[ it ].total.pendientes--;
+								$scope.lstTickets[ it ].total.cocinando++;
 							}
-
-							if ( index >= 0 ) 
-							{
-								// CAMBIA DE ESTADO A DETALLE
-								$scope.lstTickets[ it ].detalle[ index ].idEstadoDetalleOrden = datos.data.idEstadoOrden;
-
-								// CAMBIO DE ESTADO
-								if ( estadoAnterior == 1 ) {
-									$scope.lstTickets[ it ].total.pendientes--;
-									$scope.lstTickets[ it ].total.cocinando++;
-								}
-								else if ( estadoAnterior == 2 ) {
-									$scope.lstTickets[ it ].total.cocinando--;
-									$scope.lstTickets[ it ].total.listos++;
-								}
-								else if ( estadoAnterior == 3 ) {
-									$scope.lstTickets[ it ].total.listos--;
-									$scope.lstTickets[ it ].total.servidos++;
-								}
+							else if ( estadoAnterior == 2 ) {
+								$scope.lstTickets[ it ].total.cocinando--;
+								$scope.lstTickets[ it ].total.listos++;
 							}
-
-							// SI TODOS LOS MENUS ESTAN SERVIDOS, SE QUITA DE LOS TICKETS PENDIENTES
-							if ( $scope.lstTickets[ it ].total.servidos == $scope.lstTickets[ it ].total.total && $scope.idEstadoOrdenTk == 1 )
-							{
-								$scope.lstTickets.splice( it, 1 );
-								$scope.ixTicketActual = -1;
+							else if ( estadoAnterior == 3 ) {
+								$scope.lstTickets[ it ].total.listos--;
+								$scope.lstTickets[ it ].total.servidos++;
 							}
-
-							// SI ES EL ELEMENTO ACTUAL CAMBIA IX FOCUS
-							if ( it == $scope.ixTicketActual )
-								$scope.ixMenuFocus = -1;
 						}
+
+						// SI TODOS LOS MENUS ESTAN SERVIDOS, SE QUITA DE LOS TICKETS PENDIENTES
+						if ( $scope.lstTickets[ it ].total.servidos == $scope.lstTickets[ it ].total.total && $scope.idEstadoOrdenTk == 1 )
+						{
+							$scope.lstTickets.splice( it, 1 );
+							$scope.ixTicketActual = -1;
+						}
+
+						// SI ES EL ELEMENTO ACTUAL CAMBIA IX FOCUS
+						if ( it == $scope.ixTicketActual )
+							$scope.ixMenuFocus = -1;
 					}				
 				}
 			break;
 
 			// CAMBIO DE TIPO DE SERVICIO A LA ORDEN
 			case 'cambioTipoServicio':
-				var ixTicket = -1;
-
-				// RECORRE TICKETS
-				for (var it = 0; it < $scope.lstTickets.length; it++) 
-				{
-					if ( $scope.lstTickets[ it ].idOrdenCliente == datos.data.idOrdenCliente ) {
-						ixTicket = it;
-						break;
-					}
-				}
-
+				var ixTicket = $scope.indexArray( 'lstTickets', 'idOrdenCliente', datos.data.idOrdenCliente );
+				
 				// SI ENCONTRO LA ORDEN
 				if ( ixTicket >= 0 )
 				{
@@ -1168,20 +1244,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 					}
 				}
 
-
 				var lstDet = datos.data.detalleOrdenCliente.lst;
-
-				for (var ip = 0; ip < lstDet.length; ip++) 
+				for (var ip = 0; ip < lstDet.length; ip++)
 				{
-					var ixMenu = -1;
-					for (var im = 0; im < $scope.lstMenus.length; im++)
-					{
-						if ( lstDet[ ip ].idMenu == $scope.lstMenus[ im ].idMenu ) 
-						{
-							ixMenu = im;
-							break
-						}
-					}
+					var ixMenu = $scope.indexArray( 'lstMenus', 'idMenu', lstDet[ ip ].idMenu );
 
 					if ( ixMenu >= 0 ) 
 					{

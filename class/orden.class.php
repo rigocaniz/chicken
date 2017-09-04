@@ -360,7 +360,11 @@ class Orden
 				    fechaRegistro,
 				    perteneceCombo,
     				idDetalleOrdenCombo,
-    				idOrdenCliente
+    				idOrdenCliente,
+    				combo,
+    				numeroTicket,
+    				codigoMenu,
+    				tiempoAlerta
 				FROM vOrdenes
 				WHERE ";
 
