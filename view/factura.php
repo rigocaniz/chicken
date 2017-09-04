@@ -80,7 +80,7 @@
 										<button type="button" class="btn btn-primary" ng-click="buscarOrdenTicket()" ng-show="!facturacion.numeroTicket">
                                             <span class="glyphicon glyphicon-search"></span> Buscar
 										</button>
-                                        <button type="button" class="btn btn-danger" ng-click="facturacion.numeroTicket=null;" ng-show="facturacion.numeroTicket">
+                                        <button type="button" class="btn btn-warning" ng-click="facturacion.numeroTicket=null;" ng-show="facturacion.numeroTicket">
                                             <span class="glyphicon glyphicon-refresh"></span> Cambiar
                                         </button>
 									</div>
@@ -112,7 +112,7 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <div class="text-center">
-                                                        <button type="button" class="btn btn-info" ng-click="consultafacturacion()">
+                                                        <button type="button" class="btn btn-info" ng-click="consultaFacturaCliente()">
                                                             <span class="glyphicon glyphicon-saved"></span> FACTURAR
                                                         </button>
                                                     </div>
@@ -129,8 +129,8 @@
                                                                 <th class="text-center">Cobrar</th>
                                                                 <th class="text-center col-sm-4">Orden</th>
                                                                 <th class="text-center col-sm-2">Cant.</th>
-                                                                <th class="text-center col-sm-2">Precio</th>
-                                                                <th class="text-center col-sm-3">Subtotal</th>
+                                                                <th class="text-right col-sm-2">Precio</th>
+                                                                <th class="text-right col-sm-3">Subtotal</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>

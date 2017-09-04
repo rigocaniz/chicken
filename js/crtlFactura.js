@@ -14,6 +14,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		importe       : null,
 		numeroTicket  : null,
 		noFactura     : null,
+		total: 0,
 		lstFormasPago : [],
 		lstOrden      : [],
 	};
@@ -30,7 +31,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		$http.post('consultas.php',{
 		    opcion : "catFormasPago"
 		}).success(function(data){
-//		    console.log(data);
 		    $scope.lstFormasPago = data;
 		    $scope.facturacion.lstFormasPago = data;
 		})
@@ -80,14 +80,36 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		});
 	};
 
-	$scope.consultafacturacion = function(){
-		$http.post('consultas.php',{
-		    opcion : "consultaFacturacion",
-		    accion : $scope.accion,
-		    data   : $scope.facturacion
-		}).success(function(data){
-		    console.log(data);		    
-		})
+	$scope.consultaFacturaCliente = function(){
+		$scope.facturacion.total = $scope.retornarTotal();
+		var factura = $scope.facturacion;
+		
+		if( !(factura.datosCliente.idCliente && factura.datosCliente.idCliente > 0) )
+			alertify.notify('Seleccione un cliente', 'warning', 4);
+		
+		else if( !(factura.numeroTicket && factura.numeroTicket > 0) )
+			alertify.notify('Ingrese un número de Ticket válido', 'warning', 4);
+		
+		else if( !(factura.lstOrden && factura.lstOrden.length > 0) )
+			alertify.notify('La lista de ordenes está vacia', 'warning', 4);
+		
+		else if( !(factura.total && factura.total > 0) )
+			alertify.notify('El total del cobro debe ser mayor a 0', 'warning', 4);
+		/*else if(  ){
+			alertify.notify('El total del cobro debe ser mayor a 0', 'warning', 4);
+		}
+		*/
+		else{
+			$http.post('consultas.php',{
+			    opcion : "consultaFacturaCliente",
+			    accion : $scope.accion,
+			    data   : $scope.facturacion
+			}).success(function(data){
+			    console.log(data);		    
+			})
+			
+		}
+
 	};
 	
 	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% DIALOGO PARA MAS INFORMACION DE ORDEN %%%%%%%%%%%%%%%%%%%%%% */
@@ -127,21 +149,18 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 
 
 	// TECLA PARA ATAJOS RAPIDOS
-	$scope.$on('keyPress', function( event, key, altDerecho )
-	{
+	$scope.$on('keyPress', function( event, key, altDerecho ) {
 		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
 		if ( $scope.$parent.loading )
 			return false;
 
-		//console.log( !$scope.modalOpen() );
 		// TECLA C
 		if ( altDerecho && key == 67 ) {
 			$scope.buscarCliente( 'CF', 'cf' )
 		}
 		// TECLA A
 		else if( altDerecho && key == 69 ){
-			if( !$scope.modalOpen() )
-			{
+			if( !$scope.modalOpen() ) {
 				if( $scope.facturacion.datosCliente.idCliente == 1 )
 					alertify.notify('Acción no válida para el tipo de cliente', 'info', 4);
 				else

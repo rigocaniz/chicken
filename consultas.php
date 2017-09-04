@@ -478,9 +478,9 @@ switch ( $data->opcion )
 		echo json_encode( $factura->lstDetalleOrdenCliente( $data->idOrdenCliente, $todo ) );
 		break;
 
-	case 'consultaFacturacion':// 	prueba
+	case 'consultaFacturaCliente':// 	prueba
 		$factura = new Factura();
-		echo json_encode( $factura->consultaFactura( $data->accion, $data ) );
+		echo json_encode( $factura->consultaFacturaCliente( $data->accion, $data ) );
 		break;
 		//////////////////////////////////
 		/////////////////////////////////////

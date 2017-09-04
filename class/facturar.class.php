@@ -21,7 +21,7 @@ class Factura
  	}
 
  	// CONSULTA FACTURACION => INSERT / UPDATE
-	function consultaFactura( $accion, $data )
+	function consultaFacturaCliente( $accion, $data )
 	{
 		$validar = new Validar();
 
