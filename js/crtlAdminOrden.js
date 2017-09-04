@@ -1145,6 +1145,47 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				}
 			break;
 
+			case 'cancelarOrdenParcial':
+				// ELIMINAR DE LISTA DE MENUS
+				for (var im = 0; im < $scope.lstMenus.length; im++) {
+					for (var idn = 0; idn < datos.data.lstDetalle.length; idn++) {
+
+						var id = $scope.indexArray( $scope.lstMenus[ im ].detalle, 'idDetalleOrdenMenu', datos.data.lstDetalle[ idn ].idDetalleOrdenMenu );
+						// SI SE ENCONTRO EL DETALLE
+						if ( id >= 0 )
+						{
+							$scope.lstMenus[ im ].detalle.splice( id, 1 );
+							$scope.lstMenus[ im ].numMenus--;
+
+							// SI EL MENU SE QUEDA CON CERO ELEMENTOS
+							if ( $scope.lstMenus[ im ].detalle.length == 0 )
+								$scope.lstMenus.splice( im, 1 );
+						}
+					}
+				}
+
+				var ixTicket = $scope.indexArray( 'lstTickets', 'idOrdenCliente', datos.data.idOrdenCliente );
+
+				if ( ixTicket >= 0 )
+				{
+					for (var id = 0; id < datos.data.lstDetalle.length; id++) {
+						var ixDetalle = $scope.indexArray( $scope.lstTickets[ ixTicket ].detalle, 'idDetalleOrdenMenu', datos.data.lstDetalle[ id ].idDetalleOrdenMenu );
+
+						// SI EXISTE EL DETALLE SE ELIMINA
+						if ( ixDetalle >= 0 )
+						{
+							$scope.lstTickets[ ixTicket ].detalle.splice( ixDetalle, 1 );
+							$scope.lstTickets[ ixTicket ].total.pendientes--;
+							$scope.lstTickets[ ixTicket ].total.total--;
+
+							// SI EL DETALLE QUEDA A CERO
+							if ( $scope.lstTickets[ ixTicket ].detalle.length == 0 )
+								$scope.lstTickets.splice( ixTicket, 1 );
+						}
+					}
+				}
+			break;
+
 			// SI ES CAMBIO DE ESTADO DE ORDEN
 			case 'cambioEstadoDetalleOrden':
 				var estadoAnterior = datos.data.idEstadoOrden - 1;
