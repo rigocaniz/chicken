@@ -11,12 +11,12 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			nombre       : '',
 			direccion    : '',
 		},
-		importe       : null,
-		numeroTicket  : null,
-		noFactura     : null,
-		total: 0,
-		lstFormasPago : [],
-		lstOrden      : [],
+		idEstadoFactura : 1,
+		numeroTicket    : null,
+		noFactura       : null,
+		total           : 0,
+		lstFormasPago   : [],
+		lstOrden        : [],
 	};
 
 	$scope.$watch('buscarTicket', function( _new, _old ){
@@ -95,17 +95,23 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		
 		else if( !(factura.total && factura.total > 0) )
 			alertify.notify('El total del cobro debe ser mayor a 0', 'warning', 4);
-		/*else if(  ){
-			alertify.notify('El total del cobro debe ser mayor a 0', 'warning', 4);
-		}
-		*/
-		else{
+
+		else {
+			
+			$scope.$parent.showLoading( 'Guardando...' );
+
+			
 			$http.post('consultas.php',{
 			    opcion : "consultaFacturaCliente",
 			    accion : $scope.accion,
 			    data   : $scope.facturacion
 			}).success(function(data){
 			    console.log(data);		    
+				alertify.set('notifier','position', 'top-right');
+				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+				if( data.respuesta == 'success' ) {
+				}
+				$scope.$parent.hideLoading();
 			})
 			
 		}
@@ -183,9 +189,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			$timeout(function(){
 				$('#nit').focus();
 			},175);
-			
 		}
-
 	});
 
 
@@ -258,13 +262,15 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	$scope.consultaCliente = function(){
         var cliente = $scope.cliente;
 
-        if( !(cliente.nombre && cliente.nombre.length >= 3) ) {
+        if( !(cliente.nombre && cliente.nombre.length >= 3) )
             alertify.notify('El nombre debe tener más de 2 caracteres', 'warning', 4);
-        }
+		
 		else if( cliente.cui == undefined )
 			alertify.notify('El No. de CUI es inválido', 'warning', 3);	
+		
 		else if( cliente.cui.length >= 1 && !(cliente.cui.length == 13) )
 			alertify.notify('El No. de CUI debe tener 13 dígitos', 'warning', 3);	
+        
         else {
             $http.post('consultas.php',{
                 opcion  : "consultaCliente",

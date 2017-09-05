@@ -63,9 +63,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		}
 	});
 
-
-
-
 	// DIALOGO DE PERSONAL SELECCIONADO
 	$scope.dialogoConsultaPersonal = function ( agruparPor ) {
 		$scope.codigoPersonal = '';
@@ -103,13 +100,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 					});
 				}
 			}
-
 			else
 				document.getElementById('codigoPersonal').focus();
 		});
 	};
-
-
 
 
 	// CONSULTA INFORMACION DE ORDENES POR MENU

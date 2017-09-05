@@ -24,8 +24,21 @@ class Caja
  	function consultarEstadoCaja()
  	{
  		$fechaApertura = date("Y-m-d");
- 		
- 		$dataCaja = NULL;
+	
+		$dataCaja = array(
+			'idCaja'           => 0,
+			'usuario'          => $this->sess->getUsuario(),
+			'codigoUsuario'    => $this->sess->getCodigoUsuario(),
+			'fechaApertura'    => $fechaApertura,
+			'efectivoInicial'  => (double)0,
+			'efectivoFinal'    => (double)0,
+			'efectivoSobrante' => (double)0,
+			'efectivoFaltante' => (double)0,
+			'idEstadoCaja'     => 2,
+			'estadoCaja'       => 'Cerrada'
+		);
+
+ 		//$dataCaja = NULL;
  		$sql = "SELECT 
 				    idCaja,
 				    usuario,
@@ -47,7 +60,7 @@ class Caja
 
  			if( $rs->num_rows AND $row = $rs->fetch_object() ){
 
-	 			$datos = array(
+	 			$dataCaja = array(
 	 					'idCaja'           => (int)$row->idCaja,
 	 					'usuario'          => $row->usuario,
 	 					'codigoUsuario'    => $this->sess->getCodigoUsuario(),
@@ -61,21 +74,9 @@ class Caja
 	 				);
  			}
  			else{
- 				$datos = array(
-					'idCaja'           => 0,
-					'usuario'          => $this->sess->getUsuario(),
-					'codigoUsuario'    => $this->sess->getCodigoUsuario(),
-					'fechaApertura'    => $fechaApertura,
-					'efectivoInicial'  => (double)0,
-					'efectivoFinal'    => (double)0,
-					'efectivoSobrante' => (double)0,
-					'efectivoFaltante' => (double)0,
-					'idEstadoCaja'     => 2,
-					'estadoCaja'       => 'Cerrada'
-				);
  			}
 
- 			$dataCaja = $datos;
+ 			//$dataCaja = $datos;
  		}
 
  		return (object)$dataCaja;

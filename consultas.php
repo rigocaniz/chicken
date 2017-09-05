@@ -480,7 +480,7 @@ switch ( $data->opcion )
 
 	case 'consultaFacturaCliente':// 	prueba
 		$factura = new Factura();
-		echo json_encode( $factura->consultaFacturaCliente( $data->accion, $data ) );
+		echo json_encode( $factura->consultaFacturaCliente( $data->accion, $data->data ) );
 		break;
 		//////////////////////////////////
 		/////////////////////////////////////

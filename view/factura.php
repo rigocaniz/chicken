@@ -134,7 +134,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr ng-repeat="item in facturacion.lstOrden track by $index" ng-class="{'warning': !item.cobrarTodo}">
+                                                            <tr ng-repeat="item in facturacion.lstOrden track by $index" ng-class="{'warning': !item.cobrarTodo}" ng-dblclick="item.cobrarTodo=!item.cobrarTodo">
                                                                 <td class="text-center">
                                                                     <button type="button" class="btn btn-sm btn-default" ng-click="item.cobrarTodo=!item.cobrarTodo">
                                                                         <span class="glyphicon " ng-class="{'glyphicon-check': item.cobrarTodo, 'glyphicon-unchecked': !item.cobrarTodo}"></span>
