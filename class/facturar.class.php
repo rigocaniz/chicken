@@ -34,7 +34,6 @@ class Factura
 		$direccion       = 'NULL';
 
 		// SETEO VARIABLES
-
  		$data->idEstadoFactura = isset( $data->idEstadoFactura ) 	? (int)$data->idEstadoFactura 	: NULL;
  		$data->idEstadoFactura = (int)$data->idEstadoFactura > 0 	? (int)$data->idEstadoFactura 	: NULL;
 
@@ -48,9 +47,8 @@ class Factura
  		$data->nombre          = strlen( $data->nombre ) > 1 		? (string)$data->nombre 		: NULL;
 
  		$data->direccion       = isset( $data->direccion ) 			? (string)$data->direccion 		: NULL;
- 		$data->direccion       = strlen( $data->direccion ) > 4		? (string)$data->direccion 		: NULL;
+ 		$data->direccion       = strlen( $data->direccion ) > 3		? (string)$data->direccion 		: NULL;
 
- 		
  		if( $accion == 'update' ):
 	 		$data->idFactura = isset( $data->idFactura ) 	? (int)$data->idFactura 	: NULL;
 	 		$data->idFactura = (int)$data->idFactura > 0 	? (int)$data->idFactura 	: NULL;
@@ -61,10 +59,10 @@ class Factura
 		$idEstadoFactura = $validar->validarEntero( $data->idEstadoFactura, NULL, TRUE, 'El estado de la factura no es válido' );
 		$idCliente       = $validar->validarEntero( $data->idCliente, NULL, TRUE, 'El Código del Cliente no es válido' );
 		$idCaja          = $validar->validarEntero( $data->idCaja, NULL, TRUE, 'El Código de CAJA no es válido' );
+
 		$nombre          = $this->con->real_escape_string( $validar->validarTexto( $data->nombre, NULL, TRUE, 3, 45, 'el nombre del combo' ) );
 		$direccion       = $this->con->real_escape_string( $validar->validarTexto( $data->direccion, NULL, TRUE, 3, 45, ' dirección del cliente' ) );
 
-		/*
  		// OBTENER RESULTADO DE VALIDACIONES
  		if( $validar->getIsError() ):
 	 		$this->respuesta = 'danger';
@@ -72,10 +70,37 @@ class Factura
 
  		else:
 
+ 			$this->con->query( "START TRANSACTION" );
+
+			$sql = "CALL consultaFacturaCliente( '{$accion}', {$idFactura}, {$idEstadoFactura}, {$idCliente}, {$idCaja}, '{$nombre}', '{$direccion}', {$total} );";
+
+	 		if( $rs = $this->con->query( $sql ) ){
+	 			$this->siguienteResultado();
+
+	 			if( $row = $rs->fetch_object() ){
+	 				$this->respuesta = $row->respuesta;
+	 				$this->mensaje   = $row->mensaje;
+
+	 				if( $accion == 'insert' AND $this->respuesta == 'success' ) {
+	 					$this->data = (int)$row->id;
+	 				}
+	 			}
+	 		}
+	 		else{
+	 			$this->respuesta = 'danger';
+	 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+	 		}
+
+	 		if( $this->respuesta == 'danger' )
+	 			$this->con->query( "ROLLBACK" );
+	 		else
+	 			$this->con->query( "ROLLBACK" );
+	 			//$this->con->query( "COMMIT" );
 
  		endif;
- 		*/
+ 		/**/
 
+ 		return $this->getRespuesta();
  		var_dump( $data );
 	}
 
@@ -172,6 +197,26 @@ class Factura
  		}
 
  		return $lst;
+ 	}
+
+
+	// OBTENER ARREGLO RESPUESTA
+ 	private function getRespuesta()
+ 	{
+
+ 		if( $this->respuesta == 'success' )
+ 			$this->tiempo = 4;
+ 		elseif( $this->respuesta == 'warning')
+ 			$this->tiempo = 5;
+ 		elseif( $this->respuesta == 'danger')
+ 			$this->tiempo = 7;
+
+ 		return $respuesta = array( 
+ 				'respuesta' => $this->respuesta,
+ 				'mensaje'   => $this->mensaje,
+ 				'tiempo'    => $this->tiempo,
+ 				'data'      => $this->data
+ 			);
  	}
 
 }

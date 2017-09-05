@@ -283,7 +283,9 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
                     $scope.resetValores( 'cliente' );
                     $scope.dialAccionCliente.hide();
                     $scope.txtCliente = '';
-                    $( '#ticket' ).focus();
+                    $timeout(function(){
+                    	$( '#ticket' ).focus();
+                    }, 150);
                 }
             }).error(function (error, status){
                 $scope.data.error = { message: error, status: status};
@@ -296,7 +298,9 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
     	$scope.facturacion.datosCliente = angular.copy( cliente );
     	$scope.dialAccionCliente.hide();
     	$scope.txtCliente = '';
-    	$( '#ticket' ).focus();
+    	$timeout(function(){
+        	$( '#ticket' ).focus();
+        }, 150);
     };
 
     $scope.editarCliente = function( cliente, accion ){
@@ -365,8 +369,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	            valor  : valor,
 	        }).success(function(data){
 	        	console.log( data );
-	            if( accion == 'principal' && data.length == 0 )
-	            {
+	            if( accion == 'principal' && data.length == 0 ) {
 	            	$scope.accionCliente = 'ninguna';
 	            	$scope.facturacion.datosCliente.nombre    = '';
 					$scope.facturacion.datosCliente.direccion = '';
@@ -376,23 +379,21 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	            		$( '#buscador' ).focus();
 	            	});
 	            }
-	            if( accion == 'busqueda' && data.length == 0 )
-	            {
+	            if( accion == 'busqueda' && data.length == 0 ) {
 	            	alertify.notify( 'No se encontraron resultados', 'info', 3 );
 	            	$scope.lstClientes = [];
 	            }
-	        	else if( accion == 'principal' && data.length == 1 ){
+	        	else if( ( accion == 'principal' || accion == 'cf' ) && data.length == 1 ){
 	        		$scope.facturacion.datosCliente = data[ 0 ];
 	        		$scope.txtCliente = '';
-	        		$( '#ticket' ).focus();
+                    
+                    if( accion == 'cf' )
+	            		$scope.dialAccionCliente.hide();
+
+	        		$timeout(function(){
+                    	$( '#ticket' ).focus();
+                    }, 150);
 	        	}
-	            else if( accion == 'cf' && data.length == 1 )
-	            {
-	            	$( '#ticket' ).focus();
-	            	$scope.txtCliente = '';
-	            	$scope.facturacion.datosCliente = data[ 0 ];
-	            	$scope.dialAccionCliente.hide();
-	            }
 	            else if( data.length >= 1 ){
 					$scope.lstClientes   = data;
 					$scope.accionCliente = 'ninguna';

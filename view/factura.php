@@ -37,7 +37,7 @@
 											<input type="text" id="searchPrincipal" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )">
 										</div>
 										<div class="col-sm-4">
-											<button type="button" class="btn btn-info" ng-click="buscarCliente( facturacion.datosCliente.nit, 'principal' );" readonly>
+											<button type="button" class="btn btn-warning" ng-click="buscarCliente( facturacion.datosCliente.nit, 'principal' );" readonly>
 												<span class="glyphicon glyphicon-search"></span>
 											</button>
 										</div>
@@ -48,7 +48,7 @@
 											<input type="text" class="form-control" ng-model="facturacion.datosCliente.nit" ng-disabled="facturacion.datosCliente.idCliente!=1">
 										</div>
 										<div class="col-sm-2 col-md-1">
-											<button type="button" class="btn btn-warning" ng-click="editarCliente( facturacion.datosCliente, 'mostrar' );" ng-show="facturacion.datosCliente.idCliente && facturacion.datosCliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
+											<button type="button" class="btn btn-info" ng-click="editarCliente( facturacion.datosCliente, 'mostrar' );" ng-show="facturacion.datosCliente.idCliente && facturacion.datosCliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
 												<span class="glyphicon glyphicon-pencil"></span>
 											</button>
 										</div>
@@ -71,13 +71,13 @@
 										<label class="col-sm-1 control-label">TICKET</label>
 										<div class="col-sm-4 col-md-3 col-lg-2">
                                             <div ng-show="!facturacion.numeroTicket">
-											     <input type="text" id="ticket" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="buscarTicket">
+											     <input type="text" id="ticket" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="buscarTicket" ng-disabled="!facturacion.datosCliente.idCliente">
                                             </div>
                                             <div ng-show="facturacion.numeroTicket">
                                                 <input type="text" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="facturacion.numeroTicket" disabled>
                                             </div>
 										</div>
-										<button type="button" class="btn btn-primary" ng-click="buscarOrdenTicket()" ng-show="!facturacion.numeroTicket">
+										<button type="button" class="btn btn-info" ng-click="buscarOrdenTicket()" ng-show="!facturacion.numeroTicket">
                                             <span class="glyphicon glyphicon-search"></span> Buscar
 										</button>
                                         <button type="button" class="btn btn-warning" ng-click="facturacion.numeroTicket=null;" ng-show="facturacion.numeroTicket">
