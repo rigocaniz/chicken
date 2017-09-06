@@ -71,7 +71,7 @@ if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
                         endif;
                     ?>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-warning btn-block" ng-disabled="user.length < 6">
+                        <button type="submit" class="btn btn-warning btn-block">
                             <b>ACCEDER</b>
                             <span class="glyphicon glyphicon-chevron-right"></span>
                         </button>

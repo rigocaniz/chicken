@@ -963,10 +963,9 @@ div.inactive-key{
     -webkit-border-radius: 7px;
 }
 
-
 .total{
     background: #eeeeee;
-    font-size: 25px;
+    font-size: 22px;
     font-weight: bold;
     color: #104290;
     text-align: right;

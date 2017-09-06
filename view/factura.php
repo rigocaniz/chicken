@@ -85,31 +85,33 @@
                                         </button>
 									</div>
                                     <div class="row">
-                                        <div class="col-xs-4 col-sm-5 col-md-5 col-lg-4">
+                                        <div class="col-xs-4 col-sm-5 col-md-3 col-lg-4">
                                             <fieldset class="fieldset">
                                                 <legend class="legend info">FORMAS DE PAGO</legend>
-                                                <div class="form-group">
-                                                    <label class="col-md-5 col-lg-5 control-label">TOTAL A COBRAR</label>
-                                                    <div class="col-md-6 col-lg-6 ">
+                                                <div class="form-group input-sm">
+                                                    <label class="col-md-12 control-label">TOTAL A COBRAR</label>
+                                                    <div class="col-md-12">
                                                         <div class="total">
                                                             Q. {{ retornarTotal() | number: 2 }}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="form-group" ng-repeat="formaPago in facturacion.lstFormasPago">
-                                                    <label class="col-md-5 col-lg-5 control-label">{{ formaPago.formaPago }}</label>
-                                                    <div class="col-md-6 col-lg-6 monto">
-                                                        <input type="number" class="form-control" ng-model="formaPago.monto">
+                                                <div class="form-group input-sm" ng-repeat="formaPago in facturacion.lstFormasPago">
+                                                    <label class="col-md-12 control-label">{{ formaPago.formaPago | uppercase }}</label>
+                                                    <div class="col-md-12 monto">
+                                                        <input type="number" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" class="form-control" ng-model="formaPago.monto">
                                                     </div>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label class="col-md-5 col-lg-5 control-label">VUELTO</label>
-                                                    <div class="col-md-6 col-lg-6">
+                                                <div class="form-group input-sm">
+                                                    <label class="col-md-12 control-label">VUELTO</label>
+                                                    <div class="col-md-12">
                                                         <div class="total">
                                                         {{ totalVuelto() | number: 2 }}
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <br><br><br>
+                                                <hr>
                                                 <div class="form-group">
                                                     <div class="text-center">
                                                         <button type="button" class="btn btn-info" ng-click="consultaFacturaCliente()">
@@ -119,22 +121,38 @@
                                                 </div>
                                             </fieldset>
                                         </div>
-                                        <div class="col-xs-8 col-sm-7 col-md-7 col-lg-8">
+                                        <div class="col-xs-8 col-sm-7 col-md-9 col-lg-8">
                                             <fieldset class="fieldset" ng-show="facturacion.lstOrden.length">
                                                 <legend class="legend info">DETALLE ORDEN</legend>
                                                 <div class="table-responsive">
+                                                    <div class="text-right">
+                                                        <button type="button" class="btn btn-xs btn-default" ng-click="facturacion.agrupado=!facturacion.agrupado; consultarDetalleOrden();">
+                                                            <span class="glyphicon" ng-class="{'glyphicon-th-list': facturacion.agrupado, 'glyphicon-list-alt': !facturacion.agrupado}"></span> <strong>{{ facturacion.agrupado ? 'VER A DETALLE' : 'AGRUPAR ORDEN' }}</strong>
+                                                        </button>
+                                                    </div>
+                                                    <br>
                                                     <table class="table table-hover table-condensed">
                                                         <thead>
                                                             <tr>
-                                                                <th class="text-center">Cobrar</th>
-                                                                <th class="text-center col-sm-4">Orden</th>
-                                                                <th class="text-center col-sm-2">Cant.</th>
-                                                                <th class="text-right col-sm-2">Precio</th>
-                                                                <th class="text-right col-sm-3">Subtotal</th>
+                                                                <th class="text-center">
+                                                                    <small>cobrar</small>
+                                                                </th>
+                                                                <th class="text-center col-sm-4 col-md-6 col-lg-6">
+                                                                    Orden
+                                                                </th>
+                                                                <th class="text-center col-sm-2 col-md-2 col-lg-2">
+                                                                    Cant.
+                                                                </th>
+                                                                <th class="text-right col-sm-2 col-md-2 col-lg-2">
+                                                                    Precio
+                                                                </th>
+                                                                <th class="text-right col-sm-3 col-md-2 col-lg-2">
+                                                                    Subtotal
+                                                                </th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr ng-repeat="item in facturacion.lstOrden track by $index" ng-class="{'warning': !item.cobrarTodo}" ng-dblclick="item.cobrarTodo=!item.cobrarTodo">
+                                                            <tr ng-repeat="item in facturacion.lstOrden" ng-class="{'warning': !item.cobrarTodo, 'border-warning': item.precio!=item.maximoPrecio}" ng-dblclick="item.cobrarTodo=!item.cobrarTodo">
                                                                 <td class="text-center">
                                                                     <button type="button" class="btn btn-sm btn-default" ng-click="item.cobrarTodo=!item.cobrarTodo">
                                                                         <span class="glyphicon " ng-class="{'glyphicon-check': item.cobrarTodo, 'glyphicon-unchecked': !item.cobrarTodo}"></span>
@@ -147,19 +165,31 @@
                                                                         <span ng-show="item.idTipoServicio==1">L</span>
                                                                     </div>
                                                                     <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
-                                                                    <span>{{ item | json }}</span>
+                                                                    <span>{{ item.descripcion }}</span>
+                                                                    <br>
+                                                                    <textarea class="form-control" rows="2" placeholder="Ingrese la justificación de rebaja" ng-model="item.justificacion" ng-show="item.precio < item.maximoPrecio && item.cobrarTodo"></textarea>
                                                                 </td>
                                                                 <td class="text-center">
-                                                                    <input type="number" class="form-control" ng-model="item.cantidad" max="{{ item.maximo }}" min="1" ng-disabled="!item.cobrarTodo">
+                                                                    <div ng-show="!item.precioHabilitado">
+                                                                        <input type="number" class="form-control" ng-model="item.cantidad" max="{{ item.maximo }}" min="1" ng-pattern="/^[0-9]+?$/" ng-disabled="!item.cobrarTodo">
+                                                                    </div>
+                                                                    <div ng-show="item.precioHabilitado">
+                                                                        {{ item.cantidad }}
+                                                                    </div>
                                                                 </td>
                                                                 <td class="text-right">
-                                                                    {{ item.precio | number: 2 }}
+                                                                    <div ng-show="!item.precioHabilitado">
+                                                                        {{ item.precio | number: 2 }}
+                                                                    </div>
+                                                                    <div ng-show="item.precioHabilitado">
+                                                                        <input type="number" class="form-control" ng-model="item.precio" max="{{ item.maximoPrecio }}" min="0" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" ng-disabled="!item.cobrarTodo">
+                                                                    </div>
                                                                 </td>
                                                                 <td class="text-right">
                                                                     {{ item.cantidad * item.precio | number:2 }}
                                                                 </td>
                                                             </tr>
-                                                            <tr>
+                                                            <tr class="success">
                                                                 <td colspan="4" class="text-right">
                                                                     <strong>TOTAL</strong>
                                                                 </td>

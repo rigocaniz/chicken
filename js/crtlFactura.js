@@ -11,6 +11,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			nombre       : '',
 			direccion    : '',
 		},
+		agrupado: true,
 		idEstadoFactura : 1,
 		numeroTicket    : null,
 		noFactura       : null,
@@ -99,7 +100,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		else {
 			
 			$scope.$parent.showLoading( 'Guardando...' );
-
 			
 			$http.post('consultas.php',{
 			    opcion : "consultaFacturaCliente",
@@ -119,6 +119,10 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	};
 	
 	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% DIALOGO PARA MAS INFORMACION DE ORDEN %%%%%%%%%%%%%%%%%%%%%% */
+	$scope.consultarDetalleOrden = function(){
+		$scope.buscarOrdenTicket();
+	};
+
 	$scope.infoOrden = {};
 	$scope.deBusqueda = false;
 	$scope.modalInfo = function ( orden, deBusqueda ) {
@@ -140,9 +144,9 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		$scope.infoOrden = orden;
 		$http.post('consultas.php', { 
 			opcion         : 'lstDetalleOrden',
-			idOrdenCliente :
-			orden.idOrdenCliente, 
-			todo           : $scope.todoDetalle
+			idOrdenCliente : orden.idOrdenCliente,
+			todo           : $scope.todoDetalle,
+			agrupado       : $scope.facturacion.agrupado
 		})
 		.success(function (data) {
 			console.log( data );

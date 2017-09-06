@@ -130,7 +130,7 @@ class Factura
 	}
 
 
-	public function lstDetalleOrdenCliente( $idOrdenCliente, $todo = false )
+	public function lstDetalleOrdenCliente( $idOrdenCliente, $todo = FALSE, $agrupado = FALSE )
  	{
 		$lst   = array();
 		$where = "";
@@ -180,46 +180,66 @@ class Factura
 
 				$index = -1;
 
-				// REVISA SI YA EXISTE MENU
-				foreach ( $lst as $ix => $item ):
-					if ( 
-						$row->idCombo == $item->idCombo AND 
-						$row->idMenu == $item->idMenu AND 
-						$row->idTipoServicio == $item->idTipoServicio
-					) {
-						$index = $ix;
-						break;
-					}
-				endforeach;
+				$row->cobrarTodo = TRUE;
 
-				// SI NO EXISTE EN LISTADO
-				if ( $index == -1 ) {
-					$index = count( $lst );
-					// AGREGA UNA NUEVA ORDEN
-					$lst[ $index ] = (object)array(
-						'idCombo'        => $row->idCombo,
-						'idMenu'         => $row->idMenu,
-						'esCombo'        => $row->perteneceCombo,
-						'cantidad'       => 0,
-						'maximo'         => 0,
-						'precio'         => $precioMenu,
-						'cobrarTodo'     => TRUE,
-						'descripcion'    => ( $row->perteneceCombo ? $row->combo : $row->menu ),
-						'idTipoServicio' => $row->idTipoServicio,
-						'tipoServicio'   => $row->tipoServicio,
-						'lstDetalle'     => array()
+				$detalle = (object)array(
+						'idCombo'          => $row->idCombo,
+						'idMenu'           => $row->idMenu,
+						'esCombo'          => $row->perteneceCombo,
+						'cantidad'         => 0,
+						'maximo'           => 0,
+						'precio'           => (double)$precioMenu,
+						'precioHabilitado' => FALSE,
+						'maximoPrecio'     => (double)$precioMenu,
+						'cobrarTodo'       => $row->cobrarTodo,
+						'descripcion'      => ( $row->perteneceCombo ? $row->combo : $row->menu ),
+						'idTipoServicio'   => $row->idTipoServicio,
+						'tipoServicio'     => $row->tipoServicio,
+						'justificacion'    => '',
+						'lstDetalle'       => array()
 					);
+
+				if( $agrupado )
+				{
+
+					// REVISA SI YA EXISTE MENU
+					foreach ( $lst as $ix => $item ):
+						if ( 
+							$row->idCombo == $item->idCombo AND 
+							$row->idMenu == $item->idMenu AND 
+							$row->idTipoServicio == $item->idTipoServicio
+						) {
+							$index = $ix;
+							break;
+						}
+					endforeach;
+
+
+					// SI NO EXISTE EN LISTADO
+					if ( $index == -1 ) {
+						$index = count( $lst );
+						// AGREGA UNA NUEVA ORDEN
+						$lst[ $index ] = $detalle;
+					}
+
+					$lst[ $index ]->cantidad += $row->cantidad;
+					$lst[ $index ]->maximo += $row->cantidad;
+
+					// AGREGA DETALLE DE ORDEN
+					$lst[ $index ]->lstDetalle[] = (object)array(
+						'precioMenu'          => $precioMenu,
+						'idDetalleOrdenMenu'  => $row->idDetalleOrdenMenu,
+						'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo
+					);
+
 				}
-
-				//$lst[ $index ]->cantidad += $row->cantidad;
-				$lst[ $index ]->maximo += $row->cantidad;
-
-				// AGREGA DETALLE DE ORDEN
-				$lst[ $index ]->lstDetalle[] = (object)array(
-					'precioMenu'          => $precioMenu,
-					'idDetalleOrdenMenu'  => $row->idDetalleOrdenMenu,
-					'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo
-				);
+				else{
+					$detalle->cantidad = 1;
+					$detalle->maximo   = 1;
+					$detalle->precioHabilitado = TRUE;
+					
+					$lst[] = $detalle;
+				}
 			}
  		}
 

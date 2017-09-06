@@ -474,8 +474,8 @@ switch ( $data->opcion )
 		//////////////////////////////////
 	case 'lstDetalleOrden':// 	prueba
 		$factura = new Factura();
-		$todo  = isset( $data->todo ) ? $data->todo : false ;
-		echo json_encode( $factura->lstDetalleOrdenCliente( $data->idOrdenCliente, $todo ) );
+		$todo = isset( $data->todo ) ? $data->todo : false ;
+		echo json_encode( $factura->lstDetalleOrdenCliente( $data->idOrdenCliente, $todo, $data->agrupado ) );
 		break;
 
 	case 'consultaFacturaCliente':// 	prueba
