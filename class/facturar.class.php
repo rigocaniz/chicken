@@ -20,23 +20,46 @@ class Factura
  		$this->sess = $sesion;
  	}
 
+
+ 	// LIBERAR SIGUIENTE RESULTADO
+ 	private function siguienteResultado()
+ 	{
+ 		if( $this->con->more_results() )
+ 			$this->con->next_result();
+ 	}
+
+
  	// CONSULTA FACTURACION => INSERT / UPDATE
 	function consultaFacturaCliente( $accion, $data )
 	{
 		$validar = new Validar();
-		$caja = new Caja();
+		$caja    = new Caja();
 
-		if( $caja->consultarEstadoCaja()->idEstadoCaja == 1 ):
-			//var_dump( $data );
+		$detalleCaja = $caja->consultarEstadoCaja();
+		//var_dump( $data );
+
+		//if( $caja->consultarEstadoCaja()->idEstadoCaja == 1 ):
+		if( $detalleCaja->idEstadoCaja != 1 ):
+			$this->respuesta = 'danger';
+	 		$this->mensaje   = 'Su <b>CAJA</b> se encuentra <b>' . strtoupper( $caja->consultarEstadoCaja()->estadoCaja ) . "</b> debe aperturarla para poder facturar";
+		
+		elseif( !count( $data->lstFormasPago ) ):
+			$this->respuesta = 'danger';
+	 		$this->mensaje   = 'No se recibió las formas de pago';
+
+		elseif( !count( $data->lstOrden ) ):
+			$this->respuesta = 'danger';
+	 		$this->mensaje   = 'No se recibió el detalle de la orden';
+
+		else:
+	 		var_dump( $data );
+
 			// INICIALIZACIÓN VAR
 			$idFactura       = 'NULL';
 			$idEstadoFactura = 'NULL';
 			$idCliente       = 'NULL';
-			$idCaja          = 'NULL';
 			$nombre          = 'NULL';
 			$direccion       = 'NULL';
-	 		
-	 		var_dump( $data->datosCliente );
 
 			// SETEO VARIABLES
 	 		$data->idEstadoFactura           = isset( $data->idEstadoFactura ) 	? (int)$data->idEstadoFactura 	: NULL;
@@ -44,17 +67,10 @@ class Factura
 
 	 		$data->datosCliente->idCliente 	 = isset( $data->datosCliente->idCliente ) 	? (int)$data->datosCliente->idCliente 	: NULL;
 	 		$data->datosCliente->idCliente   = (int)$data->datosCliente->idCliente > 0 	? (int)$data->datosCliente->idCliente 	: NULL;
-
-	 		//$data->idCaja                  = isset( $data->idCaja ) 			? (int)$data->idCaja 			: NULL;
-	 		//$data->idCaja                  = (int)$data->idCaja > 0 			? (int)$data->idCaja 			: NULL;
-
 	 		$data->datosCliente->nombre      = isset( $data->datosCliente->nombre ) 		? (string)$data->datosCliente->nombre 	: NULL;
-	 		$data->nombre      = strlen( $data->datosCliente->nombre ) > 1	? (string)$data->datosCliente->nombre 	: NULL;
-
-	 		$data->datosCliente->direccion   = isset( $data->datosCliente->direccion ) 		? (string)$data->datosCliente->direccion 	: NULL;
+	 		$data->nombre                    = strlen( $data->datosCliente->nombre ) > 1	? (string)$data->datosCliente->nombre 	: NULL;
+	 		$data->datosCliente->direccion   = isset( $data->datosCliente->direccion ) 	? (string)$data->datosCliente->direccion 	: NULL;
 	 		$data->direccion   = strlen( $data->datosCliente->direccion ) > 3	? (string)$data->datosCliente->direccion 	: NULL;
-
-	 		//var_dump( $data );
 
 	 		if( $accion == 'update' ):
 		 		$data->idFactura = isset( $data->idFactura ) 	? (int)$data->idFactura 	: NULL;
@@ -66,10 +82,13 @@ class Factura
 			$idEstadoFactura = $validar->validarEntero( $data->idEstadoFactura, NULL, TRUE, 'El estado de la factura no es válido' );
 
 			$idCliente       = $validar->validarEntero( $data->datosCliente->idCliente, NULL, TRUE, 'El Código del Cliente no es válido' );
-			$idCaja          = $validar->validarEntero( $data->idCaja, NULL, TRUE, 'El Código de CAJA no es válido' );
 
 			$nombre          = $this->con->real_escape_string( $validar->validarTexto( $data->nombre, NULL, TRUE, 3, 60, 'el nombre del combo' ) );
 			$direccion       = $this->con->real_escape_string( $validar->validarTexto( $data->direccion, NULL, TRUE, 3, 75, ' dirección del cliente' ) );
+
+
+			$total  = (double)$data->total;
+			$idCaja = (int)$detalleCaja->idCaja;
 
 	 		// OBTENER RESULTADO DE VALIDACIONES
 	 		if( $validar->getIsError() ):
@@ -82,17 +101,24 @@ class Factura
 
 				$sql = "CALL consultaFacturaCliente( '{$accion}', {$idFactura}, {$idEstadoFactura}, {$idCliente}, {$idCaja}, '{$nombre}', '{$direccion}', {$total} );";
 
-		 		if( $rs = $this->con->query( $sql ) ){
+		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 			$this->siguienteResultado();
 
-		 			if( $row = $rs->fetch_object() ){
-		 				$this->respuesta = $row->respuesta;
-		 				$this->mensaje   = $row->mensaje;
+	 				$this->respuesta = $row->respuesta;
+	 				$this->mensaje   = $row->mensaje;
 
-		 				if( $accion == 'insert' AND $this->respuesta == 'success' ) {
-		 					$this->data = (int)$row->id;
-		 				}
-		 			}
+	 				if( $accion == 'insert' AND $this->respuesta == 'success' ) {
+	 					$this->data = (int)$row->id;
+	 					if( count( $data->lstFormasPago ) ){
+
+	 					}
+	 					else
+	 					{
+	 						$this->respuesta == 'danger';
+	 						$this->respuesta == 'danger';
+	 					}
+	 				}
+
 		 		}
 		 		else{
 		 			$this->respuesta = 'danger';
@@ -105,13 +131,26 @@ class Factura
 		 			$this->con->query( "ROLLBACK" );
 		 			//$this->con->query( "COMMIT" );
 	 		endif;
-
-		else:
-			$this->respuesta = 'danger';
-	 		$this->mensaje   = 'Su <b>CAJA</b> se encuentra <b>' . strtoupper( $caja->consultarEstadoCaja()->estadoCaja ) . "</b> debe aperturarla para poder facturar";
 		endif;
 
  		return $this->getRespuesta();
+	}
+
+	public function consultaFormaPago( $accion, $idFactura, $lstFormasPago )
+	{
+		$sql = "CALL consultaFormaPago( '{$accion}' );";
+		
+		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+
+				$this->respuesta = $row->respuesta;
+				$this->mensaje   = $row->mensaje;
+				$this->data      = $row;
+		}
+		else{
+			$this->respuesta = 'danger';
+			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
+		}
+		
 	}
 
 
