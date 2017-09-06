@@ -147,7 +147,7 @@
                                                                         <span ng-show="item.idTipoServicio==1">L</span>
                                                                     </div>
                                                                     <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
-                                                                    <span>{{ item.descripcion }}</span>
+                                                                    <span>{{ item | json }}</span>
                                                                 </td>
                                                                 <td class="text-center">
                                                                     <input type="number" class="form-control" ng-model="item.cantidad" max="{{ item.maximo }}" min="1" ng-disabled="!item.cobrarTodo">

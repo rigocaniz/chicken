@@ -28,7 +28,6 @@ class Factura
 
 		if( $caja->consultarEstadoCaja()->idEstadoCaja == 1 ):
 			//var_dump( $data );
-
 			// INICIALIZACIÓN VAR
 			$idFactura       = 'NULL';
 			$idEstadoFactura = 'NULL';
@@ -109,10 +108,25 @@ class Factura
 
 		else:
 			$this->respuesta = 'danger';
-	 		$this->mensaje   = 'Lo sentimos la CAJA se encuentra ' . $caja->consultarEstadoCaja()->estadoCaja;
+	 		$this->mensaje   = 'Su <b>CAJA</b> se encuentra <b>' . strtoupper( $caja->consultarEstadoCaja()->estadoCaja ) . "</b> debe aperturarla para poder facturar";
 		endif;
 
  		return $this->getRespuesta();
+	}
+
+
+	private function consultaFacturaMenu( $idMenu, $precio, $cantidad, $tipoServicio, $lstDetalle )
+	{
+		foreach ($lstDetalle AS $ixDetalle => $detalle ) {
+			
+		}
+	}
+
+	private function consultaFacturaCombo( $idCombo, $precio, $cantidad, $tipoServicio, $lstDetalle )
+	{
+		foreach ($lstDetalle AS $ixDetalle => $detalle ) {
+			
+		}
 	}
 
 
@@ -197,13 +211,14 @@ class Factura
 					);
 				}
 
-				$lst[ $index ]->cantidad += $row->cantidad;
+				//$lst[ $index ]->cantidad += $row->cantidad;
 				$lst[ $index ]->maximo += $row->cantidad;
 
 				// AGREGA DETALLE DE ORDEN
 				$lst[ $index ]->lstDetalle[] = (object)array(
-					'idDetalleOrdenMenu' => $row->idDetalleOrdenMenu,
-					'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo,
+					'precioMenu'          => $precioMenu,
+					'idDetalleOrdenMenu'  => $row->idDetalleOrdenMenu,
+					'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo
 				);
 			}
  		}
