@@ -44,7 +44,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			for (var i = 0; i < $scope.facturacion.lstOrden.length; i++) {
 				var orden = $scope.facturacion.lstOrden[ i ];
 				if( orden.cobrarTodo )
-					total += ( orden.cantidad * orden.precio );
+					total += ( orden.cantidad * (orden.precioMenu - orden.descuento) );
 			}
 		}
 
@@ -94,8 +94,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		else if( !(factura.lstOrden && factura.lstOrden.length > 0) )
 			alertify.notify('La lista de ordenes está vacia', 'warning', 4);
 		
-		else if( !(factura.total && factura.total > 0) )
-			alertify.notify('El total del cobro debe ser mayor a 0', 'warning', 4);
+		//else if( !(factura.total && factura.total > 0) )
+		//	alertify.notify('El total del cobro debe ser mayor a 0', 'warning', 4);
 
 		else {
 			

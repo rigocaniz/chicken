@@ -146,13 +146,16 @@
                                                                 <th class="text-right col-sm-2 col-md-2 col-lg-2">
                                                                     Precio
                                                                 </th>
+                                                                <th class="text-right col-sm-2 col-md-2 col-lg-2">
+                                                                    Descuento
+                                                                </th>
                                                                 <th class="text-right col-sm-3 col-md-2 col-lg-2">
                                                                     Subtotal
                                                                 </th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr ng-repeat="item in facturacion.lstOrden" ng-class="{'warning': !item.cobrarTodo, 'border-warning': item.precio!=item.maximoPrecio}" ng-dblclick="item.cobrarTodo=!item.cobrarTodo">
+                                                            <tr ng-repeat="item in facturacion.lstOrden" ng-class="{'warning': !item.cobrarTodo, 'border-warning': item.precio!=item.precioMenu}" ng-dblclick="item.cobrarTodo=!item.cobrarTodo">
                                                                 <td class="text-center">
                                                                     <button type="button" class="btn btn-sm btn-default" ng-click="item.cobrarTodo=!item.cobrarTodo">
                                                                         <span class="glyphicon " ng-class="{'glyphicon-check': item.cobrarTodo, 'glyphicon-unchecked': !item.cobrarTodo}"></span>
@@ -167,7 +170,7 @@
                                                                     <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
                                                                     <span>{{ item.descripcion }}</span>
                                                                     <br>
-                                                                    <textarea class="form-control" rows="2" placeholder="Ingrese la justificación de rebaja" ng-model="item.justificacion" ng-show="item.precio < item.maximoPrecio && item.cobrarTodo"></textarea>
+                                                                    <textarea class="form-control" rows="2" placeholder="Ingrese  justificación del descuento" ng-model="item.comentario" ng-show="item.descuento > 0 && item.cobrarTodo"></textarea>
                                                                 </td>
                                                                 <td class="text-center">
                                                                     <div ng-show="!item.precioHabilitado">
@@ -178,19 +181,17 @@
                                                                     </div>
                                                                 </td>
                                                                 <td class="text-right">
-                                                                    <div ng-show="!item.precioHabilitado">
-                                                                        {{ item.precio | number: 2 }}
-                                                                    </div>
-                                                                    <div ng-show="item.precioHabilitado">
-                                                                        <input type="number" class="form-control" ng-model="item.precio" max="{{ item.maximoPrecio }}" min="0" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" ng-disabled="!item.cobrarTodo">
-                                                                    </div>
+                                                                    {{ item.precioMenu | number: 2 }}
                                                                 </td>
                                                                 <td class="text-right">
-                                                                    {{ item.cantidad * item.precio | number:2 }}
+                                                                    <input type="number" class="form-control" ng-model="item.descuento" max="{{ item.precioMenu }}" min="0" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" ng-disabled="!item.cobrarTodo">
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    {{ item.cantidad * ( item.precioMenu - item.descuento ) | number:2 }}
                                                                 </td>
                                                             </tr>
                                                             <tr class="success">
-                                                                <td colspan="4" class="text-right">
+                                                                <td colspan="5" class="text-right">
                                                                     <strong>TOTAL</strong>
                                                                 </td>
                                                                 <td class="text-right" style="">

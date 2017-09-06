@@ -52,8 +52,6 @@ class Factura
 	 		$this->mensaje   = 'No se recibió el detalle de la orden';
 
 		else:
-	 		var_dump( $data );
-
 			// INICIALIZACIÓN VAR
 			$idFactura       = 'NULL';
 			$idEstadoFactura = 'NULL';
@@ -80,12 +78,9 @@ class Factura
 	 		endif;
 
 			$idEstadoFactura = $validar->validarEntero( $data->idEstadoFactura, NULL, TRUE, 'El estado de la factura no es válido' );
-
 			$idCliente       = $validar->validarEntero( $data->datosCliente->idCliente, NULL, TRUE, 'El Código del Cliente no es válido' );
-
 			$nombre          = $this->con->real_escape_string( $validar->validarTexto( $data->nombre, NULL, TRUE, 3, 60, 'el nombre del combo' ) );
 			$direccion       = $this->con->real_escape_string( $validar->validarTexto( $data->direccion, NULL, TRUE, 3, 75, ' dirección del cliente' ) );
-
 
 			$total  = (double)$data->total;
 			$idCaja = (int)$detalleCaja->idCaja;
@@ -108,16 +103,15 @@ class Factura
 	 				$this->mensaje   = $row->mensaje;
 
 	 				if( $accion == 'insert' AND $this->respuesta == 'success' ) {
-	 					$this->data = (int)$row->id;
-	 					if( count( $data->lstFormasPago ) ){
-
-	 					}
-	 					else
-	 					{
-	 						$this->respuesta == 'danger';
-	 						$this->respuesta == 'danger';
-	 					}
+	 					$this->data    = $idFactura = (int)$row->id;
+	 					$this->tiempo  = 3;
 	 				}
+
+ 					if( $this->respuesta == 'success'  )
+ 						$this->consultaFormaPago( $accion, $idFactura, $data->lstFormasPago );
+
+ 					if( $this->respuesta == 'success'  )
+ 						$this->consultaDetalleFactura( $accion, $idFactura, $data->agrupado, $data->lstOrden );
 
 		 		}
 		 		else{
@@ -128,43 +122,105 @@ class Factura
 		 		if( $this->respuesta == 'danger' )
 		 			$this->con->query( "ROLLBACK" );
 		 		else
-		 			$this->con->query( "ROLLBACK" );
-		 			//$this->con->query( "COMMIT" );
+		 			$this->con->query( "COMMIT" );
+		 			//$this->con->query( "ROLLBACK" );
 	 		endif;
 		endif;
 
  		return $this->getRespuesta();
 	}
 
-	public function consultaFormaPago( $accion, $idFactura, $lstFormasPago )
+	private function consultaDetalleFactura( $accion, $idFactura, $agrupado, $lstOrden )
 	{
-		$sql = "CALL consultaFormaPago( '{$accion}' );";
-		
-		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+		$agrupado  = (int)$agrupado;
+		$validar   = new Validar();
+		$guardados = 0;
 
-				$this->respuesta = $row->respuesta;
-				$this->mensaje   = $row->mensaje;
-				$this->data      = $row;
+		foreach ($lstOrden AS $ixOrden => $orden ) {
+
+			if( (int)$orden->cobrarTodo ):
+				$idFactura           = (int)$idFactura;
+				$idDetalleOrdenMenu  = "NULL";
+				$idDetalleOrdenCombo = "NULL";
+				$comentario          = "NULL";
+
+				if( (int)$orden->esCombo )
+					$idDetalleOrdenCombo = (int)$orden->idDetalleOrdenCombo;
+				else
+					$idDetalleOrdenMenu = (int)$orden->idDetalleOrdenMenu;
+
+				$precioMenu = (double)$orden->precioMenu;
+				$descuento  = (double)$orden->descuento;
+				
+				$comentario = "'" . $orden->comentario . "'";
+				
+				$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precioMenu}, {$descuento}, {$comentario} );";
+				//echo $sql . "\n";
+
+				if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+					$this->siguienteResultado();
+
+					$this->respuesta = $row->respuesta;
+					$this->mensaje   = $row->mensaje;
+					
+					if( $this->respuesta == 'success' )
+						$guardados++;
+				}
+				else{
+					$this->respuesta = 'danger';
+					$this->mensaje   = 'Error al ejecutar la operacion (Detalle Factura)';
+				}
+
+				if( $this->respuesta == 'danger' )
+					break;
+
+			endif;
 		}
-		else{
+
+		if( !$guardados ){
 			$this->respuesta = 'danger';
-			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
-		}
-		
-	}
-
-
-	private function consultaFacturaMenu( $idMenu, $precio, $cantidad, $tipoServicio, $lstDetalle )
-	{
-		foreach ($lstDetalle AS $ixDetalle => $detalle ) {
-			
+			$this->mensaje   = 'No se realizó ningun cobro de la orden';
+			$this->tiempo    = 7;
 		}
 	}
 
-	private function consultaFacturaCombo( $idCombo, $precio, $cantidad, $tipoServicio, $lstDetalle )
-	{
-		foreach ($lstDetalle AS $ixDetalle => $detalle ) {
+
+	public function consultaFormaPago( $accion, $idFactura, $lstFormasPago )
+	{	
+		$guardados = 0;
+		foreach ( $lstFormasPago AS $ixFormaPago => $formaPago ) {
+			if( isset( $formaPago->monto ) && $formaPago->monto > 0  ){
+
+				$idFormaPago = (int)$formaPago->idFormaPago;
+				$idFactura   = (int)$idFactura;
+				$monto       = (double)$formaPago->monto;
+
+				$sql = "CALL consultaFormaPago( '{$accion}', {$idFactura}, {$idFormaPago}, {$monto} );";
+				
+				if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+					$this->siguienteResultado();
+					$this->respuesta = $row->respuesta;
+					$this->mensaje   = $row->mensaje;
+					
+					if( $this->respuesta == 'success' )
+						$guardados++;
+				}
+				else{
+					$this->respuesta = 'danger';
+					$this->mensaje   = 'Error al ejecutar la operacion (Forma de Pago)';
+				}
+
+				if( $this->respuesta == 'danger' )
+					break;
+			}
+
 			
+		}
+
+		if( !$guardados ){
+			$this->respuesta = 'danger';
+			$this->mensaje   = 'No se registró ningun monto en la forma de pago';
+			$this->tiempo    = 8;
 		}
 	}
 
@@ -175,7 +231,7 @@ class Factura
 		$where = "";
 
 		if ( !$todo )
-			$where = " AND idEstadoDetalleOrden != 10 ";
+			$where = " AND idEstadoDetalleOrden != 6 ";
 
  		$sql = "SELECT 
 				    idDetalleOrdenMenu,
@@ -199,7 +255,7 @@ class Factura
 				WHERE
 				    idOrdenCliente = {$idOrdenCliente} $where
 				GROUP BY IF( perteneceCombo, idDetalleOrdenCombo, idDetalleOrdenMenu ), perteneceCombo;";
-				//echo $sql;
+				echo $sql;
 
 		if( $rs = $this->con->query( $sql ) ) {
 			while ( $row = $rs->fetch_object() ) {
@@ -222,20 +278,21 @@ class Factura
 				$row->cobrarTodo = TRUE;
 
 				$detalle = (object)array(
-						'idCombo'          => $row->idCombo,
-						'idMenu'           => $row->idMenu,
-						'esCombo'          => $row->perteneceCombo,
-						'cantidad'         => 0,
-						'maximo'           => 0,
-						'precio'           => (double)$precioMenu,
-						'precioHabilitado' => FALSE,
-						'maximoPrecio'     => (double)$precioMenu,
-						'cobrarTodo'       => $row->cobrarTodo,
-						'descripcion'      => ( $row->perteneceCombo ? $row->combo : $row->menu ),
-						'idTipoServicio'   => $row->idTipoServicio,
-						'tipoServicio'     => $row->tipoServicio,
-						'justificacion'    => '',
-						'lstDetalle'       => array()
+						'idCombo'             => $row->idCombo,
+						'idMenu'              => $row->idMenu,
+						'esCombo'             => $row->perteneceCombo,
+						'cantidad'            => 0,
+						'maximo'              => 0,
+						'descuento'           => 0,
+						'precioMenu'          => (double)$precioMenu,
+						'cobrarTodo'          => $row->cobrarTodo,
+						'descripcion'         => ( $row->perteneceCombo ? $row->combo : $row->menu ),
+						'idTipoServicio'      => $row->idTipoServicio,
+						'tipoServicio'        => $row->tipoServicio,
+						'comentario'          => '',
+						'idDetalleOrdenMenu'  => $row->idDetalleOrdenMenu,
+						'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo,
+						'lstDetalle'          => array()
 					);
 
 				if( $agrupado )
