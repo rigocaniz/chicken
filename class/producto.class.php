@@ -449,10 +449,12 @@ class Producto
  		$comentario      = "NULL";
 
 		// SETEO VARIABLES GENERALES
- 		$data->noFactura       = isset( $data->noFactura )		  ? (string)$data->noFactura 	: NULL;
- 		$data->fechaFactura    = isset( $data->fechaFactura )	  ? $data->fechaFactura 		: NULL;
- 		$data->idEstadoFactura = isset( $data->idEstadoFactura )  ? (int)$data->idEstadoFactura : NULL;
- 		$data->comentario      = isset( $data->comentario )		  ? (string)$data->comentario 	: NULL;
+ 		$data->noFactura       = isset( $data->noFactura )		  	? (string)$data->noFactura 		: NULL;
+ 		$data->fechaFactura    = isset( $data->fechaFactura )	  	? $data->fechaFactura 			: NULL;
+ 		$data->idEstadoFactura = isset( $data->idEstadoFactura )  	? (int)$data->idEstadoFactura 	: NULL;
+ 		$data->idEstadoFactura = (int)$data->idEstadoFactura   		? (int)$data->idEstadoFactura 	: NULL;
+ 		$data->comentario      = isset( $data->comentario )		  	? (string)$data->comentario 	: NULL;
+ 		$data->comentario      = strlen( $data->comentario )	  	? (string)$data->comentario 	: NULL;
  		
  		
  		// VALIDACIONES
@@ -460,9 +462,9 @@ class Producto
 		$noFactura       = $this->con->real_escape_string( $validar->validarTexto( $data->noFactura, NULL, TRUE, 'El No. de factura no es válido' ) );
  		$proveedor       = isset( $data->proveedor ) ? $this->con->real_escape_string( (string)$data->proveedor ) : NULL;
 
- 		if( $accion == 'update' )
- 		{
+ 		if( $accion == 'update' ) {
  			$data->idFacturaCompra = isset( $data->idFacturaCompra )  ? (int)$data->idFacturaCompra : NULL;
+ 			$data->idFacturaCompra = (int)$data->idFacturaCompra > 0  ? (int)$data->idFacturaCompra : NULL;
  			$idFacturaCompra       = $validar->validarEntero( $data->idFacturaCompra, NULL, TRUE, 'El ID de la factura no es válida' );
  		}
 
