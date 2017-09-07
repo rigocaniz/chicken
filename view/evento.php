@@ -218,15 +218,25 @@
                                         </div>
                                     </div>
                                     <div class="row" style="margin-top:5px">
-                                        <label class="col-xs-2">Cliente</label>
-                                        <div class="col-xs-6">
-                                            <input type="text" class="form-control" ng-model="evento.idCliente">
+                                        <div class="col-sm-12">
+                                            <div class="alert alert-info alert-dismissible fade in" role="alert">
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                                <b>Alvaro Barrera Lacan</b> (78237232), 4ta. Calle Zona 4 Totonicapán
+                                            </div>
                                         </div>
-                                        <div class="col-xs-4">
-                                            <button type="button" class="btn btn-info">
-                                                <span class="glyphicon glyphicon-pencil"></span>
-                                                Modificar
-                                            </button>
+                                    </div>
+                                    <div class="row" style="margin-top:5px">
+                                        <label class="col-xs-2">Cliente</label>
+                                        <div class="col-xs-7">
+                                            <input type="text" class="form-control" ng-model="$parent.busquedaCliente">
+                                            <div class="lstResultado">
+                                                <ul>
+                                                    <li>jfkladjs flksadj</li>
+                                                    <li class="active">jfkladjs flksadj</li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row" style="margin-top:5px">
@@ -269,18 +279,23 @@
                                     </div>
                                 </div>
 
-                                <!-- MENUS ORDENADOS -->
+                                <!-- $$$$$$ MENUS ORDENADOS $$$$$$ -->
                                 <div role="tabpanel" class="tab-pane" ng-class="{'active' : idTab==2}" ng-show="idTab==2">
                                    <div class="row" style="margin-top:5px">
-                                        <div class="col-xs-12 text-right" style="margin-top:5px">
-                                            <button type="button" class="btn btn-sm btn-primary">
+                                        <!-- BOTON PARA AGREGAR MENU -->
+                                        <div class="col-xs-12 text-right" style="margin-top:5px" ng-show="accionMenu==''">
+                                            <button type="button" class="btn btn-sm btn-primary" ng-click="accionMenu='nuevo'">
                                                 <span class="glyphicon glyphicon-plus"></span>
                                                 <b>Agregar Menú</b>
                                             </button>
                                         </div>
-                                        <div class="col-sm-12">
+
+                                        <!-- FORMULARIO PARA MENU -->
+                                        <div class="col-sm-12" ng-show="accionMenu=='nuevo' || accionMenu=='editar'">
                                             <fieldset class="fieldset">
-                                                <legend class="legend info">Agregar Menú</legend>
+                                                <legend class="legend info">
+                                                    <span>{{ accionMenu=='nuevo'?'Agregar':'Editar' }}</span> Menú
+                                                </legend>
                                                 <div class="row">
                                                     <div class="col-xs-4">
                                                         <div class="btn-group" style="margin-left:18px">
@@ -301,8 +316,8 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-xs-8">
-                                                        <input type="text" class="form-control" ng-model="menu.otroMenu" ng-show="tipo=='otroMenu'">
-                                                        <select class="form-control" ng-model="menu.idMenu" ng-show="tipo!='otroMenu'">
+                                                        <input type="text" class="form-control" ng-model="menu.otroMenu" ng-show="tipo=='otroMenu'" id="inputMenu">
+                                                        <select class="form-control" ng-model="menu.idMenu" ng-show="tipo!='otroMenu'" id="selectMenu">
                                                             <option value="{{item.idMenu}}" ng-repeat="item in lstMenu">{{item.menu}}</option>
                                                         </select>
                                                     </div>
@@ -324,14 +339,20 @@
                                                     <textarea rows="2" class="form-control" ng-model="menu.comentario"></textarea>
                                                 </div>
                                                 <div class="col-xs-12 text-right" style="margin-top:5px">
-                                                    <button type="button" class="btn btn-sm btn-primary">
-                                                        <span class="glyphicon glyphicon-plus"></span>
-                                                        <b>Agregar</b>
+                                                    <button type="button" class="btn btn-sm btn-default" ng-click="accionMenu==''">
+                                                        <span class="glyphicon glyphicon-remove"></span>
+                                                        Cancelar
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-success">
+                                                        <span class="glyphicon glyphicon-ok"></span>
+                                                        <b>Guardar</b>
                                                     </button>
                                                 </div>
                                             </fieldset>
                                         </div>
-                                        <div class="col-sm-12">
+
+                                        <!-- LISTA DE MENUS -->
+                                        <div class="col-sm-12" ng-show="accionMenu==''">
                                             <table class="table table-striped">
                                                 <thead>
                                                     <tr>
@@ -369,13 +390,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <div class="col-sm-12 text-center">
-                                            <button type="button" class="btn btn-success" ng-click="guardarEvento()">
-                                                <span class="glyphicon glyphicon-plus-sign"></span>
-                                                <b>Guardar Menús de Evento</b>
-                                            </button>
-                                        </div>
-                                   </div>
+                                    </div>
                                 </div>
                                 <!-- MENUS ORDENADOS -->
                             </div>

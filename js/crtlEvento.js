@@ -1,8 +1,8 @@
 app.controller('crtlEvento', function( $scope, $http, $timeout, $modal ){
 
-	$scope.tipo = 'menu';
-	$scope.lstMenu = [];
-
+	$scope.tipo       = 'menu';
+	$scope.lstMenu    = [];
+	$scope.accionMenu = '';
 	$scope.menu = {
 		cantidad       : 0,
 		precioUnitario : 0,
@@ -11,9 +11,40 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal ){
 		comentario     : ''
 	};
 
+	$scope.busquedaCliente = '';
+	$scope.evento = {
+		evento         : '',
+		idCliente      : '',
+		nombreCliente  : '',
+		fechaEvento    : null,
+		horaInicio     : null,
+		horaFinal      : null,
+		anticipo       : 0,
+		numeroPersonas : 0,
+		observacion    : ''
+	};
+
 	// DIALOGOS
 	$scope.dialOrden = $modal({scope: $scope,template:'dl.evento.html', show: false, backdrop:false, keyboard: false });
 
+
+	$scope.consultarCliente = function () {
+		if ( !( $scope.busquedaCliente.length > 3 ) )
+			return false;
+
+		$http.post('consultas.php', { opcion : 'consultarCliente', valor: $scope.busquedaCliente } )
+		.success(function (data) {
+			console.log( data );
+		});
+	};
+
+	$scope.$watch('busquedaCliente', function (_new) {
+		$scope.consultarCliente();
+	});
+
+
+
+	// CONSULTA MENUS O COMBOS
 	$scope.consultarMenu = function () {
 		var datos            = null;
 		$scope.lstMenu       = [];
@@ -49,6 +80,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal ){
 		}
 	};
 
+	// AUXILIAR PARA PREPARAR ARREGLO DE LISTADO OBTENIDO
 	$scope.arrayLst = function ( _array, id, descr ) {
 		var array = [];
 
@@ -62,8 +94,18 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal ){
 		return array;
 	};
 
+	// SI CAMBIA EL TIPO SE REALIZA LA CONSULTA DE MENU
 	$scope.$watch('tipo', function (_new) {
-		$scope.consultarMenu();
+		if ( _new.length ) {
+			$scope.consultarMenu();
+
+			$timeout(function () {
+				if ( _new == 'otroMenu' )
+					document.getElementById('inputMenu').focus();
+				else
+					document.getElementById('selectMenu').focus();
+			});
+		}
 	});
 	
 

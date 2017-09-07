@@ -1012,6 +1012,7 @@ div.inactive-key{
 .lstResultado ul li{
     padding: 4px 9px;
     border-bottom: 1px solid rgba(215, 80, 37, 0.2);
+    cursor: pointer;
 }
 
 .lstResultado ul li.active{
