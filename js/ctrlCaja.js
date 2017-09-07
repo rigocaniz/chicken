@@ -5,15 +5,17 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 	$scope.accion     = 'insert';
 
 	$scope.caja = {
-		cajero           : '',
-		usuario          : '',
-		codigoUsuario    : null,
-		idCaja           : null,
-		fechaApertura    : angular.copy( $scope.$parent.fechaActual ),
-		efectivoInicial  : null,
-		efectivoFinal    : null,
-		efectivoSobrante : null,
-		efectivoFaltante : null
+		cajero            : '',
+		cajaAtrasada      : false,
+		usuario           : '',
+		codigoUsuario     : null,
+		idCaja            : null,
+		fechaApertura     : angular.copy( $scope.$parent.fechaActual ),
+		fechaHoraApertura : null,
+		efectivoInicial   : null,
+		efectivoFinal     : null,
+		efectivoSobrante  : null,
+		efectivoFaltante  : null
 	};
 
 	$scope.$watch('accionCaja', function(){
@@ -64,18 +66,20 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 		})
 		.success(function(data){
 			console.log(data);
-			$scope.caja.cajero           = data.cajero;
-			$scope.caja.idCaja           = data.dataCaja.idCaja;
-			$scope.caja.usuario          = data.dataCaja.usuario;
-			$scope.caja.codigoUsuario    = data.dataCaja.codigoUsuario;
-			$scope.caja.idEstadoCaja     = data.dataCaja.idEstadoCaja;
-			$scope.caja.estadoCaja       = data.dataCaja.estadoCaja;
-			$scope.caja.fechaApertura    = moment( data.dataCaja.fechaApertura );
-			$scope.caja.efectivoInicial  = data.dataCaja.efectivoInicial;
-			$scope.caja.efectivoFinal    = data.dataCaja.efectivoFinal;
-			$scope.caja.efectivoSobrante = data.dataCaja.efectivoSobrante;
-			$scope.caja.efectivoFaltante = data.dataCaja.efectivoFaltante;
-			$scope.caja.idCaja           = data.dataCaja.idCaja;
+			$scope.caja.cajero            = data.cajero;
+			$scope.caja.cajaAtrasada      = data.dataCaja.cajaAtrasada;
+			$scope.caja.idCaja            = data.dataCaja.idCaja;
+			$scope.caja.usuario           = data.dataCaja.usuario;
+			$scope.caja.codigoUsuario     = data.dataCaja.codigoUsuario;
+			$scope.caja.idEstadoCaja      = data.dataCaja.idEstadoCaja;
+			$scope.caja.estadoCaja        = data.dataCaja.estadoCaja;
+			$scope.caja.fechaApertura     = moment( data.dataCaja.fechaApertura );
+			$scope.caja.fechaHoraApertura = data.dataCaja.fechaHoraApertura;
+			$scope.caja.efectivoInicial   = data.dataCaja.efectivoInicial;
+			$scope.caja.efectivoFinal     = data.dataCaja.efectivoFinal;
+			$scope.caja.efectivoSobrante  = data.dataCaja.efectivoSobrante;
+			$scope.caja.efectivoFaltante  = data.dataCaja.efectivoFaltante;
+			$scope.caja.idCaja            = data.dataCaja.idCaja;
 
 			if( !($scope.caja.idCaja > 0) ){
 				$scope.accion = 'insert';
@@ -91,7 +95,6 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 
 
 	$scope.consultaCaja = function() {
-		console.log( "acceder" );
 		var caja = $scope.caja;
 		if( $scope.accion == 'cierre' && !( caja.idCaja && caja.idCaja > 0 ) )
 			alertify.notify( 'El Cierre de caja no es válido', 'danger', 3 );
@@ -109,6 +112,7 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 				data   : $scope.caja
 			})
 			.success(function(data){
+				console.log( data );
 				alertify.set('notifier','position', 'top-right');
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 				if( data.respuesta == 'success' ){

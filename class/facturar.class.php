@@ -51,6 +51,11 @@ class Factura
 			$this->respuesta = 'danger';
 	 		$this->mensaje   = 'No se recibió el detalle de la orden';
 
+	 	elseif( $detalleCaja->cajaAtrasada ):
+	 		$this->respuesta = 'danger';
+	 		$this->mensaje   = ' NO HA REALIZADO EL CIERRE DE SU CAJA DE FECHA/HORA: <b>' . $detalleCaja->fechaHoraApertura . "</b>";
+	 		$this->tiempo    = 8;
+
 		else:
 			// INICIALIZACIÓN VAR
 			$idFactura       = 'NULL';
@@ -255,7 +260,7 @@ class Factura
 				WHERE
 				    idOrdenCliente = {$idOrdenCliente} $where
 				GROUP BY IF( perteneceCombo, idDetalleOrdenCombo, idDetalleOrdenMenu ), perteneceCombo;";
-				echo $sql;
+//				echo $sql;
 
 		if( $rs = $this->con->query( $sql ) ) {
 			while ( $row = $rs->fetch_object() ) {

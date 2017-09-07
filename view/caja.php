@@ -46,6 +46,9 @@
 									</button>
 								</p>
 							</div>
+							<div class="alert alert-danger" role="alert" ng-show="caja.cajaAtrasada">
+								<span class="glyphicon glyphicon-info-sign"></span> USTED NO HA REALIZADO EL CIERRE DE SU CAJA DE FECHA/HORA: <strong style="font-size: 18px">{{ caja.fechaHoraApertura }}</strong>
+							</div>
 							<fieldset class="fieldset">
 								<legend class="legend info">APERTURA DE CAJA</legend>
 								<form class="form-horizontal" autocomplete="off" novalidate>

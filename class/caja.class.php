@@ -27,6 +27,7 @@ class Caja
 	
 		$dataCaja = array(
 			'idCaja'           => 0,
+			'cajaAtrasada'     => FALSE,
 			'usuario'          => $this->sess->getUsuario(),
 			'codigoUsuario'    => $this->sess->getCodigoUsuario(),
 			'fechaApertura'    => $fechaApertura,
@@ -38,11 +39,11 @@ class Caja
 			'estadoCaja'       => 'Cerrada'
 		);
 
- 		//$dataCaja = NULL;
  		$sql = "SELECT 
 				    idCaja,
 				    usuario,
 				    fechaApertura,
+				    DATE_FORMAT( fechaApertura, '%d/%m/%Y %h:%i %p' ) AS fechaHoraApertura,
 				    efectivoInicial,
 				    efectivoFinal,
 				    efectivoSobrante,
@@ -54,29 +55,32 @@ class Caja
 				    codigo
 					FROM
 				    	vstCaja
- 				WHERE usuario = '{$this->sess->getUsuario()}' AND fechaApertura = '{$fechaApertura}' AND idEstadoCaja = 1;";
+ 				WHERE usuario = '{$this->sess->getUsuario()}' AND idEstadoCaja = 1;";
  		
  		if( $rs = $this->con->query( $sql ) ){
 
  			if( $rs->num_rows AND $row = $rs->fetch_object() ){
+				
+				$row->cajaAtrasada = FALSE;
+ 				if( $row->fechaApertura <> $fechaApertura )
+ 					$row->cajaAtrasada = TRUE;
 
 	 			$dataCaja = array(
-	 					'idCaja'           => (int)$row->idCaja,
-	 					'usuario'          => $row->usuario,
-	 					'codigoUsuario'    => $this->sess->getCodigoUsuario(),
-	 					'fechaApertura'    => $row->fechaApertura,
-	 					'efectivoInicial'  => (double)$row->efectivoInicial,
-	 					'efectivoFinal'    => (double)$row->efectivoFinal,
-	 					'efectivoSobrante' => (double)$row->efectivoSobrante,
-	 					'efectivoFaltante' => (double)$row->efectivoFaltante,
-	 					'idEstadoCaja'     => (int)$row->idEstadoCaja,
-	 					'estadoCaja'       => $row->estadoCaja,
+	 					'idCaja'            => (int)$row->idCaja,
+	 					'cajaAtrasada'      => $row->cajaAtrasada,
+	 					'usuario'           => $row->usuario,
+	 					'codigoUsuario'     => $this->sess->getCodigoUsuario(),
+	 					'fechaApertura'     => $row->fechaApertura,
+	 					'fechaHoraApertura' => $row->fechaHoraApertura,
+	 					'efectivoInicial'   => (double)$row->efectivoInicial,
+	 					'efectivoFinal'     => (double)$row->efectivoFinal,
+	 					'efectivoSobrante'  => (double)$row->efectivoSobrante,
+	 					'efectivoFaltante'  => (double)$row->efectivoFaltante,
+	 					'idEstadoCaja'      => (int)$row->idEstadoCaja,
+	 					'estadoCaja'        => $row->estadoCaja,
 	 				);
  			}
- 			else{
- 			}
 
- 			//$dataCaja = $datos;
  		}
 
  		return (object)$dataCaja;
@@ -140,6 +144,8 @@ class Caja
  		else:
 
 	 		$sql = "CALL consultaCaja( '{$accion}', {$idCaja}, {$idEstadoCaja}, {$efectivoInicial}, {$efectivoFinal}, {$efectivoSobrante}, {$efectivoFaltante} )";
+
+	 	//echo $sql;
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 	 			
