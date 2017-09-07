@@ -127,8 +127,8 @@ class Factura
 		 		if( $this->respuesta == 'danger' )
 		 			$this->con->query( "ROLLBACK" );
 		 		else
-		 			$this->con->query( "COMMIT" );
-		 			//$this->con->query( "ROLLBACK" );
+		 			$this->con->query( "ROLLBACK" );
+		 			//$this->con->query( "COMMIT" );
 	 		endif;
 		endif;
 
@@ -141,43 +141,77 @@ class Factura
 		$validar   = new Validar();
 		$guardados = 0;
 
+		//var_dump( $lstOrden );
+
 		foreach ($lstOrden AS $ixOrden => $orden ) {
+			
+			$idFactura           = (int)$idFactura;
+			$idDetalleOrdenMenu  = "NULL";
+			$idDetalleOrdenCombo = "NULL";
+			$comentario          = "NULL";
+			$precioMenu          = (double)$orden->precioMenu;
+
+			if( (int)$orden->esCombo )
+				$idDetalleOrdenCombo = (int)$orden->idDetalleOrdenCombo;
+			else
+				$idDetalleOrdenMenu = (int)$orden->idDetalleOrdenMenu;
+
+			$descuento  = (double)$orden->descuento;
+			$comentario = "'" . $orden->comentario . "'";
 
 			if( (int)$orden->cobrarTodo ):
-				$idFactura           = (int)$idFactura;
-				$idDetalleOrdenMenu  = "NULL";
-				$idDetalleOrdenCombo = "NULL";
-				$comentario          = "NULL";
+				if( $agrupado ) {
 
-				if( (int)$orden->esCombo )
-					$idDetalleOrdenCombo = (int)$orden->idDetalleOrdenCombo;
-				else
-					$idDetalleOrdenMenu = (int)$orden->idDetalleOrdenMenu;
+					for ($i = 0; $i < $orden->cantidad; $i++) {
 
-				$precioMenu = (double)$orden->precioMenu;
-				$descuento  = (double)$orden->descuento;
+						$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precioMenu}, {$descuento}, {$comentario} );";
+
+//						echo $sql . "\n";
+						if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+							$this->siguienteResultado();
+
+							$this->respuesta = $row->respuesta;
+							$this->mensaje   = $row->mensaje;
+							
+							if( $this->respuesta == 'success' ){
+								$this->tiempo = 2;
+								$guardados++;
+							}
+						}
+						else{
+							$this->respuesta = 'danger';
+							$this->mensaje   = 'Error al ejecutar la operacion (Detalle Factura)';
+						}
+
+						if( $this->respuesta == 'danger' )
+							break;
+					}
 				
-				$comentario = "'" . $orden->comentario . "'";
-				
-				$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precioMenu}, {$descuento}, {$comentario} );";
-				//echo $sql . "\n";
-
-				if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-					$this->siguienteResultado();
-
-					$this->respuesta = $row->respuesta;
-					$this->mensaje   = $row->mensaje;
+				}
+				else {
 					
-					if( $this->respuesta == 'success' )
-						$guardados++;
-				}
-				else{
-					$this->respuesta = 'danger';
-					$this->mensaje   = 'Error al ejecutar la operacion (Detalle Factura)';
-				}
+					$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precioMenu}, {$descuento}, {$comentario} );";
 
-				if( $this->respuesta == 'danger' )
-					break;
+					//echo $sql . "\n";
+					if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+						$this->siguienteResultado();
+
+						$this->respuesta = $row->respuesta;
+						$this->mensaje   = $row->mensaje;
+						
+						if( $this->respuesta == 'success' ){
+							$this->tiempo = 2;
+							$guardados++;
+						}
+					}
+					else{
+						$this->respuesta = 'danger';
+						$this->mensaje   = 'Error al ejecutar la operacion (Detalle Factura)';
+					}
+
+					if( $this->respuesta == 'danger' )
+						break;
+				}
 
 			endif;
 		}
@@ -207,8 +241,10 @@ class Factura
 					$this->respuesta = $row->respuesta;
 					$this->mensaje   = $row->mensaje;
 					
-					if( $this->respuesta == 'success' )
+					if( $this->respuesta == 'success' ) {
+						$this->tiempo = 2;
 						$guardados++;
+					}
 				}
 				else{
 					$this->respuesta = 'danger';
@@ -260,7 +296,7 @@ class Factura
 				WHERE
 				    idOrdenCliente = {$idOrdenCliente} $where
 				GROUP BY IF( perteneceCombo, idDetalleOrdenCombo, idDetalleOrdenMenu ), perteneceCombo;";
-//				echo $sql;
+				//echo $sql;
 
 		if( $rs = $this->con->query( $sql ) ) {
 			while ( $row = $rs->fetch_object() ) {
@@ -351,13 +387,14 @@ class Factura
 	// OBTENER ARREGLO RESPUESTA
  	private function getRespuesta()
  	{
-
+ 		/*
  		if( $this->respuesta == 'success' )
  			$this->tiempo = 4;
  		elseif( $this->respuesta == 'warning')
  			$this->tiempo = 5;
  		elseif( $this->respuesta == 'danger')
  			$this->tiempo = 7;
+ 		*/
 
  		return $respuesta = array( 
  				'respuesta' => $this->respuesta,

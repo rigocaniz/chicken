@@ -2529,15 +2529,15 @@
             element,
             openInstances = [],
             classes = {
-                base: 'alertify-notifier',
-                message: 'ajs-message',
-                top: 'ajs-top',
-                right: 'ajs-right',
-                bottom: 'ajs-bottom',
-                left: 'ajs-left',
-                visible: 'ajs-visible',
-                hidden: 'ajs-hidden',
-                close: 'ajs-close'
+                base    : 'alertify-notifier',
+                message : 'ajs-message',
+                top     : 'ajs-top',
+                right   : 'ajs-right',
+                bottom  : 'ajs-bottom',
+                left    : 'ajs-left',
+                visible : 'ajs-visible',
+                hidden  : 'ajs-hidden',
+                close   : 'ajs-close'
             };
         /**
          * Helper: initializes the notifier instance
