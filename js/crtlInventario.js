@@ -259,6 +259,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 					console.log( data );
 					alertify.set('notifier','position', 'top-right');
 					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+					$scope.$parent.hideLoading();
 					if( data.respuesta == 'success' )
 					{
 						$scope.realizarReajuste = false;
@@ -266,7 +267,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 						$scope.lstProductosInventario();	
 					}
 
-					$scope.$parent.hideLoading();
 				});
 				
 			}
@@ -315,6 +315,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				console.log( data );
 				alertify.set('notifier','position', 'top-right');
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+				$scope.$parent.hideLoading();
 				if( data.respuesta == 'success' )
 				{
 					$scope.resetValores( 'cierreDiario' );
@@ -322,7 +323,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 					$scope.lstProductosInventario();
 				}
 
-				$scope.$parent.hideLoading();
 			});
 
 		}
@@ -479,6 +479,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				console.log( data );
 				alertify.set('notifier','position', 'top-right');
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+				$scope.$parent.hideLoading();
 
 				if( data.respuesta == 'success' )
 				{
@@ -490,8 +491,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 						$scope.cargarLstFacturaCompra();
 					}
 				}
-
-				$scope.$parent.hideLoading();
 			});
 		}
 	};
@@ -619,7 +618,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				'cantidadMinima' : null,
 				'cantidadMaxima' : null,
 				'disponibilidad' : '',
-				'importante'     : '',
+				'importante'     : true,
 			};			
 		}
 		else if( accion == 2 ){
@@ -742,6 +741,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				console.log( data );
 				alertify.set('notifier','position', 'top-right');
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+				$scope.$parent.hideLoading();
 
 				if ( data.respuesta == "success" ) {
 					$scope.resetValores( 1 );
@@ -749,7 +749,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 					$scope.dialAdministrarCerrar();
 				}
 
-				$scope.$parent.hideLoading();
 			})
 		}
 	};
@@ -807,12 +806,12 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				console.log( data );
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
+				$scope.$parent.hideLoading();
 				if ( data.respuesta == 'success' ) {
 					$scope.resetValores( 4 );
 					$scope.catTipoProducto();
 				}
 
-				$scope.$parent.hideLoading();
 			})
 		}
 	};
@@ -852,13 +851,13 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			}).success(function(data){
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
+				$scope.$parent.hideLoading();
 				if ( data.respuesta == 'success' ) {
 					$scope.medidaProducto = '';
 					$scope.catMedidas();
 					$scope.resetValores( 6 );
 				}
 
-				$scope.$parent.hideLoading();
 			})
 		}
 	};

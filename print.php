@@ -17,11 +17,12 @@ echo "</pre>";
 ?>
 <style type="text/css">
 	table {
-		border-collapse:collapse
+		border-collapse: collapse
 	}
 	td {
-		border:1px solid black;
+		border: 0px solid black;
 	}
+	.
 </style>
 
 <table border="0" cellpadding="2">
@@ -42,7 +43,7 @@ echo "</pre>";
 </table>
 <br>
 
-<table border="1" cellpadding="4">
+<table border="0" cellpadding="4">
 	<thead>
 		<tr>
 			<th>No.</th>
