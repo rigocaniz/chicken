@@ -180,7 +180,7 @@
 
 <!-- MODAL EVENTO -->
 <script type="text/ng-template" id="dl.evento.html">
-    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_nuevo_evento">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dl_evento">
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-primary">
                 <div class="modal-header panel-heading">
@@ -192,7 +192,7 @@
                     <div class="row">
                         <!-- TABS -->
                         <div class="col-sm-12">
-                            <ul class="nav nav-tabs tabs-title" role="tablist" ng-init="idTab=2">
+                            <ul class="nav nav-tabs tabs-title" role="tablist">
                                 <li role="presentation" ng-class="{'active' : idTab==1}" ng-click="idTab=1">
                                     <a href="" role="tab" data-toggle="tab">
                                         <span class="glyphicon glyphicon-calendar"></span> Datos del Evento
@@ -211,32 +211,32 @@
                             <div class="tab-content">
                                 <!--  INFORMACION EVENTO -->
                                 <div role="tabpanel" class="tab-pane" ng-class="{'active' : idTab==1}" ng-show="idTab==1">
-                                	<div class="row">
-                                        <label class="col-xs-2">Evento</label>
-                                        <div class="col-xs-8">
-                                            <input type="text" class="form-control" ng-model="evento.evento" placeholder="Descripción de evento">
-                                        </div>
-                                    </div>
-                                    <div class="row" style="margin-top:5px">
+                                    <div class="row" style="margin-top:5px" ng-show="evento.idCliente>0">
                                         <div class="col-sm-12">
                                             <div class="alert alert-info alert-dismissible fade in" role="alert">
-                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <button type="button" class="close" ng-click="evento.idCliente=0;evento.nombreCliente=''" ng-hide="evento.idEvento>0 && accionEvento=='insert'">
                                                     <span aria-hidden="true">×</span>
                                                 </button>
-                                                <b>Alvaro Barrera Lacan</b> (78237232), 4ta. Calle Zona 4 Totonicapán
+                                                <span ng-bind-html="evento.nombreCliente"></span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row" style="margin-top:5px">
+                                    <div class="row" style="margin-top:5px" ng-hide="evento.idCliente>0">
                                         <label class="col-xs-2">Cliente</label>
                                         <div class="col-xs-7">
                                             <input type="text" class="form-control" ng-model="$parent.busquedaCliente">
-                                            <div class="lstResultado">
+                                            <div class="lstResultado" ng-show="lstResultado.length">
                                                 <ul>
-                                                    <li>jfkladjs flksadj</li>
-                                                    <li class="active">jfkladjs flksadj</li>
+                                                    <li ng-repeat="item in lstResultado" ng-click="seleccionarCliente( item )" ng-class="{'active':item.active}" ng-bind-html="item.cliente">
+                                                    </li>
                                                 </ul>
                                             </div>
+                                        </div>
+                                    </div>
+                                	<div class="row" style="margin-top:5px">
+                                        <label class="col-xs-2">Evento</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" ng-model="evento.evento" placeholder="Descripción de evento" id="evento">
                                         </div>
                                     </div>
                                     <div class="row" style="margin-top:5px">
@@ -246,11 +246,11 @@
                                         </div>
                                         <label class="col-xs-1">De</label>
                                         <div class="col-xs-2">
-                                            <input type="text" class="form-control" ng-model="evento.horaInicio" bs-timepicker data-time-format="hh:mm a" data-time-type="string">
+                                            <input type="text" class="form-control" ng-model="evento.horaInicio" bs-timepicker data-time-format="hh:mm" data-time-type="string">
                                         </div>
                                         <label class="col-xs-1">Para</label>
                                         <div class="col-xs-2">
-                                            <input type="text" class="form-control" ng-model="evento.horaFinal" bs-timepicker data-time-format="hh:mm a" data-time-type="string">
+                                            <input type="text" class="form-control" ng-model="evento.horaFinal" bs-timepicker data-time-format="hh:mm" data-time-type="string">
                                         </div>
                                     </div>
                                     <div class="row" style="margin-top:5px">
@@ -265,8 +265,8 @@
                                     </div>
                                     <div class="row" style="margin-top:5px">
                                         <label class="col-xs-2">Observación</label>
-                                        <div class="col-xs-8">
-                                            <textarea rows="2" class="form-control" ng-model="evento.observacion"></textarea>
+                                        <div class="col-xs-10">
+                                            <textarea rows="5" class="form-control" ng-model="evento.observacion"></textarea>
                                         </div>
                                     </div>
                                     <div class="row" style="margin-top:5px">
@@ -339,11 +339,11 @@
                                                     <textarea rows="2" class="form-control" ng-model="menu.comentario"></textarea>
                                                 </div>
                                                 <div class="col-xs-12 text-right" style="margin-top:5px">
-                                                    <button type="button" class="btn btn-sm btn-default" ng-click="accionMenu==''">
+                                                    <button type="button" class="btn btn-sm btn-default" ng-click="accionMenu=''">
                                                         <span class="glyphicon glyphicon-remove"></span>
                                                         Cancelar
                                                     </button>
-                                                    <button type="button" class="btn btn-sm btn-success">
+                                                    <button type="button" class="btn btn-sm btn-success" ng-click="guardarMenu()">
                                                         <span class="glyphicon glyphicon-ok"></span>
                                                         <b>Guardar</b>
                                                     </button>

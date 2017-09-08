@@ -77,6 +77,7 @@ var socket = io.connect('http://127.0.0.1:8080', { 'forceNew': true });
 
 // CONTROLADOR PRINCIPAL
 app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $modal, $window ){
+    alertify.set('notifier','position', 'top-right');
     
     $scope.loading     = false;
     $scope.loadingText = "Cargando...";

@@ -16,6 +16,7 @@ include 'class/producto.class.php';
 include 'class/sesion.class.php';
 include 'class/usuario.class.php';
 include 'class/validar.class.php';
+include 'class/evento.class.php';
 include 'class/funciones.php';
 
 // DEFINIR SESION USUARIO
@@ -534,6 +535,14 @@ switch ( $data->opcion )
 		$usuario = new Usuario();
 		echo json_encode( array( 'usuario' => $usuario->getUsuario( $sesion->getUsuario() ) ) );
 		break;
+
+	///////////////////////// EVENTO /////////////////////////
+	// CONSULTA EVENTO
+	case 'guardarEvento':
+		$evento = new Evento();
+		echo json_encode( $evento->guardarEvento( $data->accion, $data->evento ) );
+		break;
+	///////////////////////// EVENTO /////////////////////////
 
 
 	/////////////////////////
