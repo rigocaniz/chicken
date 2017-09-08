@@ -19,11 +19,13 @@
 						<span class="glyphicon glyphicon-user"></span> NUEVO CLIENTE
 					</a>
 				</li>
+				<!--
 				<li role="presentation" ng-class="{'active' : menuCliente=='clientes'}" ng-click="menuCliente='clientes'">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-user"></span> CLIENTES
 					</a>
 				</li>
+				-->
 			</ul>
 			<!-- CONTENIDO TABS -->
 			<div class="tab-content">

@@ -127,8 +127,8 @@ class Factura
 		 		if( $this->respuesta == 'danger' )
 		 			$this->con->query( "ROLLBACK" );
 		 		else
-		 			$this->con->query( "ROLLBACK" );
-		 			//$this->con->query( "COMMIT" );
+		 			$this->con->query( "COMMIT" );
+		 			//$this->con->query( "ROLLBACK" );
 	 		endif;
 		endif;
 
@@ -166,7 +166,7 @@ class Factura
 
 						$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precioMenu}, {$descuento}, {$comentario} );";
 
-//						echo $sql . "\n";
+						//echo $sql . "\n";
 						if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 							$this->siguienteResultado();
 
@@ -381,6 +381,144 @@ class Factura
  		}
 
  		return $lst;
+ 	}
+
+
+
+ 	function lstFacturas( $idFactura = NULL )
+ 	{
+ 		$where = "";
+ 		if( !is_null( $idFactura ) AND $idFactura > 0 )
+ 			$where .= "WHERE idFactura = {$idFactura}";
+
+ 		$lstFacturas = array();
+
+ 		$sql = "SELECT 
+				    idFactura,
+				    idCliente,
+				    idCaja,
+				    nombre,
+				    direccion,
+				    total,
+				    fechaFactura,
+				    usuario,
+				    idEstadoFactura,
+				    estadoFactura,
+				    fechaRegistro
+				FROM
+				    vstFactura $where
+				ORDER BY fechaRegistro DESC;";
+ 		
+ 		if( $rs = $this->con->query( $sql ) ){
+ 			while( $row = $rs->fetch_object() ){
+ 				$lstFacturas[] = $row;
+ 			}
+ 		}
+
+ 		return $lstFacturas;
+ 	}
+
+
+ 	function detalleOrdenFactura( $idFactura )
+ 	{
+
+ 		$lstDetalleFactura = array();
+
+		$sql = "SELECT 
+					*
+				    /*
+				    idFactura,
+				    idOrdenCliente,
+				    numeroTicket,
+				    idDetalleOrdenMenu,
+				    idMenu,
+				    menu,
+				    imagen,
+				    perteneceCombo,
+				    idDetalleOrdenCombo,
+				    idCombo,
+				    combo,
+				    imagenCombo,
+				    idTipoServicio,
+				    tipoServicio,
+				    usuarioRegistro,
+				    precioMenu,
+				    descuento,
+				    precioReal,
+				    comentario
+				    */
+				FROM
+				    vstDetalleOrdenFactura
+				WHERE
+				    idFactura = {$idFactura}
+				GROUP BY IF( perteneceCombo, idDetalleOrdenCombo, idDetalleOrdenMenu ), perteneceCombo;";
+ 		
+ 		if( $rs = $this->con->query( $sql ) ){
+ 			while( $row = $rs->fetch_object() ){
+ 				$row->perteneceCombo = (int)$row->perteneceCombo;
+				// SI PERTENECE A COMBO
+				if ( $row->perteneceCombo ) {
+					$row->idMenu             = 0;
+					$row->idDetalleOrdenMenu = 0;
+					$precioMenu              = $row->precioMenu;
+				}
+				else{
+					$row->idCombo             = 0;
+					$row->idDetalleOrdenCombo = 0;
+					$precioMenu               = $row->precioMenu;
+				}
+
+ 				$index = -1;
+
+				$detalle = (object)array(
+						'idCombo'             => $row->idCombo,
+						'idMenu'              => $row->idMenu,
+						'esCombo'             => $row->perteneceCombo,
+						'cantidad'            => 0,
+						'descuento'           => (double)$row->descuento,
+						'precioMenu'          => (double)$precioMenu,
+						'precioReal'          => $row->precioReal,
+						'descripcion'         => ( $row->perteneceCombo ? $row->combo : $row->menu ),
+						'idTipoServicio'      => $row->idTipoServicio,
+						'tipoServicio'        => $row->tipoServicio,
+						'comentario'          => $row->comentario,
+						'idDetalleOrdenMenu'  => $row->idDetalleOrdenMenu,
+						'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo
+					);
+
+				// REVISA SI YA EXISTE MENU
+				foreach ( $lstDetalleFactura as $ix => $item ):
+					if ( 
+						$row->idCombo        == $item->idCombo AND
+						$row->idMenu         == $item->idMenu AND
+						$row->idTipoServicio == $item->idTipoServicio AND
+						$row->precioReal     == $item->precioReal
+					) {
+						$index = $ix;
+						break;
+					}
+				endforeach;
+
+				// SI NO EXISTE EN LISTADO
+				if ( $index == -1 ) {
+					$index = count( $lstDetalleFactura );
+					// AGREGA UNA NUEVA ORDEN
+					$lstDetalleFactura[ $index ] = $detalle;
+				}
+
+				$lstDetalleFactura[ $index ]->cantidad += 1;
+
+				// AGREGA DETALLE DE ORDEN
+				/*$lstDetalleFactura[ $index ]->lstDetalle[] = (object)array(
+					'precioMenu'          => $precioMenu,
+					'idDetalleOrdenMenu'  => $row->idDetalleOrdenMenu,
+					'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo
+				);
+				*/
+ 			}
+ 		}
+
+ 		return $lstDetalleFactura;
  	}
 
 

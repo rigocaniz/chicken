@@ -137,25 +137,25 @@
                                                                 <th class="text-center">
                                                                     <small>cobrar</small>
                                                                 </th>
-                                                                <th class="text-center col-sm-4 col-md-6 col-lg-6">
+                                                                <th class="text-center col-sm-4 col-md-6 col-lg-5">
                                                                     Orden
                                                                 </th>
                                                                 <th class="text-center col-sm-2 col-md-2 col-lg-2">
                                                                     Cant.
                                                                 </th>
-                                                                <th class="text-right col-sm-2 col-md-2 col-lg-2">
+                                                                <th class="text-right col-sm-2 col-md-1 col-lg-1">
                                                                     Precio
                                                                 </th>
-                                                                <th class="text-right col-sm-2 col-md-2 col-lg-2">
+                                                                <th class="text-right col-sm-2 col-md-1 col-lg-2">
                                                                     Descuento
                                                                 </th>
-                                                                <th class="text-right col-sm-3 col-md-2 col-lg-2">
+                                                                <th class="text-right col-sm-3 col-md-3 col-lg-2">
                                                                     Subtotal
                                                                 </th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr ng-repeat="item in facturacion.lstOrden" ng-class="{'warning': !item.cobrarTodo, 'border-warning': item.precio!=item.precioMenu}" ng-dblclick="item.cobrarTodo=!item.cobrarTodo">
+                                                            <tr ng-repeat="item in facturacion.lstOrden" ng-class="{'warning': !item.cobrarTodo, 'border-warning': item.descuento > 0 , 'border-danger': item.descuento == item.precioMenu}" ng-dblclick="item.cobrarTodo=!item.cobrarTodo">
                                                                 <td class="text-center">
                                                                     <button type="button" class="btn btn-sm btn-default" ng-click="item.cobrarTodo=!item.cobrarTodo">
                                                                         <span class="glyphicon " ng-class="{'glyphicon-check': item.cobrarTodo, 'glyphicon-unchecked': !item.cobrarTodo}"></span>
