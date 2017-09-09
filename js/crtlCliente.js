@@ -84,13 +84,12 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
 	$scope.consultaCliente = function(){
         var cliente = $scope.cliente;
 
-        if( !(cliente.nombre && cliente.nombre.length >= 3) ) {
+        if( !(cliente.nombre && cliente.nombre.length >= 3) )
             alertify.notify('El nombre debe tener más de 2 caracteres', 'warning', 4);
-        }
-		else if( cliente.cui == undefined )
-			alertify.notify('El No. de CUI es inválido', 'warning', 3);	
-		else if( cliente.cui.length >= 1 && !(cliente.cui.length == 13) )
-			alertify.notify('El No. de CUI debe tener 13 dígitos', 'warning', 3);	
+
+		else if( cliente.cui != undefined && cliente.cui.length >= 1 && !(cliente.cui.length == 13) )
+            alertify.notify('El No. de CUI debe tener 13 dígitos', 'warning', 3);   
+
         else {
             $http.post('consultas.php',{
                 opcion  : "consultaCliente",
