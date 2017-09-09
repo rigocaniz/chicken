@@ -36,9 +36,7 @@ class Factura
 		$caja    = new Caja();
 
 		$detalleCaja = $caja->consultarEstadoCaja();
-		//var_dump( $data );
 
-		//if( $caja->consultarEstadoCaja()->idEstadoCaja == 1 ):
 		if( $detalleCaja->idEstadoCaja != 1 ):
 			$this->respuesta = 'danger';
 	 		$this->mensaje   = 'Su <b>CAJA</b> se encuentra <b>' . strtoupper( $caja->consultarEstadoCaja()->estadoCaja ) . "</b> debe aperturarla para poder facturar";
@@ -141,10 +139,9 @@ class Factura
 		$validar   = new Validar();
 		$guardados = 0;
 
-		//var_dump( $lstOrden );
-
 		foreach ($lstOrden AS $ixOrden => $orden ) {
-			
+
+			//var_dump( $orden );
 			$idFactura           = (int)$idFactura;
 			$idDetalleOrdenMenu  = "NULL";
 			$idDetalleOrdenCombo = "NULL";
@@ -160,6 +157,7 @@ class Factura
 			$comentario = "'" . $orden->comentario . "'";
 
 			if( (int)$orden->cobrarTodo ):
+
 				if( $agrupado ) {
 
 					for ($i = 0; $i < $orden->cantidad; $i++) {
@@ -168,6 +166,8 @@ class Factura
 
 						//echo $sql . "\n";
 						if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+
+							//var_dump( $row );
 							$this->siguienteResultado();
 
 							$this->respuesta = $row->respuesta;

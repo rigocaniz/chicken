@@ -70,6 +70,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 
 	$scope.dialAccionCliente = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenBusqueda = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialPrintFactura  = $modal({scope: $scope,template:'dial.printFactura.html', show: false, backdrop:false, keyboard: true });
+	
 
 	$scope.seleccionarDeBusqueda = function ( orden ) {
 		console.log( orden );
@@ -81,6 +83,10 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		});
 	};
 
+	$scope.impresionFactura = {
+		type      : 'g',
+		idFactura : null
+	};
 	$scope.consultaFacturaCliente = function(){
 		$scope.facturacion.total = $scope.retornarTotal();
 		var factura = $scope.facturacion;
@@ -110,6 +116,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 				alertify.set('notifier','position', 'top-right');
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 				if( data.respuesta == 'success' ) {
+					$scope.impresionFactura.idFactura = data.data;
+					$scope.dialPrintFactura.show();
 				}
 				$scope.$parent.hideLoading();
 			})
