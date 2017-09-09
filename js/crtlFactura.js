@@ -100,8 +100,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		else if( !(factura.lstOrden && factura.lstOrden.length > 0) )
 			alertify.notify('La lista de ordenes está vacia', 'warning', 4);
 		
-		//else if( !(factura.total && factura.total > 0) )
-		//	alertify.notify('El total del cobro debe ser mayor a 0', 'warning', 4);
+		else if( !(factura.total && factura.total > 0) )
+		alertify.notify('El total del cobro debe ser mayor a 0', 'warning', 4);
 
 		else {
 			
