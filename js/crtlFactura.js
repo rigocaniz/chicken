@@ -44,7 +44,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			for (var i = 0; i < $scope.facturacion.lstOrden.length; i++) {
 				var orden = $scope.facturacion.lstOrden[ i ];
 				if( orden.cobrarTodo )
-					total += ( orden.cantidad * (orden.precioMenu - orden.descuento) );
+					total += ( ( orden.cantidad * orden.precioMenu ) - orden.descuento );
 			}
 		}
 

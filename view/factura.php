@@ -187,7 +187,7 @@
                                                                     <input type="number" class="form-control" ng-model="item.descuento" max="{{ item.precioMenu }}" min="0" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" ng-disabled="!item.cobrarTodo">
                                                                 </td>
                                                                 <td class="text-right">
-                                                                    {{ item.cantidad * ( item.precioMenu - item.descuento ) | number:2 }}
+                                                                    {{ ( item.cantidad * item.precioMenu ) -  item.descuento | number:2 }}
                                                                 </td>
                                                             </tr>
                                                             <tr class="success">
