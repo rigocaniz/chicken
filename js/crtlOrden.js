@@ -68,8 +68,14 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 				if ( Array.isArray( data ) && data.length ) {
 					$scope.buscarTicket = 0;
-					$scope.lstTicketBusqueda = data;
-					$scope.dialOrdenBusqueda.show();
+
+					if ( data.length == 1 )
+						$scope.seleccionarDeBusqueda( data[ 0 ] );
+					
+					else{
+						$scope.lstTicketBusqueda = data;
+						$scope.dialOrdenBusqueda.show();
+					}
 				}
 				else{
 					alertify.set('notifier','position', 'top-right');
@@ -696,7 +702,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		// ORDENES POR ESTADO
 		if ( key == 80 ) $scope.idEstadoOrden = 1; // {P}
 		if ( key == 69 ) $scope.idEstadoOrden = 2; // {E}
-		if ( key == 70 ) $scope.idEstadoOrden = 3; // {F}
+		if ( key == 76 ) $scope.idEstadoOrden = 3; // {F}
+		if ( key == 70 ) $scope.idEstadoOrden = 4; // {F}
 		if ( key == 67 ) $scope.idEstadoOrden = 10; // {C}
 
 		// BUSQUEDA POR TICKET
@@ -813,7 +820,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key, altDerecho ) {
-
 		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
 		if ( $scope.$parent.loading )
 			return false;

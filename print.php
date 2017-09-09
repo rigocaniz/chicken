@@ -45,7 +45,7 @@ $detalleFactura   = $factura->detalleOrdenFactura( $idFactura );
 	<tbody>
 		<tr>
 			<td><b>NIT:</b></td>
-			<td><?= $principalFactura->idFactura; ?></td>
+			<td><?= $principalFactura->nit; ?></td>
 		</tr>
 		<tr>
 			<td><b>Nombre</b>:</td>
@@ -105,3 +105,9 @@ $detalleFactura   = $factura->detalleOrdenFactura( $idFactura );
  	</tr>
 	</tbody>
 </table>
+<script type="text/javascript">
+	window.onload = function() { 
+		window.print(); 
+		window.close();
+	}
+</script>

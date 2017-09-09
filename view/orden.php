@@ -28,9 +28,13 @@
 					<span class="hidden-xs"><u>E</u>n Progreso</span>
 				</button>
 				<button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="idEstadoOrden=3">
-					<span class="glyphicon glyphicon-flag"></span>
-					<span class="hidden-xs"><u>F</u>inalizados</span>
+					<span class="glyphicon glyphicon-ok"></span>
+					<span class="hidden-xs"><u>L</u>isto</span>
 				</button>
+                <button class="bt-primary" ng-class="{'active':idEstadoOrden==4}" ng-click="idEstadoOrden=4">
+                    <span class="glyphicon glyphicon-flag"></span>
+                    <span class="hidden-xs"><u>F</u>inalizados</span>
+                </button>
 				<button class="bt-danger" ng-class="{'active':idEstadoOrden==10}" ng-click="idEstadoOrden=10">
 					<span class="glyphicon glyphicon-remove"></span>
 					<span class="hidden-xs"><u>C</u>ancelados</span>

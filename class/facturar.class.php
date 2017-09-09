@@ -397,6 +397,7 @@ class Factura
 				    idFactura,
 				    idCliente,
 				    idCaja,
+				    nit,
 				    nombre,
 				    direccion,
 				    total,

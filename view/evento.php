@@ -1,28 +1,28 @@
 <div class="col-xs-12" style="margin-top:5px">
 	<div class="row">
-        <div class="col-sm-4 col-xs-5" style="margin-bottom:9px">
+        <div class="col-xs-6" style="margin-top:5px">
+            <div class="btn-orden">
+                <button class="bt-info" ng-class="{'active':idEstadoEvento==1}" ng-click="idEstadoEvento=1">
+                    <span class="glyphicon glyphicon-time"></span>
+                    <span class="hidden-xs">Programado</span>
+                </button>
+                <button class="bt-success" ng-class="{'active':idEstadoEvento==5}" ng-click="idEstadoEvento=5">
+                    <span class="glyphicon glyphicon-flag"></span>
+                    <span class="hidden-xs">Finalizados</span>
+                </button>
+                <button class="bt-danger" ng-class="{'active':idEstadoEvento==10}" ng-click="idEstadoEvento=10">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    <span class="hidden-xs">Cancelados</span>
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-5" style="margin-bottom:5px">
             <button type="button" class="btn btn-success" ng-click="showDialOrden( 'insert' )">
                 <span class="glyphicon glyphicon-plus"></span>
-                <u>N</u>uevo Evento
+                Nuevo Evento
                 <span class="glyphicon glyphicon-calendar"></span>
             </button>
         </div>
-		<div class="col-xs-12" style="margin-top:5px">
-			<div class="btn-orden">
-				<button class="bt-info" ng-class="{'active':idEstadoEvento==1}" ng-click="idEstadoEvento=1">
-					<span class="glyphicon glyphicon-time"></span>
-					<span class="hidden-xs">Programado</span>
-				</button>
-				<button class="bt-success" ng-class="{'active':idEstadoEvento==5}" ng-click="idEstadoEvento=5">
-					<span class="glyphicon glyphicon-flag"></span>
-					<span class="hidden-xs">Finalizados</span>
-				</button>
-				<button class="bt-danger" ng-class="{'active':idEstadoEvento==10}" ng-click="idEstadoEvento=10">
-					<span class="glyphicon glyphicon-remove"></span>
-					<span class="hidden-xs">Cancelados</span>
-				</button>
-			</div>
-		</div>
 	</div>
 	<div class="row contenedor-tickets">
         <div class="col-xs-12" ng-hide="lstEvento.length">
@@ -30,7 +30,7 @@
         </div>
 
         <!-- *********** INFORMACION DE EVENTOS ********* -->
-        <div class="col-xs-12 info-orden-ticket" ng-repeat="evento in lstEvento" style="margin-bottom:9px">
+        <div class="col-xs-12 info-orden-ticket" ng-repeat="evento in lstEvento" style="margin-bottom:13px">
             <!-- *********** INFORMACION DE ORDEN ********* -->
             <div class="row">
                 <div class="col-sm-6 col-xs-12">
@@ -81,6 +81,7 @@
                     <span class="valor">{{formatoFecha( evento.fechaRegistro, 'D[/]MM[/]YYYY [-] HH:mm' )}}</span>
                 </div>
             </div>
+            <!--
             <legend class="legend2" style="cursor:pointer" ng-click="evento.showMenus=!evento.showMenus">Menús Evento</legend>
             <div class="row" ng-show="evento.showMenus">
                 <div class="col-xs-12">
@@ -109,7 +110,7 @@
                         </tbody>
                     </table>
                 </div>
-           </div>
+           </div>-->
         </div>
 	</div>
 </div>
