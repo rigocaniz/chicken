@@ -284,17 +284,17 @@
                                    <div class="row" style="margin-top:5px">
                                         <!-- BOTON PARA AGREGAR MENU -->
                                         <div class="col-xs-12 text-right" style="margin-top:5px" ng-show="accionMenu==''">
-                                            <button type="button" class="btn btn-sm btn-primary" ng-click="accionMenu='nuevo'">
+                                            <button type="button" class="btn btn-sm btn-primary" ng-click="accionMenu='insert'">
                                                 <span class="glyphicon glyphicon-plus"></span>
                                                 <b>Agregar Menú</b>
                                             </button>
                                         </div>
 
                                         <!-- FORMULARIO PARA MENU -->
-                                        <div class="col-sm-12" ng-show="accionMenu=='nuevo' || accionMenu=='editar'">
+                                        <div class="col-sm-12" ng-show="accionMenu=='insert' || accionMenu=='update'">
                                             <fieldset class="fieldset">
                                                 <legend class="legend info">
-                                                    <span>{{ accionMenu=='nuevo'?'Agregar':'Editar' }}</span> Menú
+                                                    <span>{{ accionMenu=='insert'?'Agregar':'Editar' }}</span> Menú
                                                 </legend>
                                                 <div class="row">
                                                     <div class="col-xs-4">

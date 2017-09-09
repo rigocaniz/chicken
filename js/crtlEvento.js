@@ -141,6 +141,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 		}
 	};
 
+	$scope.accionMenu = 'insert';
 	// GUARDAR MENU
 	$scope.guardarMenu = function () {
 		if ( !( $scope.menu.cantidad > 0 ) )
@@ -155,14 +156,27 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 		else
 		{
 			var datos = {
-				idMenu         : $scope.menu.idMenu,
-				cantidad       : $scope.menu.cantidad,
-				precioUnitario : $scope.menu.precioUnitario,
-				comentario     : $scope.menu.comentario,
-				otroMenu       : $scope.menu.otroMenu,
-				tipo           : $scope.tipo
+				opcion : 'guardarMenuEvento',
+				menu   : {
+					accion         : $scope.accionMenu,
+					idMenu         : $scope.menu.idMenu,
+					cantidad       : $scope.menu.cantidad,
+					precioUnitario : $scope.menu.precioUnitario,
+					comentario     : $scope.menu.comentario,
+					otroMenu       : $scope.menu.otroMenu,
+					tipo           : $scope.tipo,
+					idEvento       : $scope.evento.idEvento
+				}
 			};
 			console.log( datos );
+			$http.post('consultas.php', datos )
+			.success(function (data) {
+				alertify.notify( data.mensaje, data.respuesta, 3 );
+
+				console.log( data );
+				if ( data.respuesta == 'success' ) {
+				}
+			});
 		}
 	};
 

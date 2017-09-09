@@ -537,11 +537,18 @@ switch ( $data->opcion )
 		break;
 
 	///////////////////////// EVENTO /////////////////////////
-	// CONSULTA EVENTO
+	// GUARDAR EVENTO
 	case 'guardarEvento':
 		$evento = new Evento();
 		echo json_encode( $evento->guardarEvento( $data->accion, $data->evento ) );
 		break;
+
+	// GUARDAR MENU
+	case 'guardarMenuEvento':
+		$evento = new Evento();
+		echo json_encode( $evento->guardarMenuEvento( $data->menu ) );
+		break;
+
 	///////////////////////// EVENTO /////////////////////////
 
 

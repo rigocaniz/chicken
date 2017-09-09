@@ -81,32 +81,73 @@ class Evento
  	}
 
 
- 	function consultarCliente( $valor )
+ 	function guardarMenuEvento( $menu )
  	{
- 		$lstClientes = [];
- 		$where = "";
+		$respuesta = "";
+		$mensaje   = "";
+		$id        = null;
 
- 		if( strlen($valor) >= 2  AND strtoupper( $valor ) == 'CF' OR strtoupper( $valor ) == 'C/F' )
- 			$where = "nit = 'CF'";
+		$idEvento       = (int)$menu->idEvento;
+		$idMenu         = (int)$menu->idMenu;
+		$cantidad       = (int)$menu->cantidad;
+		$precioUnitario = (double)$menu->precioUnitario;
+		$comentario     = $this->con->real_escape_string( $menu->comentario );
+		$otroMenu       = $this->con->real_escape_string( $menu->otroMenu );
+		$tipo           = $menu->tipo;
+		$accion         = $menu->accion;
 
- 		else if( preg_match('/^[0-9-\s]{5,10}$/', $valor ) AND strlen( $valor ) >= 5  AND strlen( $valor ) <= 10 )
- 			$where = "nit = '$valor'";
+		if ( !( $idEvento > 0 ) )
+			$msgError = "Debe guardar antes el evento";
 
- 		elseif( preg_match('/^[0-9-\s]{13,15}$/', $valor ) AND strlen( $valor) >= 13 AND strlen( $valor) <= 15 )
- 			$where = "cui = $valor";
+		else if ( !( $idMenu > 0 AND ( $tipo == 'menu' OR $tipo == 'combo' ) ) )
+			$msgError = "Especifique un menú valido";
 
- 		else {
- 			$valor= str_replace(' ','%', $valor);
-			$where = "nombre LIKE '%{$valor}%'  LIMIT 20";
- 		}
+		else if ( strlen( $otroMenu ) < 4 AND $tipo == 'otroMenu' )
+			$msgError = "Ingrese un Menú valido";
 
-	 	$sql = "SELECT * FROM vstCliente where $where ;";
-	 	
-	 	if( $rs = $this->con->query( $sql ) )
-	 		while( $row = $rs->fetch_object() )
-	 			$lstClientes[] = $row;
+		if ( !( $cantidad > 0 ) )
+			$msgError = "La cantidad debe ser mayor a cero";
 
-	 	return $lstClientes;
+		else if ( !( $precioUnitario > 0 ) )
+			$msgError = "El precio debe ser mayor a cero";
+
+		else
+		{
+			if ( $tipo == 'otroMenu' )
+				$idMenu = 'NULL';
+
+	 		if( $accion == 'insert' ):
+	 			$sql = "CALL consultaMenuEvento( 'insert', NULL, {$idEvento}, {$idMenu}, {$cantidad}, {$precioUnitario}, '{$comentario}' )";
+
+	 			$rs = $this->con->query( $sql );
+	 			if ( $rs AND $row = $rs->fetch_object() )
+	 			{
+					$respuesta = $row->respuesta;
+					$mensaje   = $row->mensaje;
+	 				if ( $row->respuesta == 'success' )
+						$id = $row->id;
+	 			}
+	 			else
+	 			{
+	 				$respuesta = "danger";
+					$mensaje   = "Error al ejecutar la consulta";
+	 			}
+
+	 			@$this->con->next_result();
+	 		endif;
+		}
+
+		if ( isset( $msgError ) )
+		{
+			$respuesta = "danger";
+			$mensaje   = $msgError;
+		}
+
+		return array(
+			'respuesta' => $respuesta,
+			'mensaje'   => $mensaje,
+			'id'        => $id,
+		);
  	}
 }
 
