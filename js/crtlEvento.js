@@ -1,13 +1,18 @@
 app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
+	$scope.idEstadoEvento  = 1;
 	$scope.idTab           = 1;
 	$scope.accionEvento    = "insert";
+	$scope.accionMenu      = '';
 	$scope.tipo            = 'menu';
+	$scope.lstEvento       = [];
 	$scope.lstMenu         = [];
 	$scope.lstResultado    = [];
+	$scope.lstMenuEvento   = [];
 	$scope.accionMenu      = '';
 	$scope.busquedaCliente = '';
 	$scope.evento          = {};
-	$scope.menu         = {
+	$scope.menu            = {
+		id       	   : 0,
 		cantidad       : 0,
 		precioUnitario : 0,
 		otroMenu 	   : '',
@@ -32,6 +37,36 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 
 	// DIALOGOS
 	$scope.dialOrden = $modal({scope: $scope,template:'dl.evento.html', show: false, backdrop:false, keyboard: false });
+
+	// MUESTRA DIALOGO DE EVENTO
+	$scope.showDialOrden = function ( _accion, evento ) {
+		$scope.accionEvento = _accion;
+		if ( _accion == 'insert' ) {
+			$scope.setEvento();
+
+			if ( document.getElementById( 'busquedaCliente' ) )
+				document.getElementById( 'busquedaCliente' ).focus();
+		}
+		else if ( _accion == 'update' )
+		{
+			//$scope.evento = angular.copy( evento );
+			$scope.evento = {
+				idEvento       : evento.idEvento,
+				evento         : evento.evento,
+				idCliente      : evento.idCliente,
+				nombreCliente  : $sce.trustAsHtml( '<b>' + evento.nombre + '</b> (' + evento.nit + ') - ' + evento.direccion ),
+				fechaEvento    : moment( evento.fechaEvento ),
+				horaInicio     : $scope.$parent.formatoFecha( evento.horaInicio, 'HH:mm' ),
+				horaFinal      : $scope.$parent.formatoFecha( evento.horaFinal, 'HH:mm' ),
+				anticipo       : evento.anticipo,
+				numeroPersonas : evento.numeroPersonas,
+				observacion    : evento.observacion
+			};
+
+			$scope.lstMenuEvento = evento.lstMenu;
+		}
+		$scope.dialOrden.show();
+	};
 
 	// CONSULTAR CLIENTES
 	$scope.consultarCliente = function () {
@@ -98,8 +133,10 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 				alertify.notify( data.mensaje, data.respuesta, 3 );
 
 				if ( data.respuesta == 'success' && $scope.accionEvento == 'insert' ) {
-					$scope.evento.idEvento = data.idEvento;
 					$scope.idTab           = 2;
+					$scope.accionMenu      = 'insert';
+					$scope.evento.idEvento = data.idEvento;
+					$scope.menu.cantidad   = angular.copy( $scope.evento.numeroPersonas );
 				}
 			});
 		}
@@ -123,7 +160,6 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 		{
 			$http.post('consultas.php', datos )
 			.success(function (data) {
-				console.log( data );
 
 				if ( $scope.tipo == 'menu' ) 
 					$scope.lstMenu = $scope.arrayLst( data, 'idMenu', 'menu' );
@@ -141,7 +177,6 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 		}
 	};
 
-	$scope.accionMenu = 'insert';
 	// GUARDAR MENU
 	$scope.guardarMenu = function () {
 		if ( !( $scope.menu.cantidad > 0 ) )
@@ -159,6 +194,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 				opcion : 'guardarMenuEvento',
 				menu   : {
 					accion         : $scope.accionMenu,
+					id             : $scope.menu.id,
 					idMenu         : $scope.menu.idMenu,
 					cantidad       : $scope.menu.cantidad,
 					precioUnitario : $scope.menu.precioUnitario,
@@ -175,6 +211,12 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 
 				console.log( data );
 				if ( data.respuesta == 'success' ) {
+					$scope.lstMenuEvento       = data.lstMenuEvento;
+					$scope.accionMenu          = "";
+					$scope.menu.id             = 0;
+					$scope.menu.precioUnitario = 0;
+					$scope.menu.comentario     = '';
+					$scope.menu.otroMenu       = '';
 				}
 			});
 		}
@@ -190,20 +232,34 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 			$scope.consultarMenu();
 
 			$timeout(function () {
-				if ( _new == 'otroMenu' )
+				if ( _new == 'otroMenu' && document.getElementById('inputMenu') != undefined )
 					document.getElementById('inputMenu').focus();
-				else
+
+				else if ( document.getElementById('selectMenu') != undefined )
 					document.getElementById('selectMenu').focus();
 			});
 		}
 	});
-	
 
+	$scope.$watch('idEstadoEvento', function (_new) {
+		if ( _new > 0 && !$scope.$parent.loading )
+		{
+			$scope.$parent.loading = true;
+			$scope.lstEvento       = [];
+			$http.post('consultas.php', { 
+				opcion         : 'consultaEvento',
+				idEstadoEvento : _new
+			})
+			.success(function (data) {
+				$scope.$parent.loading = false;
+				console.log( data );
 
-	$timeout(function () {
-		$scope.dialOrden.show();
+				if ( Array.isArray( data ) )
+					$scope.lstEvento = data;
+			});
+		}
 	});
-
+	
 	// PRESS KEY
 	$scope.$on('keyPress', function( event, key, altDerecho, evento ) {
 		// SI EL DIALOGO DE EVENTO SE ESTA MOSTRANDO

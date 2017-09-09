@@ -14,6 +14,7 @@ class Evento
  		$this->sess = $sesion;
  	}
 
+ 	// GUARDA EVENTO
  	function guardarEvento( $accion, $_evento )
  	{
 		$respuesta = "";
@@ -80,13 +81,14 @@ class Evento
 		);
  	}
 
-
+ 	// GUARDA MENU DEL EVENTO
  	function guardarMenuEvento( $menu )
  	{
 		$respuesta = "";
 		$mensaje   = "";
-		$id        = null;
+		$lastId    = null;
 
+		$id             = isset( $menu->id ) ? (int)$menu->id : 0;
 		$idEvento       = (int)$menu->idEvento;
 		$idMenu         = (int)$menu->idMenu;
 		$cantidad       = (int)$menu->cantidad;
@@ -95,11 +97,12 @@ class Evento
 		$otroMenu       = $this->con->real_escape_string( $menu->otroMenu );
 		$tipo           = $menu->tipo;
 		$accion         = $menu->accion;
+		$lstMenuEvento  = array();
 
 		if ( !( $idEvento > 0 ) )
 			$msgError = "Debe guardar antes el evento";
 
-		else if ( !( $idMenu > 0 AND ( $tipo == 'menu' OR $tipo == 'combo' ) ) )
+		else if ( !( $idMenu > 0 ) AND ( $tipo == 'menu' OR $tipo == 'combo' ) )
 			$msgError = "Especifique un menú valido";
 
 		else if ( strlen( $otroMenu ) < 4 AND $tipo == 'otroMenu' )
@@ -113,28 +116,35 @@ class Evento
 
 		else
 		{
-			if ( $tipo == 'otroMenu' )
+			if ( $accion == 'insert' )
+				$id = 'NULL';
+
+			if ( $tipo == 'menu' )
+	 			$sql = "CALL consultaMenuEvento( '{$accion}', {$id}, {$idEvento}, {$idMenu}, {$cantidad}, {$precioUnitario}, '{$comentario}' )";
+
+	 		else if ( $tipo == 'combo' )
+	 			$sql = "CALL consultaComboEvento( '{$accion}', {$id}, {$idEvento}, {$idMenu}, {$cantidad}, {$precioUnitario}, '{$comentario}' )";
+
+	 		else if ( $tipo == 'otroMenu' ) {
 				$idMenu = 'NULL';
+	 			$sql = "CALL consultaOtroMenuEvento( '{$accion}', {$id}, {$idEvento}, '{$otroMenu}', {$cantidad}, {$precioUnitario}, '{$comentario}' )";
+	 		}
 
-	 		if( $accion == 'insert' ):
-	 			$sql = "CALL consultaMenuEvento( 'insert', NULL, {$idEvento}, {$idMenu}, {$cantidad}, {$precioUnitario}, '{$comentario}' )";
+ 			$rs = $this->con->query( $sql );
+ 			@$this->con->next_result();
 
-	 			$rs = $this->con->query( $sql );
-	 			if ( $rs AND $row = $rs->fetch_object() )
-	 			{
-					$respuesta = $row->respuesta;
-					$mensaje   = $row->mensaje;
-	 				if ( $row->respuesta == 'success' )
-						$id = $row->id;
-	 			}
-	 			else
-	 			{
-	 				$respuesta = "danger";
-					$mensaje   = "Error al ejecutar la consulta";
-	 			}
-
-	 			@$this->con->next_result();
-	 		endif;
+ 			if ( $rs AND $row = $rs->fetch_object() )
+ 			{
+				$respuesta = $row->respuesta;
+				$mensaje   = $row->mensaje;
+ 				if ( $row->respuesta == 'success' AND $accion == 'insert' )
+					$lastId = $row->id;
+ 			}
+ 			else
+ 			{
+ 				$respuesta = "danger";
+				$mensaje   = "Error al ejecutar la consulta";
+ 			}
 		}
 
 		if ( isset( $msgError ) )
@@ -143,11 +153,100 @@ class Evento
 			$mensaje   = $msgError;
 		}
 
+		if ( $respuesta == 'success' )
+			$lstMenuEvento = $this->consultaDetalleOrdenEvento( $idEvento );
+
 		return array(
-			'respuesta' => $respuesta,
-			'mensaje'   => $mensaje,
-			'id'        => $id,
+			'respuesta'     => $respuesta,
+			'mensaje'       => $mensaje,
+			'lastId'        => $lastId,
+			'lstMenuEvento' => $lstMenuEvento,
 		);
+ 	}
+
+ 	// CONSULTA MENUS DEL EVENTO
+ 	function consultaDetalleOrdenEvento( $idEvento )
+ 	{
+		$lst      = array();
+		$idEvento = (int)$idEvento;
+		
+		$sql = "CALL consultaDetalleOrdenEvento( {$idEvento} )";
+
+		$rs = $this->con->query( $sql );
+		@$this->con->next_result();
+		while ( $rs AND $row = $rs->fetch_object() )
+			$lst[] = $row;
+
+		return $lst;
+ 	}
+
+ 	// CONSULTA EVENTO
+ 	function consultaEvento( $idEstadoEvento, $idEvento = NULL )
+ 	{
+		$result   = array();
+		$idEvento = (int)$idEvento;
+		$limit    = "";
+		
+		if ( $idEvento > 0 )
+			$where = " WHERE idEvento = {$idEvento} "; 
+
+		else
+		{
+			$where = " WHERE idEstadoEvento = {$idEstadoEvento} "; 
+
+			if ( $idEstadoEvento != 1 )
+				$limit = " LIMIT 10 ";
+		}
+
+		$sql = "SELECT 
+					idEvento,
+				    evento,
+				    fechaEvento,
+				    horaInicio,
+				    horaFinal,
+				    observacion,
+				    anticipo,
+				    numeroPersonas,
+				    usuario,
+				    fechaRegistro,
+				    idEstadoEvento,
+				    estadoEvento,
+				    idCliente,
+				    nit,
+				    nombre,
+				    cui,
+				    correo,
+				    telefono,
+				    direccion,
+				    idTipoCliente,
+				    tipoCliente
+				FROM vEvento " . $where . $limit;
+
+		$rs = $this->con->query( $sql );
+
+		if ( $idEvento > 0 )
+		{
+			if ( $rs AND $row = $rs->fetch_object() )
+			{
+				$row->numeroPersonas = (int)$row->numeroPersonas;
+				$row->anticipo       = (double)$row->anticipo;
+				$row->lstMenu = $this->consultaDetalleOrdenEvento( $row->idEvento );
+				$result = $row;
+			}
+		}
+		else
+		{
+			while ( $rs AND $row = $rs->fetch_object() )
+			{
+				$row->numeroPersonas = (int)$row->numeroPersonas;
+				$row->anticipo       = (double)$row->anticipo;
+				$row->lstMenu = $this->consultaDetalleOrdenEvento( $row->idEvento );
+				$result[] = $row;
+			}
+
+		}
+			
+		return $result;
  	}
 }
 

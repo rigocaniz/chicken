@@ -536,7 +536,7 @@ switch ( $data->opcion )
 		echo json_encode( array( 'usuario' => $usuario->getUsuario( $sesion->getUsuario() ) ) );
 		break;
 
-	///////////////////////// EVENTO /////////////////////////
+	// #############################  EVENTO #############################
 	// GUARDAR EVENTO
 	case 'guardarEvento':
 		$evento = new Evento();
@@ -549,7 +549,16 @@ switch ( $data->opcion )
 		echo json_encode( $evento->guardarMenuEvento( $data->menu ) );
 		break;
 
-	///////////////////////// EVENTO /////////////////////////
+	// GUARDAR MENU
+	case 'consultaEvento':
+		if ( !isset( $data->idEvento ) )
+			$data->idEvento = 0;
+
+		$evento = new Evento();
+		echo json_encode( $evento->consultaEvento( $data->idEstadoEvento, $data->idEvento ) );
+		break;
+
+	// ############################# EVENTO #############################
 
 
 	/////////////////////////

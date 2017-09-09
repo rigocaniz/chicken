@@ -132,7 +132,12 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
 
     $scope.formatoFecha = function function_name( fecha, formato ) {
         var _for = formato || "D [de] MMMM [de] YYYY";
-        var txt = moment( fecha ).format( _for )
+
+        if ( fecha.length == 8 )
+            var txt = moment( fecha, 'HH:mm:ss' ).format( _for )
+
+        else
+            var txt = moment( fecha ).format( _for )
 
         return txt;
     };
@@ -226,7 +231,6 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
         $http.post('consultas.php',{
             opcion : 'catTiposCliente'
         }).success(function(data){
-            console.log( data );
             $scope.lstTipoCliente = data;
         })
     })();  
