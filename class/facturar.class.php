@@ -256,7 +256,7 @@ class Factura
 						$this->tiempo = 2;
 						$guardados++;
 
-						if( $formaPago->monto >= $total )
+						//if( $formaPago->monto >= $total )
 							$total -= $monto;
 					}
 				}
