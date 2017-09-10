@@ -17,14 +17,42 @@ endif;
 
 include 'class/conexion.class.php';
 include 'class/facturar.class.php';
+include 'class/documento.class.php';
 
+$lst = array(
+	'nit'        => '1234',
+	'nombre'     => 'Mi Nombre Es',
+	'direccion'  => 'Esta es mi dirección',
+	'lstDetalle' => array(
+		array(
+			'descripcion'    => 'Pollo Frito',
+			'cantidad'       => '5',
+			'precioUnitario' => '10.00',
+			'subTotal'       => '50.00',
+		),
+		array(
+			'descripcion'    => 'Papas Fritas',
+			'cantidad'       => '5',
+			'precioUnitario' => '5.00',
+			'subTotal'       => '25.00',
+		),
+	),
+);
+$documento = new Documento( 1 );
+$documento->render( $lst );
+/*
 $factura   = new Factura();
 $idFactura = (int)$_GET[ 'id' ];
 $type      = isset( $_GET[ 'type' ] ) ? $_GET[ 'type' ] : 'g';
 
 $principalFactura = (object)$factura->lstFacturas( $idFactura )[ 0 ];
 $detalleFactura   = $factura->detalleOrdenFactura( $idFactura );
+*/
 //var_dump( $principalFactura );
+
+// CIERRA LA CONEXION
+$conexion->close();
+exit();
 ?>
 <style type="text/css">
 	table {
@@ -107,7 +135,7 @@ $detalleFactura   = $factura->detalleOrdenFactura( $idFactura );
 </table>
 <script type="text/javascript">
 	window.onload = function() { 
-		window.print(); 
-		window.close();
+		//window.print(); 
+		//window.close();
 	}
 </script>

@@ -103,7 +103,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group input-sm">
-                                                    <label class="col-md-12 control-label">VUELTO</label>
+                                                    <label class="col-md-12 control-label">CAMBIO</label>
                                                     <div class="col-md-12">
                                                         <div class="total">
                                                         {{ totalVuelto() | number: 2 }}
