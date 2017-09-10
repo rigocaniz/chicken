@@ -111,7 +111,7 @@ class Factura
 	 				}
 
  					if( $this->respuesta == 'success'  )
- 						$this->consultaFormaPago( $accion, $idFactura, $data->lstFormasPago );
+ 						$this->consultaFormaPago( $accion, $idFactura, $total, $data->lstFormasPago );
 
  					if( $this->respuesta == 'success'  )
  						$this->consultaDetalleFactura( $accion, $idFactura, $data->agrupado, $data->lstOrden );
@@ -122,16 +122,17 @@ class Factura
 		 			$this->mensaje   = 'Error al ejecutar la instrucción.';
 		 		}
 
-		 		if( $this->respuesta == 'danger' )
-		 			$this->con->query( "ROLLBACK" );
-		 		else
+		 		if( $this->respuesta == 'success' )
 		 			$this->con->query( "COMMIT" );
 		 			//$this->con->query( "ROLLBACK" );
+		 		else
+		 			$this->con->query( "ROLLBACK" );
 	 		endif;
 		endif;
 
  		return $this->getRespuesta();
 	}
+
 
 	private function consultaDetalleFactura( $accion, $idFactura, $agrupado, $lstOrden )
 	{
@@ -139,19 +140,13 @@ class Factura
 		$validar   = new Validar();
 		$guardados = 0;
 
-		foreach ($lstOrden AS $ixOrden => $orden ) {
+		foreach ( $lstOrden AS $ixOrden => $orden ) {
 
-			//var_dump( $orden );
 			$idFactura           = (int)$idFactura;
 			$idDetalleOrdenMenu  = "NULL";
 			$idDetalleOrdenCombo = "NULL";
 			$comentario          = "NULL";
 			$precioMenu          = (double)$orden->precioMenu;
-
-			if( (int)$orden->esCombo )
-				$idDetalleOrdenCombo = (int)$orden->idDetalleOrdenCombo;
-			else
-				$idDetalleOrdenMenu = (int)$orden->idDetalleOrdenMenu;
 
 			$descuento  = (double)$orden->descuento;
 			$comentario = "'" . $orden->comentario . "'";
@@ -160,14 +155,19 @@ class Factura
 
 				if( $agrupado ) {
 
-					for ($i = 0; $i < $orden->cantidad; $i++) {
+					$cantidad = (int)$orden->cantidad;
 
+					foreach ( $orden->lstDetalle as $ixDetalle => $detalle ) {
+
+						if( (int)$orden->esCombo )
+							$idDetalleOrdenCombo = (int)$detalle->idDetalleOrdenCombo;
+						else
+							$idDetalleOrdenMenu = (int)$detalle->idDetalleOrdenMenu;
+						
 						$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precioMenu}, {$descuento}, {$comentario} );";
 
-						//echo $sql . "\n";
 						if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 
-							//var_dump( $row );
 							$this->siguienteResultado();
 
 							$this->respuesta = $row->respuesta;
@@ -177,22 +177,28 @@ class Factura
 								$this->tiempo = 2;
 								$guardados++;
 							}
+
+							$cantidad--;
 						}
 						else{
 							$this->respuesta = 'danger';
 							$this->mensaje   = 'Error al ejecutar la operacion (Detalle Factura)';
 						}
 
-						if( $this->respuesta == 'danger' )
+						if( $this->respuesta == 'danger' OR $cantidad == 0 )
 							break;
 					}
 				
 				}
 				else {
 					
+					if( (int)$orden->esCombo )
+						$idDetalleOrdenCombo = (int)$orden->idDetalleOrdenCombo;
+					else
+						$idDetalleOrdenMenu = (int)$orden->idDetalleOrdenMenu;
+
 					$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precioMenu}, {$descuento}, {$comentario} );";
 
-					//echo $sql . "\n";
 					if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 						$this->siguienteResultado();
 
@@ -224,15 +230,20 @@ class Factura
 	}
 
 
-	public function consultaFormaPago( $accion, $idFactura, $lstFormasPago )
-	{	
+	public function consultaFormaPago( $accion, $idFactura, $total, $lstFormasPago )
+	{
 		$guardados = 0;
+		$total     = (double)$total;
+
 		foreach ( $lstFormasPago AS $ixFormaPago => $formaPago ) {
 			if( isset( $formaPago->monto ) && $formaPago->monto > 0  ){
 
 				$idFormaPago = (int)$formaPago->idFormaPago;
 				$idFactura   = (int)$idFactura;
 				$monto       = (double)$formaPago->monto;
+
+				if( $monto > $total )
+					$monto = $monto - ( $monto - $total );
 
 				$sql = "CALL consultaFormaPago( '{$accion}', {$idFactura}, {$idFormaPago}, {$monto} );";
 				
@@ -244,6 +255,9 @@ class Factura
 					if( $this->respuesta == 'success' ) {
 						$this->tiempo = 2;
 						$guardados++;
+
+						if( $formaPago->monto > $total )
+							$total -= $monto;
 					}
 				}
 				else{
@@ -254,13 +268,17 @@ class Factura
 				if( $this->respuesta == 'danger' )
 					break;
 			}
-
 			
 		}
 
 		if( !$guardados ){
 			$this->respuesta = 'danger';
 			$this->mensaje   = 'No se registró ningun monto en la forma de pago';
+			$this->tiempo    = 7;
+		}
+		elseif( $total > 0  ){
+			$this->respuesta = 'warning';
+			$this->mensaje   = 'Los montos ingresados no cubren el <b>TOTAL DE LA ORDEN</b>';
 			$this->tiempo    = 8;
 		}
 	}

@@ -60,7 +60,7 @@ class Caja
  		if( $rs = $this->con->query( $sql ) ){
 
  			if( $rs->num_rows AND $row = $rs->fetch_object() ){
-				
+
 				$row->cajaAtrasada = FALSE;
  				if( $row->fechaApertura <> $fechaApertura )
  					$row->cajaAtrasada = TRUE;

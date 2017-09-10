@@ -49,19 +49,17 @@ if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
             </div>
             <p>
                 <form action="login.php" method="POST" novalidate autocomplete="off">
-                    <div class="form-group input-group" ng-class="{'has-success has-feedback': user && user.length >=8}">
+                    <div class="form-group input-group">
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-user"></i>
                         </span>
                         <input class="form-control" type="text" name="usuario" ng-model="user" maxlength="12" placeholder="Usuario" required autofocus />
-                        <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true" ng-show="user && user.length >=8"></span>
                     </div>
-                    <div class="form-group input-group" ng-class="{'has-success has-feedback': pass && pass.length >=6}" ">
+                    <div class="form-group input-group">
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-lock"></i>
                         </span>
-                        <input class="form-control" type="password" maxlength="30" name="clave" ng-model="pass" ng-disabled="user.length < 5" placeholder="Contraseña" required />     
-                        <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true" ng-show="pass && pass.length >=6"></span>
+                        <input class="form-control" type="password" maxlength="30" name="clave" ng-model="pass" ng-disabled="user.length < 5" placeholder="Contraseña" required />
                     </div>
                     <?php
                         if( isset( $data[ 'respuesta' ] ) AND $data[ 'respuesta' ] == 'danger'  ):

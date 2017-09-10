@@ -56,7 +56,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		if( $scope.retornarTotal() > 0 ){
 			for (var i = 0; i < $scope.facturacion.lstFormasPago.length; i++) {
 				var pago = $scope.facturacion.lstFormasPago[ i ];
-				if( pago.monto && pago.monto > 0 && pago.idFormaPago == 1 ){
+				if( (pago.monto && pago.monto > $scope.retornarTotal() ) && pago.idFormaPago == 1 ){
 					total += pago.monto;
 				}
 			}
@@ -101,7 +101,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			alertify.notify('La lista de ordenes está vacia', 'warning', 4);
 		
 		else if( !(factura.total && factura.total > 0) )
-		alertify.notify('El total del cobro debe ser mayor a 0', 'warning', 4);
+			alertify.notify('El total del cobro debe ser mayor a 0', 'warning', 4);
 
 		else {
 			
@@ -116,6 +116,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 				alertify.set('notifier','position', 'top-right');
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 				if( data.respuesta == 'success' ) {
+					$scope.resetValores( 'facturacion' );
 					$scope.impresionFactura.idFactura = data.data;
 					$scope.dialPrintFactura.show();
 					
@@ -124,7 +125,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 					});
 				}
 				$scope.$parent.hideLoading();
-			})
+			});
 			
 		}
 
@@ -244,8 +245,24 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
                 'idTipoCliente' : 1,
             };
         }
-        if( accion == 'lstClientes' ) {
+        else if( accion == 'lstClientes' ) {
             $scope.lstClientes = [];
+        }
+        else if( 'facturacion' ){
+        	$scope.facturacion = {
+				datosCliente : {
+					nit          : '',
+					nombre       : '',
+					direccion    : '',
+				},
+				agrupado: true,
+				idEstadoFactura : 1,
+				numeroTicket    : null,
+				noFactura       : null,
+				total           : 0,
+				lstFormasPago   : [],
+				lstOrden        : [],
+			};
         }
     };
 
