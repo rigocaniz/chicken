@@ -227,7 +227,7 @@
 							</div>
 							<label class="col-sm-2 control-label">CÓDIGO</label>
 							<div class="col-sm-3">
-								<input type="number" class="form-control" ng-model="usuario.codigo" placeholder="Código" ng-pattern="/^[0-9]+?$/" min="1" max="9999" step="any">
+								<input type="text" class="form-control" ng-model="usuario.codigo" placeholder="Código" ng-pattern="/^[0-9]+?$/" minlength="1" maxlength="4" ng-trim="false" required>
 							</div>
 						</div>
 						<div class="form-group">
@@ -240,7 +240,7 @@
 							<div class="col-sm-6">
 								<label>APELLIDOS</label>
 								<div>
-									<input type="text" class="form-control" maxlength="65" ng-model="usuario.apellidos" placeholder="Ingrese apellidos">	
+									<input type="text" class="form-control" maxlength="65" ng-model="usuario.apellidos" placeholder="Ingrese apellidos">
 								</div>
 							</div>
 						</div>

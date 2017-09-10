@@ -106,14 +106,22 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 		var usuario = $scope.usuario;
 
+		console.log( usuario );
+
 		if( !(usuario.idPerfil && usuario.idPerfil > 0 ) )
 			alertify.notify( 'Seleccione el perfil del Usuario', 'warning', 4 );
 
-		else if( !(usuario.usuario && usuario.usuario.length >=8 ) )
-			alertify.notify( 'El usuario debe tener más de 7 caracteres', 'warning', 5 );
+		else if( !(usuario.usuario) )
+			alertify.notify( 'Ingrese usuario válido, sin espacios en blanco', 'warning', 5 );
 
-		else if( !(usuario.codigo && usuario.codigo > 0 ) )
-			alertify.notify( 'El código del usuario debe ser mayor a 0', 'warning', 5 );
+		else if( !(usuario.usuario.length >=8 ) )
+			alertify.notify( 'El nombre de usuario debe tener más de 7 caracteres', 'warning', 5 );
+
+		else if( !(usuario.codigo ) )
+			alertify.notify( 'Ingrese CÓDIGO de usuario válido, sin espacios en blanco', 'warning', 5 );
+
+		else if( !(usuario.codigo > 0 ) )
+			alertify.notify( 'El código del usuario debe ser mayor a 0', 'warning', 4 );
 
 		else if( !(usuario.nombres && usuario.nombres.length >=3 ) )
 			alertify.notify( 'El nombre de la persona debe tener más de 2 caracteres', 'warning', 5 );
@@ -123,6 +131,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 		else
 		{
+		
 			$scope.$parent.showLoading( 'Guardando...' );
 
 			$http.post('consultas.php',{
