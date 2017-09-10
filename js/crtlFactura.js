@@ -118,6 +118,10 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 				if( data.respuesta == 'success' ) {
 					$scope.impresionFactura.idFactura = data.data;
 					$scope.dialPrintFactura.show();
+					
+					$timeout(function () {
+						$("#btn_print_factura").focus();
+					});
 				}
 				$scope.$parent.hideLoading();
 			})

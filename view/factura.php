@@ -411,7 +411,7 @@
 
 
 <script type="text/ng-template" id="dial.printFactura.html">
-    <div class="modal" tabindex="-1" role="dialog">
+    <div class="modal" tabindex="-1" role="dialog" id="dial_printFactura">
         <div class="modal-dialog">
             <div class="modal-content panel-info">
                 <div class="modal-header panel-heading text-center">
@@ -430,7 +430,7 @@
                                 </button>
                             </div>
                             <br><br>
-                            <a class="btn btn-info btn-lg" target="_blank" ng-href="print.php?id={{ impresionFactura.idFactura }}&type={{ impresionFactura.type }}" title="IMPRIMIR FACTURA">
+                            <a class="btn btn-info btn-lg" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ impresionFactura.idFactura }}&type={{ impresionFactura.type }}" title="IMPRIMIR FACTURA">
                                 <span class="glyphicon glyphicon-print"></span> IMPRIMIR
                             </a>
                         </div>
