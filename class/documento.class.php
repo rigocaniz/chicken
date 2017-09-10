@@ -96,7 +96,7 @@ class Documento
 				$label = "<b>" . $campo->label . "</b>";
 
 			if ( $campo->idTipoItem == 1 )
-				echo "<div class='campos' style='left:{$campo->x};top:{$campo->y};font-size:{$campo->fontSize}px;'>{$label} {$item}</div>";
+				echo "<div class='campos' style='left:{$campo->x}px;top:{$campo->y}px;font-size:{$campo->fontSize}px;'>{$label} {$item}</div>";
 
 			else
 			{
@@ -109,6 +109,7 @@ class Documento
 
 				// IMPRIME FILAS
 				foreach ( $item as $valor ) {
+					$valor = (array)$valor;
 					$body .= "<tr>";
 					foreach ($campo->encabezado as $ix => $enc):
 						
@@ -130,7 +131,7 @@ class Documento
 							<tbody>' . $body . '</tbody>
 						</table>';
 
-				echo "<div class='campos' style='left:{$campo->x};top:{$campo->y};'>$table</div>";
+				echo "<div class='campos' style='left:{$campo->x}px;top:{$campo->y}px;'>$table</div>";
 			}
 
 			$ultimoY = $campo->y;

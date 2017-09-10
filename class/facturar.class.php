@@ -426,28 +426,27 @@ class Factura
  		$lstDetalleFactura = array();
 
 		$sql = "SELECT 
-					*
-				    /*
-				    idFactura,
-				    idOrdenCliente,
-				    numeroTicket,
-				    idDetalleOrdenMenu,
-				    idMenu,
-				    menu,
-				    imagen,
-				    perteneceCombo,
-				    idDetalleOrdenCombo,
-				    idCombo,
-				    combo,
-				    imagenCombo,
-				    idTipoServicio,
-				    tipoServicio,
-				    usuarioRegistro,
-				    precioMenu,
-				    descuento,
-				    precioReal,
-				    comentario
-				    */
+					idFactura,
+					idOrdenCliente,
+					numeroTicket,
+					idDetalleOrdenMenu,
+					idMenu,
+					menu,
+					imagen,
+					perteneceCombo,
+					idDetalleOrdenCombo,
+					idCombo,
+					combo,
+					imagenCombo,
+					idTipoServicio,
+					tipoServicio,
+					usuarioRegistro,
+					precioMenu,
+					descuento,
+					precioReal,
+					comentario,
+					usuarioFacturaDetalle,
+					fechaFacturaDetalle
 				FROM
 				    vstDetalleOrdenFactura
 				WHERE
@@ -476,6 +475,7 @@ class Factura
 						'idMenu'              => $row->idMenu,
 						'esCombo'             => $row->perteneceCombo,
 						'cantidad'            => 0,
+						'subTotal' 			  => 0,
 						'descuento'           => (double)$row->descuento,
 						'precioMenu'          => (double)$precioMenu,
 						'precioReal'          => $row->precioReal,
@@ -508,14 +508,7 @@ class Factura
 				}
 
 				$lstDetalleFactura[ $index ]->cantidad += 1;
-
-				// AGREGA DETALLE DE ORDEN
-				/*$lstDetalleFactura[ $index ]->lstDetalle[] = (object)array(
-					'precioMenu'          => $precioMenu,
-					'idDetalleOrdenMenu'  => $row->idDetalleOrdenMenu,
-					'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo
-				);
-				*/
+				$lstDetalleFactura[ $index ]->subTotal = ( $lstDetalleFactura[ $index ]->cantidad * $row->precioReal );
  			}
  		}
 

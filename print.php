@@ -19,123 +19,35 @@ include 'class/conexion.class.php';
 include 'class/facturar.class.php';
 include 'class/documento.class.php';
 
-$lst = array(
-	'nit'        => '1234',
-	'nombre'     => 'Mi Nombre Es',
-	'direccion'  => 'Esta es mi dirección',
-	'lstDetalle' => array(
-		array(
-			'descripcion'    => 'Pollo Frito',
-			'cantidad'       => '5',
-			'precioUnitario' => '10.00',
-			'subTotal'       => '50.00',
-		),
-		array(
-			'descripcion'    => 'Papas Fritas',
-			'cantidad'       => '5',
-			'precioUnitario' => '5.00',
-			'subTotal'       => '25.00',
-		),
-	),
-);
-$documento = new Documento( 1 );
-$documento->render( $lst );
-/*
 $factura   = new Factura();
 $idFactura = (int)$_GET[ 'id' ];
 $type      = isset( $_GET[ 'type' ] ) ? $_GET[ 'type' ] : 'g';
 
-$principalFactura = (object)$factura->lstFacturas( $idFactura )[ 0 ];
-$detalleFactura   = $factura->detalleOrdenFactura( $idFactura );
-*/
-//var_dump( $principalFactura );
+// OBTIENE INFORMACION DE FACTURA
+$datos = (array)$factura->lstFacturas( $idFactura )[ 0 ];
+
+// OBTIENE DETALLE DE FACTURA
+$datos[ 'lstDetalle' ] = $factura->detalleOrdenFactura( $idFactura );
+
+// RENDERIZA EL DOCUMENTO
+$documento = new Documento( 1 );
 
 // CIERRA LA CONEXION
 $conexion->close();
-exit();
 ?>
-<style type="text/css">
-	table {
-		border-collapse: collapse
-	}
-	td {
-		border: 0px solid black;
-	}
-	.text-right{
-		text-align: right;
-	}
-	.text-center{
-		text-align: center;
-	}
-</style>
-
-<table border="0" cellpadding="2">
-	<tbody>
-		<tr>
-			<td><b>NIT:</b></td>
-			<td><?= $principalFactura->nit; ?></td>
-		</tr>
-		<tr>
-			<td><b>Nombre</b>:</td>
-			<td><?= $principalFactura->nombre; ?></td>
-		</tr>
-		<tr>
-			<td><b>Dirección</b>:</td>
-			<td colspan="4"><?= $principalFactura->direccion; ?></td>
-		</tr>
-	</tbody>
-</table>
-<br>
-<table border="0" cellpadding="4">
-	<thead>
-		<tr>
-			<th>No.</th>
-			<th>Descripción</th>
-			<th>Cantidad</th>
-			<th>P/U</th>
-			<th>Subtotal</th>
-		</tr>
-	</thead>
-	<tbody>
-<?php
-	if( count( $detalleFactura ) ):
-		if( $type == 'g' ):
-?>
-		<tr>
-			<td>1</td>
-			<td>Consumo de alimentos</td>
-			<td class='text-center'></td>
-			<td class='text-right'></td>
-			<td class='text-right'><?= number_format( (double)$principalFactura->total, 2 ); ?></td>
-		</tr>
-<?php
-		else:
-			foreach ( $detalleFactura AS $ixDetalle => $detalle ) {
-				$noOrden  = (int)$ixDetalle + 1;
-				$subtotal = number_format( (double)$detalle->precioMenu * $detalle->cantidad, 2 );
-?>
-				<tr>
-					<td><?= $noOrden; ?></td>
-					<td><?= $detalle->descripcion; ?></td>
-					<td class='text-center'><?= $detalle->cantidad; ?></td>
-					<td class='text-right'><?= $detalle->precioMenu; ?></td>
-					<td class='text-right'><?= $subtotal; ?></td>
-				</tr>
-<?php
-			}
-		endif;
-		
-	endif;
- ?>
- 	<tr>
- 		<td colspan="4" class='text-right'><b>TOTAL</b></td>
- 		<td class='text-right'><b><?= number_format( (double)$principalFactura->total, 2 ); ?></b></td>
- 	</tr>
-	</tbody>
-</table>
-<script type="text/javascript">
-	window.onload = function() { 
-		//window.print(); 
-		//window.close();
-	}
-</script>
+<!DOCTYPE html>
+<html lang="es-GT">
+<head>
+	<meta charset="UTF-8">
+	<title>Factura Print</title>
+</head>
+<body style="margin: 0;padding: 0;">
+	<?php $documento->render( $datos ); ?>
+	<script type="text/javascript">
+		window.onload = function() { 
+			window.print(); 
+			window.close();
+		}
+	</script>
+</body>
+</html>
