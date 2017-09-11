@@ -242,6 +242,26 @@
                                             </button>
                                         </div>
 
+                                        <!-- ELIMINAR MENU -->
+                                        <div class="col-sm-12" ng-show="accionMenu=='delete'">
+                                            <fieldset class="fieldset">
+                                                <legend class="legend danger">Eliminar Menú</legend>
+                                                <div class="col-xs-12" style="margin-top:5px">
+                                                    <h4>Eliminar <kbd>{{menu.cantidad}} {{menu.menu}}</kbd></h4>
+                                                </div>
+                                                <div class="col-xs-12 text-center" style="margin-top:5px">
+                                                    <button type="button" class="btn btn-sm btn-default" ng-click="$parent.accionMenu=''">
+                                                        <span class="glyphicon glyphicon-remove"></span>
+                                                        Cancelar
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-danger" ng-click="guardarMenu()">
+                                                        <span class="glyphicon glyphicon-remove"></span>
+                                                        <b>Eliminar</b>
+                                                    </button>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+
                                         <!-- FORMULARIO PARA MENU -->
                                         <div class="col-sm-12" ng-show="accionMenu=='insert' || accionMenu=='update'">
                                             <fieldset class="fieldset">
@@ -327,7 +347,7 @@
                                                 <tbody>
                                                     <tr ng-repeat="item in lstMenuEvento">
                                                         <td>
-                                                            <button type="button" class="btn btn-xs btn-danger" ng-click="eliminarMenu( $index )" ng-disabled="$parent.idEstadoEvento!=1" title="Eliminar" data-toggle="tooltip" data-placement="top" tooltip>
+                                                            <button type="button" class="btn btn-xs btn-danger" ng-click="menuAccion( 'delete', item )" ng-disabled="$parent.idEstadoEvento!=1" title="Eliminar" data-toggle="tooltip" data-placement="top" tooltip>
                                                                 <span class="glyphicon glyphicon-remove"></span>
                                                             </button>
                                                         </td>

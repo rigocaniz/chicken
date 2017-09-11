@@ -47,6 +47,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 	// MUESTRA DIALOGO DE EVENTO
 	$scope.showDialOrden = function ( _accion, evento, _status ) {
 		$scope.accionEvento = _accion;
+		$scope.accionMenu   = '';
 
 		if ( _accion == 'insert' ) {
 			$scope.setEvento();
@@ -225,9 +226,8 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 			$scope.menu.otroMenu       = '';
 			$scope.menu.comentario     = '';
 		}
-		else if ( _accion == 'update' )
+		else if ( _accion == 'update' || _accion == 'delete' )
 		{
-			console.log( _menu );
 			$scope.menu = {
 				id       	   : _menu.id,
 				cantidad       : parseInt( _menu.cantidad ),
@@ -235,10 +235,14 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 				otroMenu 	   : ( _menu.idTipo == 'otroMenu' ?  _menu.menu : '' ),
 				idMenu 		   : ( _menu.idTipo != $scope.tipo ? '' : _menu.idMenu ),
 				idMenuCurrent  : _menu.idMenu,
+				menu  		   : _menu.menu,
 				comentario     : _menu.comentario
 			};
 
-			if ( _menu.idTipo != $scope.tipo )
+			console.log( $scope.menu );
+
+
+			if ( _menu.idTipo != $scope.tipo && _accion == 'update' )
 				$scope.tipo = _menu.idTipo;
 		}
 	};
