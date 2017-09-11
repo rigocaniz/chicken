@@ -167,6 +167,11 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			if ( data.length ) {
 				$scope.facturacion.lstOrden = data;
 			}
+			else{
+				alertify.set('notifier','position', 'top-right');
+                alertify.notify( 'No se encontraron ordenes con el No. de Ticket', 'info', 7 );
+			}
+
 		});
 	};
 
@@ -363,10 +368,9 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			// CONSULTA TIPO DE SERVICIOS
 			$http.post('consultas.php', { opcion : 'busquedaTicket', ticket : $scope.buscarTicket })
 			.success(function (data) {
-				console.log( data );
+				console.log( "TICKET:::", data );
 				$scope.$parent.loading = false; // cargando...
 				if ( Array.isArray( data ) && data.length ) {
-					//$scope.buscarTicket = 0;
 					$scope.lstTicketBusqueda = data;
 					if( $scope.lstTicketBusqueda.length == 1 )
 						$scope.seleccionarDeBusqueda( $scope.lstTicketBusqueda[ 0 ] );
@@ -375,7 +379,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 				}
 				else{
 					alertify.set('notifier','position', 'top-right');
-					alertify.notify( "No se encontro información", 'info', 2 );
+					alertify.notify( "No se encontro información del TICKET", 'info', 3 );
 				}
 			});
 		}else{

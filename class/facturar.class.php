@@ -290,7 +290,7 @@ class Factura
 		$where = "";
 
 		if ( !$todo )
-			$where = " AND idEstadoDetalleOrden != 6 ";
+			$where = " AND idEstadoDetalleOrden = 4 ";
 
  		$sql = "SELECT 
 				    idDetalleOrdenMenu,
