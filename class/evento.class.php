@@ -19,8 +19,10 @@ class Evento
  	{
 		$respuesta = "";
 		$mensaje   = "";
-		$idEvento  = null;
+		$lastId  = null;
 
+		$idEstadoEvento        = (int)$_evento->idEstadoEvento;
+		$idEvento              = (int)$_evento->idEvento;
 		$idCliente             = (int)$_evento->idCliente;
 		$numeroPersonas        = (int)$_evento->numeroPersonas;
 		$evento                = $this->con->real_escape_string( $_evento->evento );
@@ -60,22 +62,25 @@ class Evento
 	 		if( $accion == 'insert' ):
 	 			$sql = "CALL consultaEvento( 'insert', NULL, '{$evento}', {$idCliente}, DATE( '{$fechaEvento}' ), TIME( '{$horaInicio}' ), TIME( '{$horaFinal}' ), '{$observacion}', {$anticipo}, NULL, {$numeroPersonas}, {$descuento}, '{$descripcionDescuento}', {$costoExtra}, '{$descripcionCostoExtra}' )";
 
-	 			$rs = $this->con->query( $sql );
-	 			if ( $rs AND $row = $rs->fetch_object() )
-	 			{
-					$respuesta = $row->respuesta;
-					$mensaje   = $row->mensaje;
-	 				if ( $row->respuesta == 'success' )
-						$idEvento = $row->id;
-	 			}
-	 			else
-	 			{
-	 				$respuesta = "danger";
-					$mensaje   = "Error al ejecutar la consulta";
-	 			}
-
-	 			@$this->con->next_result();
+	 		elseif( $accion == 'update' ):
+	 			$sql = "CALL consultaEvento( 'update', {$idEvento}, '{$evento}', {$idCliente}, DATE( '{$fechaEvento}' ), TIME( '{$horaInicio}' ), TIME( '{$horaFinal}' ), '{$observacion}', {$anticipo}, {$idEstadoEvento}, {$numeroPersonas}, {$descuento}, '{$descripcionDescuento}', {$costoExtra}, '{$descripcionCostoExtra}' )";
 	 		endif;
+
+ 			$rs = $this->con->query( $sql );
+ 			if ( $rs AND $row = $rs->fetch_object() )
+ 			{
+				$respuesta = $row->respuesta;
+				$mensaje   = $row->mensaje;
+ 				if ( $row->respuesta == 'success' AND $accion == 'insert' )
+					$lastId = $row->id;
+ 			}
+ 			else
+ 			{
+ 				$respuesta = "danger";
+				$mensaje   = "Error al ejecutar la consulta";
+ 			}
+
+ 			@$this->con->next_result();
 		}
 
 		if ( isset( $msgError ) )
@@ -87,7 +92,7 @@ class Evento
 		return array(
 			'respuesta' => $respuesta,
 			'mensaje'   => $mensaje,
-			'idEvento'  => $idEvento,
+			'idEvento'  => $lastId,
 		);
  	}
 
@@ -229,7 +234,11 @@ class Evento
 				    telefono,
 				    direccion,
 				    idTipoCliente,
-				    tipoCliente
+				    tipoCliente,
+				    descuento,
+				    descripcionDescuento,
+				    costoExtra,
+				    descripcionCostoExtra
 				FROM vEvento " . $where . $limit;
 
 		$rs = $this->con->query( $sql );
@@ -240,7 +249,9 @@ class Evento
 			{
 				$row->numeroPersonas = (int)$row->numeroPersonas;
 				$row->anticipo       = (double)$row->anticipo;
-				$row->lstMenu = $this->consultaDetalleOrdenEvento( $row->idEvento );
+				$row->descuento      = (double)$row->descuento;
+				$row->costoExtra     = (double)$row->costoExtra;
+				$row->lstMenu        = $this->consultaDetalleOrdenEvento( $row->idEvento );
 				$result = $row;
 			}
 		}
@@ -250,7 +261,9 @@ class Evento
 			{
 				$row->numeroPersonas = (int)$row->numeroPersonas;
 				$row->anticipo       = (double)$row->anticipo;
-				$row->lstMenu = $this->consultaDetalleOrdenEvento( $row->idEvento );
+				$row->descuento      = (double)$row->descuento;
+				$row->costoExtra     = (double)$row->costoExtra;
+				$row->lstMenu        = $this->consultaDetalleOrdenEvento( $row->idEvento );
 				$result[] = $row;
 			}
 

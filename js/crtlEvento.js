@@ -23,6 +23,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 	($scope.setEvento = function () {
 		$scope.evento = {
 			idEvento              : null,
+			idEstadoEvento        : null,
 			evento                : '',
 			idCliente             : '',
 			nombreCliente         : '',
@@ -35,7 +36,8 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 			descuento             : '',
 			descripcionDescuento  : '',
 			costoExtra            : '',
-			descripcionCostoExtra : ''
+			descripcionCostoExtra : '',
+			estadoEvento 		  : ''
 		};
 	})();
 
@@ -43,8 +45,9 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 	$scope.dialOrden = $modal({scope: $scope,template:'dl.evento.html', show: false, backdrop:false, keyboard: false });
 
 	// MUESTRA DIALOGO DE EVENTO
-	$scope.showDialOrden = function ( _accion, evento ) {
+	$scope.showDialOrden = function ( _accion, evento, _status ) {
 		$scope.accionEvento = _accion;
+
 		if ( _accion == 'insert' ) {
 			$scope.setEvento();
 
@@ -53,22 +56,33 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 		}
 		else if ( _accion == 'update' )
 		{
-			//$scope.evento = angular.copy( evento );
-			$scope.evento = {
-				idEvento       : evento.idEvento,
-				evento         : evento.evento,
-				idCliente      : evento.idCliente,
-				nombreCliente  : $sce.trustAsHtml( '<b>' + evento.nombre + '</b> (' + evento.nit + ') - ' + evento.direccion ),
-				fechaEvento    : moment( evento.fechaEvento ),
-				horaInicio     : $scope.$parent.formatoFecha( evento.horaInicio, 'HH:mm' ),
-				horaFinal      : $scope.$parent.formatoFecha( evento.horaFinal, 'HH:mm' ),
-				anticipo       : evento.anticipo,
-				numeroPersonas : evento.numeroPersonas,
-				observacion    : evento.observacion
-			};
+			var _idEstadoEvento = _status || '';
 
+			$scope.evento = {
+				idEvento              : evento.idEvento,
+				evento                : evento.evento,
+				idCliente             : evento.idCliente,
+				nombreCliente         : $sce.trustAsHtml( '<b>' + evento.nombre + '</b> (' + evento.nit + ') - ' + evento.direccion ),
+				fechaEvento           : moment( evento.fechaEvento ),
+				horaInicio            : $scope.$parent.formatoFecha( evento.horaInicio, 'HH:mm' ),
+				horaFinal             : $scope.$parent.formatoFecha( evento.horaFinal, 'HH:mm' ),
+				anticipo              : evento.anticipo,
+				numeroPersonas        : evento.numeroPersonas,
+				observacion           : evento.observacion,
+				descuento             : evento.descuento,
+				descripcionDescuento  : evento.descripcionDescuento,
+				costoExtra            : evento.costoExtra,
+				descripcionCostoExtra : evento.descripcionCostoExtra,
+				idEstadoEvento        : evento.idEstadoEvento,
+				newIdEstadoEvento     : _idEstadoEvento,
+				estadoEvento          : evento.estadoEvento
+			};
+			console.log( $scope.evento );
+
+			// SI NO ES CAMBIO DE ESTADO
 			$scope.lstMenuEvento = evento.lstMenu;
 		}
+
 		$scope.dialOrden.show();
 	};
 
@@ -128,6 +142,10 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 		{
 			$scope.evento.fechaEventoTxt = moment( $scope.evento.fechaEvento ).format( "YYYY[-]MM[-]DD" );
 
+			// CAMBIA ESTADO ACTUAL
+			if ( $scope.evento.newIdEstadoEvento > 0 )
+				$scope.evento.idEstadoEvento = $scope.evento.newIdEstadoEvento;
+
 			$http.post('consultas.php', { 
 				opcion : 'guardarEvento',
 				accion : $scope.accionEvento,
@@ -142,6 +160,13 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 					$scope.evento.idEvento = data.idEvento;
 					$scope.menu.cantidad   = angular.copy( $scope.evento.numeroPersonas );
 				}
+
+				// CONSULTA EVENTOS
+				$scope.consultaEvento();
+
+				if ( $scope.evento.newIdEstadoEvento > 0 )
+					$scope.dialOrden.hide();
+
 			});
 		}
 	};
@@ -150,8 +175,12 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 	$scope.consultarMenu = function () {
 		var datos            = null;
 		$scope.lstMenu       = [];
-		$scope.menu.otroMenu = "";
-		$scope.menu.idMenu   = '';
+
+		if ( !( $scope.menu.id > 0 ) )
+		{
+			$scope.menu.otroMenu = "";
+			$scope.menu.idMenu   = '';
+		}
 		
 		if ( $scope.tipo == 'menu' ) 
 			datos = { opcion : 'lstMenu', idTipoMenu : 0, idEstadoMenu : 1 };
@@ -173,11 +202,44 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 
 				$timeout(function () {
 
+					// SI ESTA DEFINIDO EL MENU ACTUAL
+					if ( $scope.menu.idMenuCurrent != undefined && $scope.menu.idMenuCurrent > 0 )
+						$scope.menu.idMenu = $scope.menu.idMenuCurrent.toString();
+					
 					// SELECCIONA LA PRIMERA OPCION
-					if ( $scope.lstMenu.length )
+					else if ( $scope.lstMenu.length )
 						$scope.menu.idMenu = $scope.lstMenu[ 0 ].idMenu;
 				});
 			});
+		}
+	};
+
+	// ACCION DEL MENU
+	$scope.menuAccion = function ( _accion, _menu ) {
+		$scope.accionMenu = _accion;
+
+		if ( _accion == 'insert' )
+		{
+			$scope.menu.id             = 0;
+			$scope.menu.precioUnitario = 0;
+			$scope.menu.otroMenu       = '';
+			$scope.menu.comentario     = '';
+		}
+		else if ( _accion == 'update' )
+		{
+			console.log( _menu );
+			$scope.menu = {
+				id       	   : _menu.id,
+				cantidad       : parseInt( _menu.cantidad ),
+				precioUnitario : parseFloat( _menu.precioUnitario ),
+				otroMenu 	   : ( _menu.idTipo == 'otroMenu' ?  _menu.menu : '' ),
+				idMenu 		   : ( _menu.idTipo != $scope.tipo ? '' : _menu.idMenu ),
+				idMenuCurrent  : _menu.idMenu,
+				comentario     : _menu.comentario
+			};
+
+			if ( _menu.idTipo != $scope.tipo )
+				$scope.tipo = _menu.idTipo;
 		}
 	};
 
@@ -208,12 +270,11 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 					idEvento       : $scope.evento.idEvento
 				}
 			};
-			console.log( datos );
+
 			$http.post('consultas.php', datos )
 			.success(function (data) {
 				alertify.notify( data.mensaje, data.respuesta, 3 );
 
-				console.log( data );
 				if ( data.respuesta == 'success' ) {
 					$scope.lstMenuEvento       = data.lstMenuEvento;
 					$scope.accionMenu          = "";
@@ -221,6 +282,9 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 					$scope.menu.precioUnitario = 0;
 					$scope.menu.comentario     = '';
 					$scope.menu.otroMenu       = '';
+					
+					// CONSULTA EVENTOS
+					$scope.consultaEvento();
 				}
 			});
 		}
@@ -245,24 +309,29 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 		}
 	});
 
+	// SI CAMBIA EL ESTADO DEL EVENTO
 	$scope.$watch('idEstadoEvento', function (_new) {
-		if ( _new > 0 && !$scope.$parent.loading )
-		{
-			$scope.$parent.loading = true;
-			$scope.lstEvento       = [];
-			$http.post('consultas.php', { 
-				opcion         : 'consultaEvento',
-				idEstadoEvento : _new
-			})
-			.success(function (data) {
-				$scope.$parent.loading = false;
-				console.log( data );
-
-				if ( Array.isArray( data ) )
-					$scope.lstEvento = data;
-			});
-		}
+		if ( _new > 0  )
+			$scope.consultaEvento();
 	});
+
+	// CONSULTA EVENTOS
+	$scope.consultaEvento = function () {
+		if ( $scope.$parent.loading ) return false;
+
+		$scope.$parent.loading = true;
+		$scope.lstEvento       = [];
+		$http.post('consultas.php', { 
+			opcion         : 'consultaEvento',
+			idEstadoEvento : $scope.idEstadoEvento
+		})
+		.success(function (data) {
+			$scope.$parent.loading = false;
+
+			if ( Array.isArray( data ) )
+				$scope.lstEvento = data;
+		});
+	};
 	
 	// PRESS KEY
 	$scope.$on('keyPress', function( event, key, altDerecho, evento ) {

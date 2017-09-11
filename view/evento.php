@@ -30,23 +30,26 @@
         </div>
 
         <!-- *********** INFORMACION DE EVENTOS ********* -->
-        <div class="col-xs-12 info-orden-ticket" ng-repeat="evento in lstEvento" style="margin-bottom:13px">
+        <div class="col-xs-12 info-orden-ticket" ng-repeat="evento in lstEvento" style="margin-bottom:9px;padding-bottom:7px">
             <!-- *********** INFORMACION DE ORDEN ********* -->
             <div class="row">
                 <div class="col-sm-6 col-xs-12">
                     <h4>
                         <b>Evento # </b> {{evento.idEvento}} » 
                         <span>{{evento.evento}}</span>
-                        <button type="button" class="btn btn-xs btn-danger" title="Cancelar" data-toggle="tooltip" data-placement="top" tooltip>
+                        <button type="button" class="btn btn-xs btn-danger" ng-click="showDialOrden( 'update', evento, 10 )" ng-disabled="idEstadoEvento!=1" title="Cancelar" data-toggle="tooltip" data-placement="top" tooltip>
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
-                        <button type="button" class="btn btn-xs btn-primary" ng-click="showDialOrden( 'update', evento )" title="Modificar" data-toggle="tooltip" data-placement="top" tooltip>
+                        <button type="button" class="btn btn-xs btn-success" ng-click="showDialOrden( 'update', evento, 5 )" ng-disabled="idEstadoEvento!=1" title="Finalizar" data-toggle="tooltip" data-placement="top" tooltip>
+                            <span class="glyphicon glyphicon-flag"></span>
+                        </button>
+                        <button type="button" class="btn btn-xs btn-info" ng-click="showDialOrden( 'update', evento )" title="Modificar" data-toggle="tooltip" data-placement="top" tooltip>
                             <span class="glyphicon glyphicon-pencil"></span>
                         </button>
                     </h4>
                 </div>
                 <div class="col-sm-6 col-xs-12">
-                    <h4><b>Fecha Evento:</b> {{formatoFecha( evento.fechaEvento, 'dddd D [de ] MMM [de] YYYY' )}}</h4>
+                    <h4><b>Fecha Evento:</b> {{formatoFecha( evento.fechaEvento, 'ddd D [de ] MMM [de] YYYY' )}}</h4>
                 </div>
             </div>
             <div class="row">
@@ -72,45 +75,17 @@
                     <span class="etiqueta">Observación: </span>
                     <span class="valor">{{evento.observacion}}</span>
                 </div>
-                <div class="col-xs-2">
+                <div class="col-xs-3">
                     <span class="etiqueta">Usuario: </span>
                     <span class="valor">{{evento.usuario}}</span>
                 </div>
-                <div class="col-xs-4">
+                <div class="col-xs-3">
                     <span class="etiqueta">Registro: </span>
-                    <span class="valor">{{formatoFecha( evento.fechaRegistro, 'D[/]MM[/]YYYY [-] HH:mm' )}}</span>
+                    <span class="valor" title="{{formatoFecha( evento.fechaRegistro, 'HH:mm')}}" data-toggle="tooltip" data-placement="top" tooltip>
+                        {{formatoFecha( evento.fechaRegistro, 'D[/]MM[/]YYYY' )}}
+                    </span>
                 </div>
             </div>
-            <!--
-            <legend class="legend2" style="cursor:pointer" ng-click="evento.showMenus=!evento.showMenus">Menús Evento</legend>
-            <div class="row" ng-show="evento.showMenus">
-                <div class="col-xs-12">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Tipo</th>
-                                <th>Menú</th>
-                                <th>Cantidad</th>
-                                <th>P./Unidad</th>
-                                <th>Subtotal</th>
-                                <th width="350px">Comentario</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="item in evento.lstMenu">
-                                <td>{{item.tipo}}</td>
-                                <td>{{item.menu}}</td>
-                                <td>{{item.cantidad}}</td>
-                                <td>{{item.precioUnitario | number:2}}</td>
-                                <td>
-                                    <b>{{(item.cantidad*item.precioUnitario) | number:2}}</b>
-                                </td>
-                                <td>{{item.comentario}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-           </div>-->
         </div>
 	</div>
 </div>
@@ -119,7 +94,8 @@
 <script type="text/ng-template" id="dl.evento.html">
     <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dl_evento">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content" ng-class="{'panel-success':accionEvento=='insert', 'panel-primary':accionEvento=='update'}">
+            <div class="modal-content" 
+                ng-class="{'panel-success':accionEvento=='insert', 'panel-primary':accionEvento=='update' && evento.newIdEstadoEvento!=10, 'panel-danger':evento.newIdEstadoEvento==10}">
                 <div class="modal-header panel-heading">
                 	<button type="button" class="close" ng-click="$hide()">&times;</button>
                 	<span class="glyphicon glyphicon-calendar"></span>
@@ -127,16 +103,29 @@
                     <span ng-show="accionEvento=='insert'">Nuevo Evento</span>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
+                    <div class="row" ng-show="evento.newIdEstadoEvento==5">
+                        <div class="col-xs-12 text-center">
+                            <h4>¿Esta seguro de FINALIZAR el Evento?</h4>
+                            <button type="button" class="btn btn-primary" ng-click="guardarEvento()">Finalizar Evento</button>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="evento.newIdEstadoEvento==10">
+                        <div class="col-xs-12 text-center">
+                            <h4>¿Esta seguro de CANCELAR el Evento?</h4>
+                            <button type="button" class="btn btn-danger" ng-click="guardarEvento()">Cancelar Evento</button>
+                        </div>
+                    </div>
+
+                    <div class="row" ng-show="!(evento.newIdEstadoEvento>0)">
                         <!-- TABS -->
                         <div class="col-sm-12">
                             <ul class="nav nav-tabs tabs-title" role="tablist">
-                                <li role="presentation" ng-class="{'active' : idTab==1}" ng-click="idTab=1">
+                                <li role="presentation" ng-class="{'active' : $parent.idTab==1}" ng-click="$parent.idTab=1">
                                     <a href="" role="tab" data-toggle="tab">
                                         <span class="glyphicon glyphicon-calendar"></span> Datos del Evento
                                     </a>
                                 </li>
-                                <li role="presentation" ng-class="{'active' : idTab==2}" ng-click="idTab=2">
+                                <li role="presentation" ng-class="{'active' : $parent.idTab==2}" ng-click="$parent.idTab=2">
                                     <a href="" role="tab" data-toggle="tab">
                                         <span class="glyphicon glyphicon-cutlery"></span> Menús
                                     </a>
@@ -148,7 +137,7 @@
                         <div class="col-sm-12">
                             <div class="tab-content">
                                 <!--  INFORMACION EVENTO -->
-                                <div role="tabpanel" class="tab-pane" ng-class="{'active' : idTab==1}" ng-show="idTab==1">
+                                <div role="tabpanel" class="tab-pane" ng-class="{'active' : $parent.idTab==1}" ng-show="$parent.idTab==1">
                                     <div class="row" style="margin-top:5px" ng-show="evento.idCliente>0">
                                         <div class="col-sm-12">
                                             <div class="alert alert-info alert-dismissible fade in" role="alert">
@@ -173,8 +162,13 @@
                                     </div>
                                 	<div class="row" style="margin-top:5px">
                                         <label class="col-xs-2">Evento</label>
-                                        <div class="col-xs-8">
+                                        <div class="col-xs-7">
                                             <input type="text" class="form-control" ng-model="evento.evento" placeholder="Descripción de evento" id="evento">
+                                        </div>
+                                        <div class="col-xs-3" ng-show="accionEvento=='update'">
+                                            <span class="label" ng-class="{'label-primary':evento.idEstadoEvento==1, 'label-success':evento.idEstadoEvento==5, 'label-danger':evento.idEstadoEvento==10}">
+                                                {{evento.estadoEvento}}
+                                            </span>
                                         </div>
                                     </div>
                                     <div class="row" style="margin-top:5px">
@@ -224,12 +218,12 @@
                                     <div class="row" style="margin-top:5px">
                                         <label class="col-xs-2">Observación</label>
                                         <div class="col-xs-10">
-                                            <textarea rows="4" class="form-control" ng-model="evento.observacion"></textarea>
+                                            <textarea rows="3" class="form-control" ng-model="evento.observacion"></textarea>
                                         </div>
                                     </div>
-                                    <div class="row" style="margin-top:5px">
+                                    <div class="row" style="margin-top:5px" ng-hide="$parent.accionEvento=='insert' && evento.idEvento>0">
                                         <div class="col-sm-12 text-center">
-                                            <button type="button" class="btn btn-success" ng-click="guardarEvento()">
+                                            <button type="button" class="btn btn-success" ng-click="guardarEvento()" ng-disabled="$parent.idEstadoEvento!=1">
                                                 <span class="glyphicon glyphicon-plus-sign"></span>
                                                 <b>Guardar Información de Evento</b>
                                             </button>
@@ -238,11 +232,11 @@
                                 </div>
 
                                 <!-- $$$$$$ MENUS ORDENADOS $$$$$$ -->
-                                <div role="tabpanel" class="tab-pane" ng-class="{'active' : idTab==2}" ng-show="idTab==2">
+                                <div role="tabpanel" class="tab-pane" ng-class="{'active' : $parent.idTab==2}" ng-show="$parent.idTab==2">
                                    <div class="row" style="margin-top:5px">
                                         <!-- BOTON PARA AGREGAR MENU -->
                                         <div class="col-xs-12 text-right" style="margin-top:5px" ng-show="accionMenu==''">
-                                            <button type="button" class="btn btn-sm btn-primary" ng-click="$parent.accionMenu='insert'">
+                                            <button type="button" class="btn btn-sm btn-primary" ng-click="menuAccion( 'insert' )" ng-disabled="$parent.idEstadoEvento!=1">
                                                 <span class="glyphicon glyphicon-plus"></span>
                                                 <b>Agregar Menú</b>
                                             </button>
@@ -257,19 +251,25 @@
                                                 <div class="row">
                                                     <div class="col-xs-4">
                                                         <div class="btn-group" style="margin-left:18px">
-                                                            <button type="button" class="btn btn-default">
+                                                            <button type="button" class="btn btn-default" ng-disabled="$parent.accionMenu=='update'">
                                                                 <span ng-show="tipo=='menu'">Menú</span>
                                                                 <span ng-show="tipo=='combo'">Combo</span>
                                                                 <span ng-show="tipo=='otroMenu'">Personalizado</span>
                                                             </button>
-                                                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-disabled="$parent.accionMenu=='update'">
                                                                 <span class="caret"></span>
                                                                 <span class="sr-only">Toggle Dropdown</span>
                                                             </button>
                                                             <ul class="dropdown-menu">
-                                                                <li><a href="" ng-click="$parent.tipo='menu'">Menú</a></li>
-                                                                <li><a href="" ng-click="$parent.tipo='combo'">Combo</a></li>
-                                                                <li><a href="" ng-click="$parent.tipo='otroMenu'">Personalizado</a></li>
+                                                                <li>
+                                                                    <a href="" ng-click="$parent.tipo='menu'">Menú</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="" ng-click="$parent.tipo='combo'">Combo</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="" ng-click="$parent.tipo='otroMenu'">Personalizado</a>
+                                                                </li>
                                                             </ul>
                                                         </div>
                                                     </div>
@@ -327,7 +327,7 @@
                                                 <tbody>
                                                     <tr ng-repeat="item in lstMenuEvento">
                                                         <td>
-                                                            <button type="button" class="btn btn-xs btn-danger" ng-click="eliminarMenu( $index )" title="Eliminar" data-toggle="tooltip" data-placement="top" tooltip>
+                                                            <button type="button" class="btn btn-xs btn-danger" ng-click="eliminarMenu( $index )" ng-disabled="$parent.idEstadoEvento!=1" title="Eliminar" data-toggle="tooltip" data-placement="top" tooltip>
                                                                 <span class="glyphicon glyphicon-remove"></span>
                                                             </button>
                                                         </td>
@@ -340,7 +340,7 @@
                                                         </td>
                                                         <td>{{item.comentario}}</td>
                                                         <td>
-                                                            <button type="button" class="btn btn-xs btn-info" ng-click="modificarMenu( $index )" title="Modificar" data-toggle="tooltip" data-placement="top" tooltip>
+                                                            <button type="button" class="btn btn-xs btn-info" ng-click="menuAccion( 'update', item )" ng-disabled="$parent.idEstadoEvento!=1" title="Modificar" data-toggle="tooltip" data-placement="top" tooltip>
                                                                 <span class="glyphicon glyphicon-pencil"></span>
                                                             </button>
                                                         </td>
