@@ -180,31 +180,51 @@
                                     <div class="row" style="margin-top:5px">
                                         <label class="col-xs-2">Fecha Evento</label>
                                         <div class="col-xs-3">
-                                            <input type="text" class="form-control" ng-model="evento.fechaEvento" data-date-format="dd/MM/yyyy" data-autoclose="1" bs-datepicker>
+                                            <input type="text" class="form-control" ng-model="evento.fechaEvento" data-date-format="dd/MM/yyyy" data-autoclose="1" bs-datepicker placeholder="Fecha del Evento">
                                         </div>
                                         <label class="col-xs-1">De</label>
                                         <div class="col-xs-2">
-                                            <input type="text" class="form-control" ng-model="evento.horaInicio" bs-timepicker data-time-format="HH:mm" data-time-type="string">
+                                            <input type="text" class="form-control" ng-model="evento.horaInicio" bs-timepicker data-time-format="HH:mm" data-time-type="string" placeholder="Hora Inicio">
                                         </div>
                                         <label class="col-xs-1">Para</label>
                                         <div class="col-xs-2">
-                                            <input type="text" class="form-control" ng-model="evento.horaFinal" bs-timepicker data-time-format="HH:mm" data-time-type="string">
+                                            <input type="text" class="form-control" ng-model="evento.horaFinal" bs-timepicker data-time-format="HH:mm" data-time-type="string" placeholder="Hora Final">
                                         </div>
                                     </div>
                                     <div class="row" style="margin-top:5px">
+                                        <label class="col-xs-2"># Personas</label>
+                                        <div class="col-xs-2">
+                                            <input type="number" class="form-control" ng-model="evento.numeroPersonas">
+                                        </div>
                                         <label class="col-xs-2">Anticipo</label>
-                                        <div class="col-xs-3">
+                                        <div class="col-xs-2">
                                             <input type="number" class="form-control" ng-model="evento.anticipo" placeholder="Q. ">
                                         </div>
-                                        <label class="col-xs-3">Cantidad de Personas</label>
-                                        <div class="col-xs-3">
-                                            <input type="number" class="form-control" ng-model="evento.numeroPersonas">
+                                    </div>
+                                    <div class="row" style="margin-top:5px">
+                                        <label class="col-xs-2">Descuento</label>
+                                        <div class="col-xs-2">
+                                            <input type="number" class="form-control" ng-model="evento.descuento" placeholder="Q.">
+                                        </div>
+                                        <label class="col-xs-2">Descripción Descuento</label>
+                                        <div class="col-xs-6">
+                                            <input type="text" class="form-control" ng-model="evento.descripcionDescuento" maxlength="75" ng-disabled="!(evento.descuento>0)">
+                                        </div>
+                                    </div>
+                                    <div class="row" style="margin-top:5px">
+                                        <label class="col-xs-2">Costo Extra</label>
+                                        <div class="col-xs-2">
+                                            <input type="number" class="form-control" ng-model="evento.costoExtra" placeholder="Q.">
+                                        </div>
+                                        <label class="col-xs-2">Descripción Descuento</label>
+                                        <div class="col-xs-6">
+                                            <input type="text" class="form-control" ng-model="evento.descripcionCostoExtra" maxlength="75" ng-disabled="!(evento.costoExtra>0)">
                                         </div>
                                     </div>
                                     <div class="row" style="margin-top:5px">
                                         <label class="col-xs-2">Observación</label>
                                         <div class="col-xs-10">
-                                            <textarea rows="5" class="form-control" ng-model="evento.observacion"></textarea>
+                                            <textarea rows="4" class="form-control" ng-model="evento.observacion"></textarea>
                                         </div>
                                     </div>
                                     <div class="row" style="margin-top:5px">

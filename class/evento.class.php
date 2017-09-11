@@ -21,14 +21,18 @@ class Evento
 		$mensaje   = "";
 		$idEvento  = null;
 
-		$idCliente      = (int)$_evento->idCliente;
-		$numeroPersonas = (int)$_evento->numeroPersonas;
-		$evento         = $this->con->real_escape_string( $_evento->evento );
-		$observacion    = $this->con->real_escape_string( $_evento->observacion );
-		$anticipo       = (double)$_evento->anticipo;
-		$fechaEvento    = $_evento->fechaEventoTxt;
-		$horaFinal      = $_evento->horaFinal;
-		$horaInicio     = $_evento->horaInicio;
+		$idCliente             = (int)$_evento->idCliente;
+		$numeroPersonas        = (int)$_evento->numeroPersonas;
+		$evento                = $this->con->real_escape_string( $_evento->evento );
+		$observacion           = $this->con->real_escape_string( $_evento->observacion );
+		$anticipo              = (double)$_evento->anticipo;
+		$fechaEvento           = $_evento->fechaEventoTxt;
+		$horaFinal             = $_evento->horaFinal;
+		$horaInicio            = $_evento->horaInicio;
+		$descuento             = (double)$_evento->descuento;
+		$descripcionDescuento  = $this->con->real_escape_string( $_evento->descripcionDescuento );
+		$costoExtra            = (double)$_evento->costoExtra;
+		$descripcionCostoExtra = $this->con->real_escape_string( $_evento->descripcionCostoExtra );
 
 		if ( !( $idCliente > 0 ) )
 			$msgError = "Debe seleccionar un cliente";
@@ -45,10 +49,16 @@ class Evento
 		else if ( strlen( $horaFinal ) != 5 )
 			$msgError = "La hora Final no es válida";
 
+		else if ( $descuento > 0 AND !( strlen( $descripcionDescuento ) > 4 ) )
+			$msgError = "Ingrese descripción de Descuento";
+
+		else if ( $costoExtra > 0 AND !( strlen( $descripcionCostoExtra ) > 4 ) )
+			$msgError = "Ingrese descripción de Costro Extra";
+
 		else
 		{
 	 		if( $accion == 'insert' ):
-	 			$sql = "CALL consultaEvento( 'insert', NULL, '{$evento}', {$idCliente}, DATE( '{$fechaEvento}' ), TIME( '{$horaInicio}' ), TIME( '{$horaFinal}' ), '{$observacion}', {$anticipo}, NULL, {$numeroPersonas} )";
+	 			$sql = "CALL consultaEvento( 'insert', NULL, '{$evento}', {$idCliente}, DATE( '{$fechaEvento}' ), TIME( '{$horaInicio}' ), TIME( '{$horaFinal}' ), '{$observacion}', {$anticipo}, NULL, {$numeroPersonas}, {$descuento}, '{$descripcionDescuento}', {$costoExtra}, '{$descripcionCostoExtra}' )";
 
 	 			$rs = $this->con->query( $sql );
 	 			if ( $rs AND $row = $rs->fetch_object() )

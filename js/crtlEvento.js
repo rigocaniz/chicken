@@ -22,16 +22,20 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 
 	($scope.setEvento = function () {
 		$scope.evento = {
-			idEvento       : null,
-			evento         : '',
-			idCliente      : '',
-			nombreCliente  : '',
-			fechaEvento    : null,
-			horaInicio     : null,
-			horaFinal      : null,
-			anticipo       : 0,
-			numeroPersonas : 0,
-			observacion    : ''
+			idEvento              : null,
+			evento                : '',
+			idCliente             : '',
+			nombreCliente         : '',
+			fechaEvento           : null,
+			horaInicio            : null,
+			horaFinal             : null,
+			anticipo              : '',
+			numeroPersonas        : 0,
+			observacion           : '',
+			descuento             : '',
+			descripcionDescuento  : '',
+			costoExtra            : '',
+			descripcionCostoExtra : ''
 		};
 	})();
 
