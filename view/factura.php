@@ -115,7 +115,7 @@
                                                 <div class="form-group">
                                                     <div class="text-center">
                                                         <button type="button" class="btn btn-info" ng-click="consultaFacturaCliente()">
-                                                            <span class="glyphicon glyphicon-saved"></span> FACTURAR
+                                                            <span class="glyphicon glyphicon-saved"></span> <strong><u>F</u></strong>ACTURAR
                                                         </button>
                                                     </div>
                                                 </div>

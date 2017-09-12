@@ -21,7 +21,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	};
 
 	$scope.$watch('buscarTicket', function( _new, _old ){
-		console.log( "new:::", _new, " old:::", _old );
 		if( _old != _new ) {
 			$scope.numeroTicket = null;
 			$scope.facturacion.lstOrden = [];
@@ -211,6 +210,12 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			$timeout(function(){
 				$('#nit').focus();
 			},175);
+		}
+		else if( altDerecho && key == 70 ){
+			if( !$scope.modalOpen() )
+				$scope.consultaFacturaCliente();
+			else
+				alertify.notify('Acción no válida', 'info', 3);
 		}
 	});
 
