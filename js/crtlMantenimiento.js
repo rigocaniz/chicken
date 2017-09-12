@@ -20,7 +20,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key, altDerecho )
 	{
-		//console.log( event, key, altDerecho );
 		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
 		if ( $scope.$parent.loading )
 			return false;
@@ -59,17 +58,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 		else if( !$scope.modalOpen() ) {
 			console.log( "prueba" );
-			/*
-			// MODO PANTALLA
-			else if ( altDerecho && key == 68 ) $scope.cambiarVista( 'dividido' );
-			else if ( altDerecho && key == 84 ) $scope.cambiarVista( 'ticket' );
-
-			else{
-				$scope._keyInicio( key, altDerecho );
-			}
-			*/
 		}
-
 		// CUANDO ESTE ABIERTO ALGUN CUADRO DE DIALOGO
 		else{
 			// CUANDO EL DIALOGO DE NUEVA ORDEN ESTE ABIERTA
@@ -107,9 +96,11 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	};
 
 	$scope.filter = {
-		pagina: 1,
-		limite: 10,
-		orden: 'ASC'
+		pagina   : 1,
+		limite   : 18,
+		orden    : 'ASC',
+		busqueda : ''
+
 	};
 
 	// ACTUALIZAR LST RECETA
@@ -449,6 +440,14 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			$scope.lstBusqueda = []
 	};
 
+	$scope.realizarBusqueda = function(){
+
+		if( $scope.menuTab == 'menu' )
+			$scope.verListaMenu();
+
+		else if( $scope.menuTab == 'combo' )
+			$scope.verListaCombos();
+	};
 
 	$scope.cargarPaginacion = function( pagina ){
 		$scope.filter.pagina = pagina;
@@ -702,6 +701,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		console.log( accion );
 		$scope.accion == 'insert';
 
+		$scope.filter.busqueda = '';
 		if( accion == 'menu' )
 		{
 			$scope.menu = {

@@ -212,10 +212,17 @@ class Menu
 
 
 	// OBTENER TOTAL PRODUCTOS
-	function getTotalPagMenu( $limite = 25 )
+	function getTotalPagMenu( $limite = 25, $busqueda )
 	{
+		
+		$where = '';
+		if( strlen( $busqueda ) ){
+			$busqueda = str_replace(" ", "%", $busqueda );
+			$where .= " AND  menu LIKE '%{$busqueda}%' ";
+		}
+
 		$total = 0;
-		$sql = "SELECT COUNT(*) AS total FROM lstMenu;";
+		$sql = "SELECT COUNT(*) AS total FROM lstMenu {$where};";
 		
 		if( $rs = $this->con->query( $sql ) ){
 			if( $row = $rs->fetch_object() )
@@ -235,13 +242,18 @@ class Menu
 		$limite = $filter->limite > 0 		? (int)$filter->limite 	: 25;
 		$orden  = strlen( $filter->orden ) 	? $filter->orden 		: 'ASC';
 
+		$where = '';
+		if( strlen( $filter->busqueda ) ){
+			$busqueda = str_replace(" ", "%", $filter->busqueda );
+			$where .= " AND menu LIKE '%{$busqueda}%' ";
+		}
+
 		$menus = (object)array(
 				'totalPaginas' => 0,
 				'lstMenus' => array()
 			);
 
 		$inicio = ($pagina - 1) * $limite;
-
 
 		$sql = "SELECT 
 					idMenu,
@@ -257,8 +269,10 @@ class Menu
 					codigoMenu,
 					tiempoAlerta
 				FROM
-					lstMenu WHERE idEstadoMenu <> 3 ORDER BY idMenu $orden LIMIT $inicio, $limite;";
-		
+					lstMenu 
+				WHERE idEstadoMenu <> 3 {$where} 
+				ORDER BY idMenu $orden LIMIT $inicio, $limite;";
+
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
 				if( $row->imagen != '' )
@@ -277,14 +291,13 @@ class Menu
 						'tipoMenu'      => $row->tipoMenu,
 						'codigo'        => $row->codigoMenu,
 						'tiempoAlerta'  => (int)$row->tiempoAlerta
-						
 				);
 
 				$menus->lstMenus[] = $menu;
 			}
 		}
 
-		$menus->totalPaginas = $this->getTotalPagMenu( $limite );
+		$menus->totalPaginas = $this->getTotalPagMenu( $limite, $filter->busqueda );
 
 		return $menus;
 	}

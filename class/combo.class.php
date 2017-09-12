@@ -30,8 +30,15 @@ class Combo
 
 
  	// OBTENER TOTAL COMBOS
-	function getTotalPagMenu( $limite = 25 )
+	function getTotalPagMenu( $limite = 25, $busqueda )
 	{
+		
+		$where = '';
+		if( strlen( $busqueda ) ){
+			$busqueda = str_replace(" ", "%", $busqueda );
+			$where .= " AND  menu LIKE '%{$busqueda}%' ";
+		}
+
 		$total = 0;
 		$sql = "SELECT COUNT(*) AS total FROM lstCombo;";
 		
@@ -53,6 +60,13 @@ class Combo
 		$limite = $filter->limite > 0 		? (int)$filter->limite 	: 25;
 		$orden  = strlen( $filter->orden ) 	? $filter->orden 		: 'ASC';
 
+		$where = '';
+		if( strlen( $filter->busqueda ) ){
+			$busqueda = str_replace(" ", "%", $filter->busqueda );
+			$where .= " AND combo LIKE '%{$busqueda}%' ";
+		}
+
+
 		$combos = (object)array(
 				'totalPaginas' => 0,
 				'lstCombos'    => array()
@@ -69,7 +83,9 @@ class Combo
 					    estadoMenu,
 					    codigoCombo
 					FROM
-					    lstCombo ORDER BY idCombo $orden LIMIT $inicio, $limite;";
+					    lstCombo
+					WHERE idEstadoMenu <> 3 {$where}
+					ORDER BY idCombo $orden LIMIT $inicio, $limite;";
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
@@ -91,7 +107,7 @@ class Combo
 			}
 		}
 
-		$combos->totalPaginas = $this->getTotalPagMenu( $limite );
+		$combos->totalPaginas = $this->getTotalPagMenu( $limite, $filter->busqueda );
 
 		return $combos;
 	}

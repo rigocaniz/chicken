@@ -51,6 +51,19 @@
 								</p>
 							</div>
 							<div class="row">
+							  	<div class="col-sm-5 col-md-6 col-lg-7">
+							    </div><!-- /input-group -->
+							  	<div class="col-sm-7 col-md-6 col-lg-5">
+							    	<div class="input-group">
+							      		<input type="text" ng-model="filter.busqueda" ng-change="realizarBusqueda()" class="form-control" placeholder="Buscar Menu" maxlength="75">
+							      		<span class="input-group-addon">
+							        		<span class="glyphicon glyphicon-search"></span>
+							      		</span>
+							    	</div>
+							  	</div>
+							</div>
+							<br>
+							<div class="row">
 							  	<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" ng-repeat="m in lstMenu">
 							    	<div class="thumbnail">
 								    	<span class="label label-default" 
@@ -99,6 +112,19 @@
 									</button>
 								</p>
 							</div>
+							<div class="row">
+							  	<div class="col-sm-5 col-md-6 col-lg-7">
+							    </div>
+							  	<div class="col-sm-7 col-md-6 col-lg-5">
+							    	<div class="input-group">
+							      		<input type="text" ng-model="filter.busqueda" ng-change="realizarBusqueda()" class="form-control" placeholder="Buscar Combo" maxlength="75">
+							      		<span class="input-group-addon">
+							        		<span class="glyphicon glyphicon-search"></span>
+							      		</span>
+							    	</div>
+							  	</div>
+							</div>
+							<br>
 							<div class="row">
 								<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" ng-repeat="c in lstCombos">
 							    	<div class="thumbnail">
