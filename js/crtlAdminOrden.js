@@ -1282,6 +1282,23 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				var lstDet = datos.data.detalleOrdenCliente.lst;
 				for (var ip = 0; ip < lstDet.length; ip++)
 				{
+					for (var ixd = 0; ixd < lstDet[ ip ].lstDetalle.length; ixd++) {
+
+						for (var im = 0; im < $scope.lstMenus.length; im++) 
+						{
+							for (var imd = 0; imd < $scope.lstMenus[ im ].detalle.length; imd++) 
+							{
+								if ( $scope.lstMenus[ im ].detalle[ imd ].idDetalleOrdenMenu == lstDet[ ip ].lstDetalle[ ixd ].idDetalleOrdenMenu )
+								{
+									$scope.lstMenus[ im ].detalle[ imd ].idTipoServicio = lstDet[ ip ].idTipoServicio;
+									break;
+								}
+							}
+						}
+
+					}
+
+					/*
 					var ixMenu = $scope.indexArray( 'lstMenus', 'idMenu', lstDet[ ip ].idMenu );
 
 					if ( ixMenu >= 0 ) 
@@ -1297,7 +1314,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 								}
 							}
 						}
-					}
+					}*/
 				}
 			break;
 		}

@@ -490,10 +490,15 @@ class Orden
 				    vOrdenes
 				WHERE
 				    idOrdenCliente = {$idOrdenCliente} $where
-				GROUP BY IF( perteneceCombo, idDetalleOrdenCombo, idDetalleOrdenMenu ), perteneceCombo;";
+				GROUP BY IF( perteneceCombo, idDetalleOrdenCombo, idDetalleOrdenMenu ), idDetalleOrdenMenu
+				ORDER BY idDetalleOrdenMenu ASC;";
 
 		if( $rs = $this->con->query( $sql ) ) {
-			while ( $row = $rs->fetch_object() ) {
+			while ( $row = $rs->fetch_object() ):
+
+				$row->idCombo             = (int)$row->idCombo;
+				$row->idMenu              = (int)$row->idMenu;
+				$row->idDetalleOrdenCombo = (int)$row->idDetalleOrdenCombo;
 
 				$row->perteneceCombo = (int)$row->perteneceCombo;
 				$img = ( $row->perteneceCombo ? $row->imagenCombo : $row->imagen );
@@ -501,25 +506,20 @@ class Orden
 				$img = file_exists( $img ) ? $img : 'img-menu/notFound.png';
 
 				// SI PERTENECE A COMBO
-				if ( $row->perteneceCombo ) {
-					//$row->idMenu             = 0;
-					//$row->idDetalleOrdenMenu = 0;
-					$precioMenu              = $row->precioCombo;
-				}
-				else{
-					//$row->idCombo             = 0;
-					//$row->idDetalleOrdenCombo = 0;
-					$precioMenu               = $row->precio;
-				}
+				if ( $row->perteneceCombo )
+					$precioMenu = $row->precioCombo;
+
+				else
+					$precioMenu = $row->precio;
 
 				$index = -1;
 
 				// REVISA SI YA EXISTE MENU
 				foreach ( $lst as $ix => $item ):
-					if ( 	$row->idCombo == $item->idCombo 
-						AND $row->idMenu == $item->idMenu 
-						AND $row->idTipoServicio == $item->idTipoServicio ) 
-					{
+					if (
+						$row->idTipoServicio == $item->idTipoServicio
+						AND ( $row->perteneceCombo ? $row->idCombo == $item->idCombo : $row->idMenu == $item->idMenu )
+					){
 						$index = $ix;
 						break;
 					}
@@ -544,18 +544,47 @@ class Orden
 					);
 				}
 
-				$lst[ $index ]->cantidad += $row->cantidad;
-				$lst[ $index ]->subTotal = ( $lst[ $index ]->cantidad * $precioMenu );
+				// AGREGA DETALLE DE ORDEN
+				$lst[ $index ]->lstDetalle[] = (object)array(
+					'idDetalleOrdenMenu'   => $row->idDetalleOrdenMenu,
+					'idDetalleOrdenCombo'  => $row->idDetalleOrdenCombo,
+					'idEstadoDetalleOrden' => $row->idEstadoDetalleOrden,
+				);
+
+				// RECORRE MENUS AGREGADOS
+				foreach ( $lst as $ix => $menu )
+				{
+					$arrCombo = array();
+					$count    = 0;
+					// RECORRE DETALLE PARA CONTAR NUMERO REAL DE MENUS Y COMBOS
+					foreach ( $menu->lstDetalle as $ixd => $detalle )
+					{
+						if ( $menu->esCombo )
+						{
+							$ixC = -1;
+							foreach ( $arrCombo as $ic => $combo ) {
+								if ( $combo == $detalle->idDetalleOrdenCombo ) {
+									$ixC = $ic;
+									break;
+								}
+							}
+
+							// SI NO ESTA EL ID DETALLE ORDEN COMBO
+							if ( $ixC == -1 )
+								$arrCombo[] = $detalle->idDetalleOrdenCombo;
+						}
+						else
+							$count++;
+					}
+
+					$lst[ $ix ]->cantidad = $menu->esCombo ? count( $arrCombo ) : $count;
+					$lst[ $ix ]->subTotal = ( $lst[ $ix ]->cantidad * $menu->precio );
+				}
+
 
 				// SUMA EL TOTAL DE LA ORDEN
 				$total += (double)$precioMenu;
-
-				// AGREGA DETALLE DE ORDEN
-				$lst[ $index ]->lstDetalle[] = (object)array(
-					'idDetalleOrdenMenu' => $row->idDetalleOrdenMenu,
-					'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo,
-				);
-			}
+			endwhile;
  		}
 
  		return array(
@@ -720,7 +749,7 @@ class Orden
 				    fechaRegistro
 				FROM vOrdenes 
 				WHERE TRUE $where
-				ORDER BY idDetalleOrdenCombo ASC, idDetalleOrdenMenu ASC " . $limit;
+				ORDER BY idDetalleOrdenMenu ASC " . $limit;
 
 		if( $rs = $this->con->query( $sql ) ) {
 			while ( $row = $rs->fetch_object() ):
@@ -969,11 +998,12 @@ class Orden
 				$item->idDetalleOrdenCombo = (int)$item->idDetalleOrdenCombo;
 				$item->idDetalleOrdenMenu  = (int)$item->idDetalleOrdenMenu;
 
-				if ( $item->idDetalleOrdenMenu > 0 )
+				if ( $item->idDetalleOrdenCombo > 0 )
+					$sql = "CALL consultaDetalleOrdenCombo( 'tipoServicio', {$item->idDetalleOrdenCombo}, NULL, NULL, NULL, NULL, {$idTipoServicio}, NULL, NULL );";
+
+				else if ( $item->idDetalleOrdenMenu > 0 )
 					$sql = "CALL consultaDetalleOrdenMenu( 'tipoServicio', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, NULL, {$idTipoServicio}, NULL, NULL );";
 				
-				else if ( $item->idDetalleOrdenCombo > 0 )
-					$sql = "CALL consultaDetalleOrdenCombo( 'tipoServicio', {$item->idDetalleOrdenCombo}, NULL, NULL, NULL, NULL, {$idTipoServicio}, NULL, NULL );";
 
 		 		if( $rs = $this->con->query( $sql ) ) {
 		 			@$this->con->next_result();
