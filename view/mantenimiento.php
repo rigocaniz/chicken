@@ -52,6 +52,16 @@
 							</div>
 							<div class="row">
 							  	<div class="col-sm-5 col-md-6 col-lg-7">
+									<div class="btn-group" role="group" aria-label="...">
+										Resultados por pagina
+										<div class="btn-group" role="group">
+									  		<select class="form-control" ng-model="filter.limite" ng-change="realizarBusqueda()">
+									  			<option value="{{ porPagina.limite }}" ng-repeat="porPagina in lstPorPagina">
+									  				{{ porPagina.limite }}
+									  			</option>
+									  		</select>
+										</div>
+									</div>
 							    </div><!-- /input-group -->
 							  	<div class="col-sm-7 col-md-6 col-lg-5">
 							    	<div class="input-group">
@@ -64,13 +74,13 @@
 							</div>
 							<br>
 							<div class="row">
-							  	<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" ng-repeat="m in lstMenu">
+							  	<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" ng-repeat="m in lstMenu" ng-show="lstMenu.length">
 							    	<div class="thumbnail">
 								    	<span class="label label-default" 
 								    		ng-class="{'label-danger': m.idDestinoMenu == 1, 'label-warning': m.idDestinoMenu == 2}">
 								    		{{ m.destinoMenu }}
 								    	</span>
-								      	<img ng-src="{{ m.imagen }}" alt="{{ m.menu }}" 	ng-click="asignarValorImagen( m.idMenu, 'menu' )" style="height:90px">
+								      	<img ng-src="{{ m.imagen }}" alt="{{ m.menu }}" ng-click="asignarValorImagen( m.idMenu, 'menu' )" style="height:85px" title="Click sobre la imagen para cambiarla" data-toggle="tooltip" data-placement="top" tooltip>
 								      	<div class="caption">
 								      		<div class="text-right">
 								      			<label class="label" ng-class="{'label-success': m.idEstadoMenu == 1, 'label-default': m.idEstadoMenu == 2}">
@@ -93,11 +103,16 @@
 								      	</div>
 							    	</div>
 							  	</div>
+							  	<div class="col-sm-12" ng-show="!lstMenu.length">
+									<div class="alert alert-warning text-right" role="alert">
+										<span class="glyphicon glyphicon-info-sign"></span>
+										NO SE ENCONTRARON RESULTADOS
+									</div>
+							  	</div>
 							</div>
 						</div>
 					</div>
 				</div>
-
 				<!-- COMBOS -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuTab=='combo'}" ng-show="menuTab=='combo'">
 					<div class="panel panel-primary">
@@ -117,7 +132,7 @@
 							    </div>
 							  	<div class="col-sm-7 col-md-6 col-lg-5">
 							    	<div class="input-group">
-							      		<input type="text" ng-model="filter.busqueda" ng-change="realizarBusqueda()" class="form-control" placeholder="Buscar Combo" maxlength="75">
+							      		<input type="text" ng-model="filter.busqueda" ng-change="realizarBusqueda()" class="form-control" placeholder="Buscar Combo" maxlength="50">
 							      		<span class="input-group-addon">
 							        		<span class="glyphicon glyphicon-search"></span>
 							      		</span>
@@ -128,7 +143,7 @@
 							<div class="row">
 								<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" ng-repeat="c in lstCombos">
 							    	<div class="thumbnail">
-								      	<img ng-src="{{ c.imagen }}" alt="{{ c.combo }}" ng-click="asignarValorImagen( c.idCombo, 'combo' )">
+								      	<img ng-src="{{ c.imagen }}" alt="{{ c.combo }}" ng-click="asignarValorImagen( c.idCombo, 'combo' )" style="height:85px" title="Click sobre la imagen para cambiarla" data-toggle="tooltip" data-placement="top" tooltip>
 								      	<div class="caption">
 								      		<div class="text-right">
 								      			<label class="label" ng-class="{'label-success': c.idEstadoMenu == 1, 'label-default': c.idEstadoMenu == 2}">
@@ -151,14 +166,15 @@
 								      	</div>
 							    	</div>
 							  	</div>
+							  	<div class="col-sm-12" ng-show="!lstCombos.length">
+									<div class="alert alert-warning text-right" role="alert">
+										<span class="glyphicon glyphicon-info-sign"></span>
+										NO SE ENCONTRARON RESULTADOS
+									</div>
+							  	</div>
 							</div>
 						</div>
 					</div>
-				</div>
-
-				<!-- SUPERCOMBO -->
-				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuTab=='superCombo'}" ng-show="menuTab=='superCombo'">
-					<h2>EN CONSTRUCCIÓN</h2>
 				</div>
 
 				<!-- PAGINADOR -->

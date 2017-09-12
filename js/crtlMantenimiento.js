@@ -88,6 +88,14 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			$scope.verListaSuperCombos();
 	});
 
+	$scope.lstPorPagina = [
+		{limite: "25" },
+		{limite: "50" },
+		{limite: "75" },
+		{limite: "100" }
+	];
+
+
 	$scope.filtro = {
 		filter : { filter: 'idMedida', value : 8 },
 		order  : { by: 'idMedia', order: 'ASC' },
@@ -97,10 +105,9 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 	$scope.filter = {
 		pagina   : 1,
-		limite   : 18,
+		limite   : "25",
 		orden    : 'ASC',
 		busqueda : ''
-
 	};
 
 	// ACTUALIZAR LST RECETA
@@ -536,7 +543,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 		$scope.accion = 'update';
 		if( tipo == 'menu' ){
-			$scope.menu = data;
+			$scope.menu = angular.copy( data );
 			$scope.cargarLstPreciosMenu( $scope.menu.idMenu );
 			$timeout(function(){
 				$scope.dialAdminMenu.show();
@@ -544,7 +551,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		}
 
 		else if( tipo == 'combo' ){
-			$scope.combo = data;
+			$scope.combo = angular.copy( data );
 			$scope.cargarLstPreciosCombo( $scope.combo.idCombo );
 			$timeout(function(){
 				$scope.dialAdminCombo.show();
@@ -553,7 +560,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	};
 
 	$scope.agregarMenuCombo = function( tipo ){
-		console.log( 'tipo: ', tipo );
 		
 		$scope.accion = 'insert';
 		if( tipo == 'menu' ){
@@ -600,7 +606,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 	$scope.agregaPrecio = function( tipo ){
 		var precio = $scope.precios;
-		console.log( $scope.menu );
 		var error = false;
 
 		if( tipo == 'menu' )
@@ -698,10 +703,9 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 
 	$scope.resetValores = function( accion ){
-		console.log( accion );
 		$scope.accion == 'insert';
-
 		$scope.filter.busqueda = '';
+
 		if( accion == 'menu' )
 		{
 			$scope.menu = {

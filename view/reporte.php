@@ -1,6 +1,11 @@
 <div class="container">
 	<div class="row">
 		<div class="col-sm-12">
+			<div class="pull-right">
+				<a href="#/" >
+	            	<img class="img-responsive" src="img/logo_churchil.png" style="height: 56px;">
+	            </a>
+	        </div>
 			<!-- TABS -->
 			<ul class="nav nav-tabs tabs-title" role="tablist">
 				<li role="presentation" ng-class="{'active' : reporteMenu==1}" ng-click="reporteMenu=1;">
