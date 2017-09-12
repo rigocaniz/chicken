@@ -484,6 +484,7 @@ class Orden
 				    idTipoServicio,
 				    tipoServicio,
 				    idDetalleOrdenCombo,
+				    idEstadoDetalleOrdenCombo,
 				    idCombo,
 				    tiempoAlerta
 				FROM
@@ -546,9 +547,10 @@ class Orden
 
 				// AGREGA DETALLE DE ORDEN
 				$lst[ $index ]->lstDetalle[] = (object)array(
-					'idDetalleOrdenMenu'   => $row->idDetalleOrdenMenu,
-					'idDetalleOrdenCombo'  => $row->idDetalleOrdenCombo,
-					'idEstadoDetalleOrden' => $row->idEstadoDetalleOrden,
+					'idDetalleOrdenMenu'        => $row->idDetalleOrdenMenu,
+					'idDetalleOrdenCombo'       => $row->idDetalleOrdenCombo,
+					'idEstadoDetalleOrden'      => $row->idEstadoDetalleOrden,
+					'idEstadoDetalleOrdenCombo' => $row->idEstadoDetalleOrdenCombo,
 				);
 
 				// RECORRE MENUS AGREGADOS
@@ -739,6 +741,7 @@ class Orden
 				    perteneceCombo,
 				    imagen,
 				    idDetalleOrdenCombo,
+				    idEstadoDetalleOrdenCombo,
 				    idCombo,
 				    combo,
 				    imagenCombo,
@@ -787,17 +790,18 @@ class Orden
 
 				
 				$lst[ $ixTicket ]->detalle[] = (object)array(
-					'idDetalleOrdenMenu'   => $row->idDetalleOrdenMenu,
-					'idDetalleOrdenCombo'  => $row->idDetalleOrdenCombo,
-					'idEstadoDetalleOrden' => $row->idEstadoDetalleOrden,
-					'idCombo'              => $row->idCombo,
-					'idMenu'               => $row->idMenu,
-					'esCombo'              => $row->perteneceCombo,
-					'descripcion'          => ( $row->perteneceCombo ? $row->menu . " (" . $row->combo . ")" : $row->menu ),
-					'imagen'               => ( strlen( (string)$img ) ? $img : 'img-menu/notFound.png' ),
-					'idTipoServicio'       => $row->idTipoServicio,
-					'tipoServicio'         => $row->tipoServicio,
-					'fechaRegistro'        => $row->fechaRegistro,
+					'idDetalleOrdenMenu'        => $row->idDetalleOrdenMenu,
+					'idDetalleOrdenCombo'       => $row->idDetalleOrdenCombo,
+					'idEstadoDetalleOrden'      => $row->idEstadoDetalleOrden,
+					'idEstadoDetalleOrdenCombo' => $row->idEstadoDetalleOrdenCombo,
+					'idCombo'                   => $row->idCombo,
+					'idMenu'                    => $row->idMenu,
+					'esCombo'                   => $row->perteneceCombo,
+					'descripcion'               => ( $row->perteneceCombo ? $row->menu . " (" . $row->combo . ")" : $row->menu ),
+					'imagen'                    => ( strlen( (string)$img ) ? $img : 'img-menu/notFound.png' ),
+					'idTipoServicio'            => $row->idTipoServicio,
+					'tipoServicio'              => $row->tipoServicio,
+					'fechaRegistro'             => $row->fechaRegistro,
 				);
 
 				$lst[ $ixTicket ]->total->total++;
@@ -813,93 +817,6 @@ class Orden
 
 				else if ( $row->idEstadoDetalleOrden == 4 )
 					$lst[ $ixTicket ]->total->servidos++;
-
-
-				//$lst[ $ixTicket ]->lstMenu[ $index ]->cantidad += $row->cantidad;
-
-				/*
-				// AGREGA DETALLE DE ORDEN
-				$lst[ $ixTicket ]->lstMenu[ $index ]->lstDetalle[] = (object)array(
-					'idDetalleOrdenMenu' => $row->idDetalleOrdenMenu,
-					'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo,
-				);*/
-
-
-
-
-
-
-				/*
-
-				// AGRUPA POR TICKET //////////////////
-				$ixTicket = -1;
-
-				foreach ( $lst as $ix => $item ) {
-					if ( $item->idOrdenCliente == $row->idOrdenCliente ) {
-						$ixTicket = $ix;
-						break;
-					}
-				}
-			
-				// SI NO EXISTE SE CREA DATOS TICKET
-				if ( $ixTicket == -1 ) {
-					$ixTicket = count( $lst );
-
-					$lst[] = (object)array(
-						'idOrdenCliente'   => $row->idOrdenCliente,
-						'numeroTicket'     => $row->numeroTicket,
-						'responsableOrden' => $row->responsableOrden,
-						'numMenus'         => 0,
-						'lstMenu'          => array(),
-					);
-				}
-				
-				$ixMenu = -1;
-
-				// VERIFICAR SI EXISTE MENU
-				foreach ( $lst[ $ixTicket ]->lstMenu as $ix => $item ):
-
-					if ( $item->idTipoServicio == $row->idTipoServicio AND 
-						$item->perteneceCombo == $row->perteneceCombo AND 
-						$item->idMenu == $row->idMenu ) 
-					{
-						$ixMenu = $ix;
-						break;
-					}
-
-				endforeach;
-
-				// AGREGA MENU AL TICKET
-				if ( $ixMenu == -1 ):
-					$ixMenu = count( $lst[ $ixTicket ]->lstMenu );
-					
-					$lst[ $ixTicket ]->lstMenu[] = (object)array(
-						'perteneceCombo' => $row->perteneceCombo,
-						'idMenu'         => $row->idMenu,
-						'menu'           => $row->menu,
-						'imagen'         => $row->imagen,
-						'idCombo'        => $row->idCombo,
-						'combo'          => $row->combo,
-						'imagenCombo'    => $row->imagenCombo,
-						'cantidad'       => 0,
-						'idTipoServicio' => $row->idTipoServicio,
-						'tipoServicio'   => $row->tipoServicio,
-						'detalle'        => array(),
-					);
-					
-					$lst[ $ixTicket ]->numMenus += (int)$row->cantidad;
-				endif;
-
-
-				$lst[ $ixTicket ]->lstMenu[ $ixMenu ]->cantidad += (int)$row->cantidad;
-				$lst[ $ixTicket ]->lstMenu[ $ixMenu ]->detalle[] = (object)array(
-					'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo,
-					'idDetalleOrdenMenu'  => $row->idDetalleOrdenMenu,
-					'fechaRegistro'       => $row->fechaRegistro,
-					'tiempoAlerta'        => $row->tiempoAlerta,
-				);
-				*/
-
 			endwhile;
 		}
 
