@@ -76,20 +76,20 @@
 							<div class="row">
 							  	<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" ng-repeat="m in lstMenu" ng-show="lstMenu.length">
 							    	<div class="thumbnail">
-								    	<span class="label label-default" 
+								    	<span class="label label-default destino" 
 								    		ng-class="{'label-danger': m.idDestinoMenu == 1, 'label-warning': m.idDestinoMenu == 2}">
 								    		{{ m.destinoMenu }}
 								    	</span>
 								      	<img ng-src="{{ m.imagen }}" alt="{{ m.menu }}" ng-click="asignarValorImagen( m.idMenu, 'menu' )" style="height:85px" title="Click sobre la imagen para cambiarla" data-toggle="tooltip" data-placement="top" tooltip>
+							      		<div class="text-right">
+							      			<label class="label" ng-class="{'label-success': m.idEstadoMenu == 1, 'label-default': m.idEstadoMenu == 2}">
+							      				{{ m.estadoMenu }}
+							      				<span class="glyphicon" ng-class="{'glyphicon-ok-sign': m.idEstadoMenu == 1, 'glyphicon-remove-sign': m.idEstadoMenu == 2}"></span>
+							      			</label>
+							      		</div>
 								      	<div class="caption">
-								      		<div class="text-right">
-								      			<label class="label" ng-class="{'label-success': m.idEstadoMenu == 1, 'label-default': m.idEstadoMenu == 2}">
-								      				{{ m.estadoMenu }}
-								      				<span class="glyphicon" ng-class="{'glyphicon-ok-sign': m.idEstadoMenu == 1, 'glyphicon-remove-sign': m.idEstadoMenu == 2}"></span>
-								      			</label>
-								      		</div>
-								        	<p>
-								        		<strong>{{ m.menu | uppercase }}</strong>
+								        	<p class="spread">
+								        		<strong class="una-linea">{{ m.menu | uppercase }}</strong>
 								        	</p>
 								        	<hr>
 							        		<button type="button" class="btn btn-info btn-sm" ng-click="actualizarMenuCombo( 'menu', m)">
@@ -144,15 +144,15 @@
 								<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" ng-repeat="c in lstCombos">
 							    	<div class="thumbnail">
 								      	<img ng-src="{{ c.imagen }}" alt="{{ c.combo }}" ng-click="asignarValorImagen( c.idCombo, 'combo' )" style="height:85px" title="Click sobre la imagen para cambiarla" data-toggle="tooltip" data-placement="top" tooltip>
+							      		<div class="text-right">
+							      			<label class="label" ng-class="{'label-success': c.idEstadoMenu == 1, 'label-default': c.idEstadoMenu == 2}">
+							      				{{ c.estadoMenu }}
+							      				<span class="glyphicon" ng-class="{'glyphicon-ok-sign': c.idEstadoMenu == 1, 'glyphicon-remove-sign': c.idEstadoMenu == 2}"></span>
+							      			</label>
+							      		</div>
 								      	<div class="caption">
-								      		<div class="text-right">
-								      			<label class="label" ng-class="{'label-success': c.idEstadoMenu == 1, 'label-default': c.idEstadoMenu == 2}">
-								      				{{ c.estadoMenu }}
-								      				<span class="glyphicon" ng-class="{'glyphicon-ok-sign': c.idEstadoMenu == 1, 'glyphicon-remove-sign': c.idEstadoMenu == 2}"></span>
-								      			</label>
-								      		</div>
-								        	<p>
-								        		<strong>{{ c.combo | uppercase }}</strong>
+								      		<p class="spread">
+								        		<strong class="una-linea">{{ c.combo | uppercase }}</strong>
 								        	</p>
 								        	<hr>
 							        		<button type="button" class="btn btn-info btn-sm" ng-click="actualizarMenuCombo( 'combo', c)">

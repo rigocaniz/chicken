@@ -13,6 +13,11 @@ h2{
     color: #ea002d;
 }
 
+.destino{
+    margin: 0 -9px 0;
+    padding: 6px 10px;
+}
+
 .panel-title{
     font-family: 'OpenSans-Bold'
 }
@@ -57,6 +62,30 @@ button,a{
     border-top: 6px solid #ff5722;
     border-bottom: 3px solid #ff5722;
     margin: 35px auto;
+}
+
+.spread {
+    max-width: 100%;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: baseline;
+    -ms-flex-align: baseline;
+    align-items: baseline;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+}
+
+.una-linea {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.una-linea:hover{
+    overflow: auto;
+    text-overflow: initial;
 }
 
 .login-block h3 {

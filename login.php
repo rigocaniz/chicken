@@ -31,13 +31,11 @@ if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/estilo.css">
 
-    <style type="text/css" media="screen">
-
+    <style type="text/css">
         body{
             background: url('img/ejemplo.jpg') no-repeat fixed center center;
             background-size: cover;
         }
-        
     </style>
 </head>
 <body>
