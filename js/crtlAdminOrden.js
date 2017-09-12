@@ -1297,24 +1297,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 						}
 
 					}
-
-					/*
-					var ixMenu = $scope.indexArray( 'lstMenus', 'idMenu', lstDet[ ip ].idMenu );
-
-					if ( ixMenu >= 0 ) 
-					{
-						for (var id = 0; id < lstDet[ ip ].lstDetalle.length; id++) 
-						{
-							for (var idm = 0; idm < $scope.lstMenus[ ixMenu ].detalle.length; idm++) 
-							{
-								if ( lstDet[ ip ].lstDetalle[ id ].idDetalleOrdenMenu == $scope.lstMenus[ ixMenu ].detalle[ idm ].idDetalleOrdenMenu ) 
-								{
-									$scope.lstMenus[ ixMenu ].detalle[ idm ].idTipoServicio = lstDet[ ip ].idTipoServicio;
-									break;
-								}
-							}
-						}
-					}*/
 				}
 			break;
 		}
