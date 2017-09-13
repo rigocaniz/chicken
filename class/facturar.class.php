@@ -403,11 +403,16 @@ class Factura
 
 
 
- 	function lstFacturas( $idFactura = NULL )
+ 	function lstFacturas( $idFactura = NULL, $filtrarPorFecha = NULL  )
  	{
  		$where = "";
  		if( !is_null( $idFactura ) AND $idFactura > 0 )
  			$where .= "WHERE idFactura = {$idFactura}";
+
+ 		elseif( !is_null( $filtrarPorFecha ) AND $filtrarPorFecha ){
+ 			$fechaRegistro = date("Y-m-d");
+ 			$where .= "WHERE DATE( fechaRegistro ) = '{$fechaRegistro}'";
+ 		}
 
  		$lstFacturas = array();
 
@@ -423,11 +428,12 @@ class Factura
 				    usuario,
 				    idEstadoFactura,
 				    estadoFactura,
-				    fechaRegistro
+				    DATE_FORMAT( fechaRegistro, '%d/%m/%Y %h:%s %p' ) AS fechaRegistro
 				FROM
 				    vstFactura $where
 				ORDER BY fechaRegistro DESC;";
- 		
+
+			//	echo $sql;
  		if( $rs = $this->con->query( $sql ) ){
  			while( $row = $rs->fetch_object() ){
  				$lstFacturas[] = $row;

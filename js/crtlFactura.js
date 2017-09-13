@@ -31,10 +31,25 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		$http.post('consultas.php',{
 		    opcion : "catFormasPago"
 		}).success(function(data){
+			console.log( data );
 		    $scope.lstFormasPago = data;
 		    $scope.facturacion.lstFormasPago = data;
 		})
 	})();
+
+	$scope.lstFacturasDia = [];
+	$scope.cargarlstFacturasDia = function(){
+		$http.post('consultas.php',{
+		    opcion : "lstFacturas"
+		}).success(function(data){
+			console.log( data );
+		    $scope.lstFacturasDia = data || [];
+		    if( $scope.lstFacturasDia.length )
+		    	$scope.dialReimpresion.show();
+		    else
+		    	alertify.notify('No hay facturas registradas el día de hoy', 'info', 4);
+		})
+	};
 
 	$scope.retornarTotal = function() {
 		var total = 0;
@@ -70,7 +85,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	$scope.dialAccionCliente = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenBusqueda = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialPrintFactura  = $modal({scope: $scope,template:'dial.printFactura.html', show: false, backdrop:false, keyboard: true });
-	
+	$scope.dialReimpresion   = $modal({scope: $scope,template:'dial.reimpresion.html', show: false, backdrop:false, keyboard: true });	
 
 	$scope.seleccionarDeBusqueda = function ( orden ) {
 		console.log( orden );

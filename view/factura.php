@@ -20,10 +20,16 @@
 				</li>
 			</ul>
 
-			<div class="tab-content">
-				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuFactura=='facturar'}" ng-show="menuFactura=='facturar'">
-					<div class="col-md-12">
-						<div class="panel panel-primary">
+            <div class="pull-right">
+                <button type="button" class="btn btn-sm btn-info" ng-click="cargarlstFacturasDia()">
+                    <span class="glyphicon glyphicon-list"></span>
+                    REIMPRESIÓN
+                </button>
+            </div>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" ng-show="menuFactura=='facturar'">
+                    <div class="col-md-12">
+                        <div class="panel panel-primary">
 							<div class="panel-heading">
 								<h3 class="panel-title">
 									<span class="glyphicon glyphicon-list-alt"></span> FACTURAR
@@ -218,6 +224,67 @@
 		</div>
 	</div>
 </div>
+
+
+<!-- FACTURAS REGISTRADAS -->
+<script type="text/ng-template" id="dial.reimpresion.html">
+    <div class="modal" tabindex="-1" role="dialog" id="dial_orden_busqueda">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-info">
+                <div class="modal-header panel-heading">
+                    <span class="glyphicon glyphicon-search"></span>
+                    REIMPRESIÓN DE FACTURAS
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center"># Orden</th>
+                                            <th class="text-center">NIT</th>
+                                            <th class="text-center">Cliente</th>
+                                            <th class="text-center">Direccion</th>
+                                            <th class="text-center">Fecha Facturacion</th>
+                                            <th class="text-center">General</th>
+                                            <th class="text-center">Detalle</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in lstFacturasDia track by $index">
+                                            <td>{{ $index + 1 }}</td>
+                                            <td class="text-center">{{ item.nit }}</td>
+                                            <td>{{ item.nombre }}</td>
+                                            <td>{{ item.direccion }}</td>
+                                            <td class="text-center">{{ item.fechaRegistro }}</td>
+                                            <td class="text-center">
+                                                <a class="btn btn-info btn-sm" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ item.idFactura }}&type=g" title="IMPRIMIR FACTURA">
+                                                    <span class="glyphicon glyphicon-print"></span>
+                                                </a>
+                                            </td>
+                                            <td class="text-center">
+                                                <a class="btn btn-info btn-sm" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ item.idFactura }}&type=d" title="IMPRIMIR FACTURA">
+                                                    <span class="glyphicon glyphicon-print"></span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" ng-click="$hide();">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <b>Salir</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script> 
 
 
 <!-- *********** BUSQUEDA DE ORDEN ********* -->

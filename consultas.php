@@ -483,6 +483,12 @@ switch ( $data->opcion )
 		$factura = new Factura();
 		echo json_encode( $factura->consultaFacturaCliente( $data->accion, $data->data ) );
 		break;
+
+	case 'lstFacturas': 		// 	CONSULTAR FACTURAS DEL DÍA
+		$factura = new Factura();
+		echo json_encode( $factura->lstFacturas( NULL, TRUE ) );
+		break;
+
 		//////////////////////////////////
 		/////////////////////////////////////
 
