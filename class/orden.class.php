@@ -541,7 +541,8 @@ class Orden
 						'imagen'         => ( strlen( (string)$img ) ? $img : 'img-menu/notFound.png' ),
 						'idTipoServicio' => $row->idTipoServicio,
 						'tipoServicio'   => $row->tipoServicio,
-						'lstDetalle'     => array()
+						'lstDetalle'     => array(),
+						'lstMenus'       => array()
 					);
 				}
 
@@ -552,6 +553,34 @@ class Orden
 					'idEstadoDetalleOrden'      => $row->idEstadoDetalleOrden,
 					'idEstadoDetalleOrdenCombo' => $row->idEstadoDetalleOrdenCombo,
 				);
+
+				// VERIFICA SI EL MENU EXISTE
+				$ixMD = -1;
+				foreach ( $lst[ $index ]->lstMenus as $ixm => $menu ):
+
+					if ( $row->perteneceCombo AND $row->idDetalleOrdenCombo == $menu->idDetalleOrdenCombo )
+					{
+						$ixMD = $ixm;
+						break;
+					}
+					
+					else if ( $row->idDetalleOrdenMenu == $menu->idDetalleOrdenMenu )
+					{
+						$ixMD = $ixm;
+						break;
+					}
+				endforeach;
+
+				// SI NO EXISTE EL MENU SE AGREGA
+				if ( $ixMD == -1 )
+					$lst[ $index ]->lstMenus[] = (object)array(
+						'perteneceCombo'            => $row->perteneceCombo,
+						'idDetalleOrdenMenu'        => $row->idDetalleOrdenMenu,
+						'idEstadoDetalleOrden'      => $row->idEstadoDetalleOrden,
+						'idDetalleOrdenCombo'       => $row->idDetalleOrdenCombo,
+						'idEstadoDetalleOrdenCombo' => $row->idEstadoDetalleOrdenCombo,
+					);
+
 
 				// RECORRE MENUS AGREGADOS
 				foreach ( $lst as $ix => $menu )

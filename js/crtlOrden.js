@@ -132,7 +132,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		$scope.miIndex = -1;
 		$scope.dialOrdenBusqueda.hide();
 		$timeout(function () {
-			$scope.modalInfo( orden, true );
+			$scope.consultaDetalleOrden( orden, true );
 		});
 	};
 
@@ -544,7 +544,13 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% DIALOGO PARA MAS INFORMACION DE ORDEN %%%%%%%%%%%%%%%%%%%%%% */
 	$scope.infoOrden = {};
 	$scope.deBusqueda = false;
-	$scope.modalInfo = function ( orden, deBusqueda ) {
+	$scope.lstEstados = [ 
+		{ abr : 'P', title : 'Pendiente', css : 'default' },
+		{ abr : 'C', title : 'Cocinando', css : 'info' },
+		{ abr : 'L', title : 'Listo', css : 'primary' },
+		{ abr : 'S', title : 'Servido', css : 'success' }
+	];
+	$scope.consultaDetalleOrden = function ( orden, deBusqueda ) {
 		if ( $scope.$parent.loading )
 			return false;
 
@@ -564,6 +570,50 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		.success(function (data) {
 			$scope.$parent.loading    = false;
 			if ( data.lst ) {
+				
+
+				for (var ix = 0; ix < data.lst.length; ix++)
+				{
+					var lstEstados = [];
+					for (var im = 0; im < data.lst[ ix ].lstMenus.length; im++)
+					{
+						var menu = data.lst[ ix ].lstMenus[ im ];
+						var ixT = -1;
+						var idEstadoActual = parseInt( menu.perteneceCombo ? menu.idEstadoDetalleOrdenCombo : menu.idEstadoDetalleOrden );
+						
+						for (var ie = 0; ie < lstEstados.length; ie++) 
+						{
+							if ( idEstadoActual == lstEstados[ ie ].idEstado )
+							{
+								ixT = ie;
+								break;
+							}
+						}
+
+						if ( ixT == -1 )
+						{
+
+							var estado = $scope.lstEstados[ idEstadoActual - 1 ] || {};
+
+							// $scope.lstEstados = [ { abr : 'P', title : 'Pendiente', css : 'default' },
+
+							ixT = lstEstados.length;
+							lstEstados.push({
+								idEstado : idEstadoActual,
+								abr      : estado.abr,
+								title    : estado.title,
+								css      : estado.css,
+								total    : 0
+							});
+						}
+
+						lstEstados[ ixT ].total++;
+					}
+
+					data.lst[ ix ].estados = lstEstados;
+				}
+
+				console.log( data.lst );
 				$scope.infoOrden.lstOrden = data.lst;
 				$scope.infoOrden.total    = data.total;
 			}
@@ -644,7 +694,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 		// SI ES UN INDEX VALIDO
 		if ( _new >= 0 && $scope.lstOrdenCliente[ _new ] )
-			$scope.modalInfo( $scope.lstOrdenCliente[ _new ] );
+			$scope.consultaDetalleOrden( $scope.lstOrdenCliente[ _new ] );
 	});
 
 	$scope.auxKeyTicket = function ( accion, numero, model1, model2 ) {

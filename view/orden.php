@@ -144,11 +144,11 @@
                                     <td><img ng-src="{{item.imagen}}" style="height:40px"></td>
                                     <td>{{item.cantidad}}</td>
                                     <td>
-                                        <button type="button" class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}"
-                                            ng-click="item.showTipoServicio=!item.showTipoServicio">
-                                            <span ng-show="item.idTipoServicio==2">R</span>
-                                            <span ng-show="item.idTipoServicio==3">D</span>
-                                            <span ng-show="item.idTipoServicio==1">L</span>
+                                        <button type="button" class="label-border" ng-click="item.showTipoServicio=!item.showTipoServicio"
+                                        ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}">
+                                            <span ng-show="item.idTipoServicio==2" title="Restaurante" data-toggle="tooltip" data-placement="top" tooltip>R</span>
+                                            <span ng-show="item.idTipoServicio==3" title="A Domicilio" data-toggle="tooltip" data-placement="top" tooltip>D</span>
+                                            <span ng-show="item.idTipoServicio==1" title="Para Llevar" data-toggle="tooltip" data-placement="top" tooltip>L</span>
                                             <span class="lst_servicio" ng-show="item.showTipoServicio">
                                                 <ul>
                                                     <li class="list-group-item" ng-hide="item.idTipoServicio==2" ng-click="cambiarServicio( infoOrden.idOrdenCliente, item.lstDetalle, 2 )">Restaurante</li>
@@ -159,6 +159,7 @@
                                         </button>
                                         <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
                                         <span>{{item.descripcion}}</span>
+                                        <span class="estado-menu {{est.css}}" ng-repeat="est in item.estados" title="{{est.title}}" data-toggle="tooltip" data-placement="top" tooltip>{{est.abr}} <span class="badge">{{est.total}}</span></span>
                                     </td>
                                     <td>{{item.subTotal | number:2}}</td>
                                     <td>
