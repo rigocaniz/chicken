@@ -35,6 +35,16 @@
 
 		<!-- TAB PANELES -->
 		<div class="col-sm-12">
+			<div class="text-right">
+				<b>Resultados por pagina</b>
+				<div class="btn-group " role="group">
+			  		<select class="form-control input-sm" ng-model="filter.limite" ng-change="realizarBusqueda()">
+			  			<option value="{{ porPagina.limite }}" ng-repeat="porPagina in lstPorPagina">
+			  				{{ porPagina.limite }}
+			  			</option>
+			  		</select>
+				</div>
+			</div>
 			<div class="tab-content">
 				<!--  MENUS -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuTab=='menu'}" ng-show="menuTab=='menu'">
@@ -52,16 +62,6 @@
 							</div>
 							<div class="row">
 							  	<div class="col-sm-5 col-md-6 col-lg-7">
-									<div class="btn-group" role="group" aria-label="...">
-										Resultados por pagina
-										<div class="btn-group" role="group">
-									  		<select class="form-control" ng-model="filter.limite" ng-change="realizarBusqueda()">
-									  			<option value="{{ porPagina.limite }}" ng-repeat="porPagina in lstPorPagina">
-									  				{{ porPagina.limite }}
-									  			</option>
-									  		</select>
-										</div>
-									</div>
 							    </div><!-- /input-group -->
 							  	<div class="col-sm-7 col-md-6 col-lg-5">
 							    	<div class="input-group">
