@@ -30,6 +30,9 @@
 			</div>
 		</div>
 		<div class="col-xs-3">
+			<button type="button" class="btn btn-xs btn-info" ng-click="dAyuda.show()">
+				<span class="glyphicon glyphicon-question-sign"></span>
+			</button>
 			<!--
             <input type="number" class="form-control" ng-model="buscarTicket" id="buscarTicket" ng-class="{'input-focus':buscarTicket>0}"
                 placeholder="# Ticket" style="font-size:19px;padding: 1px 14px;font-weight:normal">-->
@@ -339,6 +342,68 @@
                         <span class="glyphicon glyphicon-log-in"></span>
                         <b>Cambiar Usuario</b>
                     </button>
+                    <button type="button" class="btn btn-default" ng-click="$hide()">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        <b>Salir</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script> 
+
+<!-- AYUDA -->
+<script type="text/ng-template" id="ayuda.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-default">
+                <div class="modal-header panel-heading">
+                    <button type="button" class="close" ng-click="$hide()">&times;</button>
+					<span class="glyphicon glyphicon-question-sign"></span>
+                	Atajos de Teclado
+                </div>
+                <div class="modal-body">
+                	<div class="row">
+	                    <div class="col-xs-6">
+							<legend>Atajos en Ordenes (Menú|Ticket)</legend>
+	                    	<ul class="list-group">
+								<li class="list-group-item"><kbd>→</kbd> Enfoca Grupo Siguiente</li>
+								<li class="list-group-item"><kbd>←</kbd> Enfoca Grupo Anterior</li>
+								<li class="list-group-item"><kbd>Retroceso(BACKSPACE)</kbd> Deselecciona Grupo</li>
+								<li class="list-group-item"><kbd>T</kbd> Selecciona Todas las Ordenes</li>
+								<li class="list-group-item"><kbd>N</kbd> Deselecciona Todas las Ordenes</li>
+								<li class="list-group-item"><kbd>+</kbd> Selecciona Asc. la próxima Orden No Seleccionada</li>
+								<li class="list-group-item"><kbd>-</kbd> Deselecciona Des. la próxima Orden Seleccionada</li>
+								<li class="list-group-item"><kbd>↓</kbd> Enfoca Orden Siguiente</li>
+								<li class="list-group-item"><kbd>↑</kbd> Enfoca Orden Anterior</li>
+								<li class="list-group-item"><kbd>ESPACIO</kbd> Des/Selecciona Orden Enfocada</li>
+								<li class="list-group-item"><kbd>ALT + ENTER</kbd> Confirma Acción de Selección Actual</li>
+							</ul>
+	                    	<legend>Cambio de Usuario</legend>
+		                    <ul class="list-group">
+								<li class="list-group-item"><kbd>ALT + U</kbd> Cambio Rápido de Usuario</li>
+							</ul>
+						</div>
+	                    <div class="col-xs-6">
+	                    	<legend>Vista Ordenes</legend>
+	                    	<ul class="list-group">
+								<li class="list-group-item"><kbd>ALT + M</kbd> Muestra Ordenes Por Menú</li>
+								<li class="list-group-item"><kbd>ALT + D</kbd> Muestra Ordenes Por Menú/Ticket</li>
+								<li class="list-group-item"><kbd>ALT + T</kbd> Muestra Ordenes Por Ticket</li>
+								<li class="list-group-item"><kbd>ALT + →</kbd> Enfoca Ordenes Por Ticket (Modo Dividido)</li>
+								<li class="list-group-item"><kbd>ALT + ←</kbd> Enfoca Ordenes Por Menú (Modo Dividido)</li>
+							</ul>
+							<legend>Ordenes Por Estado</legend>
+	                    	<ul class="list-group">
+								<li class="list-group-item"><kbd>P</kbd> Ordenes Pendientes</li>
+								<li class="list-group-item"><kbd>C</kbd> Ordenes Cocinando</li>
+								<li class="list-group-item"><kbd>L</kbd> Ordenes Listas</li>
+								<li class="list-group-item"><kbd>S</kbd> Ordenes Servidas</li>
+							</ul>
+		                </div>
+		            </div>
+                </div>
+                <div class="modal-footer">
                     <button type="button" class="btn btn-default" ng-click="$hide()">
                         <span class="glyphicon glyphicon-log-out"></span>
                         <b>Salir</b>

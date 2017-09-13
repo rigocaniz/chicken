@@ -48,6 +48,8 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.user = {};
 
 	$scope.dConsultaPersonal = $modal({scope: $scope,template:'consulta.personal.html', show: false, backdrop:false, keyboard: true });
+	$scope.dAyuda = $modal({scope: $scope,template:'ayuda.html', show: false, backdrop:false, keyboard: true });
+
 
 	// CONSULTA INFORMACION DE PERSONA
 	$http.post('consultas.php', { opcion : 'iniOrdenAdmin' })
