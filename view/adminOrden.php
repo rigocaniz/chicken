@@ -272,6 +272,32 @@
 	<img ng-src="{{seleccionMenu.imagen}}">
 </div>
 
+<!-- SI TIENE SELECCIONADO ALGUN TICKET -->
+<div class="acciones" ng-show="seleccionTicket.si">
+	<div class="btn-accion">
+		<button type="button" class="btn btn-lg btn-success" ng-click="continuarProcesoMenu()">
+			Servir
+			<span class="badge" style="font-size:16px">{{seleccionTicket.count.total}}</span>
+		</button>
+		<!-- SELECCION POR TIPO DE SERVICIO -->
+		<div class="tipo-servicio">
+            <span class="estado-menu primary" ng-show="seleccionTicket.count.llevar>0">
+            	L <span class="badge">{{seleccionTicket.count.llevar}}</span>
+            </span>
+			<span class="estado-menu success" ng-show="seleccionTicket.count.restaurante>0">
+				R <span class="badge">{{seleccionTicket.count.restaurante}}</span>
+			</span>
+            <span class="estado-menu warning" ng-show="seleccionTicket.count.domicilio>0">
+            	D <span class="badge">{{seleccionTicket.count.domicilio}}</span>
+            </span>
+		</div>
+	</div>
+	<div class="ticket">
+		<span class="glyphicon glyphicon-bookmark"></span>
+		<span>{{seleccionTicket.numeroTicket}}</span>
+	</div>
+</div>
+
 
 <!-- CAMBIO DE PERSONAL -->
 <script type="text/ng-template" id="consulta.personal.html">

@@ -31,10 +31,11 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 	$scope.seleccionTicket  = {
-		si     : false,
-		menu   : '',
-		imagen : null,
-		count  : {
+		si           : false,
+		menu         : '',
+		imagen       : null,
+		numeroTicket : '',
+		count        : {
 			total 		: 0,
 			llevar      : 0,
 			restaurante : 0,
@@ -165,31 +166,58 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 	// CAMBIA ESTADO ACTUAL A PROCESO SIGUIENTE, SELECCION
 	$scope.continuarProcesoMenu = function () {
-		if ( !$scope.seleccionMenu.si || $scope.$parent.loading ) return false;
-
 		var lst = [], idEstadoDestino = 0;
 
-		if ( $scope.idEstadoOrden >= 1 && $scope.idEstadoOrden <= 3 ) 
-			idEstadoDestino = $scope.idEstadoOrden + 1;
+		if ( $scope.seleccionMenu.si )
+		{
+			if ( $scope.idEstadoOrden >= 1 && $scope.idEstadoOrden <= 3 ) 
+				idEstadoDestino = $scope.idEstadoOrden + 1;
 
-		for (var i = 0; i < $scope.lstMenus[ $scope.ixMenuActual ].detalle.length; i++) {
-			var item = $scope.lstMenus[ $scope.ixMenuActual ].detalle[ i ];
+			for (var i = 0; i < $scope.lstMenus[ $scope.ixMenuActual ].detalle.length; i++) {
+				var item = $scope.lstMenus[ $scope.ixMenuActual ].detalle[ i ];
 
-			// SI ESTA SELECCIONADO
-			if ( item.selected )
-				lst.push({
-					numeroTicket        : item.numeroTicket,
-					idMenu              : item.idMenu,
-					cantidad            : item.cantidad,
-					idDetalleOrdenMenu  : item.idDetalleOrdenMenu,
-					idDetalleOrdenCombo : item.idDetalleOrdenCombo
-				});
+				// SI ESTA SELECCIONADO
+				if ( item.selected )
+					lst.push({
+						numeroTicket        : item.numeroTicket,
+						idMenu              : item.idMenu,
+						cantidad            : item.cantidad,
+						idDetalleOrdenMenu  : item.idDetalleOrdenMenu,
+						idDetalleOrdenCombo : item.idDetalleOrdenCombo
+					});
+			}
 		}
+		else if ( $scope.seleccionTicket.si )
+		{
+			idEstadoDestino = 4;
+
+			for (var it = 0; it < $scope.lstTickets.length; it++)
+			{
+				var detalle = $scope.lstTickets[ it ].detalle;
+				for (var id = 0; id < detalle.length; id++) {
+					//var detalle = $scope.lstTickets[ it ].detalle[ id ];
+					if ( detalle[ id ].selected )
+						lst.push({
+							numeroTicket        : $scope.lstTickets[ it ].numeroTicket,
+							idMenu              : detalle[ id ].idMenu,
+							cantidad            : 1,
+							idDetalleOrdenMenu  : detalle[ id ].idDetalleOrdenMenu,
+							idDetalleOrdenCombo : detalle[ id ].idDetalleOrdenCombo
+						});
+				}
+			}
+		}
+
+		$scope.guardarEstadoDetalleOrden( lst, idEstadoDestino );
+	};
+
+	// GUARDA CAMBIO DE ESTADO DETALLE ORDEN
+	$scope.guardarEstadoDetalleOrden = function ( lst, idEstadoDestino ) {
+		if ( $scope.$parent.loading ) return false;
 
 		// REALIZA CONSULTA HACIA EL SERVIDOR
 		if ( idEstadoDestino > 0 && lst.length ) 
 		{
-
 			var datos = { 
 				opcion        : 'cambioEstadoDetalleOrden',
 				idEstadoOrden : idEstadoDestino,
@@ -226,10 +254,11 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		};
 
 		$scope.seleccionTicket  = {
-			si     : false,
-			menu   : '',
-			imagen : null,
-			count  : {
+			si           : false,
+			menu         : '',
+			imagen       : null,
+			numeroTicket : '',
+			count        : {
 				total 		: 0,
 				llevar      : 0,
 				restaurante : 0,
@@ -630,9 +659,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		if ( !( $scope.ixTicketActual >= 0 ) )
 			return false;
 
-		$scope.seleccionTicket.menu   = $scope.lstTickets[ $scope.ixTicketActual ].menu;
-		$scope.seleccionTicket.imagen = $scope.lstTickets[ $scope.ixTicketActual ].imagen;
-		$scope.seleccionTicket.si     = false;
+		$scope.seleccionTicket.menu         = $scope.lstTickets[ $scope.ixTicketActual ].menu;
+		$scope.seleccionTicket.imagen       = $scope.lstTickets[ $scope.ixTicketActual ].imagen;
+		$scope.seleccionTicket.numeroTicket = $scope.lstTickets[ $scope.ixTicketActual ].numeroTicket;
+		$scope.seleccionTicket.si           = false;
 
 		// SI ES INDIVIDUAL
 		if ( ixDetalle != undefined ) {
@@ -712,8 +742,9 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			return false;
 
 		// INFORMACION DE MENU
-		$scope.seleccionTicket.menu   = $scope.lstTickets[ $scope.ixTicketActual ].menu;
-		$scope.seleccionTicket.imagen = $scope.lstTickets[ $scope.ixTicketActual ].imagen;
+		$scope.seleccionTicket.menu         = $scope.lstTickets[ $scope.ixTicketActual ].menu;
+		$scope.seleccionTicket.imagen       = $scope.lstTickets[ $scope.ixTicketActual ].imagen;
+		$scope.seleccionTicket.numeroTicket = $scope.lstTickets[ $scope.ixTicketActual ].numeroTicket;
 
 		// SI EXISTE AL MENOS UN ELEMENTO
 		if ( $scope.lstTickets[ $scope.ixTicketActual ].detalle.length ) {
@@ -1223,6 +1254,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 						{
 							// CAMBIA DE ESTADO A DETALLE
 							$scope.lstTickets[ it ].detalle[ index ].idEstadoDetalleOrden = datos.data.idEstadoOrden;
+							$scope.lstTickets[ it ].detalle[ index ].selected = false;
 
 							// CAMBIO DE ESTADO
 							if ( estadoAnterior == 1 ) {

@@ -840,6 +840,10 @@
           transform: translate3d(0, 0, 0);
   transition-duration: 250ms;
   transition-timing-function: linear;
+  border: solid 2px rgba(0, 0, 0, 0.14);
+  box-shadow: 1px 2px 7px 1px rgba(0, 0, 0, 0.46);
+  -moz-box-shadow: 1px 2px 7px 1px rgba(0, 0, 0, 0.46);
+  -webkit-box-shadow: 1px 2px 7px 1px rgba(0, 0, 0, 0.46);
 }
 .alertify-notifier .ajs-message.ajs-visible {
   transition-duration: 500ms;
