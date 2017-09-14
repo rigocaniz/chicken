@@ -1,11 +1,8 @@
 <?php
     session_start();
     if( isset( $_SESSION[ 'usuario' ] ) AND isset( $_SESSION[ 'idPerfil' ] ) ):
-    /*
-        echo "<pre>";
-        var_dump( $_SESSION );
-        echo "</pre>";
-    */
+        include 'class/sesion.class.php';
+        $token = "USR." . $sesion->getUsuario() . "." . $sesion->getIdPerfil();
 ?>
 
 <!DOCTYPE html>
@@ -25,6 +22,7 @@
     <link rel="stylesheet" href="css/fileinput.css">
 </head>
 <body ng-controller="inicioCtrl" ng-keydown="pressKey( $event.keyCode, ( $event.altKey && $event.ctrlKey ), $event );">
+    <input type="hidden" id="resuFoni" value="<?= $token; ?>">
     <div class="cargando" id="cargando" ng-show="loading">
         <div class="loading-bro">
             <h1>{{ loadingText }}</h1>

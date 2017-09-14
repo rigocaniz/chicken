@@ -28,6 +28,7 @@ class Orden
 		$idOrdenCliente     = "NULL";
 		$numeroTicket       = "NULL";
 		$usuarioResponsable = "NULL";
+		$usuarioBarra       = "NULL";
 		$idEstadoOrden      = "NULL";
 
 		// SETEO DE VARIABLES
@@ -38,6 +39,10 @@ class Orden
 		// SI USUARIO RESPONSABLE ESTA DEFINIDO
 		if ( isset( $data->usuarioResponsable ) AND strlen( $data->usuarioResponsable ) > 3 )
 			$usuarioResponsable = "'" . $this->con->real_escape_string( $validar->validarTexto( $data->usuarioResponsable, NULL, TRUE, 8, 16, "Usuario responsable" ) ) . "'";
+
+		// SI USUARIO RESPONSABLE BARRA
+		if ( isset( $data->usuarioBarra ) AND strlen( $data->usuarioBarra ) > 3 )
+			$usuarioBarra = "'" . $this->con->real_escape_string( $validar->validarTexto( $data->usuarioBarra, NULL, TRUE, 8, 16, "Usuario responsable barra" ) ) . "'";
 
 		// VALIDACIONES
 		if( $accion == 'insert' ):
@@ -69,7 +74,7 @@ class Orden
  		else:
 		 	$this->con->query( "START TRANSACTION" );
 
-	 		$sql = "CALL consultaOrdenCliente( '{$accion}', {$idOrdenCliente}, {$numeroTicket}, {$usuarioResponsable}, {$idEstadoOrden} )";
+	 		$sql = "CALL consultaOrdenCliente( '{$accion}', {$idOrdenCliente}, {$numeroTicket}, {$usuarioResponsable}, {$idEstadoOrden}, {$usuarioBarra} )";
 	 		
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 		@$this->con->next_result();

@@ -71,6 +71,7 @@ var app = angular.module('restaurante',['ngRoute','mgcrea.ngStrap','angularUtils
 /* CONEXION A SERVIDOR DE NOTIFICACIONES */
 //var socket = io.connect('http://192.168.0.140:8080', { 'forceNew': true });
 var socket = io.connect('http://127.0.0.1:8080', { 'forceNew': true });
+var code   = document.getElementById('resuFoni').value;
 
 
 /****CONTROLADORES****/
@@ -95,9 +96,10 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
 
     $scope.hideLoading();
 
+    
     // LISTEN INFO NODE
-    socket.on('mensaje', function(data) {  
-        //console.log(data);
+    socket.on('connect', function() {  
+        socket.emit( "sesion", { code : code });
     });
 
     socket.on('info', function(data) {  
