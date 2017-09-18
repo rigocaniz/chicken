@@ -915,6 +915,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% INFORMACION DE NODEJS %%%%%%%%%%%%%%%%%%%%%%%%%%%%  */
 	$scope.$on('infoNode', function( event, datos ) {
+		console.log( datos );
 
 		switch ( datos.accion ) {
 			// SI SE AGREGO UNA ORDEN NUEVA

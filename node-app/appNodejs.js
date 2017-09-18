@@ -11,6 +11,28 @@ client.subscribe("ch_restaurante");
 
 var lstUsers = [];
 
+function getUsers() {
+	var _arr = [];
+	for (var i = 0; i < lstUsers.length; i++) {
+		var index = -1;
+
+		for (var ix = 0; ix < _arr.length; ix++) {
+			if ( _arr[ ix ].user == lstUsers[ i ].user ) {
+				index = ix;
+				break;
+			}
+		}
+
+		if ( index == -1 )
+			_arr.push({
+				user     : lstUsers[ i ].user,
+				idPerfil : lstUsers[ i ].idPerfil
+			});
+	}
+
+	return _arr;
+};
+
 io.on('connection', function (socket) {
 	console.log( "Un cliente conectado" );
 
@@ -24,7 +46,8 @@ io.on('connection', function (socket) {
 				idPerfil : _user[ 2 ],
 				id       : socket.id
 			});
-			console.log( lstUsers );
+
+	    	io.sockets.emit('info', { action : 'lstU', lst : getUsers()} );
 		}
 	});
 
@@ -52,7 +75,7 @@ io.on('connection', function (socket) {
 		if ( index >= 0 )
 			lstUsers.splice( index, 1 );
 
-		console.log( lstUsers );
+	    io.sockets.emit('info', { action : 'lstU', lst : getUsers()} );
 	});
 });
 

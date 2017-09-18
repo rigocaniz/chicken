@@ -146,6 +146,14 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
 
     // CAPTURA TECLA PARA ATAJOS RAPIDOS
     $scope.pressKey = function ( key, altDerecho, event ) {
+        console.log( key );
+
+        // SI ES BORRAR
+        if ( key == 8 )
+        {
+            event.preventDefault();
+            event.stopPropagation();
+        }
 
         if ( key != 17 && key != 18 && key != 92 && key != 91 ) {
             $rootScope.$broadcast('keyPress', key, altDerecho, event );
