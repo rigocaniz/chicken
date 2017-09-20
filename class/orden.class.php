@@ -33,16 +33,21 @@ class Orden
 
 		// SETEO DE VARIABLES
 		$data->numeroTicket = isset( $data->numeroTicket ) ? (int)$data->numeroTicket	 : "NULL";
+		$lstUsuarios        = isset( $data->lstU ) ? $data->lstU : array();
+
+		// VERIFICA EL ULTIMO USUARIO
+		$usuarioResponsable = $this->usuarioResponsable( 'cocina', $lstUsuarios );
+		$usuarioBarra       = $this->usuarioResponsable( 'barra', $lstUsuarios );
 
 		$validar = new Validar();
 
 		// SI USUARIO RESPONSABLE ESTA DEFINIDO
-		if ( isset( $data->usuarioResponsable ) AND strlen( $data->usuarioResponsable ) > 3 )
-			$usuarioResponsable = "'" . $this->con->real_escape_string( $validar->validarTexto( $data->usuarioResponsable, NULL, TRUE, 8, 16, "Usuario responsable" ) ) . "'";
+		//if ( isset( $data->usuarioResponsable ) AND strlen( $data->usuarioResponsable ) > 3 )
+		//	$usuarioResponsable = "'" . $this->con->real_escape_string( $validar->validarTexto( $data->usuarioResponsable, NULL, TRUE, 8, 16, "Usuario responsable" ) ) . "'";
 
 		// SI USUARIO RESPONSABLE BARRA
-		if ( isset( $data->usuarioBarra ) AND strlen( $data->usuarioBarra ) > 3 )
-			$usuarioBarra = "'" . $this->con->real_escape_string( $validar->validarTexto( $data->usuarioBarra, NULL, TRUE, 8, 16, "Usuario responsable barra" ) ) . "'";
+		//if ( isset( $data->usuarioBarra ) AND strlen( $data->usuarioBarra ) > 3 )
+		//	$usuarioBarra = "'" . $this->con->real_escape_string( $validar->validarTexto( $data->usuarioBarra, NULL, TRUE, 8, 16, "Usuario responsable barra" ) ) . "'";
 
 		// VALIDACIONES
 		if( $accion == 'insert' ):
@@ -74,7 +79,7 @@ class Orden
  		else:
 		 	$this->con->query( "START TRANSACTION" );
 
-	 		$sql = "CALL consultaOrdenCliente( '{$accion}', {$idOrdenCliente}, {$numeroTicket}, {$usuarioResponsable}, {$idEstadoOrden}, {$usuarioBarra} )";
+	 		$sql = "CALL consultaOrdenCliente( '{$accion}', {$idOrdenCliente}, {$numeroTicket}, '{$usuarioResponsable}', {$idEstadoOrden}, '{$usuarioBarra}' )";
 	 		
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 		@$this->con->next_result();
@@ -1154,6 +1159,86 @@ class Orden
 	 		$this->con->query( "ROLLBACK" );
 
 	 	return $this->getRespuesta();
+ 	}
+
+
+ 	public function usuarioResponsable( $responsable, $lstUsuarios )
+ 	{
+		$usuario  = NULL;
+		$groupBy  = "usuarioResponsable";
+		$lstU     = array();
+		$idPerfil = 3; // cocina
+
+ 		if ( $responsable == 'barra' )
+ 		{
+			$groupBy  = "usuarioBarra";
+			$idPerfil = 4; // barra
+ 		}
+
+ 		$sql = "SELECT
+					$groupBy AS 'usuario',
+				    MAX( idOrdenCliente ) AS 'idOrdenCliente'
+				FROM ordenCliente
+				WHERE numMenu > 0 # AND DATE( fechaRegistro ) = curdate()
+				GROUP BY {$groupBy}
+				ORDER BY idOrdenCliente ASC
+				LIMIT 6";
+
+ 		$rs = $this->con->query( $sql );
+ 		while ( $rs AND $row = $rs->fetch_object() ):
+
+ 			$index = -1;
+ 			foreach ( $lstUsuarios as $ix => $user ) {
+ 				if ( $user->user == $row->usuario AND $user->idPerfil == $idPerfil ) 
+ 				{
+ 					$index = $ix;
+ 					break;
+ 				}
+ 			}
+
+ 			// SI SE ENCONTRO SE AGREGA AL LISTADO
+ 			if ( $index >= 0 )
+				$lstU[] = $row->usuario;
+
+		endwhile;
+
+		// RECORRE EL LISTADO DE USUARIOS DE CLIENTES
+		foreach ( $lstUsuarios as $ixP => $userCurrent ):
+
+			// SI EL PERFIL ES DIFERENTE SE IGNORA
+			if ( $userCurrent->idPerfil != $idPerfil )
+				continue;
+
+			$index = -1;
+			// RECORRE EL LISTADO DE USUARIOS
+			foreach ( $lstU as $ix => $user ):
+				if ( $userCurrent->user == $user )
+				{
+					$index = $ix;
+					break;
+				}
+			endforeach;
+
+			if ( $index == -1 )
+			{
+				$usuario = $userCurrent->user;
+				break;
+			}
+		endforeach;
+
+		// SI USUARIO SIGUE SIENDO NULO TOMA EL PRIMERO
+		if ( count( $lstUsuarios ) AND count( $lstU ) )
+			$usuario = $lstU[ 0 ];
+
+
+		// SI USUARIO ES NULO Y ES BARRA
+		if ( is_null( $usuario ) AND $responsable == 'barra' )
+			$usuario = "usuarioBarra";
+
+		else if ( is_null( $usuario ) AND $responsable == 'cocina' )
+			$usuario = "usuarioCocina";
+
+ 		return $usuario;
  	}
 
  	function getRespuesta()

@@ -46,8 +46,9 @@ io.on('connection', function (socket) {
 				idPerfil : _user[ 2 ],
 				id       : socket.id
 			});
-
-	    	io.sockets.emit('info', { action : 'lstU', lst : getUsers()} );
+			
+	    	socket.broadcast.emit('info', { action : 'lstU', lst : getUsers()} );
+	    	socket.emit('info', { action : 'lstU', lst : getUsers()} );
 		}
 	});
 
@@ -75,7 +76,8 @@ io.on('connection', function (socket) {
 		if ( index >= 0 )
 			lstUsers.splice( index, 1 );
 
-	    io.sockets.emit('info', { action : 'lstU', lst : getUsers()} );
+	    socket.broadcast.emit('info', { action : 'lstU', lst : getUsers()} );
+	    socket.emit('info', { action : 'lstU', lst : getUsers()} );
 	});
 });
 

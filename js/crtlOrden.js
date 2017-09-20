@@ -149,8 +149,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			$scope.miIndex += 1;
 	};
 
-
-
 	// #1 => MUESTRA DIALOGO INGRESO DE TICKET
 	$scope.nuevaOrden = function () {
 		$scope.noTicket = 0;
@@ -179,8 +177,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 		$scope.codigoRapido = 0;
 		
-		if ( parseInt( $scope.noTicket ) > 0 ) {
-
+		if ( parseInt( $scope.noTicket ) > 0 )
+		{
 			$scope.$parent.loading = true; // cargando...
 
 			// CONSULTA PRECIOS DEL MENU
@@ -189,7 +187,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				accion : 'insert',
 				datos : {
 					numeroTicket       : $scope.noTicket,
-					usuarioResponsable : ''
+					usuarioResponsable : '',
+					lstU               : $scope.$parent.lstU
 				}
 			})
 			.success(function (data) {

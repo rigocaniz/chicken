@@ -80,6 +80,7 @@ var code   = document.getElementById('resuFoni').value;
 app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $modal, $window ){
     alertify.set('notifier','position', 'top-right');
     
+    $scope.lstU        = [];
     $scope.loading     = false;
     $scope.loadingText = "Cargando...";
 
@@ -98,13 +99,18 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
 
     
     // LISTEN INFO NODE
-    socket.on('connect', function() {  
+    socket.on('connect', function() {
+        console.log("CONECT..!", code);
         socket.emit( "sesion", { code : code });
     });
 
     socket.on('info', function(data) {  
         console.log( data );
-        $rootScope.$broadcast( 'infoNode', data );
+        if ( data.action != undefined && data.action == 'lstU' )
+            $scope.lstU = data.lst;
+
+        else
+            $rootScope.$broadcast( 'infoNode', data );
     });
 
     $scope.difLocalServer = 0;
