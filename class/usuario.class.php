@@ -87,18 +87,19 @@ class Usuario
 		$validar = new Validar();
 
 		// INICIALIZACIÓN VAR
-		$usuario   = "NULL";
-		$codigo    = "NULL";
-		$nombres   = "NULL";
-		$apellidos = "NULL";
-		$idPerfil  = "NULL";
+		$usuario       = "NULL";
+		$codigo        = "NULL";
+		$nombres       = "NULL";
+		$apellidos     = "NULL";
+		$idPerfil      = "NULL";
+		$idDestinoMenu = "NULL";
 
 		// SETEO VARIABLES GENERALES
- 		$data->idPerfil        = isset( $data->idPerfil )			? (int)$data->idPerfil 			: NULL;
- 		$data->usuario         = isset( $data->usuario )			? (string)$data->usuario 		: NULL;
- 		$data->codigo          = isset( $data->codigo )				? (int)$data->codigo 			: NULL;
- 		$data->nombres         = isset( $data->nombres )			? (string)$data->nombres 		: NULL;
- 		$data->apellidos       = isset( $data->apellidos )			? (string)$data->apellidos 		: NULL;
+		$data->idPerfil      = isset( $data->idPerfil )			? (int)$data->idPerfil 			: NULL;
+		$data->usuario       = isset( $data->usuario )			? (string)$data->usuario 		: NULL;
+		$data->codigo        = isset( $data->codigo )				? (int)$data->codigo 			: NULL;
+		$data->nombres       = isset( $data->nombres )			? (string)$data->nombres 		: NULL;
+		$data->apellidos     = isset( $data->apellidos )			? (string)$data->apellidos 		: NULL;
 
  		$data->idPerfil        = (int)$data->idPerfil > 0			? (int)$data->idPerfil 			: NULL;
  		$data->usuario         = strlen( $data->usuario ) >= 1		? (string)$data->usuario 		: NULL;
@@ -107,11 +108,12 @@ class Usuario
  		$data->apellidos       = strlen( $data->apellidos ) >= 2	? (string)$data->apellidos 		: NULL;
 
  		// VALIDACIONES
-		$idPerfil  = $validar->validarEntero( $data->idPerfil, NULL, TRUE, 'El perfil no es válido' );
-		$usuario   = $this->con->real_escape_string( $validar->validarTexto( $data->usuario, NULL, TRUE, 8, 16, "USUARIO" ) );
-		$codigo    = $validar->validarEntero( $data->codigo, NULL, TRUE, 'El código del usuario no es válido' );
-		$nombres   = $this->con->real_escape_string( $validar->validarTexto( $data->nombres, NULL, TRUE, 3, 65, 'el nombre' ) );
-		$apellidos = $this->con->real_escape_string( $validar->validarTexto( $data->apellidos, NULL, TRUE, 3, 65, 'los apellidos' ) );
+		$idPerfil      = $validar->validarEntero( $data->idPerfil, NULL, TRUE, 'El perfil no es válido' );
+		$usuario       = $this->con->real_escape_string( $validar->validarTexto( $data->usuario, NULL, TRUE, 8, 16, "USUARIO" ) );
+		$codigo        = $validar->validarEntero( $data->codigo, NULL, TRUE, 'El código del usuario no es válido' );
+		$nombres       = $this->con->real_escape_string( $validar->validarTexto( $data->nombres, NULL, TRUE, 3, 65, 'el nombre' ) );
+		$apellidos     = $this->con->real_escape_string( $validar->validarTexto( $data->apellidos, NULL, TRUE, 3, 65, 'los apellidos' ) );
+		$idDestinoMenu = isset( $data->idDestinoMenu )			? (int)$data->idDestinoMenu 			: NULL;
 
  		// OBTENER RESULTADOS
  		if( $validar->getIsError() ):
@@ -120,7 +122,7 @@ class Usuario
 	 		$this->tiempo    = $validar->getTiempo();
 
  		else:
-	 		$sql = "CALL consultaUsuario( '{$accion}', '{$usuario}', {$codigo}, '{$nombres}', '{$apellidos}', {$idPerfil} );";
+	 		$sql = "CALL consultaUsuario( '{$accion}', '{$usuario}', {$codigo}, '{$nombres}', '{$apellidos}', {$idPerfil}, {$idDestinoMenu} );";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 	 			$this->siguienteResultado();
@@ -243,6 +245,7 @@ class Usuario
 					$sesion->setVariable( 'nombre', $row->nombre );
 					$sesion->setVariable( 'nombreCorto', $row->nombreCorto );
 					$sesion->setVariable( 'idPerfil', (int)$row->idPerfil );
+					$sesion->setVariable( 'idDestinoMenu', (int)$row->idDestinoMenu );
 					$sesion->setVariable( 'usuario', $row->usuario );
 					$sesion->setVariable( 'codigoUsuario', $row->codigoUsuario );
 					
@@ -283,31 +286,25 @@ class Usuario
 				    dm.idDestinoMenu,
 				    dm.destinoMenu
 				FROM vUsuario AS u
-					LEFT JOIN destinoMenuUsuario AS dmu
-						ON u.usuario = dmu.usuario
 					LEFT JOIN destinoMenu AS dm
-						ON dmu.idDestinoMenu = dm.idDestinoMenu
+						ON u.idDestinoMenu = dm.idDestinoMenu
 				WHERE u.usuario = '{$usuario}' ";
 			
 		$rs = $this->con->query( $sql );
 
-		while( $rs AND $row = $rs->fetch_object() ){
-			if ( is_null( $user ) )
-				$user = (object)array(
-					'usuario'         => $row->usuario,
-					'codigo'          => $row->codigo,
-					'nombres'         => $row->nombres,
-					'apellidos'       => $row->apellidos,
-					'idEstadoUsuario' => $row->idEstadoUsuario,
-					'estadoUsuario'   => $row->estadoUsuario,
-					'idPerfil'        => $row->idPerfil,
-					'perfil'          => $row->perfil,
-					'lstDestinos'     => array(),
-				);
-			
-			$user->lstDestinos[] = (object)array(
-				'idDestinoMenu' => $row->idDestinoMenu,
-				'destinoMenu'   => $row->destinoMenu,
+		if ( $rs AND $row = $rs->fetch_object() )
+		{
+			$user = (object)array(
+				'usuario'         => $row->usuario,
+				'codigo'          => $row->codigo,
+				'nombres'         => $row->nombres,
+				'apellidos'       => $row->apellidos,
+				'idEstadoUsuario' => $row->idEstadoUsuario,
+				'estadoUsuario'   => $row->estadoUsuario,
+				'idPerfil'        => $row->idPerfil,
+				'perfil'          => $row->perfil,
+				'idDestinoMenu'   => $row->idDestinoMenu,
+				'destinoMenu'     => $row->destinoMenu,
 			);
 		}
 		

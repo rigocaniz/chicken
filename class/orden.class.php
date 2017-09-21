@@ -738,7 +738,7 @@ class Orden
 		$lst = array();
 
 		if ( IS_NULL( $idOrdenCliente ) )
-			$where = " AND ( responsableDetalle = '{$this->sess->getUsuario()}' OR usuarioDetalle = '{$this->sess->getUsuario()}' ) ";
+			$where = " AND ( responsableOrden = '{$this->sess->getUsuario()}' OR usuarioBarra = '{$this->sess->getUsuario()}' ) ";
 
 		else
 			$where = " AND idOrdenCliente = {$idOrdenCliente} ";
@@ -770,6 +770,7 @@ class Orden
 				    idEstadoOrden,
 				    numeroTicket,
 				    responsableOrden,
+				    usuarioBarra,
 				    idDetalleOrdenMenu,
 				    cantidad,
 				    idMenu,

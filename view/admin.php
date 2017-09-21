@@ -244,6 +244,17 @@
 								</div>
 							</div>
 						</div>
+						<div class="form-group">
+							<div class="col-sm-6">
+								<label>DESTINO</label>
+								<div>
+									<select ng-model="usuario.idDestinoMenu" class="form-control">
+										<option value="1">Cocina</option>
+										<option value="2">Barra</option>
+									</select>
+								</div>
+							</div>
+						</div>
 					</form>
 				</div>
 				<div class="modal-footer">
