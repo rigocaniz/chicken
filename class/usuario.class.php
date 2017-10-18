@@ -39,22 +39,6 @@ class Usuario
 		return $lstEstadoUsuario;
 	}
 
-	
-	// CARGAR LISTA PERFILES
-	function lstPerfiles()
-	{
-		$lstPerfiles = array();
-
-		$sql = "SELECT * FROM perfil;";
-		
-		if( $rs = $this->con->query( $sql ) ){
-			while( $row = $rs->fetch_object() )
-				$lstPerfiles[] = $row;
-		}
-		
-		return $lstPerfiles;
-	}
-
 
 	// OBTENER LISTA DE USUARIOS
 	function lstUsuarios( $filtro = 'activos' )

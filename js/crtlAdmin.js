@@ -6,6 +6,8 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 	$scope.dialAdminUsuario         = $modal({scope: $scope,template:'dial.adminUsuario.html', show: false, backdrop: 'static', keyboard: false});
 	$scope.dialCambiarEstadoUsuario = $modal({scope: $scope,template:'dial.cambiarEstado.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialModulosPerfil = $modal({scope: $scope,template:'dial.modulosPerfil.html', show: false, backdrop: 'static', keyboard: false})
+	
 	
 	$scope.$watch( 'filtroUsuario', function( _old, _new ){
 		if( ( _old != _new ) && $scope.adminMenu == 'usuarios' )
@@ -20,6 +22,45 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			$scope.lstEstadoUsuario = data;
 		});
 	};
+
+
+	$scope.dataPerfil = {};
+	$scope.datosPerfil = function( perfil ){
+		$scope.dataPerfil = angular.copy( perfil );
+		$scope.dataPerfil.lstModulosPerfil = [];
+		$scope.consultarModulosPerfil( $scope.dataPerfil.idPerfil );
+		$scope.dialModulosPerfil.show();
+	};
+
+	$scope.consultarModulosPerfil = function( idPerfil ){
+		$http.post('consultas.php',{
+			opcion   : 'consultarModulosPerfil',
+			idPerfil : idPerfil
+		}).success(function(data){
+			console.log( data );
+			$scope.dataPerfil.lstModulosPerfil = data || [];
+		});
+	};
+
+
+	$scope.asignarModulo = function( idPerfil, idModulo, asignado ){
+		$scope.$parent.showLoading( 'Guardando...' );
+		$http.post('consultas.php',{
+			opcion   : 'asignarModulo',
+			idPerfil : idPerfil,
+			idModulo : idModulo,
+			asignado : asignado
+		}).success(function(data){
+			console.log( data );
+			alertify.set('notifier','position', 'top-right');
+			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+			if( data.respuesta == 'success' )
+				$scope.consultarModulosPerfil( idPerfil );
+			
+			$scope.$parent.hideLoading();
+		});
+	};
+
 
 	$scope.actualizarEstadoUsuario = function(){
 		

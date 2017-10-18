@@ -4,6 +4,7 @@ session_start();
 $data = json_decode( file_get_contents("php://input") );
 
 include 'class/conexion.class.php';
+include 'class/admin.class.php';
 include 'class/cliente.class.php';
 include 'class/caja.class.php';
 include 'class/combo.class.php';
@@ -269,9 +270,20 @@ switch ( $data->opcion )
 		break;
 
 	case 'lstPerfiles':				// CONSULTA PERFILES
-		$usuario = new Usuario();
-		echo json_encode( $usuario->lstPerfiles() );
+		$admin = new Admin();
+		echo json_encode( $admin->lstPerfiles() );
 		break;
+
+	case 'consultarModulosPerfil':				// CONSULTA PERFILES
+		$admin = new Admin();
+		echo json_encode( $admin->consultarModulosPerfil( $data->idPerfil ) );
+		break;
+
+	case 'asignarModulo':				// CONSULTA PERFILES
+		$admin = new Admin();
+		echo json_encode( $admin->asignarModulo( $data->idPerfil, $data->idModulo, $data->asignado ) );
+		break;
+			
 
 	/////////////////////////
 	//***** CLIENTE

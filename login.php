@@ -42,7 +42,7 @@ if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
     <div class="back-login">
         <div class="login-block">
             <div class="">
-                <img class="img-rounded" src="img/Logo_Churchil.png">
+                <img class="img-rounded" src="img/logo_churchil.png">
                 <h3>INGRESAR</h3>
             </div>
             <p>
@@ -57,7 +57,7 @@ if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-lock"></i>
                         </span>
-                        <input class="form-control" type="password" maxlength="30" name="clave" ng-model="pass" ng-disabled="user.length < 5" placeholder="Contraseña" required />
+                        <input class="form-control" type="password" maxlength="30" name="clave" ng-model="pass" placeholder="Contraseña" required />
                     </div>
                     <?php
                         if( isset( $data[ 'respuesta' ] ) AND $data[ 'respuesta' ] == 'danger'  ):
