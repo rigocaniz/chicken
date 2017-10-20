@@ -58,10 +58,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 		if ( data.usuario != undefined ) {
 			$scope.user           = data.usuario;
-			$scope.lstDestinoMenu = data.usuario.lstDestinos;
+			//$scope.lstDestinoMenu = data.usuario.lstDestinos;
 			$timeout(function () {
-				if ( $scope.lstDestinoMenu.length )
-					$scope.idDestinoMenu = $scope.lstDestinoMenu[ 0 ].idDestinoMenu;
+				if ( data.usuario.idDestinoMenu )
+					$scope.idDestinoMenu = data.usuario.idDestinoMenu;
 			});
 		}
 	});
