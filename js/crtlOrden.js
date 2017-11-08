@@ -9,6 +9,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.accionOrden     = 'nuevo';
 	$scope.idEstadoOrden   = 1;
 	$scope.todoDetalle 	   = false;
+	$scope.observacion 	   = "";
 
 	$scope.ordenActual = {
 		idOrdenCliente : 0,
@@ -295,6 +296,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		$scope.menuActual.cantidad  = 1;
 		$scope.menuActual.precio    = 0;
 		$scope.menuActual.lstPrecio = [];
+		$scope.observacion          = "";
 
 		$scope.$parent.loading = true; // cargando...
 		// CONSULTA PRECIOS DEL MENU
@@ -351,7 +353,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 					precio         : $scope.menuActual.precio,
 					tipoServicio   : tipoServicio,
 					idTipoServicio : $scope.idTipoServicio,
-					tipoMenu       : $scope.tipoMenu
+					tipoMenu       : $scope.tipoMenu,
+					observacion    : $scope.observacion
 				});
 			}
 			$scope.dialOrdenCliente.show();
@@ -373,7 +376,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 					idMenu         : $scope.ordenActual.lstAgregar[ i ].idMenu,
 					cantidad       : $scope.ordenActual.lstAgregar[ i ].cantidad,
 					idTipoServicio : $scope.ordenActual.lstAgregar[ i ].idTipoServicio,
-					tipoMenu       : $scope.ordenActual.lstAgregar[ i ].tipoMenu
+					tipoMenu       : $scope.ordenActual.lstAgregar[ i ].tipoMenu,
+					observacion    : $scope.ordenActual.lstAgregar[ i ].observacion
 				});
 			}
 
@@ -429,8 +433,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				$scope.codigoRapido    = 0;
 
 				if ( data.tipoMenu != null ) {
-					$scope.menuActual = data.menu;
-					$scope.tipoMenu   = data.tipoMenu;
+					$scope.menuActual  = data.menu;
+					$scope.tipoMenu    = data.tipoMenu;
+					$scope.observacion = "";
 					$scope.dialOrdenCliente.hide();
 					$scope.dialMenuCantidad.show();
 				}
@@ -768,7 +773,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		if ( key == 8 && !$("#buscarTicket").is(":focus") ) // {BACK}
 			$scope.auxKeyTicket( 'back', 0, 'buscarTicket' );
 
-		if ( key == 13 ) // {ENTER}
+		if ( key == 117 ) // {F6}
 			$scope.buscarOrdenTicket();
 
 		if ( key == 65 && $scope.infoOrden.idOrdenCliente > 0 ) // {O}
@@ -792,7 +797,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		if ( key == 8 && !$("#noTicket").is(":focus") ) // {BACK}
 			$scope.auxKeyTicket( 'back', 0, 'noTicket' );
 
-		if ( key == 13 || key == 65 ) // {ENTER} || {A}
+		if ( key == 13 || key == 117 ) // {ENTER} || {F6}
 			$scope.agregarOrden();
 	};
 
@@ -814,11 +819,11 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		if ( key == 46 || key == 8 ) // {SUPR} || {BACK}
 			$scope.auxKeyTicket( 'supr', 0, 'codigoRapido' );
 
-		if ( key == 13 || key == 65 ) // {ENTER}
+		if ( key == 13 ) // {ENTER}
 			$scope.consultaMenuPorCodigo();
 
 		// CONFIRMA LA ORDEN DEL CLIENTE
-		if ( key == 13 && altDerecho ) // {ALT+ENTER}
+		if ( key == 117 ) // {F6}
 			$scope.guardarOrden();
 
 		if ( key == 27 && $scope.accionOrden == 'modificar' ) // {ESC}
@@ -826,7 +831,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 	$scope._keyDialMenuCantidad = function ( key ) {
-		if ( key == 65 || key == 13 ) // {A} || {ENTER}
+		if ( key == 117 ) // {F6}
 			$scope.agregarAPedido();
 
 		else if ( ( key == 109 || key == 189 ) && $scope.menuActual.cantidad > 1 ) // {-}

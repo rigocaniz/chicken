@@ -121,6 +121,8 @@ class Orden
 
 		$data->idOrdenCliente = (int)$data->idOrdenCliente > 0 ? (int)$data->idOrdenCliente : "NULL";
 
+		$observacion = isset( $data->observacion ) AND strlen( $data->observacion ) > 3 ? "'" . $data->observacion . "'" : 'NULL';
+
 		if ( true ):
 			$idDetalleOrdenMenu = $validar->validarEntero( $data->idDetalleOrdenMenu, NULL, TRUE, 'El No. del Detalle de Orden no es válido' );
 
@@ -151,7 +153,7 @@ class Orden
 		 		$this->tiempo    = $validar->getTiempo();
 	 		else:
 
-		 		$sql = "CALL consultaDetalleOrdenMenu( '{$accion}', {$idDetalleOrdenMenu}, {$idMenu}, {$cantidad}, {$idEstadoDetalleOrden}, {$idTipoServicio}, {$idFactura}, {$usuarioResponsable} );";
+		 		$sql = "CALL consultaDetalleOrdenMenu( '{$accion}', {$idDetalleOrdenMenu}, {$idMenu}, {$cantidad}, {$idEstadoDetalleOrden}, {$idTipoServicio}, {$idFactura}, {$usuarioResponsable}, {$observacion} );";
 
 		 		if( $rs = $this->con->query( $sql ) ){
 		 			@$this->con->next_result();
@@ -193,6 +195,7 @@ class Orden
 		$data->idTipoServicio     = (int)$data->idTipoServicio > 0			? (int)$data->idTipoServicio		: "NULL";
 		$data->idFactura          = (int)$data->idFactura > 0					? (int)$data->idFactura				: "NULL";
 		$data->usuarioResponsable = strlen( $data->usuarioResponsable ) > 3	? $data->usuarioResponsable			: "NULL";
+		$observacion = isset( $data->observacion ) AND strlen( $data->observacion ) > 3 ? "'" . $data->observacion . "'" : 'NULL';
 
 		$validar = new Validar();
 
@@ -234,7 +237,7 @@ class Orden
 	 		$this->tiempo    = $validar->getTiempo();
  		else:
 
-	 		$sql = "CALL consultaDetalleOrdenCombo( '{$accion}', {$idDetalleOrdenMenu}, {$idCombo}, {$cantidad}, {$idEstadoDetalleOrden}, {$idTipoServicio}, {$idFactura}, {$usuarioResponsable} );";
+	 		$sql = "CALL consultaDetalleOrdenCombo( '{$accion}', {$idDetalleOrdenMenu}, {$idCombo}, {$cantidad}, {$idEstadoDetalleOrden}, {$idTipoServicio}, {$idFactura}, {$usuarioResponsable}, {$observacion} );";
 
 	 		if( $rs = $this->con->query( $sql ) ){
 	 			@$this->con->next_result();
@@ -270,12 +273,13 @@ class Orden
 				$item->idMenu         = (int)$item->idMenu > 0			? (int)$item->idMenu			: 0;
 				$item->cantidad       = (int)$item->cantidad > 0		? (int)$item->cantidad			: 0;
 				$item->idTipoServicio = (int)$item->idTipoServicio > 0	? (int)$item->idTipoServicio	: 0;
+				$observacion = ( isset( $item->observacion ) AND strlen( $item->observacion ) > 3 ) ? "'" . $item->observacion . "'" : 'NULL';
 
 				if ( $item->tipoMenu == 'menu' )
-					$sql = "CALL consultaDetalleOrdenMenu( 'insert', NULL, {$idOrdenCliente}, {$item->idMenu}, {$item->cantidad}, NULL, {$item->idTipoServicio}, NULL, NULL );";
+					$sql = "CALL consultaDetalleOrdenMenu( 'insert', NULL, {$idOrdenCliente}, {$item->idMenu}, {$item->cantidad}, NULL, {$item->idTipoServicio}, NULL, NULL, {$observacion} );";
 				
 				else if ( $item->tipoMenu == 'combo' )
-					$sql = "CALL consultaDetalleOrdenCombo( 'insert', NULL, {$idOrdenCliente}, {$item->idMenu}, {$item->cantidad}, NULL, {$item->idTipoServicio}, NULL, NULL );";
+					$sql = "CALL consultaDetalleOrdenCombo( 'insert', NULL, {$idOrdenCliente}, {$item->idMenu}, {$item->cantidad}, NULL, {$item->idTipoServicio}, NULL, NULL, {$observacion} );";
 
 		 		if( $rs = $this->con->query( $sql ) ){
 		 			@$this->con->next_result();
@@ -374,7 +378,8 @@ class Orden
     				combo,
     				numeroTicket,
     				codigoMenu,
-    				tiempoAlerta
+    				tiempoAlerta,
+    				observacion
 				FROM vOrdenes
 				WHERE ";
 
@@ -496,7 +501,8 @@ class Orden
 				    idDetalleOrdenCombo,
 				    idEstadoDetalleOrdenCombo,
 				    idCombo,
-				    tiempoAlerta
+				    tiempoAlerta,
+					observacion
 				FROM
 				    vOrdenes
 				WHERE
@@ -562,6 +568,7 @@ class Orden
 					'idDetalleOrdenCombo'       => $row->idDetalleOrdenCombo,
 					'idEstadoDetalleOrden'      => $row->idEstadoDetalleOrden,
 					'idEstadoDetalleOrdenCombo' => $row->idEstadoDetalleOrdenCombo,
+					'observacion' 				=> $row->observacion,
 				);
 
 				// VERIFICA SI EL MENU EXISTE
@@ -671,7 +678,8 @@ class Orden
 				    usuarioDetalle,
 				    responsableOrden,
 				    fechaRegistro,
-				    tiempoAlerta
+				    tiempoAlerta,
+				    observacion
 				FROM vOrdenes
 				WHERE idEstadoDetalleOrden = {$idEstadoDetalleOrden} AND idDestinoMenu = {$idDestinoMenu}
 					$where
@@ -708,7 +716,7 @@ class Orden
 					);
 				}
 				
-				// AGREGA DETALL AL MENU
+				// AGREGA DETALLE AL MENU
 				$lst[ $ixMenu ]->detalle[] = (object)array(
 					'perteneceCombo'      => $row->perteneceCombo,
 					'numeroTicket'        => $row->numeroTicket,
@@ -721,6 +729,7 @@ class Orden
 					'idCombo'             => $row->idCombo,
 					'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo,
 					'imagenCombo'         => $row->imagenCombo,
+					'observacion'         => $row->observacion,
 				);
 
 				$lst[ $ixMenu ]->numMenus += (int)$row->cantidad;

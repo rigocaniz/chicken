@@ -424,15 +424,18 @@
 	                			<label>Cantidad</label>
 	                			<input type="number" class="form-control input-lg input-focus" ng-model="menuActual.cantidad" id="cantidad_menu" min="1">
                 			</div>
-                			<div class="col-xs-12" style="margin-top:5px">
-                				<button type="button" class="btn btn-default" ng-click="menuActual.cantidad=( menuActual.cantidad>1 ? menuActual.cantidad-1 : menuActual.cantidad)">
-                					<span class="glyphicon glyphicon-minus"></span>
-                				</button>
-                				<button type="button" class="btn btn-primary" ng-click="menuActual.cantidad=menuActual.cantidad+1">
-                					<span class="glyphicon glyphicon-plus"></span>
-                				</button>
-                			</div>
-                		</div>
+                            <div class="col-xs-12" style="margin-top:5px">
+                                <button type="button" class="btn btn-default" ng-click="menuActual.cantidad=( menuActual.cantidad>1 ? menuActual.cantidad-1 : menuActual.cantidad)">
+                                    <span class="glyphicon glyphicon-minus"></span>
+                                </button>
+                                <button type="button" class="btn btn-primary" ng-click="menuActual.cantidad=menuActual.cantidad+1">
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                </button>
+                            </div>
+                            <div class="col-xs-12" style="margin-top:5px">
+                                <textarea ng-model="$parent.observacion" rows="3" class="form-control" placeholder="Observación del menú"></textarea>
+                            </div>
+                        </div>
             			<div class="col-xs-12">
             				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=2,'btn-info':idTipoServicio==2}" 
             					ng-click="$parent.idTipoServicio=2" style="margin-right:4px;margin-top:5px">

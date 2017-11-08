@@ -944,7 +944,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 		/************ CONSULTA POR ESTADO ************ 
 		**********************************************/
-		else if ( altDerecho && key == 13 ) // {CONTINUA CON EL PROCESO}
+		else if ( key == 117 ) // {CONTINUA CON EL PROCESO}
 			$scope.continuarProcesoMenu();
 		
 
@@ -1066,6 +1066,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 							tipoServicio         : item.tipoServicio,
 							numeroTicket         : item.numeroTicket,
 							perteneceCombo       : item.perteneceCombo,
+							observacion          : item.observacion,
 							imagenCombo          : null,
 							cantidad             : 1
 						};

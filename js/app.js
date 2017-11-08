@@ -154,6 +154,12 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     $scope.pressKey = function ( key, altDerecho, event ) {
         console.log( key );
 
+        if ( $scope.loading )
+            return false;
+
+        if ( key == 117 )
+            event.preventDefault();
+
         if ( key != 17 && key != 18 && key != 92 && key != 91 ) {
             $rootScope.$broadcast('keyPress', key, altDerecho, event );
         }

@@ -143,6 +143,10 @@
 											<span class="label label-warning" ng-show="item.perteneceCombo">
 												<span class="glyphicon glyphicon-gift"></span>
 											</span>
+											<p class="label label-info" ng-show="item.observacion.length>3">
+												<span class="glyphicon glyphicon-star"></span>
+												<span>{{item.observacion}}</span>
+											</p>
 										</td>
 										<td>
 											<span>{{tiempoTranscurrido( item.fechaRegistro )}}</span>
