@@ -91,7 +91,7 @@
                     </h4>
                 </div>
                 <div class="col-sm-6 col-xs-12 text-right" ng-show="infoOrden.idEstadoOrden==1">
-                    <button type="button" class="btn btn-sm btn-danger" ng-click="dialOrdenCancelar.show()">
+                    <button type="button" class="btn btn-sm btn-danger" ng-click="dialOrdenCancelar.show();comentario=''">
                         <span class="glyphicon glyphicon-remove"></span>
                         <b>Cancelar Orden</b>
                     </button>
@@ -532,6 +532,12 @@
                 </div>
                 <div class="modal-body">
                     <h3>¿Está seguro de cancelar la Orden con Ticket # <kbd>{{infoOrden.numeroTicket}}</kbd>?</h3>
+                    <div class="row">
+                        <div class="col-sm-offset-2 col-sm-8">
+                            <label>Ingrese motivo de Cancelación</label>
+                            <textarea ng-model="$parent.comentario" rows="3" class="form-control"></textarea>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" ng-click="cancelarOrdenPrincipal( infoOrden.idOrdenCliente )">
@@ -561,6 +567,12 @@
                 </div>
                 <div class="modal-body">
                     <h3>¿Está seguro de cancelar Detalle de Orden con Ticket # <kbd>{{infoOrden.numeroTicket}}</kbd>?</h3>
+                    <div class="row">
+                        <div class="col-sm-offset-2 col-sm-8">
+                            <label>Ingrese motivo de Cancelación</label>
+                            <textarea ng-model="$parent.comentario" rows="3" class="form-control"></textarea>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" ng-click="cancelarOrdenParcial( infoOrden.idOrdenCliente, itemDetalle )">

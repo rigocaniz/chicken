@@ -533,7 +533,7 @@ switch ( $data->opcion )
 	// CANCELAR ORDEN PARCIALMENTE
 	case 'cancelarOrdenParcial':
 		$orden = new Orden();
-		echo json_encode( $orden->cancelarOrdenParcial( $data->idOrdenCliente, $data->lstDetalle ) );
+		echo json_encode( $orden->cancelarOrdenParcial( $data->idOrdenCliente, $data->lstDetalle, $data->comentario ) );
 		break;
 
 	// CAMBIA SERVICIO DE ORDEN

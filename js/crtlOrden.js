@@ -8,8 +8,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.idTipoMenu      = '';
 	$scope.accionOrden     = 'nuevo';
 	$scope.idEstadoOrden   = 1;
-	$scope.todoDetalle 	   = false;
-	$scope.observacion 	   = "";
+	$scope.todoDetalle     = false;
+	$scope.observacion     = "";
+	$scope.comentario      = "";
 
 	$scope.ordenActual = {
 		idOrdenCliente : 0,
@@ -22,6 +23,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.menuActual     = {
 		lstPrecio : []
 	};
+
+	alertify.set('notifier','position', 'top-right');
 
 	// DIALOGOS
 	$scope.dialOrden            = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false, keyboard: false });
@@ -454,7 +457,10 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		if ( $scope.$parent.loading )
 			return false;
 
-		if ( idOrdenCliente > 0 ) {
+		if ( !( $scope.comentario.length > 5 ) )
+			alertify.notify('Comentario demasiado corto', 'danger', 5);
+
+		else if ( idOrdenCliente > 0 ) {
 
 			$scope.$parent.loading = true; // cargando...
 
@@ -462,7 +468,10 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			$http.post('consultas.php', { 
 				opcion : 'consultaOrdenCliente',
 				accion : 'cancel',
-				datos : { idOrdenCliente : idOrdenCliente }
+				datos : {
+					idOrdenCliente : idOrdenCliente,
+					comentario     : $scope.comentario
+				}
 			})
 			.success(function (data) {
 				$scope.$parent.loading = false; // cargando...
@@ -474,7 +483,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 					$scope.dialOrdenCancelar.hide();
 			});
 		} else {
-			alertify.set('notifier','position', 'top-right');
 			alertify.notify('Orden de Cliente no válida', 'danger', 4);
 		}
 	};
@@ -484,27 +492,35 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		if ( $scope.$parent.loading )
 			return false;
 
-		$scope.$parent.loading = true; // cargando...
 
-		// CONSULTA PRECIOS DEL MENU
-		$http.post('consultas.php', { 
-			opcion         : 'cancelarOrdenParcial',
-			idOrdenCliente : idOrdenCliente,
-			lstDetalle     : lstDetalle
-		})
-		.success(function (data) {
-			console.log( data );
+		if ( !( $scope.comentario.length > 3 ) )
+			alertify.notify('Comentario demasiado corto', 'danger', 5);
 
-			$scope.$parent.loading = false; // cargando...
+		else{
 
-			if ( data.mensaje != undefined ) {
-				alertify.set('notifier','position', 'top-right');
-				alertify.notify( data.mensaje, data.respuesta, 3 );
+			$scope.$parent.loading = true; // cargando...
 
-				if ( data.respuesta == 'success' )
-					$scope.dialCancelarDetalle.hide();
-			}
-		});
+			// CONSULTA PRECIOS DEL MENU
+			$http.post('consultas.php', { 
+				opcion         : 'cancelarOrdenParcial',
+				idOrdenCliente : idOrdenCliente,
+				lstDetalle     : lstDetalle,
+				comentario     : $scope.comentario
+			})
+			.success(function (data) {
+				console.log( data );
+
+				$scope.$parent.loading = false; // cargando...
+
+				if ( data.mensaje != undefined ) {
+					alertify.set('notifier','position', 'top-right');
+					alertify.notify( data.mensaje, data.respuesta, 3 );
+
+					if ( data.respuesta == 'success' )
+						$scope.dialCancelarDetalle.hide();
+				}
+			});
+		}
 	};
 
 	// => CAMBIAR SERVICIO DE ORDEN
@@ -629,6 +645,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	// CANCELAR ORDEN
 	$scope.cancelarDetalle = function ( itemDetalle ) {
 		$scope.itemDetalle = itemDetalle;
+		$scope.comentario  = "";
 		$scope.dialCancelarDetalle.show();
 	};
 

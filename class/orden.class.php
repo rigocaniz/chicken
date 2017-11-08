@@ -48,6 +48,7 @@ class Orden
 		// SI USUARIO RESPONSABLE BARRA
 		//if ( isset( $data->usuarioBarra ) AND strlen( $data->usuarioBarra ) > 3 )
 		//	$usuarioBarra = "'" . $this->con->real_escape_string( $validar->validarTexto( $data->usuarioBarra, NULL, TRUE, 8, 16, "Usuario responsable barra" ) ) . "'";
+		$comentario = ( isset( $data->comentario ) AND strlen( $data->comentario ) > 3 ) ? "'" . $data->comentario . "'" : "NULL";
 
 		// VALIDACIONES
 		if( $accion == 'insert' ):
@@ -79,7 +80,7 @@ class Orden
  		else:
 		 	$this->con->query( "START TRANSACTION" );
 
-	 		$sql = "CALL consultaOrdenCliente( '{$accion}', {$idOrdenCliente}, {$numeroTicket}, '{$usuarioResponsable}', {$idEstadoOrden}, '{$usuarioBarra}' )";
+	 		$sql = "CALL consultaOrdenCliente( '{$accion}', {$idOrdenCliente}, {$numeroTicket}, '{$usuarioResponsable}', {$idEstadoOrden}, '{$usuarioBarra}', $comentario )";
 	 		
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 		@$this->con->next_result();
@@ -153,7 +154,7 @@ class Orden
 		 		$this->tiempo    = $validar->getTiempo();
 	 		else:
 
-		 		$sql = "CALL consultaDetalleOrdenMenu( '{$accion}', {$idDetalleOrdenMenu}, {$idMenu}, {$cantidad}, {$idEstadoDetalleOrden}, {$idTipoServicio}, {$idFactura}, {$usuarioResponsable}, {$observacion} );";
+		 		$sql = "CALL consultaDetalleOrdenMenu( '{$accion}', {$idDetalleOrdenMenu}, {$idMenu}, {$cantidad}, {$idEstadoDetalleOrden}, {$idTipoServicio}, {$idFactura}, {$usuarioResponsable}, {$observacion}, NULL );";
 
 		 		if( $rs = $this->con->query( $sql ) ){
 		 			@$this->con->next_result();
@@ -237,7 +238,7 @@ class Orden
 	 		$this->tiempo    = $validar->getTiempo();
  		else:
 
-	 		$sql = "CALL consultaDetalleOrdenCombo( '{$accion}', {$idDetalleOrdenMenu}, {$idCombo}, {$cantidad}, {$idEstadoDetalleOrden}, {$idTipoServicio}, {$idFactura}, {$usuarioResponsable}, {$observacion} );";
+	 		$sql = "CALL consultaDetalleOrdenCombo( '{$accion}', {$idDetalleOrdenMenu}, {$idCombo}, {$cantidad}, {$idEstadoDetalleOrden}, {$idTipoServicio}, {$idFactura}, {$usuarioResponsable}, {$observacion}, NULL );";
 
 	 		if( $rs = $this->con->query( $sql ) ){
 	 			@$this->con->next_result();
@@ -273,13 +274,13 @@ class Orden
 				$item->idMenu         = (int)$item->idMenu > 0			? (int)$item->idMenu			: 0;
 				$item->cantidad       = (int)$item->cantidad > 0		? (int)$item->cantidad			: 0;
 				$item->idTipoServicio = (int)$item->idTipoServicio > 0	? (int)$item->idTipoServicio	: 0;
-				$observacion = ( isset( $item->observacion ) AND strlen( $item->observacion ) > 3 ) ? "'" . $item->observacion . "'" : 'NULL';
+				$observacion          = ( isset( $item->observacion ) AND strlen( $item->observacion ) > 3 ) ? "'" . $item->observacion . "'" : 'NULL';
 
 				if ( $item->tipoMenu == 'menu' )
-					$sql = "CALL consultaDetalleOrdenMenu( 'insert', NULL, {$idOrdenCliente}, {$item->idMenu}, {$item->cantidad}, NULL, {$item->idTipoServicio}, NULL, NULL, {$observacion} );";
+					$sql = "CALL consultaDetalleOrdenMenu( 'insert', NULL, {$idOrdenCliente}, {$item->idMenu}, {$item->cantidad}, NULL, {$item->idTipoServicio}, NULL, NULL, {$observacion}, NULL );";
 				
 				else if ( $item->tipoMenu == 'combo' )
-					$sql = "CALL consultaDetalleOrdenCombo( 'insert', NULL, {$idOrdenCliente}, {$item->idMenu}, {$item->cantidad}, NULL, {$item->idTipoServicio}, NULL, NULL, {$observacion} );";
+					$sql = "CALL consultaDetalleOrdenCombo( 'insert', NULL, {$idOrdenCliente}, {$item->idMenu}, {$item->cantidad}, NULL, {$item->idTipoServicio}, NULL, NULL, {$observacion}, NULL );";
 
 		 		if( $rs = $this->con->query( $sql ) ){
 		 			@$this->con->next_result();
@@ -965,10 +966,10 @@ class Orden
 				$item->idDetalleOrdenMenu  = (int)$item->idDetalleOrdenMenu;
 
 				if ( $item->idDetalleOrdenCombo > 0 )
-					$sql = "CALL consultaDetalleOrdenCombo( 'tipoServicio', {$item->idDetalleOrdenCombo}, NULL, NULL, NULL, NULL, {$idTipoServicio}, NULL, NULL );";
+					$sql = "CALL consultaDetalleOrdenCombo( 'tipoServicio', {$item->idDetalleOrdenCombo}, NULL, NULL, NULL, NULL, {$idTipoServicio}, NULL, NULL, NULL, NULL );";
 
 				else if ( $item->idDetalleOrdenMenu > 0 )
-					$sql = "CALL consultaDetalleOrdenMenu( 'tipoServicio', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, NULL, {$idTipoServicio}, NULL, NULL );";
+					$sql = "CALL consultaDetalleOrdenMenu( 'tipoServicio', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, NULL, {$idTipoServicio}, NULL, NULL, NULL, NULL );";
 				
 
 		 		if( $rs = $this->con->query( $sql ) ) {
@@ -1038,7 +1039,7 @@ class Orden
  	}
 
  	// CANCELAR ORDEN DE MANERA PARCIAL
- 	public function cancelarOrdenParcial( $idOrdenCliente, $lstDetalle )
+ 	public function cancelarOrdenParcial( $idOrdenCliente, $lstDetalle, $comentario = "" )
  	{
 
 		$count       = count( $lstDetalle );
@@ -1047,6 +1048,9 @@ class Orden
  		if ( $count AND $idOrdenCliente > 0 ):
  			$validar = new Validar();
 
+			$comentario = $this->con->real_escape_string( $comentario );
+			$comentario = strlen( $comentario ) > 3 ? "'" . $comentario . "'" : 'NULL';
+			
 		 	$this->con->query( "START TRANSACTION" );
 
 			foreach ( $lstDetalle as $ix => $item ):
@@ -1055,10 +1059,10 @@ class Orden
 				$item->idDetalleOrdenMenu  = (int)$item->idDetalleOrdenMenu;
 
 				if ( $item->idDetalleOrdenMenu > 0 )
-					$sql = "CALL consultaDetalleOrdenMenu( 'cancel', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, NULL, NULL, NULL, NULL );";
+					$sql = "CALL consultaDetalleOrdenMenu( 'cancel', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, {$comentario} );";
 				
 				else if ( $item->idDetalleOrdenCombo > 0 )
-					$sql = "CALL consultaDetalleOrdenCombo( 'cancel', {$item->idDetalleOrdenCombo}, NULL, NULL, NULL, NULL, NULL, NULL, NULL );";
+					$sql = "CALL consultaDetalleOrdenCombo( 'cancel', {$item->idDetalleOrdenCombo}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, {$comentario} );";
 
 		 		if( $rs = $this->con->query( $sql ) ) {
 		 			@$this->con->next_result();
@@ -1069,7 +1073,7 @@ class Orden
 		 		}
 		 		else{
 		 			$this->respuesta = 'danger';
-		 			$this->mensaje   = 'Error al ejecutar la consulta.';
+		 			$this->mensaje   = 'Error al ejecutar la consulta.' . $this->con->error;
 		 			break;
 		 		}
 		 		

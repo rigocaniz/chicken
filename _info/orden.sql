@@ -1,5 +1,5 @@
 
-CREATE PROCEDURE consultaOrdenCliente( _action VARCHAR(20), _idOrdenCliente INT, _numeroTicket INT, _usuarioResponsable VARCHAR(15), _idEstadoOrden INT, _usuarioBarra VARCHAR(15) )
+CREATE PROCEDURE consultaOrdenCliente( _action VARCHAR(20), _idOrdenCliente INT, _numeroTicket INT, _usuarioResponsable VARCHAR(15), _idEstadoOrden INT, _usuarioBarra VARCHAR(15), _comentario TEXT )
 BEGIN
 	DECLARE _tktPendiente BOOLEAN DEFAULT FALSE;
 	DECLARE _estadoActualOrden INT DEFAULT 0;
@@ -46,6 +46,8 @@ BEGIN
 		END IF;
 
 	ELSEIF _action = 'cancel' THEN
+
+		SET @comentario = _comentario;
 		
         SELECT COUNT(*) INTO _ordenesPreparacion FROM detalleOrdenMenu 
 			WHERE idOrdenCliente = _idOrdenCliente AND idEstadoDetalleOrden > 1 AND idEstadoDetalleOrden != 10;
