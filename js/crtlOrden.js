@@ -11,6 +11,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.todoDetalle     = false;
 	$scope.observacion     = "";
 	$scope.comentario      = "";
+	$scope.filtroServicio  = 1;
 
 	$scope.ordenActual = {
 		idOrdenCliente : 0,
@@ -29,6 +30,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	// DIALOGOS
 	$scope.dialOrden            = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenCliente     = $modal({scope: $scope,template:'dial.orden.cliente.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialCantidad  		= $modal({scope: $scope,template:'dial.cantidad.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenMenu        = $modal({scope: $scope,template:'dial.orden-menu.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialMenuCantidad     = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenBusqueda    = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
@@ -54,6 +56,18 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			}
 		});
 	})();
+
+	/* ===== MOSTRAR DIALOGOS ===== */
+	$scope.openCantidad = function () {
+		$scope.cantidadInicial = 1;
+
+		$scope.dialOrdenCliente.hide();
+		$scope.dialCantidad.show();
+		$timeout(function () {
+			if ( document.getElementById("cantidadInicial") )
+				document.getElementById("cantidadInicial").focus();
+		});
+	};
 
 
 	$scope.lstTicketBusqueda = [];
@@ -179,7 +193,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		if ( $scope.$parent.loading )
 			return false;
 
-		$scope.codigoRapido = 0;
+		$scope.codigoRapido = "";
 		
 		if ( parseInt( $scope.noTicket ) > 0 )
 		{
@@ -236,7 +250,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		
 		$scope.consultaMenus();
 		$scope.dialOrdenMenu.show();
-		$scope.dialOrdenCliente.hide()
+		$scope.dialCantidad.hide()
 	};
 
 	// CONSULTA MENUS
@@ -296,7 +310,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			datos = { opcion : 'cargarComboPrecio', idCombo : menu.idCombo };
 		}
 
-		$scope.menuActual.cantidad  = 1;
 		$scope.menuActual.precio    = 0;
 		$scope.menuActual.lstPrecio = [];
 		$scope.observacion          = "";
@@ -311,10 +324,11 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		});
 
 		$scope.dialOrdenMenu.hide();
-		$scope.dialMenuCantidad.show();
+		$scope.dialCantidad.show();
 	};
 
 	// #4 => AGREGAR MENU Y CANTIDAD A ORDEN A AGREGAR
+	/*
 	$scope.agregarAPedido = function () {
 		if ( !( $scope.menuActual.precio > 0 ) ) {
 			alertify.set('notifier','position', 'top-right');
@@ -362,6 +376,57 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			}
 			$scope.dialOrdenCliente.show();
 			$scope.dialMenuCantidad.hide();
+		}
+	};*/
+
+	$scope.agregarOrdenLista = function () {
+		if ( !( $scope.menuActual.precio > 0 ) ) {
+			alertify.set('notifier','position', 'top-right');
+			alertify.notify('Menú no disponible para este Tipo de Servicio', 'danger', 3);
+		}
+		else if ( !( $scope.cantidadInicial > 0 ) ) {
+			alertify.set('notifier','position', 'top-right');
+			alertify.notify('La cantidad debe ser mayor a cero', 'danger', 2);
+		}
+		else if ( !( $scope.idTipoServicio > 0 ) ) {
+			alertify.set('notifier','position', 'top-right');
+			alertify.notify('Debe seleccionar un Tipo de Servicio', 'danger', 2);
+		}
+		else{
+			var tipoServicio = $scope.descripcion( 'lstTipoServicio', 'idTipoServicio', $scope.idTipoServicio, 'tipoServicio' );
+
+			var subTotal = parseFloat( $scope.menuActual.precio ) * $scope.cantidadInicial;
+			$scope.ordenActual.totalAgregar += subTotal;
+
+			var index = -1;
+			for (var i = 0; i < $scope.ordenActual.lstAgregar.length; i++) {
+				if ( $scope.ordenActual.lstAgregar[ i ].idMenu == $scope.menuActual.idMenu 
+					&& $scope.ordenActual.lstAgregar[ i ].idTipoServicio == $scope.idTipoServicio
+					&& $scope.ordenActual.lstAgregar[ i ].tipoMenu == $scope.tipoMenu 
+				) {
+					index = i;
+					break;
+				}
+			}
+
+			if ( index >= 0 ) {
+				$scope.ordenActual.lstAgregar[ index ].cantidad += $scope.cantidadInicial;
+			}
+			else{
+				$scope.ordenActual.lstAgregar.unshift({
+					idMenu         : $scope.menuActual.idMenu,
+					menu           : $scope.menuActual.menu,
+					cantidad       : $scope.cantidadInicial,
+					precio         : $scope.menuActual.precio,
+					tipoServicio   : tipoServicio,
+					idTipoServicio : $scope.idTipoServicio,
+					tipoMenu       : $scope.tipoMenu,
+					observacion    : $scope.observacion
+				});
+			}
+
+			$scope.dialCantidad.hide();
+			$scope.dialOrdenCliente.show();
 		}
 	};
 
@@ -416,7 +481,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		// SI NO SE A AGREGADO NINGUNA ORDEN
 		else{
 			alertify.set('notifier','position', 'top-right');
-			alertify.notify('No agregado ningún menú', 'danger', 4);
+			alertify.notify('No ha agregado ningún menú', 'danger', 4);
 		}
 	};
 
@@ -433,14 +498,14 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				console.log( data );
 
 				$scope.$parent.loading = false; // cargando...
-				$scope.codigoRapido    = 0;
+				$scope.codigoRapido    = "";
 
 				if ( data.tipoMenu != null ) {
 					$scope.menuActual  = data.menu;
 					$scope.tipoMenu    = data.tipoMenu;
 					$scope.observacion = "";
-					$scope.dialOrdenCliente.hide();
-					$scope.dialMenuCantidad.show();
+					//$scope.dialCantidad.hide();
+					//$scope.dialMenuCantidad.show();
 				}
 				
 				else{
@@ -673,13 +738,40 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.watchPrecio = function () {
 		$scope.menuActual.precio = 0;
 
-		if ( $scope.menuActual.lstPrecio.length && $scope.idTipoServicio > 0 ) {
+		if ( $scope.menuActual.lstPrecio && $scope.menuActual.lstPrecio.length && $scope.idTipoServicio > 0 ) {
 			for ( var i = 0; i < $scope.menuActual.lstPrecio.length; i++ )
 				if ( $scope.menuActual.lstPrecio[ i ].idTipoServicio == $scope.idTipoServicio ) {
 					$scope.menuActual.precio = $scope.menuActual.lstPrecio[ i ].precio;
 					break;
 				}
 		}
+	};
+
+	$scope.cancelarMenu = function () {
+		if ( $scope.menuActual && $scope.menuActual.idMenu > 0 ) 
+		{
+			$scope.menuActual = {};
+			$timeout(function () {
+				if ( document.getElementById("codigoRapido") )
+					document.getElementById("codigoRapido").focus();
+			});
+		}
+	};
+
+	$scope.changeInt = function ( val, sum, min, max ) {
+		var result = 0;
+		val = parseInt( val );
+
+		if ( val && val < max && sum )
+			result = val + 1;
+
+		else if ( val && val > min && !sum )
+			result = val - 1;
+
+		else
+			result = ( val || min );
+
+		return result;
 	};
 
 	// SI EL ESTADO DE ORDEN CAMBIA
@@ -701,6 +793,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	// SI CAMBIA EL Tipo de Servicio
 	$scope.$watch('idTipoServicio', function ( _new, _old ) {
 		$scope.watchPrecio();
+
+		if ( _new )
+			$scope.filtroServicio = _new;
 	});
 
 	// SI CAMBIA LA Lista de Precio
@@ -820,24 +915,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 	// ATAJOS DIALOGO ORDEN CLIENTE
 	$scope._keyDialOrden = function ( key, altDerecho ) {
-		if ( key == 77 ) // {M}
-			$scope.mostrarMenus('menu');
-
-		if ( key == 67 ) // {C}
-			$scope.mostrarMenus('combo');
-
-		// TECLA PARA CODIGO RAPIDO
-		if ( key >= 48 && key <= 57 ) // {0-9}
-			$scope.auxKeyTicket( 'number', ( key - 48 ), 'codigoRapido' );
-
-		if ( key >= 96 && key <= 105 ) // {0-9}
-			$scope.auxKeyTicket( 'number', ( key - 96 ), 'codigoRapido' );
-		
-		if ( key == 46 || key == 8 ) // {SUPR} || {BACK}
-			$scope.auxKeyTicket( 'supr', 0, 'codigoRapido' );
-
-		if ( key == 13 ) // {ENTER}
-			$scope.consultaMenuPorCodigo();
+		// ABRE MODAL DE CANTIDAD Y CONSULTA DE MENU
+		if ( key == 65 ) // {A}
+			$scope.openCantidad();
 
 		// CONFIRMA LA ORDEN DEL CLIENTE
 		if ( key == 117 ) // {F6}
@@ -845,9 +925,75 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 		if ( key == 27 && $scope.accionOrden == 'modificar' ) // {ESC}
 			$scope.dialOrdenCliente.hide();
+
+		if ( key == 37 && $scope.filtroServicio > 1 )
+			$scope.filtroServicio--;
+
+		else if ( key == 37 && $scope.filtroServicio == 1 )
+			$scope.filtroServicio = "";
+
+		else if ( key == 39 && $scope.filtroServicio < 3 )
+			$scope.filtroServicio++;
+
+		else if ( key == 39 && $scope.filtroServicio == '' )
+			$scope.filtroServicio = 1;
 	};
 
-	$scope._keyDialMenuCantidad = function ( key ) {
+	// ATAJOS DIALOGO CANTIDAD
+	$scope._keyCantidad = function ( key, altDerecho ) {
+		if ( ( key == 109 || key == 189 ) && $scope.cantidadInicial > 1 ) // {-}
+			$scope.cantidadInicial = $scope.changeInt( $scope.cantidadInicial, false, 1, 500 );
+
+		if ( key == 107 || key == 187 ) { // {+}
+			$scope.cantidadInicial = $scope.changeInt( $scope.cantidadInicial, true, 1, 500 );
+		}
+
+		// CANCELA EL MENU ACTUAL
+		if ( key == 46 )
+			$scope.cancelarMenu();
+
+		// TECLA PARA CODIGO RAPIDO
+		/*if ( key >= 48 && key <= 57 ) // {0-9}
+			$scope.auxKeyTicket( 'number', ( key - 48 ), 'codigoRapido' );
+
+		if ( key >= 96 && key <= 105 ) // {0-9}
+			$scope.auxKeyTicket( 'number', ( key - 96 ), 'codigoRapido' );*/
+		
+		if ( $("#codigoRapido").is( ":focus" ) && key == 8 ) // {BACK}
+			$scope.auxKeyTicket( 'supr', 0, 'codigoRapido' );
+
+		// {ENTER & FOCUS cantidad}
+		if ( $("#cantidadInicial").is( ":focus" ) && key == 13 ) 
+			document.getElementById("codigoRapido").focus();
+
+		// {ENTER & FOCUS codigo menu}
+		if ( $("#codigoRapido").is( ":focus" ) && key == 13 )
+			$scope.consultaMenuPorCodigo();
+
+		if ( altDerecho && key == 13 ) // {ALT-DERECHO} + {ENTER}
+			document.getElementById("observacionMenu").focus();
+
+		// SELECCION DE TIPO DE SERVICIO
+		if ( altDerecho && key == 76 ) // {L}
+			$scope.idTipoServicio = 1;
+
+		if ( altDerecho && key == 82 ) // {R}
+			$scope.idTipoServicio = 2;
+
+		if ( altDerecho && key == 68 ) // {D}
+			$scope.idTipoServicio = 3;
+
+		// CONFIRMA LA ORDEN DEL CLIENTE
+		if ( key == 117 ) // {F6}
+			$scope.agregarOrdenLista();
+
+		if ( key == 27 ) { // {ESC}
+			$scope.dialCantidad.hide();
+			$scope.dialOrdenCliente.show();
+		} 
+	};
+
+	$scope._keyDialMenuCantidad = function ( key, altDerecho ) {
 		if ( key == 117 ) // {F6}
 			$scope.agregarAPedido();
 
@@ -859,17 +1005,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				$scope.menuActual.cantidad = 0;
 
 			$scope.menuActual.cantidad++;
-		} 
-
-		// SELECCION DE TIPO DE SERVICIO
-		else if ( key == 76 ) // {L}
-			$scope.idTipoServicio = 1;
-
-		else if ( key == 82 ) // {R}
-			$scope.idTipoServicio = 2;
-
-		else if ( key == 68 ) // {D}
-			$scope.idTipoServicio = 3;
+		}
 
 		else if ( key == 27 ) { // {ESC}
 			$scope.dialMenuCantidad.hide();
@@ -891,6 +1027,9 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key, altDerecho ) {
+		if ( ( altDerecho && key == 67 ) || key == 187 || key == 189 || key == 109 || key == 107 )
+			event.preventDefault();
+
 		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
 		if ( $scope.$parent.loading )
 			return false;
@@ -906,9 +1045,14 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				$scope._keyDialTicket( key );
 			}
 
-			// ******** DIALOGO DE ORDEN DEL CLIENTE ********
+			// ******** DIALOGO DE ADMON. ORDEN DEL CLIENTE ********
 			if ( $scope.modalOpen( 'dial_orden_cliente' ) ) {
 				$scope._keyDialOrden( key, altDerecho );
+			}
+
+			// ******** DIALOGO DE CANTIDAD ********
+			if ( $scope.modalOpen( 'dial_cantidad' ) ) {
+				$scope._keyCantidad( key, altDerecho );
 			}
 
 			// ******** DIALOGO DE LISTADO DE MENUS ********
@@ -921,7 +1065,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 			// CUANDO EL DIALOGO DE CANTIDAD DE ORDEN SELECCIONADA ESTE ABIERTA
 			if ( $scope.modalOpen( 'dial_menu_cantidad' ) ) {
-				$scope._keyDialMenuCantidad( key );
+				$scope._keyDialMenuCantidad( key, altDerecho );
 			}
 		}
 	});

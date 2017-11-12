@@ -182,6 +182,7 @@
 	</div>
 </div>
 
+
 <!-- NUEVA ORDEN -->
 <script type="text/ng-template" id="dial.orden.nueva.html">
     <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_nueva">
@@ -265,7 +266,7 @@
     </div>
 </script> 
 
-<!-- ADMINISTRAR ORDEN -->
+<!-- ORDEN CLIENTE -->
 <script type="text/ng-template" id="dial.orden.cliente.html">
     <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_cliente">
         <div class="modal-dialog modal-lg">
@@ -280,25 +281,39 @@
                 </div>
                 <div class="modal-body">
                 	<div class="row">
-                		<div class="col-xs-12 col-sm-6">
-                			<button class="btn btn-primary" ng-click="mostrarMenus( 'menu' )">
+                		<div class="col-xs-12" style="margin-bottom:5px">
+                			<button type="button" class="btn btn-primary" ng-click="openCantidad()">
                 				<span class="glyphicon glyphicon-plus"></span>
-                				<b><u>M</u>enú</b>
-                			</button>
-                			<button class="btn btn-primary" ng-click="mostrarMenus( 'combo' )">
-                				<span class="glyphicon glyphicon-plus"></span>
-                				<b><u>C</u>ombo</b>
+                				<b><u>A</u>gregar Menú</b>
                 			</button>
                 		</div>
-                        <div class="col-xs-12 col-sm-6">
-                            <div class="codigoRapido" ng-class="{'ok':(codigoRapido>0)}">
-                                <span ng-show="(codigoRapido>0)">{{codigoRapido}}</span>
-                                <span ng-hide="(codigoRapido>0)">Ingrese Código</span>
-                            </div>
-                        </div>
-                   </div>
-                   <div class="row">
                 		<div class="col-xs-12">
+							<ul class="nav nav-tabs">
+								<li ng-class="{'active':$parent.filtroServicio==''}">
+									<a href="" ng-click="$parent.filtroServicio=''">
+										<span class="badge">{{ordenActual.lstAgregar.length}}</span>
+										Todos
+									</a>
+								</li>
+								<li ng-class="{'active':$parent.filtroServicio==1}">
+									<a href="" ng-click="$parent.filtroServicio=1">
+										<span class="badge">{{ (ordenActual.lstAgregar | filter : { idTipoServicio : 1 } ).length }}</span>
+										Para Llevar
+									</a>
+								</li>
+								<li ng-class="{'active':$parent.filtroServicio==2}">
+									<a href="" ng-click="$parent.filtroServicio=2">
+										<span class="badge">{{ (ordenActual.lstAgregar | filter : { idTipoServicio : 2 } ).length }}</span>
+										Restaurante
+									</a>
+								</li>
+								<li ng-class="{'active':$parent.filtroServicio==3}">
+									<a href="" ng-click="$parent.filtroServicio=3">
+										<span class="badge">{{ (ordenActual.lstAgregar | filter : { idTipoServicio : 3 } ).length }}</span>
+										A Domicilio
+									</a>
+								</li>
+							</ul>
                 			<table class="table table-condensed table-hover">
                 				<thead>
                 					<tr>
@@ -309,23 +324,26 @@
                 					</tr>
                 				</thead>
                 				<tbody>
-                					<tr ng-repeat="item in ordenActual.lstAgregar track by $index">
+                					<tr ng-repeat="item in ordenActual.lstAgregar | filter : { idTipoServicio : $parent.filtroServicio } track by $index">
                 						<td>
-                							<button type="button" class="btn btn-xs btn-default" ng-click="ordenCantidad( $index, 0, item.cantidad, item.precio )">
+                							<button type="button" class="btn btn-xs btn-default" ng-click="ordenCantidad( ordenActual.lstAgregar.indexOf( item ), 0, item.cantidad, item.precio )">
                 								<span class="glyphicon glyphicon-minus"></span>
                 							</button>
                 							<b style="font-size:17px">{{item.cantidad}}</b>
-                							<button type="button" class="btn btn-xs btn-info" ng-click="ordenCantidad( $index, 1, item.cantidad, item.precio )">
+                							<button type="button" class="btn btn-xs btn-info" ng-click="ordenCantidad( ordenActual.lstAgregar.indexOf( item ), 1, item.cantidad, item.precio )">
                 								<span class="glyphicon glyphicon-plus"></span>
                 							</button>
                 						</td>
                 						<td>
                 							<span class="glyphicon glyphicon-gift" ng-show="item.tipoMenu=='combo'"></span>
-                							<span>{{item.menu}} » {{item.tipoServicio}}</span>
+                							<span>
+                								{{item.menu}} ({{item.tipoMenu}}) 
+                								<span class="label label-info" ng-show="item.observacion.length>2">{{item.observacion}}</span>
+                							</span>
                 						</td>
                 						<td>{{(item.precio*item.cantidad) | number:2}}</td>
                 						<td>
-                							<button type="button" class="btn btn-xs btn-danger" ng-click="quitarElemento( $index, item.cantidad, item.precio )">
+                							<button type="button" class="btn btn-xs btn-danger" ng-click="quitarElemento( ordenActual.lstAgregar.indexOf( item ), item.cantidad, item.precio )">
                 								<span class="glyphicon glyphicon-remove"></span>
                 							</button>
                 						</td>
@@ -354,6 +372,111 @@
         </div>
     </div>
 </script> 
+
+<!-- INGRESO DE CANTIDAD Y CODIGO DE MENU -->
+<script type="text/ng-template" id="dial.cantidad.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_cantidad">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-info">
+                <div class="modal-header panel-heading">
+                    <b>Ingrese Cantidad Menú</b>
+                </div>
+                <div class="modal-body">
+                	<div class="row">
+                		<div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                			<h3 class="text-center">Cantidad</h3>
+							<div class="input-group">
+								<span class="input-group-btn">
+		                            <button type="button" class="btn btn-lg btn-default" ng-click="$parent.cantidadInicial = changeInt( $parent.cantidadInicial, false, 1, 500 )">
+		                                <span class="glyphicon glyphicon-minus"></span>
+		                            </button>
+								</span>
+                				<input type="text" class="form-control input-lg" ng-model="$parent.cantidadInicial" id="cantidadInicial" numbers-only>
+								<span class="input-group-btn">
+		                            <button type="button" class="btn btn-lg btn-default" ng-click="$parent.cantidadInicial = changeInt( $parent.cantidadInicial, true, 1, 500 )">
+		                                <span class="glyphicon glyphicon-plus"></span>
+		                            </button>
+								</span>
+							</div>
+                		</div>
+            			<hr>
+                    </div>
+                    <!-- CODIGO O MODAL ( MENU | COMBO ) -->
+            		<div class="row" style="margin-top: 6px" ng-hide="menuActual.idMenu>0">
+                        <div class="col-xs-12">
+							<div class="input-group">
+								<span class="input-group-btn">
+		                			<button class="btn btn-lg btn-default" ng-click="mostrarMenus( 'menu' )">
+		                				<span class="glyphicon glyphicon-apple"></span>
+		                				<b class="hidden-xs"><u>M</u>enú</b>
+		                			</button>
+		                			<button class="btn btn-lg btn-default" ng-click="mostrarMenus( 'combo' )">
+		                				<span class="glyphicon glyphicon-gift"></span>
+		                				<b class="hidden-xs"><u>C</u>ombo</b>
+		                			</button>
+		                		</span>
+                        		<input type="text" class="form-control input-lg" ng-model="$parent.codigoRapido" placeholder="Código Rápido" id="codigoRapido" numbers-only>
+								<span class="input-group-btn">
+		                            <button type="button" class="btn btn-lg btn-primary" ng-click="consultaMenuPorCodigo()">
+		                                <span class="glyphicon glyphicon-search"></span>
+		                            </button>
+								</span>
+							</div>
+                            <!-- <div class="codigoRapido" ng-class="{'ok':(codigoRapido>0)}">
+                                <span ng-show="(codigoRapido>0)">{{codigoRapido}}</span>
+                                <span ng-hide="(codigoRapido>0)">Ingrese Código</span>
+                            </div> -->
+                        </div>
+                    </div>
+            		<div class="row" style="margin-top: 6px" ng-show="menuActual.idMenu>0">
+                		<div class="col-sm-6 col-xs-12 text-center">
+                			<span class="quitar" ng-click="cancelarMenu()">
+						        <span class="glyphicon glyphicon-remove"></span>
+						    </span>
+                			<img ng-src="{{menuActual.imagen}}" style="height:100px">
+                			<h4>{{menuActual.menu}} <kbd>{{tipoMenu}}</kbd></h4>
+                			<h3>Q. {{menuActual.precio | number:2}}</h3>
+                		</div>
+                		<div class="col-sm-6 col-xs-12">
+            				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=2,'btn-info':idTipoServicio==2}" 
+            					ng-click="$parent.idTipoServicio=2" style="margin-right:4px;margin-top:5px">
+            					<u>R</u>estaurante
+            					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==2"></span>
+            				</button>
+            			</div>
+                		<div class="col-sm-6 col-xs-12">
+            				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=1,'btn-info':idTipoServicio==1}" 
+            					ng-click="$parent.idTipoServicio=1" style="margin-right:4px;margin-top:5px">
+            					Para <u>L</u>levar
+            					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==1"></span>
+            				</button>
+            			</div>
+                		<div class="col-sm-6 col-xs-12">
+            				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=3,'btn-info':idTipoServicio==3}" 
+            					ng-click="$parent.idTipoServicio=3" style="margin-right:4px;margin-top:5px">
+            					A <u>D</u>omicilio
+            					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==3"></span>
+            				</button>
+            			</div>
+            			<div class="col-xs-12" style="margin-top:5px">
+                            <textarea ng-model="$parent.observacion" id="observacionMenu" rows="3" class="form-control" placeholder="Observación del menú"></textarea>
+            			</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                	<button type="button" class="btn btn-success" ng-click="agregarOrdenLista()">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        <b>Agregar (F6)</b>
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="$hide();dialOrdenCliente.show()">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <b>Regresar</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
 
 <!-- LISTADO DE MENUS -->
 <script type="text/ng-template" id="dial.orden-menu.html">
