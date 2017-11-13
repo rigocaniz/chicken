@@ -210,7 +210,6 @@ class Menu
 		return $menuPrecio;
 	}
 
-
 	// OBTENER TOTAL PRODUCTOS
 	function getTotalPagMenu( $limite = 25, $busqueda )
 	{

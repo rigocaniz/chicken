@@ -437,26 +437,31 @@
                 			<h4>{{menuActual.menu}} <kbd>{{tipoMenu}}</kbd></h4>
                 			<h3>Q. {{menuActual.precio | number:2}}</h3>
                 		</div>
-                		<div class="col-sm-6 col-xs-12">
+                		<div class="col-sm-6 col-xs-4">
             				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=2,'btn-info':idTipoServicio==2}" 
             					ng-click="$parent.idTipoServicio=2" style="margin-right:4px;margin-top:5px">
             					<u>R</u>estaurante
             					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==2"></span>
             				</button>
             			</div>
-                		<div class="col-sm-6 col-xs-12">
+                		<div class="col-sm-6 col-xs-4">
             				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=1,'btn-info':idTipoServicio==1}" 
             					ng-click="$parent.idTipoServicio=1" style="margin-right:4px;margin-top:5px">
             					Para <u>L</u>levar
             					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==1"></span>
             				</button>
             			</div>
-                		<div class="col-sm-6 col-xs-12">
+                		<div class="col-sm-6 col-xs-4">
             				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=3,'btn-info':idTipoServicio==3}" 
             					ng-click="$parent.idTipoServicio=3" style="margin-right:4px;margin-top:5px">
             					A <u>D</u>omicilio
             					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==3"></span>
             				</button>
+            			</div>
+                		<div class="col-xs-12" ng-show="lstSinDisponibilidad.length">
+							<p class="alert alert-danger" ng-repeat="item in lstSinDisponibilidad">
+								<kbd>{{item.producto}}</kbd> Requerido: <b>{{item.cantidadRequerida}} {{item.medida}}</b> > Disponible: <b>{{item.disponibilidad}} {{item.medida}}</b>
+							</p>
             			</div>
             			<div class="col-xs-12" style="margin-top:5px">
                             <textarea ng-model="$parent.observacion" id="observacionMenu" rows="3" class="form-control" placeholder="Observación del menú"></textarea>

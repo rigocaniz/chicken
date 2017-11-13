@@ -299,7 +299,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				imagen : menu.imagen,
 			};
 
-			datos = { opcion : 'cargarMenuPrecio', idMenu : menu.idMenu };
+			datos = { opcion : 'cargarMenuPrecio', idMenu : menu.idMenu, cantidad : $scope.cantidadInicial };
 		}
 		else if ( $scope.tipoMenu == 'combo' ) {
 			$scope.menuActual = {
@@ -307,20 +307,24 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				menu   : menu.combo,
 				imagen : menu.imagen,
 			};
-			datos = { opcion : 'cargarComboPrecio', idCombo : menu.idCombo };
+			datos = { opcion : 'cargarComboPrecio', idCombo : menu.idCombo, cantidad : $scope.cantidadInicial };
 		}
 
 		$scope.menuActual.precio    = 0;
 		$scope.menuActual.lstPrecio = [];
 		$scope.observacion          = "";
+		$scope.lstSinDisponibilidad = [];
 
 		$scope.$parent.loading = true; // cargando...
 		// CONSULTA PRECIOS DEL MENU
 		$http.post('consultas.php', datos )
 		.success(function (data) {
 			$scope.$parent.loading = false; // cargando...
-			if ( data.length )
-				$scope.menuActual.lstPrecio = data;
+
+			if ( data.lstPrecios && data.lstPrecios.length ) {
+				$scope.menuActual.lstPrecio = data.lstPrecios;
+				$scope.lstSinDisponibilidad = data.lstSinDisponibilidad;
+			}
 		});
 
 		$scope.dialOrdenMenu.hide();
@@ -486,14 +490,16 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 	// CONSULTA MENU POR CODIGO
+	$scope.lstSinDisponibilidad  = [];
 	$scope.consultaMenuPorCodigo = function () {
 		if ( $scope.$parent.loading )
 			return false;
 
 		if ( $scope.codigoRapido > 0 ) {
 			$scope.$parent.loading = true; // cargando...
+			$scope.lstSinDisponibilidad = [];
 
-			$http.post('consultas.php', { opcion : 'menuPorCodigo', codigoRapido : $scope.codigoRapido })
+			$http.post('consultas.php', { opcion : 'menuPorCodigo', codigoRapido : $scope.codigoRapido, cantidad : $scope.cantidadInicial })
 			.success(function (data) {
 				console.log( data );
 
@@ -501,11 +507,10 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 				$scope.codigoRapido    = "";
 
 				if ( data.tipoMenu != null ) {
-					$scope.menuActual  = data.menu;
-					$scope.tipoMenu    = data.tipoMenu;
-					$scope.observacion = "";
-					//$scope.dialCantidad.hide();
-					//$scope.dialMenuCantidad.show();
+					$scope.menuActual           = data.menu;
+					$scope.tipoMenu             = data.tipoMenu;
+					$scope.observacion          = "";
+					$scope.lstSinDisponibilidad = data.menu.lstSinDisponibilidad;
 				}
 				
 				else{

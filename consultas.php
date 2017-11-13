@@ -104,7 +104,13 @@ switch ( $data->opcion )
 
 	case 'cargarMenuPrecio':		// DATOS MENU PRECIO
 		$menu = new Menu();
-		echo json_encode( $menu->cargarMenuPrecio( $data->idMenu ) );
+		$orden = new Orden();
+		echo json_encode( 
+			array(
+				'lstPrecios'           => $menu->cargarMenuPrecio( $data->idMenu ),
+				'lstSinDisponibilidad' => $orden->obtenerDisponiblidad( $data->cantidad, $data->idMenu, NULL ),
+			)
+		);
 		break;
 
 	case 'cargarCombo':				// DATOS COMBO
@@ -119,7 +125,13 @@ switch ( $data->opcion )
 
 	case 'cargarComboPrecio':		// DATOS COMBO DETALLE
 		$combo = new Combo();
-		echo json_encode( $combo->cargarComboPrecio( $data->idCombo, @$data->idTipoServicio ) );
+		$orden = new Orden();
+		echo json_encode( 
+			array(
+				'lstPrecios'           => $combo->cargarComboPrecio( $data->idCombo, @$data->idTipoServicio ),
+				'lstSinDisponibilidad' => $orden->obtenerDisponiblidad( $data->cantidad, NULL, $data->idCombo ),
+			)
+		);
 		break;
 
 	case 'cargarSuperCombo':		// DATOS SUPER COMBO
@@ -522,7 +534,7 @@ switch ( $data->opcion )
 
 	case 'menuPorCodigo':
 		$orden = new Orden();
-		echo json_encode( $orden->menuPorCodigo( $data->codigoRapido ) );
+		echo json_encode( $orden->menuPorCodigo( $data->codigoRapido, $data->cantidad ) );
 		break;
 
 	case 'busquedaTicket':

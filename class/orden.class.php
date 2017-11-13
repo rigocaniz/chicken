@@ -873,7 +873,7 @@ class Orden
 		return $lst;
  	}
 
- 	public function menuPorCodigo( $codigoRapido )
+ 	public function menuPorCodigo( $codigoRapido, $cantidad )
  	{
 		$datos        = (object)array( "menu" => NULL, "tipoMenu" => NULL );
 		$codigoRapido = (int)$codigoRapido;
@@ -893,12 +893,13 @@ class Orden
 
 					$datos->tipoMenu = 'menu';
 					$datos->menu     = (object)array(
-						'idMenu'    => $info->idMenu,
-						'menu'      => $info->menu,
-						'imagen'    => $info->imagen,
-						'cantidad'  => 1,
-						'precio'    => 0.00,
-						'lstPrecio' => $menu->cargarMenuPrecio( $row->idMenu )
+						'idMenu'               => $info->idMenu,
+						'menu'                 => $info->menu,
+						'imagen'               => $info->imagen,
+						'cantidad'             => 1,
+						'precio'               => 0.00,
+						'lstPrecio'            => $menu->cargarMenuPrecio( $row->idMenu ),
+						'lstSinDisponibilidad' => $this->obtenerDisponiblidad( $cantidad, $row->idMenu, NULL ),
 					);
 				}
 
@@ -909,12 +910,13 @@ class Orden
 
 					$datos->tipoMenu = 'combo';
 					$datos->menu     = (object)array(
-						'idMenu'    => $info->idCombo,
-						'menu'      => $info->combo,
-						'imagen'    => $info->imagen,
-						'cantidad'  => 1,
-						'precio'    => 0.00,
-						'lstPrecio' => $combo->cargarComboPrecio( $row->idMenu )
+						'idMenu'               => $info->idCombo,
+						'menu'                 => $info->combo,
+						'imagen'               => $info->imagen,
+						'cantidad'             => 1,
+						'precio'               => 0.00,
+						'lstPrecio'            => $combo->cargarComboPrecio( $row->idMenu ),
+						'lstSinDisponibilidad' => $this->obtenerDisponiblidad( $cantidad, NULL, $row->idMenu ),
 					);
 				}
 
@@ -923,6 +925,40 @@ class Orden
 
  		return $datos;
  	}
+
+ 	public function obtenerDisponiblidad( $cantidad, $idMenu, $idCombo )
+	{
+		$sinDisponiblidad = array();
+		
+		$cantidad = (int)$cantidad;
+		$idMenu   = (int)$idMenu ?: 'NULL';
+		$idCombo  = (int)$idCombo ?: 'NULL';
+
+		$sql = "SELECT obtenerDisponiblidad( {$idMenu}, {$idCombo}, {$cantidad} ) AS 'resultado'";
+
+		$rs = $this->con->query( $sql );
+
+		if( $rs AND $row = $rs->fetch_object() ):
+
+			$productos = explode( "=r=", $row->resultado );
+
+			foreach ( $productos as $producto )
+			{
+				$producto = explode( "#i#", $producto );
+
+				if ( count( $producto ) == 4 )
+					$sinDisponiblidad[] = array(
+						"cantidadRequerida" => $producto[ 0 ],
+						"disponibilidad"    => $producto[ 1 ],
+						"producto"          => $producto[ 2 ],
+						"medida"            => $producto[ 3 ],
+					);
+			}
+
+		endif;
+
+		return $sinDisponiblidad;
+	}
 
  	public function busquedaTicket( $ticket )
  	{
