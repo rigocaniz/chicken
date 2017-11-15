@@ -40,7 +40,7 @@ app.config(function($routeProvider) {
         templateUrl:'view/mantenimiento.php',
         controller:'crtlMantenimiento'
     })
-    .when('/factura',{
+    .when('/factura/:idOrdenCliente?',{
         templateUrl:'view/factura.php',
         controller:'facturaCtrl'
     })

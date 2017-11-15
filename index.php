@@ -22,6 +22,10 @@
     <link rel="stylesheet" href="css/fileinput.css">
 </head>
 <body ng-controller="inicioCtrl" ng-keydown="pressKey( $event.keyCode, ( $event.altKey && $event.ctrlKey ), $event );">
+    <div id="divFocus">
+        <h2>Haga clic aquí</h2>
+    </div>
+
     <input type="hidden" id="resuFoni" value="<?= $token; ?>">
     <div class="cargando" id="cargando" ng-show="loading">
         <div class="loading-bro">

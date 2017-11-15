@@ -49,8 +49,8 @@
                 <button type="button" class="list-group-item" ng-repeat="item in lstOrdenCliente track by $index" ng-class="{'active':$index==miIndex}"
                     ng-click="seleccionarTicket( item.idOrdenCliente )" ng-hide="deBusqueda">
                     <span class="tkt-active"></span>
-                    <span class="glyphicon glyphicon-bookmark"></span>
-                    {{item.numeroTicket}}
+                    <span class="glyphicon" ng-class="{'glyphicon-bookmark':(item.numeroTicket>0), 'glyphicon-home':!(item.numeroTicket>0)}"></span>
+                    {{(item.numeroTicket>0?item.numeroTicket:item.idOrdenCliente)}}
                     <span class="badge">{{item.numMenu}}</span>
                 </button>
             </div>
@@ -90,8 +90,12 @@
                         <span class="badge-ticket">Ticket # {{infoOrden.numeroTicket}}</span>
                     </h4>
                 </div>
-                <div class="col-sm-6 col-xs-12 text-right" ng-show="infoOrden.idEstadoOrden==1">
-                    <button type="button" class="btn btn-sm btn-danger" ng-click="dialOrdenCancelar.show();comentario=''">
+                <div class="col-sm-6 col-xs-12 text-right">
+                	<a href="#/factura/{{infoOrden.idOrdenCliente}}" class="btn btn-sm btn-primary">
+                        <span class="glyphicon glyphicon-shopping-cart"></span>
+                        <b>Facturar</b> (F10)
+                    </a>
+                    <button type="button" class="btn btn-sm btn-danger" ng-click="dialOrdenCancelar.show();comentario=''" ng-show="infoOrden.idEstadoOrden==1">
                         <span class="glyphicon glyphicon-remove"></span>
                         <b>Cancelar Orden</b>
                     </button>
@@ -252,6 +256,10 @@
                    </div>
                 </div>
                 <div class="modal-footer">
+                	<button type="button" class="btn btn-primary" ng-click="agregarOrden( 'domicilio' )" ng-disabled="noTicket>0">
+                        <span class="glyphicon glyphicon-plus-sign"></span>
+                        <b>A <u>D</u>omicilio</b>
+                    </button>
                 	<button type="button" class="btn btn-success" ng-click="agregarOrden()">
                         <span class="glyphicon glyphicon-plus-sign"></span>
                         <b>Agregar Ticket</b>
@@ -307,7 +315,7 @@
 										Restaurante
 									</a>
 								</li>
-								<li ng-class="{'active':$parent.filtroServicio==3}">
+								<li ng-class="{'active':$parent.filtroServicio==3, 'inactive':ordenActual.noTicket>0}">
 									<a href="" ng-click="$parent.filtroServicio=3">
 										<span class="badge">{{ (ordenActual.lstAgregar | filter : { idTipoServicio : 3 } ).length }}</span>
 										A Domicilio
@@ -422,10 +430,6 @@
 		                            </button>
 								</span>
 							</div>
-                            <!-- <div class="codigoRapido" ng-class="{'ok':(codigoRapido>0)}">
-                                <span ng-show="(codigoRapido>0)">{{codigoRapido}}</span>
-                                <span ng-hide="(codigoRapido>0)">Ingrese Código</span>
-                            </div> -->
                         </div>
                     </div>
             		<div class="row" style="margin-top: 6px" ng-show="menuActual.idMenu>0">
@@ -439,22 +443,22 @@
                 		</div>
                 		<div class="col-sm-6 col-xs-4">
             				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=2,'btn-info':idTipoServicio==2}" 
-            					ng-click="$parent.idTipoServicio=2" style="margin-right:4px;margin-top:5px">
-            					<u>R</u>estaurante
+            					ng-click="$parent.idTipoServicio=2" ng-disabled="!(ordenActual.noTicket>0)" style="margin-right:4px;margin-top:5px">
+            					<b><u>R</u>estaurante</b>
             					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==2"></span>
             				</button>
             			</div>
                 		<div class="col-sm-6 col-xs-4">
             				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=1,'btn-info':idTipoServicio==1}" 
-            					ng-click="$parent.idTipoServicio=1" style="margin-right:4px;margin-top:5px">
-            					Para <u>L</u>levar
+            					ng-click="$parent.idTipoServicio=1" ng-disabled="!(ordenActual.noTicket>0)" style="margin-right:4px;margin-top:5px">
+            					<b>Para <u>L</u>levar</b>
             					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==1"></span>
             				</button>
             			</div>
                 		<div class="col-sm-6 col-xs-4">
             				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=3,'btn-info':idTipoServicio==3}" 
-            					ng-click="$parent.idTipoServicio=3" style="margin-right:4px;margin-top:5px">
-            					A <u>D</u>omicilio
+            					ng-click="$parent.idTipoServicio=3" ng-disabled="ordenActual.noTicket>0" style="margin-right:4px;margin-top:5px">
+            					<b>A <u>D</u>omicilio</b>
             					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==3"></span>
             				</button>
             			</div>

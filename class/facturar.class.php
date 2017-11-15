@@ -337,21 +337,23 @@ class Factura
 				$row->cobrarTodo = TRUE;
 
 				$detalle = (object)array(
-						'idCombo'             => $row->idCombo,
-						'idMenu'              => $row->idMenu,
-						'esCombo'             => $row->perteneceCombo,
-						'cantidad'            => 0,
-						'maximo'              => 0,
-						'descuento'           => 0,
-						'precioMenu'          => (double)$precioMenu,
-						'cobrarTodo'          => $row->cobrarTodo,
-						'descripcion'         => ( $row->perteneceCombo ? $row->combo : $row->menu ),
-						'idTipoServicio'      => $row->idTipoServicio,
-						'tipoServicio'        => $row->tipoServicio,
-						'comentario'          => '',
-						'idDetalleOrdenMenu'  => $row->idDetalleOrdenMenu,
-						'idDetalleOrdenCombo' => $row->idDetalleOrdenCombo,
-						'lstDetalle'          => array()
+						'idCombo'              => $row->idCombo,
+						'idMenu'               => $row->idMenu,
+						'esCombo'              => $row->perteneceCombo,
+						'cantidad'             => 0,
+						'maximo'               => 0,
+						'descuento'            => 0,
+						'precioMenu'           => (double)$precioMenu,
+						'cobrarTodo'           => $row->cobrarTodo,
+						'descripcion'          => ( $row->perteneceCombo ? $row->combo : $row->menu ),
+						'idTipoServicio'       => $row->idTipoServicio,
+						'tipoServicio'         => $row->tipoServicio,
+						'comentario'           => '',
+						'idEstadoDetalleOrden' => $row->idEstadoDetalleOrden,
+						'estadoDetalleOrden'   => $row->estadoDetalleOrden,
+						'idDetalleOrdenMenu'   => $row->idDetalleOrdenMenu,
+						'idDetalleOrdenCombo'  => $row->idDetalleOrdenCombo,
+						'lstDetalle'           => array(),
 					);
 
 				if( $agrupado )

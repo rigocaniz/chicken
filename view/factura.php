@@ -37,13 +37,38 @@
 							</div>
 							<div class="panel-body">
 								<form class="form-horizontal" role="form" autocomplete="off" novalidate>
+                                    <div class="form-group">
+                                        <label class="col-sm-1 control-label">TICKET</label>
+                                        <div class="col-sm-4 col-md-3 col-lg-2">
+                                            <div ng-show="!facturacion.numeroTicket">
+                                                 <input type="text" id="ticket" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="buscarTicket">
+                                            </div>
+                                            <div ng-show="facturacion.numeroTicket">
+                                                <input type="text" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="facturacion.numeroTicket" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <button type="button" class="btn btn-info" ng-click="buscarOrdenTicket()" ng-show="!facturacion.numeroTicket">
+                                                <span class="glyphicon glyphicon-search"></span> Buscar
+                                            </button>
+                                            <button type="button" class="btn btn-warning" ng-click="facturacion.numeroTicket=null;" ng-show="facturacion.numeroTicket">
+                                                <span class="glyphicon glyphicon-refresh"></span> Cambiar
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-4 text-right">
+                                            <h4>
+                                                <b># Orden:</b>
+                                                {{infoOrden.idOrdenCliente}}
+                                            </h4>
+                                        </div>
+                                    </div>
 									<div class="form-group">
 										<label class="col-sm-2 control-label">BUSCAR CLIENTE</label>
 										<div class="col-sm-4">
 											<input type="text" id="searchPrincipal" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )">
 										</div>
 										<div class="col-sm-4">
-											<button type="button" class="btn btn-warning" ng-click="buscarCliente( facturacion.datosCliente.nit, 'principal' );" readonly>
+											<button type="button" class="btn btn-warning" ng-click="buscarCliente( txtCliente, 'principal' );" readonly>
 												<span class="glyphicon glyphicon-search"></span>
 											</button>
 										</div>
@@ -51,7 +76,7 @@
 									<div class="form-group">
 										<label class="col-sm-1 control-label">NIT</label>
 										<div class="col-sm-4">
-											<input type="text" class="form-control" ng-model="facturacion.datosCliente.nit" ng-disabled="facturacion.datosCliente.idCliente!=1">
+											<input type="text" class="form-control" ng-model="facturacion.datosCliente.nit" ng-disabled="facturacion.datosCliente.idCliente!=1" id="cliente_nit" focus-enter>
 										</div>
 										<div class="col-sm-2 col-md-1">
 											<button type="button" class="btn btn-info" ng-click="editarCliente( facturacion.datosCliente, 'mostrar' );" ng-show="facturacion.datosCliente.idCliente && facturacion.datosCliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
@@ -66,29 +91,12 @@
 									<div class="form-group">
 										<label class="col-sm-1 control-label">NOMBRE</label>
 										<div class="col-sm-4">
-											<input type="text" class="form-control" ng-model="facturacion.datosCliente.nombre" ng-disabled="facturacion.datosCliente.idCliente!=1">
+											<input type="text" class="form-control" ng-model="facturacion.datosCliente.nombre" ng-disabled="facturacion.datosCliente.idCliente!=1" focus-enter>
 										</div>
 										<label class="col-sm-2 col-lg-1 control-label">DIRECCION</label>
 										<div class="col-sm-5 col-lg-6">
-											<input type="text" class="form-control" ng-model="facturacion.datosCliente.direccion" ng-disabled="facturacion.datosCliente.idCliente!=1">
+											<input type="text" class="form-control" ng-model="facturacion.datosCliente.direccion" ng-disabled="facturacion.datosCliente.idCliente!=1" focus-enter>
 										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-1 control-label">TICKET</label>
-										<div class="col-sm-4 col-md-3 col-lg-2">
-                                            <div ng-show="!facturacion.numeroTicket">
-											     <input type="text" id="ticket" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="buscarTicket" ng-disabled="!facturacion.datosCliente.idCliente">
-                                            </div>
-                                            <div ng-show="facturacion.numeroTicket">
-                                                <input type="text" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="facturacion.numeroTicket" disabled>
-                                            </div>
-										</div>
-										<button type="button" class="btn btn-info" ng-click="buscarOrdenTicket()" ng-show="!facturacion.numeroTicket">
-                                            <span class="glyphicon glyphicon-search"></span> Buscar
-										</button>
-                                        <button type="button" class="btn btn-warning" ng-click="facturacion.numeroTicket=null;" ng-show="facturacion.numeroTicket">
-                                            <span class="glyphicon glyphicon-refresh"></span> Cambiar
-                                        </button>
 									</div>
                                     <div class="row">
                                         <div class="col-xs-4 col-sm-5 col-md-3 col-lg-4">
@@ -105,7 +113,7 @@
                                                 <div class="form-group input-sm" ng-repeat="formaPago in facturacion.lstFormasPago">
                                                     <label class="col-md-12 control-label">{{ formaPago.formaPago | uppercase }}</label>
                                                     <div class="col-md-12 monto">
-                                                        <input type="number" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" class="form-control" ng-model="formaPago.monto">
+                                                        <input type="number" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" class="form-control" ng-model="formaPago.monto" focus-enter>
                                                     </div>
                                                 </div>
                                                 <div class="form-group input-sm">
@@ -121,7 +129,7 @@
                                                 <div class="form-group">
                                                     <div class="text-center">
                                                         <button type="button" class="btn btn-info" ng-click="consultaFacturaCliente()">
-                                                            <span class="glyphicon glyphicon-saved"></span> <strong><u>F</u></strong>ACTURAR
+                                                            <span class="glyphicon glyphicon-saved"></span> <b><u>F</u>ACTURAR</b> (F6)
                                                         </button>
                                                     </div>
                                                 </div>
@@ -338,7 +346,7 @@
 
 <!-- DIALOGO BUSCAR / LISTAR CLIENTES -->
 <script type="text/ng-template" id="dial.accionCliente.html">
-    <div class="modal" tabindex="-1" role="dialog">
+    <div class="modal" tabindex="-1" role="dialog" id="dial_accionCliente">
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-info">
                 <div class="modal-header panel-heading text-center">
@@ -406,7 +414,7 @@
 								<div class="form-group">
 									<label class="col-sm-2 control-label">NIT</label>
 									<div class="col-sm-3">
-										<input type="text" ng-model="$parent.cliente.nit" class="form-control" id="nit" ng-pattern="/^[0-9-\s]+?$/" maxlength="15">
+										<input type="text" ng-model="$parent.cliente.nit" class="form-control" id="nit" ng-pattern="/^[0-9-\s]+?$/" maxlength="15" focus-enter>
 									</div>
 									<div class="col-sm-6">
 										<div class="text-right">
@@ -419,23 +427,23 @@
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Nombre</label>
 									<div class="col-sm-9 col-md-8">
-										<input type="text" class="form-control" ng-model="$parent.cliente.nombre" maxlength="65">
+										<input type="text" class="form-control" ng-model="$parent.cliente.nombre" maxlength="65" focus-enter>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Cui (DPI)</label>
 									<div class="col-sm-4 col-md-3">
-										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="$parent.cliente.cui">
+										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="$parent.cliente.cui" focus-enter>
 									</div>
 									<label class="col-sm-2 control-label">Correo</label>
 									<div class="col-sm-4 col-md-3">
-										<input type="email" class="form-control"  maxlength="65" ng-model="$parent.cliente.correo">
+										<input type="email" class="form-control"  maxlength="65" ng-model="$parent.cliente.correo" focus-enter>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Telefono</label>
 									<div class="col-sm-4 col-md-3">
-										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="8" ng-model="$parent.cliente.telefono">
+										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="8" ng-model="$parent.cliente.telefono" focus-enter>
 									</div>
 									<label class="col-sm-2 control-label">Tipo Cliente</label>
 									<div class="col-sm-4">

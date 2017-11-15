@@ -256,3 +256,16 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     //$scope.tipo = null;
 
 });
+
+
+/*
+window.onfocus = function() {
+    console.log( "Focus" );
+    $("#divFocus").removeClass("noFocusApp");
+};
+
+window.onblur = function() {
+    console.log( "Blur" );
+    $("#divFocus").addClass("noFocusApp");
+};
+*/

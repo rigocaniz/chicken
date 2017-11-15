@@ -499,7 +499,8 @@ switch ( $data->opcion )
 		//////////////////////////////////
 	case 'lstDetalleOrden':// 	prueba
 		$factura = new Factura();
-		$todo = isset( $data->todo ) ? $data->todo : false ;
+		//$todo = isset( $data->todo ) ? $data->todo : false ;
+		$todo = true;
 		echo json_encode( $factura->lstDetalleOrdenCliente( $data->idOrdenCliente, $todo, $data->agrupado ) );
 		break;
 
@@ -539,7 +540,7 @@ switch ( $data->opcion )
 
 	case 'busquedaTicket':
 		$orden = new Orden();
-		echo json_encode( $orden->busquedaTicket( $data->ticket ) );
+		echo json_encode( $orden->busquedaTicket( $data->ticket, @$data->idOrdenCliente ) );
 		break;
 
 	// CANCELAR ORDEN PARCIALMENTE

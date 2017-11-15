@@ -26,14 +26,13 @@ class Orden
  	{
  		// INICIALIZACIÓN DE VARIABLES
 		$idOrdenCliente     = "NULL";
-		$numeroTicket       = "NULL";
 		$usuarioResponsable = "NULL";
 		$usuarioBarra       = "NULL";
 		$idEstadoOrden      = "NULL";
 
 		// SETEO DE VARIABLES
-		$data->numeroTicket = isset( $data->numeroTicket ) ? (int)$data->numeroTicket	 : "NULL";
-		$lstUsuarios        = isset( $data->lstU ) ? $data->lstU : array();
+		$numeroTicket = ( isset( $data->numeroTicket ) && $data->numeroTicket > 0 ) ? (int)$data->numeroTicket : "NULL";
+		$lstUsuarios  = isset( $data->lstU ) ? $data->lstU : array();
 
 		// VERIFICA EL ULTIMO USUARIO
 		$usuarioResponsable = $this->usuarioResponsable( 'cocina', $lstUsuarios );
@@ -51,24 +50,25 @@ class Orden
 		$comentario = ( isset( $data->comentario ) AND strlen( $data->comentario ) > 3 ) ? "'" . $data->comentario . "'" : "NULL";
 
 		// VALIDACIONES
-		if( $accion == 'insert' ):
+		/*if( $accion == 'insert' ):
 			// OBLIGATORIOS
 			$numeroTicket = $validar->validarEntero( $data->numeroTicket, NULL, TRUE, 'El No. de Ticket no es válido' );
 
-		else:
+		else:*/
 
-			// SETEO DE VARIABLES
-			$data->idOrdenCliente = (int)$data->idOrdenCliente > 0	? (int)$data->idOrdenCliente : "NULL";
-			$data->idEstadoOrden  = isset( $data->idEstadoOrden )	? (int)$data->idEstadoOrden	 : "NULL";
 
-			// OBLIGATORIOS
-			$idOrdenCliente = $validar->validarEntero( $data->idOrdenCliente, NULL, TRUE, 'El No. de Orden no es válido' );
+		//endif;
 
-			if( $accion == 'update' ):
-				$numeroTicket = $validar->validarEntero( $data->numeroTicket, NULL, TRUE, 'El No. de Ticket es válido' );
-			
-			endif;
+		// SETEO DE VARIABLES
+		$idOrdenCliente = ( isset( $data->idOrdenCliente ) && (int)$data->idOrdenCliente > 0 )? (int)$data->idOrdenCliente : "NULL";
+		$data->idEstadoOrden  = isset( $data->idEstadoOrden )	? (int)$data->idEstadoOrden	 : "NULL";
 
+		// OBLIGATORIOS
+		//$idOrdenCliente = $validar->validarEntero( $data->idOrdenCliente, "NULL", FALSE, 'El No. de Orden no es válido' );
+
+		if( $accion == 'update' ):
+			$numeroTicket = $validar->validarEntero( $data->numeroTicket, NULL, TRUE, 'El No. de Ticket es válido' );
+		
 		endif;
 
 
@@ -81,7 +81,7 @@ class Orden
 		 	$this->con->query( "START TRANSACTION" );
 
 	 		$sql = "CALL consultaOrdenCliente( '{$accion}', {$idOrdenCliente}, {$numeroTicket}, '{$usuarioResponsable}', {$idEstadoOrden}, '{$usuarioBarra}', $comentario )";
-	 		
+
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 		@$this->con->next_result();
 		 		$this->con->query( "COMMIT" );// CONFIRMA TRANSACCION
@@ -960,9 +960,15 @@ class Orden
 		return $sinDisponiblidad;
 	}
 
- 	public function busquedaTicket( $ticket )
+ 	public function busquedaTicket( $ticket, $idOrdenCliente = 0 )
  	{
  		$lst = array();
+
+ 		if ( (int)$ticket > 0 )
+ 			$where = " AND numeroTicket = {$ticket} ";
+
+ 		else
+ 			$where = " AND idOrdenCliente = {$idOrdenCliente} ";
 
  		$sql = "SELECT
 					idOrdenCliente,
@@ -974,8 +980,8 @@ class Orden
 				    fechaRegistro,
 				    numMenu
 				FROM vOrdenCliente 
-				WHERE ( DATE( fechaRegistro ) = CURDATE() OR idEstadoOrden = 1 ) AND numeroTicket = {$ticket}
-				ORDER BY idOrdenCliente DESC;";
+				WHERE DATE( fechaRegistro ) >= DATE_SUB( CURDATE(), INTERVAL 1 DAY ) $where
+				ORDER BY idOrdenCliente DESC LIMIT 5";
 
 		if ( $rs = $this->con->query( $sql ) ) {
 

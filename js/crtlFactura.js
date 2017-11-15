@@ -1,4 +1,4 @@
-app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
+app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeParams ){
 	
 	$scope.accionCliente     = 'ninguna';
 	$scope.menuFactura       = 'facturar';
@@ -13,6 +13,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		},
 		agrupado: true,
 		idEstadoFactura : 1,
+		idOrdenCliente  : null,
 		numeroTicket    : null,
 		noFactura       : null,
 		total           : 0,
@@ -82,16 +83,17 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		return vuelto;
 	};
 
-	$scope.dialAccionCliente = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialAccionCliente = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialOrdenBusqueda = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialPrintFactura  = $modal({scope: $scope,template:'dial.printFactura.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialReimpresion   = $modal({scope: $scope,template:'dial.reimpresion.html', show: false, backdrop:false, keyboard: true });	
 
 	$scope.seleccionarDeBusqueda = function ( orden ) {
-		console.log( orden );
 		$scope.miIndex = -1;
 		$scope.dialOrdenBusqueda.hide();
-		$scope.facturacion.numeroTicket = angular.copy( parseInt( orden.numeroTicket ) );
+		$scope.facturacion.numeroTicket   = angular.copy( parseInt( orden.numeroTicket ) );
+		$scope.facturacion.idOrdenCliente = angular.copy( parseInt( orden.idOrdenCliente ) );
+
 		$timeout(function () {
 			$scope.modalInfo( orden, true );
 		});
@@ -101,7 +103,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		type      : 'g',
 		idFactura : null
 	};
-	$scope.consultaFacturaCliente = function(){
+
+	$scope.consultaFacturaCliente = function() {
 		$scope.facturacion.total = $scope.retornarTotal();
 		var factura = $scope.facturacion;
 		
@@ -147,13 +150,12 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	
 	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% DIALOGO PARA MAS INFORMACION DE ORDEN %%%%%%%%%%%%%%%%%%%%%% */
 	$scope.consultarDetalleOrden = function(){
-		$scope.buscarOrdenTicket();
+		$scope.buscarOrdenTicket( $scope.facturacion.idOrdenCliente );
 	};
 
 	$scope.infoOrden = {};
 	$scope.deBusqueda = false;
 	$scope.modalInfo = function ( orden, deBusqueda ) {
-		console.log("cargandoORDEN::: " , orden);
 		if ( $scope.$parent.loading )
 			return false;
 
@@ -195,6 +197,17 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
 		if ( $scope.$parent.loading )
 			return false;
+
+		// SI EL DIALOGO DE AGREGAR CLIENTE ESTA ABIERTO
+		if ( $scope.modalOpen( 'dial_accionCliente' ) )
+		{
+			if ( key == 117 )
+				$scope.consultaCliente()
+		}
+
+		// SI ES PANTALLA PRINCIPAL Y PRESIONAR LA TECLA {F6}
+		if ( !$scope.modalOpen() && key == 117 )
+			$scope.consultaFacturaCliente();
 
 		// TECLA C
 		if ( altDerecho && key == 67 ) {
@@ -241,11 +254,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		else
 			return !!( $( '#' + _name ).data() && $( '#' + _name ).data().$scope.$isShown );
 	};
-
-
-	$timeout(function(){
-		$('#searchPrincipal').focus();
-	}, 150);
 	
 	$scope.cliente  = {
         'nit'           : null,
@@ -297,8 +305,10 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 		if( $scope.accionCliente == 'agregar' ){
 			$scope.resetValores( 'cliente' );
 			$scope.accion = 'insert';
+			$timeout(function () {
+				$("#nit").focus();
+			});
 		}
-
 	});
 
 	$scope.lstDetalleOrden = [];
@@ -323,10 +333,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
         if( !(cliente.nombre && cliente.nombre.length >= 3) )
             alertify.notify('El nombre debe tener más de 2 caracteres', 'warning', 4);
 		
-		else if( cliente.cui == undefined )
-			alertify.notify('El No. de CUI es inválido', 'warning', 3);	
-		
-		else if( cliente.cui.length >= 1 && !(cliente.cui.length == 13) )
+		else if( cliente.cui != undefined && cliente.cui.length >= 1 && !(cliente.cui.length == 13) )
 			alertify.notify('El No. de CUI debe tener 13 dígitos', 'warning', 3);	
         
         else {
@@ -376,17 +383,21 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
     }
 
    	$scope.lstTicketBusqueda = [];
-	$scope.buscarOrdenTicket = function () {
+	$scope.buscarOrdenTicket = function ( idOrdenCliente ) {
 
 		if ( $scope.$parent.loading )
 			return false;
 
-		if ( $scope.buscarTicket > 0 ) {
+		if ( $scope.buscarTicket > 0 || ( idOrdenCliente && idOrdenCliente > 0 ) ) {
 			$scope.lstTicketBusqueda = [];
 			$scope.$parent.loading = true; // cargando...
 			
 			// CONSULTA TIPO DE SERVICIOS
-			$http.post('consultas.php', { opcion : 'busquedaTicket', ticket : $scope.buscarTicket })
+			$http.post('consultas.php', { 
+				opcion         : 'busquedaTicket',
+				ticket         : $scope.buscarTicket,
+				idOrdenCliente : idOrdenCliente
+			})
 			.success(function (data) {
 				console.log( "TICKET:::", data );
 				$scope.$parent.loading = false; // cargando...
@@ -417,12 +428,14 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			$scope.facturacion.datosCliente.direccion = '';
 			$scope.txtCliente = '';
 			$scope.lstClientes = [];
-			$timeout(function(){
+			/*$timeout(function(){
 				$('#buscador').focus();
 			});
-	        $scope.dialAccionCliente.show();
+	        $scope.dialAccionCliente.show();*/
+	        valor = 'cf';
 		}
-		else if( valor.length >= 1 ){
+		
+		if( valor.length >= 1 ){
 			
 			if( accion == 'principal' )
 				$scope.accionCliente = 'ninguna';
@@ -438,8 +451,10 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 					$scope.facturacion.datosCliente.direccion = '';
 	            	$scope.txtCliente = '';
 	            	$scope.dialAccionCliente.show();
+
+	            	$scope.accionCliente = 'agregar';
 	            	$timeout(function(){
-	            		$( '#buscador' ).focus();
+	            		$( '#nit' ).focus();
 	            	});
 	            }
 	            if( accion == 'busqueda' && data.length == 0 ) {
@@ -454,8 +469,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 	            		$scope.dialAccionCliente.hide();
 
 	        		$timeout(function(){
-                    	$( '#ticket' ).focus();
-                    }, 150);
+                    	$( '#cliente_nit' ).focus();
+                    });
 	        	}
 	            else if( data.length >= 1 ){
 					$scope.lstClientes   = data;
@@ -468,4 +483,16 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout ){
 			alertify.notify( 'Ingrese un dato para consultar', 'info', 3 );
 	};
 
+	// SI EXISTE ORDEN DE CLIENTE
+	if ( $routeParams.idOrdenCliente && $routeParams.idOrdenCliente > 0 )
+	{
+		$scope.buscarOrdenTicket( $routeParams.idOrdenCliente );
+		$timeout(function(){
+			$('#searchPrincipal').focus();
+		});
+	}
+	else
+		$timeout(function(){
+			$('#ticket').focus();
+		});
 });

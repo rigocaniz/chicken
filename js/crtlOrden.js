@@ -61,6 +61,14 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.openCantidad = function () {
 		$scope.cantidadInicial = 1;
 
+		if ( !( $scope.ordenActual.noTicket > 0 ) )
+			$scope.idTipoServicio = 3;
+		else if ( $scope.ordenActual.noTicket > 0 )
+		{
+			if ( $scope.idTipoServicio == 3 )
+				$scope.idTipoServicio = 1;
+		}
+
 		$scope.dialOrdenCliente.hide();
 		$scope.dialCantidad.show();
 		$timeout(function () {
@@ -189,13 +197,18 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 	// #2 => CREA UNA NUEVA ORDEN
-	$scope.agregarOrden = function () {
+	$scope.agregarOrden = function ( domicilio ) {
 		if ( $scope.$parent.loading )
 			return false;
 
 		$scope.codigoRapido = "";
 		
-		if ( parseInt( $scope.noTicket ) > 0 )
+		if ( !( parseInt( $scope.noTicket ) > 0 ) && domicilio != 'domicilio' )
+		{
+			alertify.set('notifier','position', 'top-right');
+			alertify.notify('Número de Ticket NO Válido', 'danger', 4);
+		}
+		else
 		{
 			$scope.$parent.loading = true; // cargando...
 
@@ -232,9 +245,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 				}
 			});
-		} else {
-			alertify.set('notifier','position', 'top-right');
-			alertify.notify('Número de Ticket NO Válido', 'danger', 4);
 		}
 	};
 
@@ -473,6 +483,12 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 					
 					$scope.dialOrdenCliente.hide();
 					$scope.ordenActual.lstAgregar = [];
+
+					// SI EL PEDIDO ES A DOMICILIO
+					$timeout(function () {
+						if ( !( $scope.ordenActual.noTicket > 0 ) )
+							window.location.href = "#/factura/" + $scope.infoOrden.idOrdenCliente;
+					});
 
 					//$scope.lstOrdenCliente.push( data.data.ordenCliente );
 				}
@@ -893,13 +909,17 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		if ( key == 117 ) // {F6}
 			$scope.buscarOrdenTicket();
 
+		// F10: FACTURAR ORDEN SELECCIONADA
+		if ( key == 121 && $scope.infoOrden.idOrdenCliente > 0 ) // {F10}
+			window.location.href = "#/factura/" + $scope.infoOrden.idOrdenCliente;
+
 		if ( key == 65 && $scope.infoOrden.idOrdenCliente > 0 ) // {O}
 			$scope.consultaOrden( $scope.infoOrden );
 	};
 
 	// ATAJOS DIALOGO INGRESO DE TICKET
 	$scope._keyDialTicket = function ( key ) {
-		if ( key == 27 || key == 83 ) // {ESC} || {S}
+		if ( key == 27 ) // {ESC} || {S}
 			$scope.dialOrden.hide();
 
 		if ( key >= 48 && key <= 57 && !$("#noTicket").is(":focus") ) // {0-9}
@@ -913,6 +933,10 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 		if ( key == 8 && !$("#noTicket").is(":focus") ) // {BACK}
 			$scope.auxKeyTicket( 'back', 0, 'noTicket' );
+
+		// SI ES ADOMICILIO
+		if ( key == 68 && !( $scope.noTicket > 0 ) ) // {D}
+			$scope.agregarOrden( 'domicilio' );
 
 		if ( key == 13 || key == 117 ) // {ENTER} || {F6}
 			$scope.agregarOrden();
@@ -979,14 +1003,21 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			document.getElementById("observacionMenu").focus();
 
 		// SELECCION DE TIPO DE SERVICIO
-		if ( altDerecho && key == 76 ) // {L}
+		if ( altDerecho && key == 76 && $scope.ordenActual.noTicket > 0 ) // {L}
 			$scope.idTipoServicio = 1;
 
-		if ( altDerecho && key == 82 ) // {R}
+		if ( altDerecho && key == 82 && $scope.ordenActual.noTicket > 0 ) // {R}
 			$scope.idTipoServicio = 2;
 
-		if ( altDerecho && key == 68 ) // {D}
+		if ( altDerecho && key == 68 && !( $scope.ordenActual.noTicket > 0 ) ) // {D}
 			$scope.idTipoServicio = 3;
+
+		// SELECCION DE MENU
+		if ( altDerecho && key == 77 ) // {M}
+			$scope.mostrarMenus( 'menu' );
+
+		if ( altDerecho && key == 67 ) // {C}
+			$scope.mostrarMenus( 'combo' );
 
 		// CONFIRMA LA ORDEN DEL CLIENTE
 		if ( key == 117 ) // {F6}

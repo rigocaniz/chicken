@@ -52,8 +52,10 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 		if ( _accion == 'insert' ) {
 			$scope.setEvento();
 
-			if ( document.getElementById( 'busquedaCliente' ) )
-				document.getElementById( 'busquedaCliente' ).focus();
+			$timeout(function () {
+				if ( document.getElementById( 'busquedaCliente' ) )
+					document.getElementById( 'busquedaCliente' ).focus();
+			});
 		}
 		else if ( _accion == 'update' )
 		{
