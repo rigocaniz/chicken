@@ -80,7 +80,6 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 				newIdEstadoEvento     : _idEstadoEvento,
 				estadoEvento          : evento.estadoEvento
 			};
-			console.log( $scope.evento );
 
 			// SI NO ES CAMBIO DE ESTADO
 			$scope.lstMenuEvento = evento.lstMenu;

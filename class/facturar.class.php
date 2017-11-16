@@ -224,8 +224,8 @@ class Factura
 
 		if( !$guardados ){
 			$this->respuesta = 'danger';
-			$this->mensaje   = 'No se realizó ningun cobro de la orden';
-			$this->tiempo    = 7;
+			$this->mensaje   = strlen( $this->mensaje ) ? $this->mensaje : 'No se realizó ningun cobro de la orden';
+			$this->tiempo    = 6;
 		}
 	}
 

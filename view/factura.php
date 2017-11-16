@@ -169,7 +169,8 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr ng-repeat="item in facturacion.lstOrden" ng-class="{'warning': !item.cobrarTodo, 'border-warning': item.descuento > 0 , 'border-danger': item.descuento == item.precioMenu}" ng-dblclick="item.cobrarTodo=!item.cobrarTodo">
+                                                            <tr ng-repeat="item in facturacion.lstOrden" ng-class="{'warning': !item.cobrarTodo, 
+                                                            'border-warning':(item.descuento>0 || item.idDetalleOrdenMenu!=4), 'border-danger': item.descuento == item.precioMenu}" ng-dblclick="item.cobrarTodo=!item.cobrarTodo">
                                                                 <td class="text-center">
                                                                     <button type="button" class="btn btn-sm btn-default" ng-click="item.cobrarTodo=!item.cobrarTodo">
                                                                         <span class="glyphicon " ng-class="{'glyphicon-check': item.cobrarTodo, 'glyphicon-unchecked': !item.cobrarTodo}"></span>
@@ -182,7 +183,7 @@
                                                                         <span ng-show="item.idTipoServicio==1">L</span>
                                                                     </div>
                                                                     <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
-                                                                    <span>{{ item.descripcion }}</span>
+                                                                    <span data-placement="top" data-title="{{item.estadoDetalleOrden}}" bs-tooltip>{{ item.descripcion }}</span>
                                                                     <br>
                                                                     <textarea class="form-control" rows="2" placeholder="Ingrese  justificación del descuento" ng-model="item.comentario" ng-show="item.descuento > 0 && item.cobrarTodo"></textarea>
                                                                 </td>

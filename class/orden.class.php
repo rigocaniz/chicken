@@ -300,7 +300,7 @@ class Orden
 		 		}
 		 		else{
 		 			$this->respuesta = 'danger';
-		 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+		 			$this->mensaje   = 'Error al ejecutar la instrucción: ' . $this->con->error;
 		 			break;
 		 		}
 		 		
