@@ -27,6 +27,7 @@ class Evento
 		$numeroPersonas        = (int)$_evento->numeroPersonas;
 		$evento                = $this->con->real_escape_string( $_evento->evento );
 		$observacion           = $this->con->real_escape_string( $_evento->observacion );
+		$comentario            = isset( $_evento->comentario ) ? "'" . $this->con->real_escape_string( $_evento->comentario ) . "'" : 'NULL';
 		$anticipo              = (double)$_evento->anticipo;
 		$fechaEvento           = $_evento->fechaEventoTxt;
 		$horaFinal             = $_evento->horaFinal;
@@ -60,10 +61,10 @@ class Evento
 		else
 		{
 	 		if( $accion == 'insert' ):
-	 			$sql = "CALL consultaEvento( 'insert', NULL, '{$evento}', {$idCliente}, DATE( '{$fechaEvento}' ), TIME( '{$horaInicio}' ), TIME( '{$horaFinal}' ), '{$observacion}', {$anticipo}, NULL, {$numeroPersonas}, {$descuento}, '{$descripcionDescuento}', {$costoExtra}, '{$descripcionCostoExtra}' )";
+	 			$sql = "CALL consultaEvento( 'insert', NULL, '{$evento}', {$idCliente}, DATE( '{$fechaEvento}' ), TIME( '{$horaInicio}' ), TIME( '{$horaFinal}' ), '{$observacion}', {$anticipo}, NULL, {$numeroPersonas}, {$descuento}, '{$descripcionDescuento}', {$costoExtra}, '{$descripcionCostoExtra}', {$comentario} )";
 
 	 		elseif( $accion == 'update' ):
-	 			$sql = "CALL consultaEvento( 'update', {$idEvento}, '{$evento}', {$idCliente}, DATE( '{$fechaEvento}' ), TIME( '{$horaInicio}' ), TIME( '{$horaFinal}' ), '{$observacion}', {$anticipo}, {$idEstadoEvento}, {$numeroPersonas}, {$descuento}, '{$descripcionDescuento}', {$costoExtra}, '{$descripcionCostoExtra}' )";
+	 			$sql = "CALL consultaEvento( 'update', {$idEvento}, '{$evento}', {$idCliente}, DATE( '{$fechaEvento}' ), TIME( '{$horaInicio}' ), TIME( '{$horaFinal}' ), '{$observacion}', {$anticipo}, {$idEstadoEvento}, {$numeroPersonas}, {$descuento}, '{$descripcionDescuento}', {$costoExtra}, '{$descripcionCostoExtra}', {$comentario} )";
 	 		endif;
 
  			$rs = $this->con->query( $sql );
@@ -196,18 +197,21 @@ class Evento
  	}
 
  	// CONSULTA EVENTO
- 	function consultaEvento( $idEstadoEvento, $idEvento = NULL )
+ 	function consultaEvento( $idEstadoEvento, $idEvento = NULL, $fecha = NULL )
  	{
 		$result   = array();
 		$idEvento = (int)$idEvento;
 		$limit    = "";
 		
 		if ( $idEvento > 0 )
-			$where = " WHERE idEvento = {$idEvento} "; 
+			$where = " idEvento = {$idEvento} "; 
+
+		elseif ( strlen( $fecha ) === 10 )
+			$where = " fechaEvento = '{$fecha}' "; 
 
 		else
 		{
-			$where = " WHERE idEstadoEvento = {$idEstadoEvento} "; 
+			$where = " idEstadoEvento = {$idEstadoEvento} "; 
 
 			if ( $idEstadoEvento != 1 )
 				$limit = " LIMIT 10 ";
@@ -239,7 +243,7 @@ class Evento
 				    descripcionDescuento,
 				    costoExtra,
 				    descripcionCostoExtra
-				FROM vEvento " . $where . $limit;
+				FROM vEvento WHERE " . $where . $limit;
 
 		$rs = $this->con->query( $sql );
 

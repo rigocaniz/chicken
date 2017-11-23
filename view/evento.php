@@ -23,6 +23,25 @@
                 <span class="glyphicon glyphicon-calendar"></span>
             </button>
         </div>
+        <div class="col-xs-12">
+            <div class="col-sm-5">
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="filtroFecha=''">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </span>
+                    <input type="text" class="form-control" ng-model="filtroFecha" data-date-format="dd/MM/yyyy" data-autoclose="1" bs-datepicker placeholder="Filtrar por Fecha">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary" ng-click="consultarEvento()">
+                            <span class="glyphicon glyphicon-search"></span>
+                            Consultar
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
 	</div>
 	<div class="row contenedor-tickets">
         <div class="col-xs-12" ng-hide="lstEvento.length">
@@ -37,10 +56,10 @@
                     <h4>
                         <b>Evento # </b> {{evento.idEvento}} » 
                         <span>{{evento.evento}}</span>
-                        <button type="button" class="btn btn-xs btn-danger" ng-click="showDialOrden( 'update', evento, 10 )" ng-disabled="idEstadoEvento!=1" title="Cancelar" data-toggle="tooltip" data-placement="top" tooltip>
+                        <button type="button" class="btn btn-xs btn-danger" ng-click="showDialOrden( 'update', evento, 10 )" ng-disabled="evento.idEstadoEvento!=1" title="Cancelar" data-toggle="tooltip" data-placement="top" tooltip>
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
-                        <button type="button" class="btn btn-xs btn-success" ng-click="showDialOrden( 'update', evento, 5 )" ng-disabled="idEstadoEvento!=1" title="Finalizar" data-toggle="tooltip" data-placement="top" tooltip>
+                        <button type="button" class="btn btn-xs btn-success" ng-click="showDialOrden( 'update', evento, 5 )" ng-disabled="evento.idEstadoEvento!=1" title="Finalizar" data-toggle="tooltip" data-placement="top" tooltip>
                             <span class="glyphicon glyphicon-flag"></span>
                         </button>
                         <button type="button" class="btn btn-xs btn-info" ng-click="showDialOrden( 'update', evento )" title="Modificar" data-toggle="tooltip" data-placement="top" tooltip>
@@ -71,9 +90,9 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-6">
-                    <span class="etiqueta">Observación: </span>
-                    <span class="valor">{{evento.observacion}}</span>
+                <div class="col-xs-4">
+                    <span class="etiqueta">Estado: </span>
+                    <span class="valor">{{evento.estadoEvento}}</span>
                 </div>
                 <div class="col-xs-3">
                     <span class="etiqueta">Usuario: </span>
@@ -84,6 +103,12 @@
                     <span class="valor" title="{{formatoFecha( evento.fechaRegistro, 'HH:mm')}}" data-toggle="tooltip" data-placement="top" tooltip>
                         {{formatoFecha( evento.fechaRegistro, 'D[/]MM[/]YYYY' )}}
                     </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <span class="etiqueta">Observación: </span>
+                    <span class="valor">{{evento.observacion}}</span>
                 </div>
             </div>
         </div>
@@ -112,7 +137,15 @@
                     <div class="row" ng-show="evento.newIdEstadoEvento==10">
                         <div class="col-xs-12 text-center">
                             <h4>¿Esta seguro de CANCELAR el Evento?</h4>
-                            <button type="button" class="btn btn-danger" ng-click="guardarEvento()">Cancelar Evento</button>
+                        </div>
+                        <div class="col-xs-12 text-center">
+                            <textarea rows="3" class="form-control" ng-model="evento.comentario" id="comentario" placeholder="Comentario de cancelación"></textarea>
+                        </div>
+                        <div class="col-xs-12 text-center">
+                            <button type="button" class="btn btn-danger" ng-click="guardarEvento()">
+                                <span class="glyphicon glyphicon-remove"></span>
+                                Cancelar Evento
+                            </button>
                         </div>
                     </div>
 

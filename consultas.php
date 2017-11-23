@@ -586,7 +586,7 @@ switch ( $data->opcion )
 			$data->idEvento = 0;
 
 		$evento = new Evento();
-		echo json_encode( $evento->consultaEvento( $data->idEstadoEvento, $data->idEvento ) );
+		echo json_encode( $evento->consultaEvento( $data->idEstadoEvento, $data->idEvento, @$data->fecha ) );
 		break;
 
 	// ############################# EVENTO #############################

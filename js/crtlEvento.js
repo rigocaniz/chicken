@@ -11,6 +11,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 	$scope.accionMenu      = '';
 	$scope.busquedaCliente = '';
 	$scope.evento          = {};
+	$scope.filtroFecha     = '';
 	$scope.menu            = {
 		id       	   : 0,
 		cantidad       : 0,
@@ -86,6 +87,11 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 		}
 
 		$scope.dialOrden.show();
+
+		$timeout(function () {
+			if ( _status == 10 )
+				document.getElementById('comentario') && document.getElementById('comentario').focus();
+		});
 	};
 
 	// CONSULTAR CLIENTES
@@ -140,6 +146,9 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 		else if ( $scope.evento.horaFinal == undefined || $scope.evento.horaFinal == null )
 			alertify.notify( "La hora Final no es válida", "danger", 2 );
 
+		else if ( $scope.evento.newIdEstadoEvento == 10 && !( $scope.evento.comentario && $scope.evento.comentario.length > 3 ) )
+			alertify.notify( "Comentario demasiado corto", "danger", 5 );
+		
 		else
 		{
 			$scope.evento.fechaEventoTxt = moment( $scope.evento.fechaEvento ).format( "YYYY[-]MM[-]DD" );
@@ -317,18 +326,35 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 	// SI CAMBIA EL ESTADO DEL EVENTO
 	$scope.$watch('idEstadoEvento', function (_new) {
 		if ( _new > 0  )
+		{
 			$scope.consultaEvento();
+			$scope.filtroFecha = '';
+		}
+	});
+
+	$scope.$watch('filtroFecha', function (_new) {
+		var fecha = moment( $scope.filtroFecha ).format( "YYYY[-]MM[-]DD" );
+		if ( fecha.length == 10 )
+		{
+			$scope.idEstadoEvento = '';
+			$scope.consultaEvento( fecha );
+		}
+		else
+			$scope.idEstadoEvento = 1;
+			
+		console.log( fecha );
 	});
 
 	// CONSULTA EVENTOS
-	$scope.consultaEvento = function () {
+	$scope.consultaEvento = function ( fecha ) {
 		if ( $scope.$parent.loading ) return false;
 
 		$scope.$parent.loading = true;
 		$scope.lstEvento       = [];
 		$http.post('consultas.php', { 
 			opcion         : 'consultaEvento',
-			idEstadoEvento : $scope.idEstadoEvento
+			idEstadoEvento : $scope.idEstadoEvento,
+			fecha 		   : ( fecha || '' )
 		})
 		.success(function (data) {
 			$scope.$parent.loading = false;
