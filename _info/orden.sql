@@ -465,6 +465,39 @@ END$$
 
 
 
+CREATE PROCEDURE ordenVistaTicket( _idEstadoOrden INT, _limit INT, _idOrdenCliente INT, _usuarioResponsable VARCHAR(15), _usuarioBarra VARCHAR(15) )
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
+
+	# LISTA DE ORDENES
+	SELECT
+		oc.idOrdenCliente,
+		oc.numeroTicket,
+		oc.usuarioPropietario,
+		oc.usuarioResponsable,
+		oc.usuarioBarra,
+		oc.fechaRegistro,
+		oc.numMenu,
+		eo.idEstadoOrden,
+		eo.estadoOrden
+	FROM ordenCliente AS oc
+		JOIN estadoOrden AS eo ON oc.idEstadoOrden = eo.idEstadoOrden
+	WHERE
+		IF( ISNULL( _idOrdenCliente ), TRUE, oc.idOrdenCliente = _idOrdenCliente )
+		AND IF( ISNULL( _idEstadoOrden ), TRUE, oc.idEstadoOrden = _idEstadoOrden  )
+		AND IF( ISNULL( _usuarioResponsable ), TRUE, oc.usuarioResponsable = _usuarioResponsable  )
+		AND IF( ISNULL( _usuarioBarra ), TRUE, oc.usuarioBarra = _usuarioBarra  )
+	LIMIT _limit;
+
+	# ESTADO ORDEN CLIENTE 
+	SELECT idEstadoOrden INTO _estadoActualOrden FROM ordenCliente WHERE idOrdenCliente = _idOrdenCliente;
+
+END$$
+
+
+
+
 
 CREATE OR REPLACE VIEW _vMenuCombo AS
 SELECT

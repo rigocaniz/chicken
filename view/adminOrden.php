@@ -283,7 +283,18 @@
 <div class="acciones" ng-show="seleccionTicket.si">
 	<div class="btn-accion">
 		<button type="button" class="btn btn-lg btn-success" ng-click="continuarProcesoMenu()">
-			Servir
+			<span ng-show="idEstadoOrdenTkt==1">
+				<span class="glyphicon glyphicon-play"></span>
+				Cocinar
+			</span>
+			<span ng-show="idEstadoOrdenTkt==2">
+				<span class="glyphicon glyphicon-ok"></span>
+				Listo
+			</span>
+			<span ng-show="idEstadoOrdenTkt==3">
+				<span class="glyphicon glyphicon-flag"></span>
+				Servir
+			</span>
 			<span class="badge" style="font-size:16px">{{seleccionTicket.count.total}}</span>
 		</button>
 		<!-- SELECCION POR TIPO DE SERVICIO -->

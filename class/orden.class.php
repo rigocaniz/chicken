@@ -741,7 +741,7 @@ class Orden
  	}
 
  	// LISTA LAS ORDENES DEL CLIENTE POR TICKET
- 	public function lstOrdenPorTicket( $idEstadoOrden, $idDestinoMenu, $idEstadoDetalleOrden, $idOrdenCliente = NULL )
+ 	public function lstOrdenPorTicket( $idEstadoOrden, $idEstadoDetalleOrden, $idOrdenCliente = NULL )
  	{
 		$where = $limit = "";
 
@@ -760,11 +760,6 @@ class Orden
 
 		else if ( $idEstadoOrden != 'all' )
 			$where .= " AND ( idEstadoOrden = {$idEstadoOrden} ) ";
-
-
-		//// SI EL DESTINO ESTA DEFINIDO ////
-		if ( $idDestinoMenu != 'all' AND (int)$idDestinoMenu > 0 )
-			$where .= " AND idDestinoMenu = {$idDestinoMenu} ";
 
 
 		//// SI EL DESTINO ESTA DEFINIDO ////
@@ -1171,7 +1166,7 @@ class Orden
  		$this->con->query( "START TRANSACTION" );
 
 		foreach ( $lstOrdenes as $ix => $item ):
-			$sql = "CALL consultaDetalleOrdenMenu( 'estado', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, {$idEstadoOrden}, NULL, NULL, NULL );";
+			$sql = "CALL consultaDetalleOrdenMenu( 'estado', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, {$idEstadoOrden}, NULL, NULL, NULL, NULL, NULL );";
 			
 	 		if( $rs = $this->con->query( $sql ) ){
 	 			@$this->con->next_result();
