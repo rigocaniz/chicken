@@ -1131,7 +1131,7 @@
 					<button type="button" class="close" ng-click="$hide()">&times;</button>
 					<h3 class="panel-title">
 						<span class="glyphicon" ng-class="{'glyphicon-plus': accion == 'insert', 'glyphicon glyphicon-pencil': accion == 'update'}"></span>
-						{{ accion == 'insert' ? 'INGRESAR NUEVO' : 'ACTUALIZAR' }} PRODUCTO
+						{{ accion == 'insert' ? 'INGRESAR' : 'ACTUALIZAR' }} PRODUCTO
 					</h3>
 				</div>
 				<div class="modal-body">
@@ -1139,14 +1139,29 @@
 						<legend class="legend">DATOS</legend>
 						<!-- FORMULARIO PRODUCTO -->
 						<form class="form-horizontal" role="form" name="$parent.formProducto">
+							<div class="form-group" ng-show="accion!='insert'">
+								<div class="col-sm-7">
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">No. Producto</label>
+									<input type="text" class="form-control" ng-model="producto.idProducto" disabled>
+								</div>
+							</div>
 							<div class="form-group">
 								<div class="col-sm-7">
 									<label class="control-label">Nombre Producto</label>
 									<input type="text" id="nombreProducto" class="form-control" ng-model="producto.producto" maxlength="45" required>
 								</div>
-								<div class="col-sm-3" ng-show="accion!='insert'">
-									<label class="control-label">No. Producto</label>
-									<input type="text" class="form-control" ng-model="producto.idProducto" disabled>
+								<div class="col-sm-3">
+									<label class="control-label">Ubicación</label>
+									<div class="btn-group" role="group" aria-label="">
+										<button type="button" class="btn btn-default">
+											Cocina
+										</button>
+										<button type="button" class="btn btn-default">
+											Barra
+										</button>
+									</div>
 								</div>
 							</div>
 							<div class="form-group">

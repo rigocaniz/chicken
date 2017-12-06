@@ -612,6 +612,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		if( accion == 1 ){
 			$scope.producto = {
 				'producto'       : '',
+				'idUbicacion'    : 1,
 				'idTipoProducto' : null,
 				'idMedida'       : null,
 				'perecedero'     : true,
@@ -713,6 +714,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		
 		else if( !(producto.producto && producto.producto.length >= 3) )
 			alertify.notify( 'El nombre del producto debe ser mayor a 3 caracteres', 'warning', 5 );
+
+		else if( !(producto.idUbicacion && producto.idUbicacion > 0) )
+			alertify.notify( 'Seleccione la ubicacion del producto', 'warning', 5 );
 		
 		else if( !(producto.idTipoProducto && producto.idTipoProducto > 0) )
 			alertify.notify( 'Seleccione el tipo de producto', 'warning', 5 );	
