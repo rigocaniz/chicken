@@ -203,7 +203,7 @@ BEGIN
 END$$
 
 
-CREATE PROCEDURE consultaCierreDiarioProducto( _action VARCHAR(20), _idCierreDiario INT, _idProducto INT, _cantidad DOUBLE( 10, 2 ), _actualizarDisponibilidad BOOLEAN )
+CREATE PROCEDURE consultaCierreDiarioProducto( _action VARCHAR(20), _idCierreDiario INT, _idProducto INT, _cantidadCocina DOUBLE(10,2), _cantidadBodega DOUBLE(10,2), _cantidadMostrador DOUBLE(10,2), _actualizarDisponibilidad BOOLEAN )
 BEGIN
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
@@ -212,12 +212,12 @@ BEGIN
 		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
 
 	ELSEIF _action = 'insert' THEN
-		INSERT INTO cierreDiarioProducto ( idCierreDiario, idProducto, cantidad ) 
-			VALUES ( _idCierreDiario, _idProducto, _cantidad );
+		INSERT INTO cierreDiarioProducto ( idCierreDiario, idProducto, cantidadCocina, cantidadBodega, cantidadMostrador ) 
+			VALUES ( _idCierreDiario, _idProducto, _cantidadCocina, _cantidadBodega, _cantidadMostrador );
 
 		# SI ACTUALIZA DISPONIBILIDAD DE PRODUCTO
 		IF _actualizarDisponibilidad THEN
-			UPDATE producto SET disponibilidad = _cantidad
+			UPDATE producto SET disponibilidad = ( _cantidadCocina + _cantidadBodega + _cantidadMostrador )
 				WHERE idProducto = _idProducto;
 		END IF;
 		
@@ -248,7 +248,10 @@ SELECT
     cd.comentario,
     cd.usuario,
     cd.fechaRegistroCierre,
-    cdp.cantidad AS 'cantidadCierre',
+    cdp.cantidadCocina,
+    cdp.cantidadBodega,
+    cdp.cantidadMostrador,
+    ( cdp.cantidadCocina + cdp.cantidadBodega + cdp.cantidadMostrador ) AS 'cantidadCierre',
 	p.*
 FROM vCierreDiario AS cd
 	JOIN cierreDiarioProducto AS cdp
