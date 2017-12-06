@@ -643,6 +643,7 @@ class Producto
 
 		// SETEO VARIABLES GENERALES
  		$data->producto       = isset( $data->producto ) 	 	? (string)$data->producto 		: NULL;
+ 		$data->idUbicacion    = isset( $data->idUbicacion ) 	? (int)$data->idUbicacion 		: NULL;
  		$data->idTipoProducto = isset( $data->idTipoProducto ) 	? (int)$data->idTipoProducto 	: NULL;
  		$data->idMedida       = isset( $data->idMedida )		? (int)$data->idMedida 			: NULL;
  		$data->cantidadMinima = isset( $data->cantidadMinima ) 	? (double)$data->cantidadMinima : NULL;
@@ -660,8 +661,9 @@ class Producto
  		endif;
 
 		$producto       = $medida = $this->con->real_escape_string( $validar->validarTexto( $data->producto, NULL, TRUE, 3, 45, 'el nombre del producto' ) );
-		$idTipoProducto = $validar->validarEntero( $data->idTipoProducto, NULL, TRUE, 'El ID del tipo de producto no es válido, verifique.' );
-		$idMedida       = $validar->validarEntero( $data->idMedida, NULL, TRUE, 'El ID del tipo de medida no es válido, verifique.' );
+		$idUbicacion    = $validar->validarEntero( $data->idUbicacion, NULL, TRUE, 'Seleccione la ubicacion del producto' );
+		$idTipoProducto = $validar->validarEntero( $data->idTipoProducto, NULL, TRUE, 'Seleccione el tipo de Producto' );
+		$idMedida       = $validar->validarEntero( $data->idMedida, NULL, TRUE, 'Seleccione el tipo de medida' );
 		$cantidadMinima = $validar->validarCantidad( $data->cantidadMinima, NULL, TRUE, 1, 50000, 'la cantidad Minima' );
 		$cantidadMaxima = $validar->validarCantidad( $data->cantidadMaxima, NULL, TRUE, 1, 50000, 'la cantidad Maxima' );
 		
