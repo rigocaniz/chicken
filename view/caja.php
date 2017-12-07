@@ -104,8 +104,8 @@
 													</tr>
 												</thead>
 												<tbody>
-													<tr ng-repeat="(ixDenominacion, denominacion) in caja.lstDenominaciones">
-														<td class="text-right">{{ denominacion.denominacion }}</td>
+													<tr ng-repeat="denominacion in caja.lstDenominaciones">
+														<td class="text-right">{{ denominacion.descripcion }} de: <b>{{ denominacion.denominacion }}</b></td>
 														<td class="text-center">
 															<input type="number" min="0"  class="form-control" ng-model="denominacion.cantidad" placeholder="Cantidad" ng-pattern="/^[0-9]+?$/" step="1">
 														</td>
