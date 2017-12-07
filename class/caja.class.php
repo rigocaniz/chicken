@@ -20,6 +20,13 @@ class Caja
  	}
 
 
+ 	private function siguienteResultado()
+ 	{
+ 		if( $this->con->more_results() )
+ 			$this->con->next_result();
+ 	}
+
+
  	// CONSULTAR ESTADO CAJA
  	function consultarEstadoCaja()
  	{
@@ -91,6 +98,7 @@ class Caja
 
  	function consultaCaja( $accion, $data )
  	{
+ 		//var_dump( $data );
  		$idCaja           = "NULL";
  		$idEstadoCaja     = "NULL";
  		$efectivoInicial  = 0;
@@ -112,23 +120,12 @@ class Caja
 		$efectivoInicial = $validar->validarDinero( $data->efectivoInicial, NULL, TRUE, 'el EFECTIVO INICIAL' );
  		// VALIDACIONES
  		if( $accion == 'cierre' ):
-			$data->idCaja           = isset( $data->idCaja ) 				? (int)$data->idCaja 				: NULL;
-			$data->idCaja           = (int)$data->idCaja > 0 				? (int)$data->idCaja 				: NULL;
-
-			$data->idEstadoCaja     = isset( $data->idEstadoCaja ) 			? (int)$data->idEstadoCaja 			: NULL;
-			$data->idEstadoCaja     = (int)$data->idEstadoCaja > 0 			? (int)$data->idEstadoCaja 			: NULL;
-
-			$data->efectivoInicial  = isset( $data->efectivoInicial ) 		? (double)$data->efectivoInicial 	: NULL;
-			$data->efectivoInicial  = (double)$data->efectivoInicial > 0 	? (double)$data->efectivoInicial 	: NULL;
-
-			$data->efectivoFinal    = isset( $data->efectivoFinal ) 		? (double)$data->efectivoFinal 		: NULL;
-			$data->efectivoFinal    = (double)$data->efectivoFinal > 0 		? (double)$data->efectivoFinal 		: NULL;
-
-			$data->efectivoSobrante = isset( $data->efectivoSobrante ) 		? (double)$data->efectivoSobrante 	: NULL;
-			$data->efectivoSobrante = (double)$data->efectivoSobrante;
-
-			$data->efectivoFaltante = isset( $data->efectivoFaltante ) 		? (double)$data->efectivoFaltante 	: NULL;
-			$data->efectivoFaltante = (double)$data->efectivoFaltante;
+			$data->idCaja           = isset( $data->idCaja ) 			? (int)$data->idCaja 				: NULL;
+			$data->idEstadoCaja     = isset( $data->idEstadoCaja ) 		? (int)$data->idEstadoCaja 			: NULL;
+			$data->efectivoInicial  = isset( $data->efectivoInicial ) 	? (double)$data->efectivoInicial 	: NULL;
+			$data->efectivoFinal    = isset( $data->efectivoFinal ) 	? (double)$data->efectivoFinal 		: NULL;
+			$data->efectivoSobrante = isset( $data->efectivoSobrante ) 	? (double)$data->efectivoSobrante 	: NULL;
+			$data->efectivoFaltante = isset( $data->efectivoFaltante ) 	? (double)$data->efectivoFaltante 	: NULL;
  		
 			$idCaja           = $validar->validarEntero( $data->idCaja, NULL, TRUE, 'El ID de la CAJA no es válido' );
 			$idEstadoCaja     = 2;
@@ -145,19 +142,31 @@ class Caja
 	 		$this->tiempo    = $validar->getTiempo();
  		else:
 
+ 			$this->con->query( "START TRANSACTION" );
+
 	 		$sql = "CALL consultaCaja( '{$accion}', {$idCaja}, {$idEstadoCaja}, {$efectivoInicial}, {$efectivoFinal}, {$efectivoSobrante}, {$efectivoFaltante} )";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-	 			
+	 				$this->siguienteResultado();
+
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
-	 				if( $accion == 'insert' AND $row->respuesta == 'success' )
-	 					$this->data = $row->id;
+	 				if( $accion == 'insert' AND $row->respuesta == 'success' ){
+	 					$idEstadoCaja = 1;
+	 					$idCaja       = $this->data = $row->id;
+	 				}
+	 				
+	 				$this->consultaDenominacionCaja( $accion, $idCaja, $idEstadoCaja, $data->lstDenominaciones );
 	 		}
 	 		else{
 	 			$this->respuesta = 'danger';
 	 			$this->mensaje   = 'Error al ejecutar la operacion de Caja (SP)';
 	 		}
+
+	 		if( $this->respuesta == 'success' )
+	 			$this->con->query( "COMMIT" );
+	 		else
+	 			$this->con->query( "ROLLBACK" );
 
  		endif;
 
@@ -165,80 +174,40 @@ class Caja
  	}
 
 
- 	function consultaDenominacionCaja( $accion, $idCaja, $idEstadoCaja, $denominacion, $cantidad )
+ 	// CONSULTA DENOMINACIÓN CAJA
+ 	function consultaDenominacionCaja( $accion, $idCaja, $idEstadoCaja, $lstDenominaciones )
  	{
-		$idCaja           = "NULL";
- 		$idEstadoCaja     = "NULL";
- 		$efectivoInicial  = 0;
- 		$efectivoFinal    = 0;
- 		$efectivoSobrante = 0;
- 		$efectivoFaltante = 0;
+ 		if( count( $lstDenominaciones ) )
+ 		{
+	 		foreach ( $lstDenominaciones AS $ixDenominacion => $denominaciones ) {
+		 		$denominacion = (double)$denominaciones->denominacion;
+		 		$cantidad     = isset( $denominaciones->cantidad ) ? (int)$denominaciones->cantidad : 0;
 
- 		// SETEO VARIABLES GENERALES
- 		$data->combo        = isset( $data->combo ) 		? (string)$data->combo 			: NULL;
- 		$data->codigo       = isset( $data->codigo ) 		? (string)$data->codigo 		: NULL;
- 		$data->descripcion  = isset( $data->descripcion ) 	? (string)$data->descripcion 	: NULL;
- 		$data->idEstadoMenu = isset( $data->idEstadoMenu ) 	? (int)$data->idEstadoMenu 		: NULL;
- 		
- 		$validar = new Validar();
-		
-		$data->efectivoInicial = isset( $data->efectivoInicial ) 	? (double)$data->efectivoInicial : NULL;
-		$data->efectivoInicial = (double)$data->efectivoInicial > 0 ? (double)$data->efectivoInicial : NULL;
+		 		$sql = "CALL consultaDenominacionCaja( '{$accion}', {$idCaja}, {$idEstadoCaja}, '{$denominacion}', {$cantidad} );";
+		 		//echo $sql . "\n";
+		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+		 			$this->siguienteResultado();
 
-		$efectivoInicial = $validar->validarDinero( $data->efectivoInicial, NULL, TRUE, 'el EFECTIVO INICIAL' );
- 		// VALIDACIONES
- 		if( $accion == 'cierre' ):
-			$data->idCaja           = isset( $data->idCaja ) 				? (int)$data->idCaja 				: NULL;
-			$data->idCaja           = (int)$data->idCaja > 0 				? (int)$data->idCaja 				: NULL;
-
-			$data->idEstadoCaja     = isset( $data->idEstadoCaja ) 			? (int)$data->idEstadoCaja 			: NULL;
-			$data->idEstadoCaja     = (int)$data->idEstadoCaja > 0 			? (int)$data->idEstadoCaja 			: NULL;
-
-			$data->efectivoInicial  = isset( $data->efectivoInicial ) 		? (double)$data->efectivoInicial 	: NULL;
-			$data->efectivoInicial  = (double)$data->efectivoInicial > 0 	? (double)$data->efectivoInicial 	: NULL;
-
-			$data->efectivoFinal    = isset( $data->efectivoFinal ) 		? (double)$data->efectivoFinal 		: NULL;
-			$data->efectivoFinal    = (double)$data->efectivoFinal > 0 		? (double)$data->efectivoFinal 		: NULL;
-
-			$data->efectivoSobrante = isset( $data->efectivoSobrante ) 		? (double)$data->efectivoSobrante 	: NULL;
-			$data->efectivoSobrante = (double)$data->efectivoSobrante;
-
-			$data->efectivoFaltante = isset( $data->efectivoFaltante ) 		? (double)$data->efectivoFaltante 	: NULL;
-			$data->efectivoFaltante = (double)$data->efectivoFaltante;
- 		
-			$idCaja           = $validar->validarEntero( $data->idCaja, NULL, TRUE, 'El ID de la CAJA no es válido' );
-			$idEstadoCaja     = 2;
-			$efectivoFinal    = $validar->validarDinero( $data->efectivoFinal, NULL, TRUE, 'el EFECTIVO FINAL' );
-			$efectivoSobrante = $data->efectivoSobrante;
-			$efectivoFaltante = $data->efectivoFaltante;
-
- 		endif;
-
- 		// OBTENER RESULTADO DE VALIDACIONES
- 		if( $validar->getIsError() ):
-	 		$this->respuesta = 'danger';
-	 		$this->mensaje   = $validar->getMsj();
-	 		$this->tiempo    = $validar->getTiempo();
- 		else:
-
-	 		$sql = "CALL consultaCaja( '{$accion}', {$idCaja}, {$idEstadoCaja}, {$efectivoInicial}, {$efectivoFinal}, {$efectivoSobrante}, {$efectivoFaltante} )";
-	 		
-	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-	 			
 	 				$this->respuesta = $row->respuesta;
-	 				$this->mensaje   = $row->mensaje;
-	 				if( $accion == 'insert' AND $row->respuesta == 'success' )
-	 					$this->data = $row->id;
-	 		}
-	 		else{
-	 			$this->respuesta = 'danger';
-	 			$this->mensaje   = 'Error al ejecutar la operacion de Caja (SP)';
-	 		}
+	 				if( $this->respuesta == 'danger' )
+	 					$this->mensaje   = $row->mensaje;
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la operacion de Denominación (SP)';
+		 		}
 
- 		endif;
+		 		if( $this->respuesta == 'danger' )
+		 			break;
+	 		}
+ 		}
+ 		else
+ 		{
+ 			$this->respuesta = 'danger';
+		 	$this->mensaje   = 'No se recibio la lista de denominaciones';
+ 		}
 
 		return $this->getRespuesta();
-
  	}
 
 
