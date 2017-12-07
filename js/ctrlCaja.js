@@ -60,6 +60,19 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 	});
 
 
+	$scope.retornarTotal = function()
+	{
+		var total = 0;
+		for (var i = 0; i < $scope.caja.lstDenominaciones.length; i++) {
+			if( !($scope.caja.lstDenominaciones[i].cantidad && $scope.caja.lstDenominaciones[i].cantidad > 0) )
+				$scope.caja.lstDenominaciones[i].cantidad = 0;
+
+			total += $scope.caja.lstDenominaciones[i].cantidad * $scope.caja.lstDenominaciones[i].denominacion;
+		}
+
+		return total;
+	};
+
 	($scope.inicioCaja = function(){
 		$http.post('consultas.php',{
 			opcion : 'inicioCaja'
@@ -80,6 +93,7 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 			$scope.caja.efectivoSobrante  = data.dataCaja.efectivoSobrante;
 			$scope.caja.efectivoFaltante  = data.dataCaja.efectivoFaltante;
 			$scope.caja.idCaja            = data.dataCaja.idCaja;
+			$scope.caja.lstDenominaciones = data.dataCaja.lstDenominaciones;
 
 			if( !($scope.caja.idCaja > 0) ){
 				$scope.accion = 'insert';

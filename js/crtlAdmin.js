@@ -24,6 +24,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	};
 
 
+
 	$scope.dataPerfil = {};
 	$scope.datosPerfil = function( perfil ){
 		$scope.dataPerfil = angular.copy( perfil );

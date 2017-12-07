@@ -89,6 +89,43 @@
 											<kbd class="numEfectivo">Q. {{ caja.efectivoInicial | number:2 }}</kbd>
 										</div>
 									</div>
+									<!-- DENOMINACIONES -->
+									<legend class="text-center">
+										<i class="fa fa-money" aria-hidden="true"></i> DENOMINACIONES
+									</legend>
+									<div class="form-group">
+										<div class="col-sm-8 col-sm-offset-2">
+											<table class="table table-condensed">
+												<thead>
+													<tr>
+														<th class="col-sm-3 text-center">DENOMINACIÓN</th>
+														<th class="col-sm-3 text-center">CANTIDAD</th>
+														<th class="col-sm-3 text-center">TOTAL</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr ng-repeat="(ixDenominacion, denominacion) in caja.lstDenominaciones">
+														<td class="text-right">{{ denominacion.denominacion }}</td>
+														<td class="text-center">
+															<input type="number" min="0"  class="form-control" ng-model="denominacion.cantidad" placeholder="Cantidad" ng-pattern="/^[0-9]+?$/" step="1">
+														</td>
+														<td class="text-right">
+															<kbd class="numEfectivo">{{ ( denominacion.cantidad ? (denominacion.cantidad * denominacion.denominacion ) : '0' ) | number:2 }}</kbd>
+														</td>
+													</tr>
+													<tr>
+														<td class="text-right" colspan="2">
+															<h4><b>TOTAL:</b></h4>
+														</td>
+														<td class="text-right">
+															<h4><kbd class="numEfectivo">{{ retornarTotal() | number: 2 }}</kbd></h4>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+
 									<div class="form-group" ng-show="accionCaja=='cierreCaja'">
 										<label class="col-sm-3 col-md-2 control-label">EFECTIVO FINAL</label>
 										<div class="col-sm-4 col-md-3 col-lg-2">
