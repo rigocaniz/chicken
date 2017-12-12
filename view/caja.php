@@ -124,6 +124,24 @@
 												</tbody>
 											</table>
 										</div>
+
+										<div class="row">
+											<div class="form-group">
+											<div class="col-sm-6" ng-repeat="denominacion in caja.lstDenominaciones">
+												<div class="form-horizontal">
+													<div class="form-group">
+														<label class="col-sm-4">{{ denominacion.descripcion }} de: <b>{{ denominacion.denominacion }}</b></label>
+														<div class="col-sm-3">
+															<input type="number" min="0"  class="form-control" ng-model="denominacion.cantidad" placeholder="Cantidad" ng-pattern="/^[0-9]+?$/" step="1">
+														</div>
+														<div class="col-sm-4">
+															<kbd class="numEfectivo">{{ ( denominacion.cantidad ? (denominacion.cantidad * denominacion.denominacion ) : '0' ) | number:2 }}</kbd>
+															
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
 									</div>
 
 									<div class="form-group" ng-show="accionCaja=='cierreCaja'">
