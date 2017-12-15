@@ -27,7 +27,7 @@ class Caja
  	}
 
 
- 	// CONSULTAR ESTADO CAJA
+ 	// CONSULTAR ESTADO Caja
  	function consultarEstadoCaja()
  	{
  		$fechaApertura = date("Y-m-d");
@@ -44,7 +44,7 @@ class Caja
 			'efectivoFaltante'  => (double)0,
 			'idEstadoCaja'      => 2,
 			'estadoCaja'        => 'Cerrada',
-			'lstDenominaciones' => $this->lstDenominaciones()
+			'lstDenominaciones' => $this->lstDenominaciones( 1 )
 		);
 
  		$sql = "SELECT 
@@ -86,7 +86,7 @@ class Caja
 	 					'efectivoFaltante'  => (double)$row->efectivoFaltante,
 	 					'idEstadoCaja'      => (int)$row->idEstadoCaja,
 	 					'estadoCaja'        => $row->estadoCaja,
-	 					'lstDenominaciones' => $this->lstDenominaciones()
+	 					'lstDenominaciones' => $this->lstDenominaciones( 1 )
 	 				);
  			}
 
@@ -179,18 +179,22 @@ class Caja
  	{
  		if( count( $lstDenominaciones ) )
  		{
+ 			$total = 0;
 	 		foreach ( $lstDenominaciones AS $ixDenominacion => $denominaciones ) {
 		 		$denominacion = (double)$denominaciones->denominacion;
 		 		$cantidad     = isset( $denominaciones->cantidad ) ? (int)$denominaciones->cantidad : 0;
 
 		 		$sql = "CALL consultaDenominacionCaja( '{$accion}', {$idCaja}, {$idEstadoCaja}, '{$denominacion}', {$cantidad} );";
-		 		//echo $sql . "\n";
+
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 			$this->siguienteResultado();
 
 	 				$this->respuesta = $row->respuesta;
 	 				if( $this->respuesta == 'danger' )
 	 					$this->mensaje   = $row->mensaje;
+
+	 				if ( $this->respuesta == 'success' )
+	 					$total += $cantidad;
 		 		}
 		 		else{
 		 			$this->respuesta = 'danger';
@@ -199,6 +203,11 @@ class Caja
 
 		 		if( $this->respuesta == 'danger' )
 		 			break;
+	 		}
+
+	 		if( $this->respuesta != 'danger' AND !$total ){
+	 			$this->respuesta = 'warning';
+	 			$this->mensaje   = 'No ingreso cantidades en las denominaciones';
 	 		}
  		}
  		else
@@ -212,11 +221,14 @@ class Caja
 
 
  	// CARGAR DENOMINACIONES
-	function lstDenominaciones()
+	function lstDenominaciones( $estado = NULL )
 	{
 		$lstDenominaciones = array();
+		$where = '';
+		if( !is_null( $estado ) )
+			$where .= "WHERE estado = {$estado}";
 
-		$sql = "SELECT * FROM denominacion;";
+		$sql = "SELECT * FROM denominacion $where;";
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
