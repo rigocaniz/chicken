@@ -114,7 +114,7 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 		if( $scope.accion == 'cierre' && !( caja.idCaja && caja.idCaja > 0 ) )
 			alertify.notify( 'El Cierre de caja no es válido', 'danger', 3 );
 		
-		else if( $scope.accion == 'insert' && !( caja.efectivoInicial && caja.efectivoInicial > 0 ) )
+		else if( $scope.accion == 'insert' && !( $scope.retornarTotal() && $scope.retornarTotal() > 0 ) )
 			alertify.notify( 'El EFECTIVO INICIAL debe ser mayor a 0', 'warning', 4 );
 
 		else if( $scope.accion == 'cierre' && !( caja.efectivoFinal && caja.efectivoFinal > 0 ) )
@@ -124,7 +124,8 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 			$http.post('consultas.php',{
 				opcion : 'consultaCaja',
 				accion : $scope.accion,
-				data   : $scope.caja
+				data   : $scope.caja,
+				total  : $scope.retornarTotal()
 			})
 			.success(function(data){
 				console.log( data );

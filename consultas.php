@@ -73,8 +73,7 @@ switch ( $data->opcion )
 	////////////////////////
 	case 'consultaCaja':			// CONSULTA CAJA => INSERT // STATUS
 		$caja = new Caja();
-
-		echo json_encode( $caja->consultaCaja( $data->accion, $data->data ) );
+		echo json_encode( $caja->consultaCaja( $data->accion, $data->data, $data->total ) );
 		break;
 
 		

@@ -96,9 +96,8 @@ class Caja
  	}
 
 
- 	function consultaCaja( $accion, $data )
+ 	function consultaCaja( $accion, $data, $total )
  	{
- 		//var_dump( $data );
  		$idCaja           = "NULL";
  		$idEstadoCaja     = "NULL";
  		$efectivoInicial  = 0;
@@ -113,9 +112,11 @@ class Caja
  		$data->idEstadoMenu = isset( $data->idEstadoMenu ) 	? (int)$data->idEstadoMenu 		: NULL;
  		
  		$validar = new Validar();
-		
-		$data->efectivoInicial = isset( $data->efectivoInicial ) 	? (double)$data->efectivoInicial : NULL;
-		$data->efectivoInicial = (double)$data->efectivoInicial > 0 ? (double)$data->efectivoInicial : NULL;
+
+		if( $accion == 'insert' )
+			$data->efectivoInicial = isset( $total ) ? (double)$total : 0;
+		else
+			$data->efectivoFinal = isset( $total ) ? (double)$total : 0;
 
 		$efectivoInicial = $validar->validarDinero( $data->efectivoInicial, NULL, TRUE, 'el EFECTIVO INICIAL' );
  		// VALIDACIONES
@@ -123,7 +124,6 @@ class Caja
 			$data->idCaja           = isset( $data->idCaja ) 			? (int)$data->idCaja 				: NULL;
 			$data->idEstadoCaja     = isset( $data->idEstadoCaja ) 		? (int)$data->idEstadoCaja 			: NULL;
 			$data->efectivoInicial  = isset( $data->efectivoInicial ) 	? (double)$data->efectivoInicial 	: NULL;
-			$data->efectivoFinal    = isset( $data->efectivoFinal ) 	? (double)$data->efectivoFinal 		: NULL;
 			$data->efectivoSobrante = isset( $data->efectivoSobrante ) 	? (double)$data->efectivoSobrante 	: NULL;
 			$data->efectivoFaltante = isset( $data->efectivoFaltante ) 	? (double)$data->efectivoFaltante 	: NULL;
  		
@@ -155,8 +155,8 @@ class Caja
 	 					$idEstadoCaja = 1;
 	 					$idCaja       = $this->data = $row->id;
 	 				}
-	 				
-	 				$this->consultaDenominacionCaja( $accion, $idCaja, $idEstadoCaja, $data->lstDenominaciones );
+	 				// CONSULTAR ACCION INSERT EN CIERRE
+	 				$this->consultaDenominacionCaja( 'insert', $idCaja, $idEstadoCaja, $data->lstDenominaciones );
 	 		}
 	 		else{
 	 			$this->respuesta = 'danger';
