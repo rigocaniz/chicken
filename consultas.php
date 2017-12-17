@@ -12,6 +12,7 @@ include 'class/consulta.class.php';
 include 'class/facturar.class.php';
 include 'class/medida.class.php';
 include 'class/menu.class.php';
+include 'class/modulo.class.php';
 include 'class/orden.class.php';
 include 'class/producto.class.php';
 include 'class/sesion.class.php';
@@ -286,8 +287,8 @@ switch ( $data->opcion )
 		break;
 
 	case 'consultarModulosPerfil':				// CONSULTA PERFILES
-		$admin = new Admin();
-		echo json_encode( $admin->consultarModulosPerfil( $data->idPerfil ) );
+		$modulo = new Modulo();
+		echo json_encode( $modulo->consultarModulosPerfil( $data->idPerfil ) );
 		break;
 
 	case 'asignarModulo':				// CONSULTA PERFILES

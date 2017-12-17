@@ -1,3 +1,12 @@
+<?php
+    include '../class/sesion.class.php';
+    
+    if( !$sesion->getAccesoModulo( 12 ) ):
+        include 'errores/403.php';
+        exit();
+    endif;
+?>
+
 <div class="container">
 	<div class="row">
 		<div class="col-sm-12">

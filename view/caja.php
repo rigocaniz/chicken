@@ -1,3 +1,11 @@
+<?php
+    include '../class/sesion.class.php';
+    
+    if( !$sesion->getAccesoModulo( 6 ) ):
+        include 'errores/403.php';
+        exit();
+    endif;
+?>
 
 <div class="contenedor">
 	<div class="row">

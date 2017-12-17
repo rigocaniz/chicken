@@ -225,6 +225,7 @@ class Usuario
 				$this->respuesta = $row->respuesta;
 				$this->mensaje   = $row->mensaje;
 				if( $this->respuesta == 'success' ){
+					$modulo = new Modulo();
 					// 	CREAR SESION
 					$sesion->setVariable( 'nombre', $row->nombre );
 					$sesion->setVariable( 'nombreCorto', $row->nombreCorto );
@@ -232,6 +233,7 @@ class Usuario
 					$sesion->setVariable( 'idDestinoMenu', (int)$row->idDestinoMenu );
 					$sesion->setVariable( 'usuario', $row->usuario );
 					$sesion->setVariable( 'codigoUsuario', $row->codigoUsuario );
+					$modulo->consultarModulosPerfil( (int)$row->idPerfil, TRUE );
 					
 					if ( $codigo === 'NULL' )
 						header( "Location: ./" );

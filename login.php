@@ -9,6 +9,7 @@ if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
         
         include 'class/conexion.class.php';
         include 'class/sesion.class.php';
+        include 'class/modulo.class.php';
         include 'class/usuario.class.php';
         include 'class/validar.class.php';
         include 'class/funciones.php';
