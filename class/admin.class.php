@@ -16,8 +16,10 @@ class Admin
  	function __construct()
  	{
  		GLOBAL $conexion, $sesion;
+ 		
  		if( is_null( $this->con ) )
  			$this->con  = $conexion;
+ 		
  		if( is_null( $this->sess ) )
  			$this->sess = $sesion;
  	}

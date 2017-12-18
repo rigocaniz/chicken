@@ -190,6 +190,18 @@ class Validar
 	}
 
 
+	function validarCantidades( $cantidad1, $cantidad2 )
+	{
+		if( $this->error )
+			return;
+
+		if( $cantidad1 < $cantidad2 ){
+			$this->error   = TRUE;
+			$this->mensaje = "Existe un faltante de: <b>Q. " . diferenciaCantidad( $cantidad1, $cantidad2  ) . "</b>";
+		}
+	}
+
+
 	// VALIDAR CANTIDAD MONETARIA
 	function validarDinero( $valor = 0, $default = NULL, $required = TRUE,  $mensaje = '' )
 	{
@@ -202,7 +214,7 @@ class Validar
 
 		if ( !is_numeric( $valor ) ):
 			$warning = TRUE;
-			$msj     = "El valor ingresado en {$mensaje} no es númerico";
+			$msj     = "El valor ingresado en {$mensaje} no es un número válido";
 
 		elseif( $valor <= 0 ):
 			$warning = TRUE;

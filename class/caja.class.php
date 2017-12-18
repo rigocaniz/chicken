@@ -35,6 +35,7 @@ class Caja
 		$dataCaja = array(
 			'idCaja'            => 0,
 			'cajaAtrasada'      => FALSE,
+			'cajero'            => $this->sess->getNombre(),
 			'usuario'           => $this->sess->getUsuario(),
 			'codigoUsuario'     => $this->sess->getCodigoUsuario(),
 			'fechaApertura'     => $fechaApertura,
@@ -86,6 +87,9 @@ class Caja
 	 					'efectivoFaltante'  => (double)$row->efectivoFaltante,
 	 					'idEstadoCaja'      => (int)$row->idEstadoCaja,
 	 					'estadoCaja'        => $row->estadoCaja,
+	 					'totalCierre'       => (double)8500,
+	 					'egresos'           => (double)500,
+	 					'agregarFaltante'   => FALSE,
 	 					'lstDenominaciones' => $this->lstDenominaciones( 1 )
 	 				);
  			}
@@ -121,17 +125,19 @@ class Caja
 		$efectivoInicial = $validar->validarDinero( $data->efectivoInicial, NULL, TRUE, 'el EFECTIVO INICIAL' );
  		// VALIDACIONES
  		if( $accion == 'cierre' ):
-			$data->idCaja           = isset( $data->idCaja ) 			? (int)$data->idCaja 				: NULL;
-			$data->idEstadoCaja     = isset( $data->idEstadoCaja ) 		? (int)$data->idEstadoCaja 			: NULL;
-			$data->efectivoInicial  = isset( $data->efectivoInicial ) 	? (double)$data->efectivoInicial 	: NULL;
-			$data->efectivoSobrante = isset( $data->efectivoSobrante ) 	? (double)$data->efectivoSobrante 	: NULL;
-			$data->efectivoFaltante = isset( $data->efectivoFaltante ) 	? (double)$data->efectivoFaltante 	: NULL;
+			$data->efectivoFaltante = isset( $data->efectivoFaltante ) 	? (double)$data->efectivoFaltante 	: 0;
+			$data->totalCierre      = isset( $data->totalCierre ) 		? (double)$data->totalCierre 		: 0;
  		
 			$idCaja           = $validar->validarEntero( $data->idCaja, NULL, TRUE, 'El ID de la CAJA no es válido' );
 			$idEstadoCaja     = 2;
-			$efectivoFinal    = $validar->validarDinero( $data->efectivoFinal, NULL, TRUE, 'el EFECTIVO FINAL' );
-			$efectivoSobrante = $data->efectivoSobrante;
-			$efectivoFaltante = $data->efectivoFaltante;
+			$efectivoFinal    = (double)$validar->validarDinero( $data->efectivoFinal, NULL, TRUE, 'el EFECTIVO FINAL' );
+			$efectivoFaltante = (double)$data->efectivoFaltante;
+			
+			$totalIngresado   = $efectivoFinal + $efectivoFaltante;
+			$totalIngresos    = (double)$data->totalCierre;
+
+			$validar->validarCantidades( $totalIngresado, $totalIngresos );
+			$efectivoSobrante = ($totalIngresado <= $totalIngresos) ? 0 : ($totalIngresado - $totalIngresos);
 
  		endif;
 

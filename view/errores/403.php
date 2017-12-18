@@ -1,4 +1,4 @@
-<div class="panel panel-default" style="margin: 50px 15px;">
+<div class="panel panel-default" style="margin: 0 15px;">
   	<div class="panel-body">
     	<div class="text-center">
     		<h2>
@@ -9,7 +9,7 @@
     		<br><br>
     		<small class="text-muted">Contacte al Administrador para mayor información</small>
     		<br><br>
-    		<a href="./" class="btn btn-danger">
+    		<a href="#/" class="btn btn-danger">
     			<span class="glyphicon glyphicon-home"></span> REGRESAR AL INICIO
     		</a>
     	</div>
