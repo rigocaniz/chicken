@@ -1,7 +1,7 @@
 <?php
     include '../class/sesion.class.php';
     
-    if( !$sesion->getAccesoModulo( 9 ) ):
+    if( !$sesion->getAccesoModulo( 9 ) AND $sesion->getIdPerfil() != 1 ):
         include 'errores/403.php';
         exit();
     endif;

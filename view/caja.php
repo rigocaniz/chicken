@@ -29,10 +29,8 @@
 				</li>
 			</ul>
 
-			<!-- INGRESO NUEVO PRODUCTO -->
 			<div class="tab-content">
-
-				<!--  PRODUCTOS DEL INVENTARIO -->
+				<!--  APERTURA / CIERRE DE CAJA -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuCaja=='verCaja'}" ng-show="menuCaja=='verCaja'">
 					<div class="text-right">
 						<p>
@@ -97,7 +95,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="text-right" ng-show="accionCaja">
+							<div class="text-right" ng-show="accionCaja=='cierreCaja'">
 								<button type="button" class="btn btn-sm btn-success" ng-click="caja.agregarFaltante=!caja.agregarFaltante">
 									<span class="glyphicon glyphicon-plus"></span>
 									Agregar Faltante

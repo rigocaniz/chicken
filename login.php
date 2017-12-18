@@ -1,11 +1,29 @@
-<?php 
-//var_dump( $_POST );
+<?php
 session_start();
 
-if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
+$username  = "";
+$password  = "";
+$mensaje   = "";
+$response  = NULL;
+$error     = FALSE;
+$respuesta = (object)array();
+$cambioPass = '
+    <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></div>
+            <input type="password" class="form-control" name="pass1" placeholder="Ingrese nueva contraseña" autofocus>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></div>
+            <input type="password" class="form-control" name="pass2" placeholder="Confirme nueva Contraseña">
+        </div>
+    </div>';
 
-    if ( isset( $_POST['usuario'] ) AND isset( $_POST[ 'clave' ] ) )
-    {
+if( !isset( $_SESSION[ 'idPerfil' ] ) AND !isset( $_SESSION[ 'username' ] )  ) {
+
+    if( isset( $_POST[ 'username' ]) && isset( $_POST[ 'password' ] ) ) { 
         
         include 'class/conexion.class.php';
         include 'class/sesion.class.php';
@@ -14,15 +32,54 @@ if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
         include 'class/validar.class.php';
         include 'class/funciones.php';
 
-        $username = $conexion->real_escape_string( $_POST[ 'usuario' ] );
-        $clave    = $conexion->real_escape_string( $_POST[ 'clave' ] );
-        $usuario = new Usuario();
-        $data = $usuario->login( $username, $clave, 'NULL' );
+        $conexion = new Conexion();
+        $usuario  = new Usuario();
+
+        $username  = $_POST['username'];
+        $password  = $_POST['password'];
+
+        $respuesta = $usuario->login( $username, $password );
+
+        if( $respuesta['respuesta'] == 'danger' ){           // ERROR NO EXISTE USUARIO o CONTRASEÑA
+            $error    = true;
+            $response = $respuesta[ 'respuesta' ];
+            $mensaje  = "<div class='alert alert-danger'>{$respuesta[ 'mensaje' ]}</div>";
+        }
+        // AGREGAR INPUTS PARA CAMBIO DE CONTRASEÑA SI ES PRIMER INICIO
+        elseif( $respuesta[ 'respuesta' ] == 'warning' || isset( $_POST[ 'pass1' ] ) ){
+            // VALIDAR CONTRASEÑAS NUEVOS ESTEN DEFINIDOS
+            if( isset( $_POST[ 'pass1' ] ) && isset( $_POST[ 'pass2' ] ) ){
+                // OBTENER NUEVOS PASSWORDS
+                $pass1 = $_POST[ 'pass1' ];
+                $pass2 = $_POST[ 'pass2' ];
+
+                $respuesta = $usuario->cambiarClaveUsuario( $username, $password, $pass1, $pass2 );
+                
+                if( $respuesta[ 'respuesta' ] == 'success' ): // SI CAMBIÓ LA CONTRASEÑA
+                    $password = "";
+                    $response = 1;
+                    $error    = false;
+                    $mensaje  = "<div class='alert alert-info'>{$respuesta['mensaje']}</div>";;
+                    unset( $_POST );
+                else:
+                    $response = 2;
+                    $error   = true;
+                    $mensaje = "<div class='alert alert-danger'>{$respuesta['mensaje']}</div>";
+                endif;                
+            }
+            else{
+                $error    = true;
+                $response = 2;
+                $mensaje  = "<div class='alert alert-warning'>{$respuesta['mensaje']}</div>";
+            }
+        }
+        $conexion->close();
     }
 
+    $disabled = $response == 2 ? 'readonly' : '';
 ?>
 <!DOCTYPE html>
-<html lang="es-GT" ng-app="">
+<html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -31,7 +88,6 @@ if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/estilo.css">
-
     <style type="text/css">
         body{
             background: url('img/ejemplo.jpg') no-repeat fixed center center;
@@ -47,26 +103,31 @@ if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
                 <h3>INGRESAR</h3>
             </div>
             <p>
-                <form action="login.php" method="POST" novalidate autocomplete="off">
+                <form action="<?php echo htmlspecialchars( $_SERVER[ 'PHP_SELF' ]); ?>" method="POST" novalidate autocomplete="off">
                     <div class="form-group input-group">
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-user"></i>
                         </span>
-                        <input class="form-control" type="text" name="usuario" ng-model="user" maxlength="12" placeholder="Usuario" required autofocus />
+                        <input class="form-control" type="text" name="username" value="<?= $username; ?>" maxlength="12" placeholder="Usuario" <?= $disabled; ?> />
                     </div>
                     <div class="form-group input-group">
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-lock"></i>
                         </span>
-                        <input class="form-control" type="password" maxlength="30" name="clave" ng-model="pass" placeholder="Contraseña" required />
+                        <input class="form-control" type="password" maxlength="25" name="password" value="<?= $password; ?>" placeholder="Contraseña" <?= $disabled; ?> />
                     </div>
-                    <?php
-                        if( isset( $data[ 'respuesta' ] ) AND $data[ 'respuesta' ] == 'danger'  ):
-                    ?>
-                    <div class="alert alert-danger" role="alert"><?= $data[ 'mensaje' ]; ?></div>
-                    <?php
+                    <?php 
+                        if( $response == 2 && $error ):
+                            echo $cambioPass;
                         endif;
                     ?>
+                    <div class="form-group">
+                        <?php
+                            if( ( $response == 1 && !$error ) OR $error ):
+                                echo $mensaje;
+                            endif;
+                        ?>
+                    </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-warning btn-block">
                             <b>ACCEDER</b>
@@ -77,17 +138,10 @@ if( !isset( $_SESSION['usuario'] ) AND !isset( $_SESSION['idPerfil'] ) ) {
             </p>
         </div>
     </div>
-
-    <script src="js/libs/jquery-3.2.1.min.js"></script>
-    <script src="js/libs/bootstrap.min.js"></script>
-    <script src="js/libs/angular.min.js"></script>
-
 </body>
 </html>
-
 <?php
 }
-else{
-    header('Location: ./');
-}
+else
+    header( 'Location: ./' );
 ?>

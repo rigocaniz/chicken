@@ -76,6 +76,7 @@ class Caja
 
 	 			$dataCaja = array(
 	 					'idCaja'            => (int)$row->idCaja,
+	 					'cajero'            => $this->sess->getNombre(),
 	 					'cajaAtrasada'      => $row->cajaAtrasada,
 	 					'usuario'           => $row->usuario,
 	 					'codigoUsuario'     => $this->sess->getCodigoUsuario(),
@@ -87,7 +88,7 @@ class Caja
 	 					'efectivoFaltante'  => (double)$row->efectivoFaltante,
 	 					'idEstadoCaja'      => (int)$row->idEstadoCaja,
 	 					'estadoCaja'        => $row->estadoCaja,
-	 					'totalCierre'       => (double)8500,
+	 					'totalCierre'       => (double)8000,
 	 					'egresos'           => (double)500,
 	 					'agregarFaltante'   => FALSE,
 	 					'lstDenominaciones' => $this->lstDenominaciones( 1 )

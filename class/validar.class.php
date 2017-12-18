@@ -166,7 +166,7 @@ class Validar
 		return $valor;
 	}
 
-	function compararValores( $valor1, $valor2, $campo1, $campo2, $accion )
+	function compararValores( $valor1, $valor2, $campo1, $campo2, $accion = 4 )
 	{
 
 		if( $accion == 1 ){
@@ -185,6 +185,12 @@ class Validar
 			if( $valor1 < $valor2 ){
 				$this->error   = TRUE;
 				$this->mensaje = "El valor de " . $campo1 . " no debe ser igual " . $campo2;
+			}
+		}
+		elseif( $accion == 4 ){
+			if( $valor1 != $valor2 ){
+				$this->error   = TRUE;
+				$this->mensaje = "La <b>" . $campo1 . "</b> no coincide con <b>" . $campo2 ."</b>";
 			}
 		}
 	}
