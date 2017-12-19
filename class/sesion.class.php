@@ -5,11 +5,22 @@
 class Sesion
 {
 	
+	function __construct()
+	{
+		$this->iniciarSesion();
+	}
+
 	function destruirSesion()
 	{
 		session_start();
 		session_destroy();
 		header("Location: login.php");
+	}
+
+	function iniciarSesion()
+	{
+		if( !isset( $_SESSION ) )
+			session_start();
 	}
 
 	// SETEAR VARIABLE
@@ -21,7 +32,7 @@ class Sesion
 	// OBTENER VARIABEL
 	private function getVariable( $var )
 	{
-		return @$_SESSION[ $var ];
+		return isset( $_SESSION[ $var ] ) ? $_SESSION[ $var ] : NULL;
 	}
 
 	function getUsuario()
@@ -47,6 +58,12 @@ class Sesion
 	function getCodigoUsuario()
 	{
 		return (int)$this->getVariable( 'codigoUsuario' );
+	}
+
+	function getAccesoModulo( $idModulo )
+	{
+		$modulo = 'modulo_' . (int)$idModulo;
+		return (int)$this->getVariable( $modulo );
 	}
 
 }

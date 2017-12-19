@@ -198,6 +198,40 @@ class Usuario
 	}
 
 
+	// CAMBIAR DE CONTRASEÑA USUARIO
+	function cambiarClaveUsuario( $usuario, $clave, $claveNueva, $claveConfirmacion )
+	{
+		$validar = new Validar();
+
+		$usuario           = $this->con->real_escape_string( $validar->validarTexto( $usuario, NULL, TRUE, 8, 16, "USUARIO" ) );
+		$clave             = $this->con->real_escape_string( $validar->validarTexto( $clave, NULL, TRUE, 4, 16, "CONTRASEÑA" ) );
+		$claveNueva        = $this->con->real_escape_string( $validar->validarTexto( $claveNueva, NULL, TRUE, 4, 16, "CONTRASEÑA NUEVA" ) );
+		$claveConfirmacion = $this->con->real_escape_string( $validar->validarTexto( $claveConfirmacion, NULL, TRUE, 4, 16, "CONTRASEÑA NUEVA" ) );
+		$validar->compararValores( $claveNueva, $claveConfirmacion, 'clave nueva', 'clave de confirmación' );
+
+		if( $validar->getIsError() ):
+ 			$this->respuesta = 'danger';
+ 			$this->mensaje   = $validar->getMsj();
+ 		else:
+
+			$sql = "CALL cambiarClaveUsuario( '{$usuario}', '{$clave}', '{$claveNueva}' );";
+			
+			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+				$this->siguienteResultado();
+
+				$this->respuesta = $row->respuesta;
+				$this->mensaje   = $row->mensaje;
+			}
+			else{
+				$this->respuesta = 'danger';
+				$this->mensaje   = 'Error al ejecutar la operacion (SP)';
+			}
+ 		endif;
+
+ 		return $this->getRespuesta();
+	}
+
+
 	// LOGIN USUARIO
 	function login( $usuario, $clave, $codigo = 'NULL' )
 	{
@@ -225,6 +259,7 @@ class Usuario
 				$this->respuesta = $row->respuesta;
 				$this->mensaje   = $row->mensaje;
 				if( $this->respuesta == 'success' ){
+					$modulo = new Modulo();
 					// 	CREAR SESION
 					$sesion->setVariable( 'nombre', $row->nombre );
 					$sesion->setVariable( 'nombreCorto', $row->nombreCorto );
@@ -232,6 +267,7 @@ class Usuario
 					$sesion->setVariable( 'idDestinoMenu', (int)$row->idDestinoMenu );
 					$sesion->setVariable( 'usuario', $row->usuario );
 					$sesion->setVariable( 'codigoUsuario', $row->codigoUsuario );
+					$modulo->consultarModulosPerfil( (int)$row->idPerfil, TRUE );
 					
 					if ( $codigo === 'NULL' )
 						header( "Location: ./" );

@@ -1,3 +1,12 @@
+<?php
+    include '../class/sesion.class.php';
+    
+    if( !$sesion->getAccesoModulo( 9 ) AND $sesion->getIdPerfil() != 1 ):
+        include 'errores/403.php';
+        exit();
+    endif;
+?>
+
 <div class="contenedor">
 	<div class="row">
 		<div class="col-sm-12">
@@ -63,11 +72,12 @@
 								<table class="table table-hover">
 									<thead>
 										<tr>
-											<th class="text-center col-sm-1">No.</th>
+											<th class="text-center">No.</th>
 											<th class="text-center col-sm-2">Nombres</th>
 											<th class="text-center col-sm-2">Apellidos</th>
 											<th class="text-center col-sm-2">Usuario</th>
 											<th class="text-center col-sm-2">Código</th>
+											<th class="text-center col-sm-2">Perfil</th>
 											<th class="text-center col-sm-2">Estado</th>
 										</tr>
 									</thead>
@@ -78,6 +88,7 @@
 											<td>{{ usuario.apellidos }}</td>
 											<td class="text-center">{{ usuario.usuario }}</td>
 											<td class="text-center">{{ usuario.codigo }}</td>
+											<td class="text-center">{{ usuario.perfil }}</td>
 											<td class="text-center">{{ usuario.estadoUsuario }}</td>
 											<td class="text-center">
 												<div class="menu-contenedor">

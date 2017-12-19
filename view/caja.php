@@ -1,3 +1,11 @@
+<?php
+    include '../class/sesion.class.php';
+    
+    if( !$sesion->getAccesoModulo( 6 ) ):
+        include 'errores/403.php';
+        exit();
+    endif;
+?>
 
 <div class="contenedor">
 	<div class="row">
@@ -21,148 +29,126 @@
 				</li>
 			</ul>
 
-			<!-- INGRESO NUEVO PRODUCTO -->
 			<div class="tab-content">
-
-				<!--  PRODUCTOS DEL INVENTARIO -->
+				<!--  APERTURA / CIERRE DE CAJA -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuCaja=='verCaja'}" ng-show="menuCaja=='verCaja'">
-					<div class="panel" ng-class="{'panel-warning' : !caja.idCaja, 'panel-success': caja.idCaja}">
-						<div class="panel-heading">
-							<h3 class="panel-title">
-								APERTURA / CIERRE CAJA
-							</h3>
-						</div>
-						<div class="panel-body">
-							<div class="text-right">
-								<p>
-									<button type="button" class="btn btn-warning" ng-click="accionCaja='cierreCaja'" ng-show="caja.idCaja">
-										<span class="glyphicon glyphicon-flag"></span> CERRAR CAJA
-									</button>
-									<button type="button" class="btn btn-success" ng-click="accionCaja='aperturarCaja'" ng-show="!caja.idCaja">
-										<span class="glyphicon glyphicon-flag"></span> APERTURAR CAJA
-									</button>
-									<button type="button" class="btn btn-danger" ng-click="accionCaja=''" ng-show="accionCaja!=''" title="CANCELAR ACCIÓN" data-toggle="tooltip" data-placement="top" tooltip>
-										<span class="glyphicon glyphicon-remove"></span>
-									</button>
-								</p>
-							</div>
-							<div class="alert alert-danger" role="alert" ng-show="caja.cajaAtrasada">
-								<span class="glyphicon glyphicon-info-sign"></span> USTED NO HA REALIZADO EL CIERRE DE SU CAJA DE FECHA/HORA: <strong style="font-size: 18px">{{ caja.fechaHoraApertura }}</strong>
-							</div>
-							<fieldset class="fieldset">
-								<legend class="legend info">APERTURA DE CAJA</legend>
-								<form class="form-horizontal" autocomplete="off" novalidate>
-									<div class="text-right">
-										<label class="label" ng-class="{'label-danger': caja.idEstadoCaja == 2, 'label-success': caja.idEstadoCaja==1}" style="font-size: 17px;">
-											ESTADO {{ caja.estadoCaja | uppercase }}
-										</label>
-									</div>
-									<br>
-									<div class="form-group">
-										<label class="col-sm-3 col-md-2 control-label">CAJERO</label>
-										<div class="col-sm-6 col-md-5 col-lg-4">
-											<input type="text" class="form-control" ng-model="caja.cajero" placeholder="Cajero" disabled>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-3 col-md-2 control-label">CODIGO OPERADOR</label>
-										<div class="col-sm-3 col-md-3 col-lg-2">
-											<input type="text" class="form-control" ng-model="caja.codigoUsuario" placeholder="Cajero" disabled>
-										</div>
-										<label class="col-sm-3 col-md-2 control-label">USUARIO</label>
-										<div class="col-sm-3 col-md-3 col-lg-2">
-											<input type="text" class="form-control" ng-model="caja.usuario" placeholder="Cajero" disabled>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-3 col-md-2 control-label">FECHA DE APERTURA</label>
-										<div class="col-sm-4 col-md-3 col-lg-2">
-											<input type="text" class="form-control" ng-model="caja.fechaApertura" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker disabled>
-										</div>
-									</div>
-									<div class="form-group" ng-show="accionCaja=='aperturarCaja' || accionCaja=='cierreCaja'">
-										<label class="col-sm-3 col-md-2 control-label">EFECTIVO INICIAL</label>
-										<div class="col-sm-4 col-md-3 col-lg-2">
-											<input type="text" id="efectivoInicio" class="form-control" ng-model="caja.efectivoInicial" placeholder="Efectivo Inicial" ng-disabled="caja.idCaja" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/">
-										</div>
-										<div class="col-sm-4 col-md-3 col-lg-2  text-right" ng-show="caja.efectivoInicial">
-											<kbd class="numEfectivo">Q. {{ caja.efectivoInicial | number:2 }}</kbd>
-										</div>
-									</div>
-									<!-- DENOMINACIONES -->
-									<legend class="text-center">
-										<i class="fa fa-money" aria-hidden="true"></i> DENOMINACIONES
-									</legend>
-									<div class="form-group">
-										<div class="form-horizontal">
-											<div class="col-sm-6" ng-repeat="denominacion in caja.lstDenominaciones">
-												<div class="form-group">
-													<label class="col-sm-4">{{ denominacion.descripcion }} de: <b>{{ denominacion.denominacion }}</b></label>
-													<div class="col-sm-4">
-														<input type="number" min="0"  class="form-control" ng-model="denominacion.cantidad" placeholder="Cantidad" ng-pattern="/^[0-9]+?$/" step="0">
-													</div>
-													<div class="col-sm-4">
-														<kbd class="numEfectivo">
-															{{ ( denominacion.cantidad ? (denominacion.cantidad * denominacion.denominacion ) : '0' ) | number:2 }}
-														</kbd>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="text-center">
-											<h4>
-												<b>EFECTIVO TOTAL:</b>
-												<label class="numEfectivo label label-success">
-													Q. {{ retornarTotal() | number: 2 }}
-												</label>
-											</h4>
-										</div>
-									</div>
-									<div class="form-group" ng-show="accionCaja=='cierreCaja'">
-										<label class="col-sm-3 col-md-2 control-label">EFECTIVO FINAL</label>
-										<div class="col-sm-4 col-md-3 col-lg-2">
-											<input type="number" id="efectivoFinal" class="form-control" ng-model="caja.efectivoFinal" placeholder="Efectivo Incial"  ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/">
-										</div>
-										<div class="col-sm-4 col-md-3 col-lg-2 text-right">
-											<kbd class="numEfectivo">Q. {{ caja.efectivoFinal | number:2 }}</kbd>
-										</div>
-									</div>
-									<div class="form-group" ng-show="accionCaja=='cierreCaja'">
-										<label class="col-sm-3 col-md-2 control-label">EFECTIVO SOBRANTE</label>
-										<div class="col-sm-4 col-md-3 col-lg-2">
-											<input type="text" class="form-control" ng-model="caja.efectivoSobrante" min="0" placeholder="Efectivo Sobrante" ng-disabled="caja.efectivoFaltante > 0" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/">
-										</div>
-										<div class="col-sm-4 col-md-3 col-lg-2 text-right">
-											<kbd class="numEfectivo">Q. {{ caja.efectivoSobrante | number:2 }}</kbd>
-										</div>
-									</div>
-									<div class="form-group" ng-show="accionCaja=='cierreCaja'">
-										<label class="col-sm-3 col-md-2 control-label">EFECTIVO FALTANTE</label>
-										<div class="col-sm-4 col-md-3 col-lg-2">
-											<input type="text" class="form-control" ng-model="caja.efectivoFaltante" min="0" placeholder="Efectivo Flotante" ng-disabled="caja.efectivoSobrante > 0" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/">
-										</div>
-										<div class="col-sm-4 col-md-3 col-lg-2 text-right">
-											<kbd class="numEfectivo">Q. {{ caja.efectivoFaltante | number:2 }}</kbd>
-										</div>
-									</div>
-									<div class="form-group text-center">
-										<button type="button" class="btn btn-success btn-lg" ng-show="accionCaja=='aperturarCaja'" ng-click="consultaCaja()">
-											<span class="glyphicon glyphicon-folder-open"></span> <u><strong>A</strong></u>perturar Caja
-										</button>
-										<button type="button" class="btn btn-warning btn-lg" ng-show="accionCaja=='cierreCaja'" ng-click="consultaCaja()">
-											<span class="glyphicon glyphicon-folder-close"></span> <u><strong>C</strong></u>errar Caja
-										</button>
-									</div>
-								</form>
-							</fieldset>
-						</div>
+					<div class="text-right">
+						<p>
+							<button type="button" class="btn btn-warning" ng-click="accionCaja='cierreCaja'" ng-show="caja.idCaja">
+								<span class="glyphicon glyphicon-flag"></span> CERRAR CAJA
+							</button>
+							<button type="button" class="btn btn-success" ng-click="accionCaja='aperturarCaja'" ng-show="!caja.idCaja">
+								<span class="glyphicon glyphicon-flag"></span> APERTURAR CAJA
+							</button>
+							<button type="button" class="btn btn-danger" ng-click="accionCaja=''" ng-show="accionCaja!=''" title="CANCELAR ACCIÓN" data-toggle="tooltip" data-placement="top" tooltip>
+								<span class="glyphicon glyphicon-remove"></span>
+							</button>
+						</p>
 					</div>
+					<div class="alert alert-danger" role="alert" ng-show="caja.cajaAtrasada">
+						<span class="glyphicon glyphicon-info-sign"></span> USTED NO HA REALIZADO EL CIERRE DE SU CAJA DE FECHA/HORA: <strong style="font-size: 18px">{{ caja.fechaHoraApertura }}</strong>
+					</div>
+					<fieldset class="fieldset">
+						<legend class="legend info">APERTURA / CIERRE</legend>
+						<form class="form-horizontal" autocomplete="off" novalidate>
+							<div class="text-right">
+								<label class="label" ng-class="{'label-danger': caja.idEstadoCaja == 2, 'label-success': caja.idEstadoCaja==1}" style="font-size: 17px;">
+									ESTADO {{ caja.estadoCaja | uppercase }}
+								</label>
+							</div>
+							<br>
+							<div class="form-group">
+								<label class="col-sm-3 col-md-2 control-label">CAJERO</label>
+								<div class="col-sm-6 col-md-5 col-lg-4">
+									<input type="text" class="form-control" ng-model="caja.cajero" placeholder="Cajero" disabled>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 col-md-2 control-label">CODIGO OPERADOR</label>
+								<div class="col-sm-3 col-md-3 col-lg-2">
+									<input type="text" class="form-control" ng-model="caja.codigoUsuario" placeholder="Cajero" disabled>
+								</div>
+								<label class="col-sm-3 col-md-2 control-label">USUARIO</label>
+								<div class="col-sm-3 col-md-3 col-lg-2">
+									<input type="text" class="form-control" ng-model="caja.usuario" placeholder="Cajero" disabled>
+								</div>
+							</div>
+							<!--
+							{{caja|json}}
+						-->
+							<!-- DENOMINACIONES -->
+							<legend class="text-center" ng-show="accionCaja">
+								<i class="fa fa-money" aria-hidden="true"></i> DENOMINACIONES
+							</legend>
+							<div class="form-group" ng-show="accionCaja">
+								<div class="col-sm-6" ng-repeat="denominacion in caja.lstDenominaciones">
+									<div class="form-group">
+										<label class="col-sm-4">{{ denominacion.descripcion }} de {{ denominacion.denominacion }}</label>
+										<div class="col-sm-4">
+											<input type="number" min="0"  class="form-control" ng-model="denominacion.cantidad" placeholder="Cantidad" ng-pattern="/^[0-9]+?$/" step="0">
+										</div>
+										<div class="col-sm-4 text-right">
+											<kbd class="numEfectivo">
+												{{ ( denominacion.cantidad ? (denominacion.cantidad * denominacion.denominacion ) : '0' ) | number:2 }}
+											</kbd>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="text-right" ng-show="accionCaja=='cierreCaja'">
+								<button type="button" class="btn btn-sm btn-success" ng-click="caja.agregarFaltante=!caja.agregarFaltante">
+									<span class="glyphicon glyphicon-plus"></span>
+									Agregar Faltante
+								</button>
+								<br><br>
+							</div>
+							<div class="form-group" ng-show="accionCaja=='cierreCaja' && caja.agregarFaltante">
+								<div class="col-sm-6"></div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4">EFECTIVO FALTANTE</label>
+										<div class="col-sm-4">
+											<input type="number" min="0"  class="form-control" ng-model="caja.efectivoFaltante" placeholder="Total Efectivo" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="1">
+										</div>
+										<div class="col-sm-4 text-right">
+											<kbd class="numEfectivo">
+												{{ ( caja.efectivoFaltante ? caja.efectivoFaltante : '0' ) | number:2 }}
+											</kbd>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-4 col-md-6 col-lg-7"></div>
+							<div class="col-sm-8 col-md-6 col-lg-5">
+								<h4><b>
+								<table class="table table-hover">
+									<tr ng-show="accionCaja=='cierreCaja'">
+										<td class="col-sm-7 text-right"><b>EFECTIVO INICIAL:</b></td>
+										<td class="col-sm-5 text-right">Q. {{ caja.efectivoInicial | number: 2 }}</td>
+									</tr>
+									<tr ng-show="caja.agregarFaltante && accionCaja=='cierreCaja' && caja.efectivoFaltante > 0">
+										<td class="col-sm-7 text-right"><b>EFECTIVO FALTANTE:</b></td>
+										<td class="col-sm-5 text-right">Q. {{ caja.efectivoFaltante | number: 2 }}</td>
+									</tr>
+									<tr ng-show="accionCaja">
+										<td class="col-sm-7 text-right"><b>EFECTIVO {{ accionCaja == 'cierreCaja' ? 'FINAL' : 'INICIAL' }}:</b></td>
+										<td class="col-sm-5 text-right">Q. {{ retornarTotal() | number: 2 }}</td>
+									</tr>
+								</table>
+								</b></h4>
+							</div>
+							<div class="form-group text-center">
+								<button type="button" class="btn btn-success btn-lg" ng-show="accionCaja=='aperturarCaja'" ng-click="consultaCaja()">
+									<span class="glyphicon glyphicon-folder-open"></span> Aperturar Caja
+								</button>
+								<button type="button" class="btn btn-warning btn-lg" ng-show="accionCaja=='cierreCaja'" ng-click="consultaCaja()">
+									<span class="glyphicon glyphicon-folder-close"></span> Cerrar Caja
+								</button>
+							</div>
+						</form>
+					</fieldset>
 				</div>
-
 			</div>
-
 		</div>
 	</div>
 </div>

@@ -1,3 +1,12 @@
+<?php
+    include '../class/sesion.class.php';
+    
+    if( !$sesion->getAccesoModulo( 2 ) ):
+        include 'errores/403.php';
+        exit();
+    endif;
+?>
+
 <div class="div-fixed">
 	<div class="row">
 		<div class="col-xs-3">

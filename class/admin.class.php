@@ -16,11 +16,13 @@ class Admin
  	function __construct()
  	{
  		GLOBAL $conexion, $sesion;
- 		$this->con  = $conexion;
- 		$this->sess = $sesion;
+ 		
+ 		if( is_null( $this->con ) )
+ 			$this->con  = $conexion;
+ 		
+ 		if( is_null( $this->sess ) )
+ 			$this->sess = $sesion;
  	}
-
-
 
  	// CARGAR LISTA PERFILES
 	function lstPerfiles()
@@ -37,27 +39,6 @@ class Admin
 		return $lstPerfiles;
 	}
 
-
-	function consultarModulosPerfil( $idModulo )
-	{
-		$idModulo = (int)$idModulo;
-		$lstModulosA = array();
-
-		$sql = "SELECT m.idModulo, m.modulo, m.habilitado, IF( ISNULL(pm.idPerfil) AND ISNULL(pm.idModulo), FALSE, TRUE ) AS asignado 
-					FROM modulo AS m
-						LEFT JOIN perfilModulo AS pm
-							ON m.idModulo = pm.idModulo AND pm.idPerfil = {$idModulo}
-					WHERE m.habilitado;";
-		
-		if( $rs = $this->con->query( $sql ) ){
-			while ( $row = $rs->fetch_object() ){
-				$row->asignado = (int)$row->asignado ? TRUE : FALSE;
-				$lstModulosA[] = $row;
-			}
-		}
-
-		return $lstModulosA;
-	}
 
 	function asignarModulo( $idPerfil, $idModulo, $asignado )
 	{
