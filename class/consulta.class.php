@@ -191,6 +191,21 @@ class Consulta
  		return $lst;
  	}
 
+ 	// LST CATALOGO SALON
+ 	function catSalon()
+ 	{
+ 		$lst = array();
+
+ 		$sql = "SELECT idSalon, salon FROM salon ";
+ 		
+ 		if( $rs = $this->con->query( $sql ) ){
+ 			while( $row = $rs->fetch_object() )
+ 				$lst[] = $row;
+ 		}
+
+ 		return $lst;
+ 	}
+
 }
 
 ?>

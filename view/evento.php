@@ -160,7 +160,12 @@
                                 </li>
                                 <li role="presentation" ng-class="{'active' : $parent.idTab==2}" ng-click="$parent.idTab=2">
                                     <a href="" role="tab" data-toggle="tab">
-                                        <span class="glyphicon glyphicon-cutlery"></span> Menús
+                                        <span class="glyphicon glyphicon-cutlery"></span> Menús / Servicios
+                                    </a>
+                                </li>
+                                <li role="presentation" ng-class="{'active' : $parent.idTab==3}" ng-click="$parent.idTab=3">
+                                    <a href="" role="tab" data-toggle="tab">
+                                        <span class="glyphicon glyphicon-shopping-cart"></span> Movimiento
                                     </a>
                                 </li>
                             </ul>
@@ -230,29 +235,11 @@
                                         <div class="col-xs-2">
                                             <input type="number" class="form-control" ng-model="evento.numeroPersonas" focus-enter>
                                         </div>
-                                        <label class="col-xs-2">Anticipo</label>
-                                        <div class="col-xs-2">
-                                            <input type="number" class="form-control" ng-model="evento.anticipo" placeholder="Q. " focus-enter>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="margin-top:5px">
-                                        <label class="col-xs-2">Descuento</label>
-                                        <div class="col-xs-2">
-                                            <input type="number" class="form-control" ng-model="evento.descuento" placeholder="Q." focus-enter>
-                                        </div>
-                                        <label class="col-xs-2">Descripción Descuento</label>
-                                        <div class="col-xs-6">
-                                            <input type="text" class="form-control" ng-model="evento.descripcionDescuento" maxlength="75" ng-disabled="!(evento.descuento>0)" focus-enter>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="margin-top:5px">
-                                        <label class="col-xs-2">Costo Extra</label>
-                                        <div class="col-xs-2">
-                                            <input type="number" class="form-control" ng-model="evento.costoExtra" placeholder="Q." focus-enter>
-                                        </div>
-                                        <label class="col-xs-2">Descripción Descuento</label>
-                                        <div class="col-xs-6">
-                                            <input type="text" class="form-control" ng-model="evento.descripcionCostoExtra" maxlength="75" ng-disabled="!(evento.costoExtra>0)" focus-enter>
+                                        <label class="col-xs-2">Salón</label>
+                                        <div class="col-xs-4">
+                                            <select ng-model="evento.idSalon" class="form-control">
+                                                <option value="{{item.idSalon}}" ng-repeat="item in lstSalon">{{item.salon}}</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="row" style="margin-top:5px">
@@ -272,20 +259,20 @@
                                 </div>
 
                                 <!-- $$$$$$ MENUS ORDENADOS $$$$$$ -->
-                                <div role="tabpanel" class="tab-pane" ng-class="{'active' : $parent.idTab==2}" ng-show="$parent.idTab==2">
+                                <div role="tabpanel" class="tab-pane" ng-class="{'active' : $parent.idTab==2}" ng-show="$parent.idTab==2 && evento.idEvento>0">
                                    <div class="row" style="margin-top:5px">
                                         <!-- BOTON PARA AGREGAR MENU -->
                                         <div class="col-xs-12 text-right" style="margin-top:5px" ng-show="accionMenu==''">
                                             <button type="button" class="btn btn-sm btn-primary" ng-click="menuAccion( 'insert' )" ng-disabled="$parent.idEstadoEvento!=1">
                                                 <span class="glyphicon glyphicon-plus"></span>
-                                                <b>Agregar Menú</b>
+                                                <b>Agregar Menú / Servicio</b>
                                             </button>
                                         </div>
 
                                         <!-- ELIMINAR MENU -->
                                         <div class="col-sm-12" ng-show="accionMenu=='delete'">
                                             <fieldset class="fieldset">
-                                                <legend class="legend danger">Eliminar Menú</legend>
+                                                <legend class="legend danger">Eliminar Menú / Servicio</legend>
                                                 <div class="col-xs-12" style="margin-top:5px">
                                                     <h4>Eliminar <kbd>{{menu.cantidad}} {{menu.menu}}</kbd></h4>
                                                 </div>
@@ -306,7 +293,7 @@
                                         <div class="col-sm-12" ng-show="accionMenu=='insert' || accionMenu=='update'">
                                             <fieldset class="fieldset">
                                                 <legend class="legend info">
-                                                    <span>{{accionMenu=='insert'?'Agregar':'Editar' }}</span> Menú
+                                                    <span>{{accionMenu=='insert'?'Agregar':'Editar' }}</span> Menú / Servicio
                                                 </legend>
                                                 <div class="row">
                                                     <div class="col-xs-4">
@@ -315,6 +302,7 @@
                                                                 <span ng-show="tipo=='menu'">Menú</span>
                                                                 <span ng-show="tipo=='combo'">Combo</span>
                                                                 <span ng-show="tipo=='otroMenu'">Personalizado</span>
+                                                                <span ng-show="tipo=='otroServicio'">Servicio</span>
                                                             </button>
                                                             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-disabled="$parent.accionMenu=='update'">
                                                                 <span class="caret"></span>
@@ -330,12 +318,15 @@
                                                                 <li>
                                                                     <a href="" ng-click="$parent.tipo='otroMenu'">Personalizado</a>
                                                                 </li>
+                                                                <li>
+                                                                    <a href="" ng-click="$parent.tipo='otroServicio'">Servicio</a>
+                                                                </li>
                                                             </ul>
                                                         </div>
                                                     </div>
                                                     <div class="col-xs-8">
-                                                        <input type="text" class="form-control" ng-model="menu.otroMenu" ng-show="tipo=='otroMenu'" id="inputMenu">
-                                                        <select class="form-control" ng-model="menu.idMenu" ng-show="tipo!='otroMenu'" id="selectMenu">
+                                                        <input type="text" class="form-control" ng-model="menu.otroMenu" ng-show="tipo=='otroMenu' || tipo=='otroServicio'" id="inputMenu">
+                                                        <select class="form-control" ng-model="menu.idMenu" ng-show="tipo!='otroMenu' && tipo!='otroServicio'" id="selectMenu">
                                                             <option value="{{item.idMenu}}" ng-repeat="item in lstMenu">{{item.menu}}</option>
                                                         </select>
                                                     </div>
@@ -351,6 +342,10 @@
                                                 <div class="col-xs-4">
                                                     <b>Subtotal</b>
                                                     <input type="text" value="{{ menu.cantidad * menu.precioUnitario | number:2}}" class="form-control" disabled focus-enter>
+                                                </div>
+                                                <div class="col-xs-4">
+                                                    <b>Hora Despacho</b>
+                                                    <input type="text" class="form-control" ng-model="menu.horaDespacho" bs-timepicker data-time-format="HH:mm" data-time-type="string" placeholder="Hora Despacho" focus-enter>
                                                 </div>
                                                 <div class="col-xs-12">
                                                     <b>Comentario</b>
@@ -411,6 +406,103 @@
                                     </div>
                                 </div>
                                 <!-- MENUS ORDENADOS -->
+
+                                <!-- $$$$$$ MOVIMIENTOS $$$$$$ -->
+                                <div role="tabpanel" class="tab-pane" ng-class="{'active' : $parent.idTab==3}" ng-show="$parent.idTab==3 && evento.idEvento>0">
+                                   <div class="row" style="margin-top:5px">
+                                        <!-- BOTON PARA AGREGAR MENU -->
+                                        <div class="col-xs-12 text-right" style="margin-top:5px" ng-show="accionMenu==''">
+                                            <button type="button" class="btn btn-sm btn-primary" ng-click="menuAccion( 'move' )" ng-disabled="$parent.idEstadoEvento!=1">
+                                                <span class="glyphicon glyphicon-shopping-cart"></span>
+                                                <b>Agregar Movimiento</b>
+                                            </button>
+                                        </div>
+
+                                        <!-- ELIMINAR MENU -->
+                                        <div class="col-sm-12" ng-show="accionMenu=='deleteMove'">
+                                            <fieldset class="fieldset">
+                                                <legend class="legend danger">Eliminar Movimiento</legend>
+                                                <!--
+                                                <div class="col-xs-12" style="margin-top:5px">
+                                                    <h4>Eliminar <kbd>{{menu.cantidad}} {{menu.menu}}</kbd></h4>
+                                                </div>
+                                                <div class="col-xs-12 text-center" style="margin-top:5px">
+                                                    <button type="button" class="btn btn-sm btn-default" ng-click="$parent.accionMenu=''">
+                                                        <span class="glyphicon glyphicon-remove"></span>
+                                                        Cancelar
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-danger" ng-click="guardarMenu()">
+                                                        <span class="glyphicon glyphicon-remove"></span>
+                                                        <b>Eliminar</b>
+                                                    </button>
+                                                </div>
+                                                -->
+                                            </fieldset>
+                                        </div>
+
+                                        <!-- FORMULARIO PARA MENU -->
+                                        <div class="col-sm-12" ng-show="accionMenu=='insertMove'">
+                                            <fieldset class="fieldset">
+                                                <legend class="legend info">
+                                                    Agregar Movimiento
+                                                </legend>
+                                                <div class="row">
+                                                    <div class="col-xs-5">
+                                                        <label>Forma de Pago:</label>
+                                                        <select class="form-control" ng-model="movimiento.idFormaPago">
+                                                            <option value="{{item.idFormaPago}}" ng-repeat="item in lstFormaPago">{{item.formaPago}}</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-xs-4">
+                                                        <label>Monto:</label>
+                                                        <input type="text" class="form-control" ng-model="movimiento.monto">
+                                                    </div>
+                                                    <div class="col-xs-8">
+                                                        <label>Descripción:</label>
+                                                        <input type="text" class="form-control" ng-model="movimiento.motivo">
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 text-right" style="margin-top:5px">
+                                                    <button type="button" class="btn btn-sm btn-default" ng-click="$parent.accionMenu=''">
+                                                        <span class="glyphicon glyphicon-remove"></span>
+                                                        Cancelar
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-success" ng-click="guardarMovimiento()">
+                                                        <span class="glyphicon glyphicon-ok"></span>
+                                                        <b>Guardar</b>
+                                                    </button>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+
+                                        <!-- LISTA DE MENUS -->
+                                        <div class="col-sm-12" ng-show="accionMenu==''">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Forma Pago</th>
+                                                        <th>Monto</th>
+                                                        <th>Descripción</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="item in lstMovimiento">
+                                                        <td>
+                                                            <button type="button" class="btn btn-xs btn-danger" ng-click="menuAccion( 'deleteMove', item )" ng-disabled="$parent.idEstadoEvento!=1" title="Eliminar" data-toggle="tooltip" data-placement="top" tooltip>
+                                                                <span class="glyphicon glyphicon-remove"></span>
+                                                            </button>
+                                                        </td>
+                                                        <td>{{item.formaPago}}</td>
+                                                        <td>{{item.monto}}</td>
+                                                        <td>{{item.motivo}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- MOVIMIENTOS -->
                             </div>
                         </div>
                     </div>

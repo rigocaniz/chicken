@@ -8,6 +8,8 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 	$scope.lstMenu         = [];
 	$scope.lstResultado    = [];
 	$scope.lstMenuEvento   = [];
+	$scope.lstSalon 	   = [];
+	$scope.lstFormaPago    = [];
 	$scope.accionMenu      = '';
 	$scope.busquedaCliente = '';
 	$scope.evento          = {};
@@ -38,12 +40,25 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 			descripcionDescuento  : '',
 			costoExtra            : '',
 			descripcionCostoExtra : '',
-			estadoEvento 		  : ''
+			estadoEvento 		  : '',
+			idSalon               : $scope.lstSalon.length && $scope.lstSalon[ 0 ].idSalon
 		};
 	})();
 
+	($scope.init = function () {
+		$http.post('consultas.php', { opcion : 'iniEvento' })
+		.success(function (data) {
+			console.log( data );
+			if ( data.lstSalon && data.lstFormaPago )
+			{
+				$scope.lstSalon     = data.lstSalon;
+				$scope.lstFormaPago = data.lstFormaPago;
+			}
+		});
+	})();
+
 	// DIALOGOS
-	$scope.dialOrden = $modal({scope: $scope,template:'dl.evento.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialEvento = $modal({scope: $scope,template:'dl.evento.html', show: false, backdrop:false, keyboard: false });
 
 	// MUESTRA DIALOGO DE EVENTO
 	$scope.showDialOrden = function ( _accion, evento, _status ) {
@@ -86,7 +101,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 			$scope.lstMenuEvento = evento.lstMenu;
 		}
 
-		$scope.dialOrden.show();
+		$scope.dialEvento.show();
 
 		$timeout(function () {
 			if ( _status == 10 )
@@ -176,7 +191,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 				$scope.consultaEvento();
 
 				if ( $scope.evento.newIdEstadoEvento > 0 )
-					$scope.dialOrden.hide();
+					$scope.dialEvento.hide();
 
 			});
 		}
@@ -233,26 +248,25 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 		{
 			$scope.menu.id             = 0;
 			$scope.menu.precioUnitario = 0;
+			$scope.menu.cantidad 	   = angular.copy( $scope.evento.numeroPersonas );
 			$scope.menu.otroMenu       = '';
 			$scope.menu.comentario     = '';
 		}
 		else if ( _accion == 'update' || _accion == 'delete' )
 		{
+			var otroMenu = ( _menu.idTipo == 'otroMenu' || _menu.idTipo == 'otroServicio' ) ?  _menu.menu : '';
 			$scope.menu = {
 				id       	   : _menu.id,
 				cantidad       : parseInt( _menu.cantidad ),
 				precioUnitario : parseFloat( _menu.precioUnitario ),
-				otroMenu 	   : ( _menu.idTipo == 'otroMenu' ?  _menu.menu : '' ),
+				otroMenu 	   : otroMenu,
 				idMenu 		   : ( _menu.idTipo != $scope.tipo ? '' : _menu.idMenu ),
 				idMenuCurrent  : _menu.idMenu,
 				menu  		   : _menu.menu,
 				comentario     : _menu.comentario
 			};
 
-			console.log( $scope.menu );
-
-
-			if ( _menu.idTipo != $scope.tipo && _accion == 'update' )
+			if ( _menu.idTipo != $scope.tipo )
 				$scope.tipo = _menu.idTipo;
 		}
 	};
@@ -265,7 +279,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 		else if ( !( $scope.menu.precioUnitario > 0 ) )
 			alertify.notify( "El precio debe ser mayor a cero", "danger", 3 );
 
-		else if ( $scope.tipo == 'otroMenu' && !( $scope.menu.otroMenu.length > 3 ) )
+		else if ( ( $scope.tipo == 'otroMenu' || $scope.tipo == 'otroServicio' ) && !( $scope.menu.otroMenu.length > 3 ) )
 			alertify.notify( "Error, menú no se encuentra especificado", "danger", 3 );
 
 		else
@@ -277,6 +291,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 					id             : $scope.menu.id,
 					idMenu         : $scope.menu.idMenu,
 					cantidad       : $scope.menu.cantidad,
+					horaDespacho   : $scope.menu.horaDespacho,
 					precioUnitario : $scope.menu.precioUnitario,
 					comentario     : $scope.menu.comentario,
 					otroMenu       : $scope.menu.otroMenu,
@@ -314,7 +329,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 			$scope.consultarMenu();
 
 			$timeout(function () {
-				if ( _new == 'otroMenu' && document.getElementById('inputMenu') != undefined )
+				if ( ( _new == 'otroMenu' || _new == 'otroServicio' ) && document.getElementById('inputMenu') != undefined )
 					document.getElementById('inputMenu').focus();
 
 				else if ( document.getElementById('selectMenu') != undefined )

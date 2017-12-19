@@ -21,21 +21,17 @@ class Evento
 		$mensaje   = "";
 		$lastId  = null;
 
-		$idEstadoEvento        = (int)$_evento->idEstadoEvento;
-		$idEvento              = (int)$_evento->idEvento;
-		$idCliente             = (int)$_evento->idCliente;
-		$numeroPersonas        = (int)$_evento->numeroPersonas;
-		$evento                = $this->con->real_escape_string( $_evento->evento );
-		$observacion           = $this->con->real_escape_string( $_evento->observacion );
-		$comentario            = isset( $_evento->comentario ) ? "'" . $this->con->real_escape_string( $_evento->comentario ) . "'" : 'NULL';
-		$anticipo              = (double)$_evento->anticipo;
-		$fechaEvento           = $_evento->fechaEventoTxt;
-		$horaFinal             = $_evento->horaFinal;
-		$horaInicio            = $_evento->horaInicio;
-		$descuento             = (double)$_evento->descuento;
-		$descripcionDescuento  = $this->con->real_escape_string( $_evento->descripcionDescuento );
-		$costoExtra            = (double)$_evento->costoExtra;
-		$descripcionCostoExtra = $this->con->real_escape_string( $_evento->descripcionCostoExtra );
+		$idEstadoEvento = (int)$_evento->idEstadoEvento;
+		$idEvento       = (int)$_evento->idEvento;
+		$idCliente      = (int)$_evento->idCliente;
+		$numeroPersonas = (int)$_evento->numeroPersonas;
+		$idSalon        = (int)$_evento->idSalon;
+		$evento         = $this->con->real_escape_string( $_evento->evento );
+		$observacion    = $this->con->real_escape_string( $_evento->observacion );
+		$comentario     = isset( $_evento->comentario ) ? "'" . $this->con->real_escape_string( $_evento->comentario ) . "'" : 'NULL';
+		$fechaEvento    = $_evento->fechaEventoTxt;
+		$horaInicio     = $_evento->horaInicio;
+		$horaFinal      = $_evento->horaFinal;
 
 		if ( !( $idCliente > 0 ) )
 			$msgError = "Debe seleccionar un cliente";
@@ -52,19 +48,13 @@ class Evento
 		else if ( strlen( $horaFinal ) != 5 )
 			$msgError = "La hora Final no es válida";
 
-		else if ( $descuento > 0 AND !( strlen( $descripcionDescuento ) > 4 ) )
-			$msgError = "Ingrese descripción de Descuento";
-
-		else if ( $costoExtra > 0 AND !( strlen( $descripcionCostoExtra ) > 4 ) )
-			$msgError = "Ingrese descripción de Costro Extra";
-
 		else
 		{
 	 		if( $accion == 'insert' ):
-	 			$sql = "CALL consultaEvento( 'insert', NULL, '{$evento}', {$idCliente}, DATE( '{$fechaEvento}' ), TIME( '{$horaInicio}' ), TIME( '{$horaFinal}' ), '{$observacion}', {$anticipo}, NULL, {$numeroPersonas}, {$descuento}, '{$descripcionDescuento}', {$costoExtra}, '{$descripcionCostoExtra}', {$comentario} )";
+	 			$sql = "CALL consultaEvento( 'insert', NULL, '{$evento}', {$idCliente}, DATE( '{$fechaEvento}' ), {$idSalon}, 1, {$numeroPersonas}, TIME( '{$horaInicio}' ), TIME( '{$horaFinal}' ), '{$observacion}', {$comentario} )";
 
 	 		elseif( $accion == 'update' ):
-	 			$sql = "CALL consultaEvento( 'update', {$idEvento}, '{$evento}', {$idCliente}, DATE( '{$fechaEvento}' ), TIME( '{$horaInicio}' ), TIME( '{$horaFinal}' ), '{$observacion}', {$anticipo}, {$idEstadoEvento}, {$numeroPersonas}, {$descuento}, '{$descripcionDescuento}', {$costoExtra}, '{$descripcionCostoExtra}', {$comentario} )";
+	 			$sql = "CALL consultaEvento( 'update', {$idEvento}, '{$evento}', {$idCliente}, DATE( '{$fechaEvento}' ), {$idSalon}, {$idEstadoEvento}, {$numeroPersonas}, TIME( '{$horaInicio}' ), TIME( '{$horaFinal}' ), '{$observacion}', {$comentario} )";
 	 		endif;
 
  			$rs = $this->con->query( $sql );
@@ -113,6 +103,7 @@ class Evento
 		$otroMenu       = $this->con->real_escape_string( $menu->otroMenu );
 		$tipo           = $menu->tipo;
 		$accion         = $menu->accion;
+		$horaDespacho   = isset( $menu->horaDespacho ) ? "TIME('" . $menu->horaDespacho . "')" : 'NULL';
 		$lstMenuEvento  = array();
 
 		if ( !( $idEvento > 0 ) )
@@ -136,14 +127,18 @@ class Evento
 				$id = 'NULL';
 
 			if ( $tipo == 'menu' )
-	 			$sql = "CALL consultaMenuEvento( '{$accion}', {$id}, {$idEvento}, {$idMenu}, {$cantidad}, {$precioUnitario}, '{$comentario}' )";
+	 			$sql = "CALL consultaMenuEvento( '{$accion}', {$id}, {$idEvento}, {$idMenu}, {$cantidad}, {$horaDespacho}, {$precioUnitario}, '{$comentario}' )";
 
 	 		else if ( $tipo == 'combo' )
-	 			$sql = "CALL consultaComboEvento( '{$accion}', {$id}, {$idEvento}, {$idMenu}, {$cantidad}, {$precioUnitario}, '{$comentario}' )";
+	 			$sql = "CALL consultaComboEvento( '{$accion}', {$id}, {$idEvento}, {$idMenu}, {$cantidad}, {$horaDespacho}, {$precioUnitario}, '{$comentario}' )";
 
 	 		else if ( $tipo == 'otroMenu' ) {
 				$idMenu = 'NULL';
-	 			$sql = "CALL consultaOtroMenuEvento( '{$accion}', {$id}, {$idEvento}, '{$otroMenu}', {$cantidad}, {$precioUnitario}, '{$comentario}' )";
+	 			$sql = "CALL consultaOtroMenuEvento( '{$accion}', {$id}, {$idEvento}, '{$otroMenu}', {$cantidad}, {$horaDespacho}, {$precioUnitario}, '{$comentario}' )";
+	 		}
+	 		else if ( $tipo == 'otroServicio' ) {
+				$idMenu = 'NULL';
+	 			$sql = "CALL consultaOtroServicio( '{$accion}', {$id}, {$idEvento}, '{$otroMenu}', {$cantidad}, {$precioUnitario}, '{$comentario}' )";
 	 		}
 
  			$rs = $this->con->query( $sql );
@@ -224,7 +219,6 @@ class Evento
 				    horaInicio,
 				    horaFinal,
 				    observacion,
-				    anticipo,
 				    numeroPersonas,
 				    usuario,
 				    fechaRegistro,
@@ -239,12 +233,9 @@ class Evento
 				    direccion,
 				    idTipoCliente,
 				    tipoCliente,
-				    descuento,
-				    descripcionDescuento,
-				    costoExtra,
-				    descripcionCostoExtra
+				    idSalon,
+				    salon
 				FROM vEvento WHERE " . $where . $limit;
-
 		$rs = $this->con->query( $sql );
 
 		if ( $idEvento > 0 )
@@ -252,9 +243,6 @@ class Evento
 			if ( $rs AND $row = $rs->fetch_object() )
 			{
 				$row->numeroPersonas = (int)$row->numeroPersonas;
-				$row->anticipo       = (double)$row->anticipo;
-				$row->descuento      = (double)$row->descuento;
-				$row->costoExtra     = (double)$row->costoExtra;
 				$row->lstMenu        = $this->consultaDetalleOrdenEvento( $row->idEvento );
 				$result = $row;
 			}
@@ -264,9 +252,6 @@ class Evento
 			while ( $rs AND $row = $rs->fetch_object() )
 			{
 				$row->numeroPersonas = (int)$row->numeroPersonas;
-				$row->anticipo       = (double)$row->anticipo;
-				$row->descuento      = (double)$row->descuento;
-				$row->costoExtra     = (double)$row->costoExtra;
 				$row->lstMenu        = $this->consultaDetalleOrdenEvento( $row->idEvento );
 				$result[] = $row;
 			}

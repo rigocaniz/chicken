@@ -495,8 +495,7 @@ switch ( $data->opcion )
 		echo json_encode( $orden->lstDetalleOrdenCliente( $data->idOrdenCliente, $todo ) );
 		break;
 
-		/////////////////////////////////////
-		//////////////////////////////////
+
 	case 'lstDetalleOrden':// 	prueba
 		$factura = new Factura();
 		//$todo = isset( $data->todo ) ? $data->todo : false ;
@@ -513,9 +512,6 @@ switch ( $data->opcion )
 		$factura = new Factura();
 		echo json_encode( $factura->lstFacturas( NULL, TRUE ) );
 		break;
-
-		//////////////////////////////////
-		/////////////////////////////////////
 
 	// LISTA DE ORDENES DETALLE => POR DESTINO
 	case 'lstOrdenPorMenu':
@@ -589,19 +585,21 @@ switch ( $data->opcion )
 		echo json_encode( $evento->consultaEvento( $data->idEstadoEvento, $data->idEvento, @$data->fecha ) );
 		break;
 
-	// ############################# EVENTO #############################
-
-
-	/////////////////////////
-	/////////////////////////
+	// GUARDAR DETALLE DE ORDEN
 	case 'guardarDetalleOrden':
 		$orden = new Orden();
 		$orden->guardarDetalleOrden( $data->idOrdenCliente, $data->lstAgregar, $data->accionOrden ) ;
 		echo json_encode( $orden->getRespuesta() );
 		break;
-	
-	default:
-		# code...
+
+	case 'iniEvento':
+		$consulta = new Consulta();
+		echo json_encode(
+			array(
+				'lstSalon'     => $consulta->catSalon(),
+				'lstFormaPago' => $consulta->catFormasPago(),
+			)
+		);
 		break;
 }
 
