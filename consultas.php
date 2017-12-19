@@ -595,8 +595,9 @@ switch ( $data->opcion )
 		$consulta = new Consulta();
 		echo json_encode(
 			array(
-				'lstSalon'     => $consulta->catSalon(),
-				'lstFormaPago' => $consulta->catFormasPago(),
+				'lstSalon'          => $consulta->catSalon(),
+				'lstFormaPago'      => $consulta->catFormasPago(),
+				'lstTipoMovimiento' => $consulta->catTipoMovimiento(),
 			)
 		);
 		break;

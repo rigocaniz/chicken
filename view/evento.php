@@ -421,16 +421,16 @@
                                    <div class="row" style="margin-top:5px">
                                         <!-- BOTON PARA AGREGAR MENU -->
                                         <div class="col-xs-12 text-right" style="margin-top:5px" ng-show="accionMenu==''">
-                                            <button type="button" class="btn btn-sm btn-primary" ng-click="menuAccion( 'move' )" ng-disabled="$parent.idEstadoEvento!=1">
+                                            <button type="button" class="btn btn-sm btn-primary" ng-click="menuAccion( 'insertMove' )" ng-disabled="$parent.idEstadoEvento!=1">
                                                 <span class="glyphicon glyphicon-shopping-cart"></span>
-                                                <b>Agregar Movimiento</b>
+                                                <b>Agregar Anticipo</b>
                                             </button>
                                         </div>
 
                                         <!-- ELIMINAR MENU -->
                                         <div class="col-sm-12" ng-show="accionMenu=='deleteMove'">
                                             <fieldset class="fieldset">
-                                                <legend class="legend danger">Eliminar Movimiento</legend>
+                                                <legend class="legend danger">Eliminar Anticipo</legend>
                                                 <!--
                                                 <div class="col-xs-12" style="margin-top:5px">
                                                     <h4>Eliminar <kbd>{{menu.cantidad}} {{menu.menu}}</kbd></h4>
@@ -453,7 +453,7 @@
                                         <div class="col-sm-12" ng-show="accionMenu=='insertMove'">
                                             <fieldset class="fieldset">
                                                 <legend class="legend info">
-                                                    Agregar Movimiento
+                                                    Agregar Anticipo
                                                 </legend>
                                                 <div class="row">
                                                     <div class="col-xs-5">

@@ -206,6 +206,22 @@ class Consulta
  		return $lst;
  	}
 
+ 	// LST CATALOGO TIPO DE MOVIMIENTO
+ 	function catTipoMovimiento()
+ 	{
+ 		$lst = array();
+
+ 		$sql = "SELECT idTipoMovimiento, tipoMovimiento, ingreso FROM tipoMovimiento ";
+ 		
+ 		if( $rs = $this->con->query( $sql ) ){
+ 			while( $row = $rs->fetch_object() ){
+				$row->ingreso = (int)$row->ingreso;
+				$lst[]        = $row;
+ 			}
+ 		}
+
+ 		return $lst;
+ 	}
 }
 
 ?>

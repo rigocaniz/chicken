@@ -8,7 +8,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 	$scope.lstMenu         = [];
 	$scope.lstResultado    = [];
 	$scope.lstMenuEvento   = [];
-	$scope.lstSalon 	   = [];
+	$scope.lstSalon        = [];
 	$scope.lstFormaPago    = [];
 	$scope.accionMenu      = '';
 	$scope.busquedaCliente = '';
@@ -51,8 +51,8 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 			console.log( data );
 			if ( data.lstSalon && data.lstFormaPago )
 			{
-				$scope.lstSalon     = data.lstSalon;
-				$scope.lstFormaPago = data.lstFormaPago;
+				$scope.lstSalon          = data.lstSalon;
+				$scope.lstFormaPago      = data.lstFormaPago;
 			}
 		});
 	})();
@@ -269,6 +269,14 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 			if ( _menu.idTipo != $scope.tipo )
 				$scope.tipo = _menu.idTipo;
 		}
+
+		else if ( _accion == 'insertMove' ) {
+			$scope.movimiento = {
+				idFormaPago : '1',
+				monto       : '',
+				motivo      : ''
+			};
+		}
 	};
 
 	// GUARDAR MENU
@@ -317,6 +325,11 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 				}
 			});
 		}
+	};
+
+	// GUARDA MOVIMIENTO
+	$scope.guardarMovimiento = function () {
+		console.log( $scope.movimiento, $scope.accionMenu );
 	};
 
 	$scope.$watch('busquedaCliente', function (_new) {
