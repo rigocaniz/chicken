@@ -86,7 +86,10 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	$scope.dialAccionCliente = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialOrdenBusqueda = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialPrintFactura  = $modal({scope: $scope,template:'dial.printFactura.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialReimpresion   = $modal({scope: $scope,template:'dial.reimpresion.html', show: false, backdrop:false, keyboard: true });	
+	$scope.dialReimpresion   = $modal({scope: $scope,template:'dial.reimpresion.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialCaja          = $modal({scope: $scope,template:'dial.caja.html', show: false, backdrop:false, keyboard: true });
+	
+	
 
 	$scope.seleccionarDeBusqueda = function ( orden ) {
 		$scope.miIndex = -1;

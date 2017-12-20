@@ -7,234 +7,232 @@
     endif;
 ?>
 
+
 <div class="contenedor">
-	<div class="row">
-		<div class="col-sm-12">
-			<div class="pull-right">
-				<a href="#/" >
-	            	<img class="img-responsive" src="img/logo_churchil.png" style="height: 56px;">
-	            </a>
-	        </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="pull-right">
+                <a href="#/" >
+                    <img class="img-responsive" src="img/logo_churchil.png" style="height: 56px;">
+                </a>
+            </div>
 
-			<ul class="nav nav-tabs tabs-title" role="tablist">
-				<li role="presentation">
-					<a href="#/">
-						<span class="glyphicon glyphicon-home"></span>
-					</a>
-				</li>
-				<li role="presentation" ng-class="{'active' : menuFactura=='facturar'}" ng-click="resetValores(); menuFactura='facturar'">
-					<a href="" role="tab" data-toggle="tab">
-						<span class="glyphicon glyphicon-list"></span> FACTURAR
-					</a>
-				</li>
-			</ul>
-
+            <ul class="nav nav-tabs tabs-title" role="tablist">
+                <li role="presentation">
+                    <a href="#/">
+                        <span class="glyphicon glyphicon-home"></span>
+                    </a>
+                </li>
+                <li role="presentation" ng-class="{'active' : menuFactura=='facturar'}" ng-click="resetValores(); menuFactura='facturar'">
+                    <a href="" role="tab" data-toggle="tab">
+                        <span class="glyphicon glyphicon-list"></span> FACTURAR
+                    </a>
+                </li>
+            </ul>
             <div class="pull-right">
                 <button type="button" class="btn btn-sm btn-info" ng-click="cargarlstFacturasDia()">
                     <span class="glyphicon glyphicon-list"></span>
                     REIMPRESIÓN
                 </button>
             </div>
+            <p>
+                <button type="button" class="btn btn-sm btn-primary" ng-click="dialCaja.show()">
+                    <span class="glyphicon glyphicon-inbox"></span> ACCIONES DE CAJA
+                </button>
+            </p>
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" ng-show="menuFactura=='facturar'">
-                    <div class="col-md-12">
-                        <div class="panel panel-primary">
-							<div class="panel-heading">
-								<h3 class="panel-title">
-									<span class="glyphicon glyphicon-list-alt"></span> FACTURAR
-								</h3>
-							</div>
-							<div class="panel-body">
-								<form class="form-horizontal" role="form" autocomplete="off" novalidate>
-                                    <div class="form-group">
-                                        <label class="col-sm-1 control-label">TICKET</label>
-                                        <div class="col-sm-4 col-md-3 col-lg-2">
-                                            <div ng-show="!facturacion.numeroTicket">
-                                                 <input type="text" id="ticket" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="buscarTicket">
-                                            </div>
-                                            <div ng-show="facturacion.numeroTicket">
-                                                <input type="text" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="facturacion.numeroTicket" disabled>
-                                            </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <span class="glyphicon glyphicon-list-alt"></span> FACTURAR
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+							<form class="form-horizontal" role="form" autocomplete="off" novalidate>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">TICKET</label>
+                                    <div class="col-sm-4 col-md-3 col-lg-2">
+                                        <div ng-show="!facturacion.numeroTicket">
+                                             <input type="text" id="ticket" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="buscarTicket">
                                         </div>
-                                        <div class="col-sm-3">
-                                            <button type="button" class="btn btn-info" ng-click="buscarOrdenTicket()" ng-show="!facturacion.numeroTicket">
-                                                <span class="glyphicon glyphicon-search"></span> Buscar
-                                            </button>
-                                            <button type="button" class="btn btn-warning" ng-click="facturacion.numeroTicket=null;" ng-show="facturacion.numeroTicket">
-                                                <span class="glyphicon glyphicon-refresh"></span> Cambiar
-                                            </button>
-                                        </div>
-                                        <div class="col-sm-4 text-right">
-                                            <h4>
-                                                <b># Orden:</b>
-                                                {{infoOrden.idOrdenCliente}}
-                                            </h4>
+                                        <div ng-show="facturacion.numeroTicket">
+                                            <input type="text" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="facturacion.numeroTicket" disabled>
                                         </div>
                                     </div>
-									<div class="form-group">
-										<label class="col-sm-2 control-label">BUSCAR CLIENTE</label>
-										<div class="col-sm-4">
-											<input type="text" id="searchPrincipal" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )">
-										</div>
-										<div class="col-sm-4">
-											<button type="button" class="btn btn-warning" ng-click="buscarCliente( txtCliente, 'principal' );" readonly>
-												<span class="glyphicon glyphicon-search"></span>
-											</button>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-1 control-label">NIT</label>
-										<div class="col-sm-4">
-											<input type="text" class="form-control" ng-model="facturacion.datosCliente.nit" ng-disabled="facturacion.datosCliente.idCliente!=1" id="cliente_nit" focus-enter>
-										</div>
-										<div class="col-sm-2 col-md-1">
-											<button type="button" class="btn btn-info" ng-click="editarCliente( facturacion.datosCliente, 'mostrar' );" ng-show="facturacion.datosCliente.idCliente && facturacion.datosCliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
-												<span class="glyphicon glyphicon-pencil"></span>
-											</button>
-										</div>
-										<label class="col-sm-1 control-label" ng-show="facturacion.datosCliente.cui.length >=10">CUI</label>
-										<div class="col-sm-3" ng-show="facturacion.datosCliente.cui.length >=10">
-											<kbd>{{ facturacion.datosCliente.cui }}</kbd>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-1 control-label">NOMBRE</label>
-										<div class="col-sm-4">
-											<input type="text" class="form-control" ng-model="facturacion.datosCliente.nombre" ng-disabled="facturacion.datosCliente.idCliente!=1" focus-enter>
-										</div>
-										<label class="col-sm-2 col-lg-1 control-label">DIRECCION</label>
-										<div class="col-sm-5 col-lg-6">
-											<input type="text" class="form-control" ng-model="facturacion.datosCliente.direccion" ng-disabled="facturacion.datosCliente.idCliente!=1" focus-enter>
-										</div>
-									</div>
-                                    <div class="row">
-                                        <div class="col-xs-4 col-sm-5 col-md-3 col-lg-4">
-                                            <fieldset class="fieldset">
-                                                <legend class="legend info">FORMAS DE PAGO</legend>
-                                                <div class="form-group input-sm">
-                                                    <label class="col-md-12 control-label">TOTAL A COBRAR</label>
-                                                    <div class="col-md-12">
-                                                        <div class="total">
-                                                            Q. {{ retornarTotal() | number: 2 }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group input-sm" ng-repeat="formaPago in facturacion.lstFormasPago">
-                                                    <label class="col-md-12 control-label">{{ formaPago.formaPago | uppercase }}</label>
-                                                    <div class="col-md-12 monto">
-                                                        <input type="number" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" class="form-control" ng-model="formaPago.monto" focus-enter>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group input-sm">
-                                                    <label class="col-md-12 control-label">CAMBIO</label>
-                                                    <div class="col-md-12">
-                                                        <div class="total">
-                                                        {{ totalVuelto() | number: 2 }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <br><br><br>
-                                                <hr>
-                                                <div class="form-group">
-                                                    <div class="text-center">
-                                                        <button type="button" class="btn btn-info" ng-click="consultaFacturaCliente()">
-                                                            <span class="glyphicon glyphicon-saved"></span> <b><u>F</u>ACTURAR</b> (F6)
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </fieldset>
-                                        </div>
-                                        <div class="col-xs-8 col-sm-7 col-md-9 col-lg-8">
-                                            <fieldset class="fieldset" ng-show="facturacion.lstOrden.length">
-                                                <legend class="legend info">DETALLE ORDEN</legend>
-                                                <div class="table-responsive">
-                                                    <div class="text-right">
-                                                        <button type="button" class="btn btn-xs btn-default" ng-click="facturacion.agrupado=!facturacion.agrupado; consultarDetalleOrden();">
-                                                            <span class="glyphicon" ng-class="{'glyphicon-th-list': facturacion.agrupado, 'glyphicon-list-alt': !facturacion.agrupado}"></span> <strong>{{ facturacion.agrupado ? 'VER A DETALLE' : 'AGRUPAR ORDEN' }}</strong>
-                                                        </button>
-                                                    </div>
-                                                    <br>
-                                                    <table class="table table-hover table-condensed">
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="text-center">
-                                                                    <small>cobrar</small>
-                                                                </th>
-                                                                <th class="text-center col-sm-4 col-md-6 col-lg-5">
-                                                                    Orden
-                                                                </th>
-                                                                <th class="text-center col-sm-2 col-md-2 col-lg-2">
-                                                                    Cant.
-                                                                </th>
-                                                                <th class="text-right col-sm-2 col-md-1 col-lg-1">
-                                                                    Precio
-                                                                </th>
-                                                                <th class="text-right col-sm-2 col-md-1 col-lg-2">
-                                                                    Descuento
-                                                                </th>
-                                                                <th class="text-right col-sm-3 col-md-3 col-lg-2">
-                                                                    Subtotal
-                                                                </th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr ng-repeat="item in facturacion.lstOrden" ng-class="{'warning': !item.cobrarTodo, 
-                                                            'border-warning':(item.descuento>0 || item.idDetalleOrdenMenu!=4), 'border-danger': item.descuento == item.precioMenu}" ng-dblclick="item.cobrarTodo=!item.cobrarTodo">
-                                                                <td class="text-center">
-                                                                    <button type="button" class="btn btn-sm btn-default" ng-click="item.cobrarTodo=!item.cobrarTodo">
-                                                                        <span class="glyphicon " ng-class="{'glyphicon-check': item.cobrarTodo, 'glyphicon-unchecked': !item.cobrarTodo}"></span>
-                                                                    </button>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="label-border btn-sm" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}" title="{{ item.tipoServicio }}" data-toggle="tooltip" data-placement="top" tooltip>
-                                                                        <span ng-show="item.idTipoServicio==2">R</span>
-                                                                        <span ng-show="item.idTipoServicio==3">D</span>
-                                                                        <span ng-show="item.idTipoServicio==1">L</span>
-                                                                    </div>
-                                                                    <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
-                                                                    <span data-placement="top" data-title="{{item.estadoDetalleOrden}}" bs-tooltip>{{ item.descripcion }}</span>
-                                                                    <br>
-                                                                    <textarea class="form-control" rows="2" placeholder="Ingrese  justificación del descuento" ng-model="item.comentario" ng-show="item.descuento > 0 && item.cobrarTodo"></textarea>
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <div ng-show="!item.precioHabilitado">
-                                                                        <input type="number" class="form-control" ng-model="item.cantidad" max="{{ item.maximo }}" min="1" ng-pattern="/^[0-9]+?$/" ng-disabled="!item.cobrarTodo">
-                                                                    </div>
-                                                                    <div ng-show="item.precioHabilitado">
-                                                                        {{ item.cantidad }}
-                                                                    </div>
-                                                                </td>
-                                                                <td class="text-right">
-                                                                    {{ item.precioMenu | number: 2 }}
-                                                                </td>
-                                                                <td class="text-right">
-                                                                    <input type="number" class="form-control" ng-model="item.descuento" max="{{ item.precioMenu }}" min="0" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" ng-disabled="!item.cobrarTodo">
-                                                                </td>
-                                                                <td class="text-right">
-                                                                    {{ ( item.cantidad * item.precioMenu ) -  item.descuento | number:2 }}
-                                                                </td>
-                                                            </tr>
-                                                            <tr class="success">
-                                                                <td colspan="5" class="text-right">
-                                                                    <strong>TOTAL</strong>
-                                                                </td>
-                                                                <td class="text-right" style="">
-                                                                    <strong>Q. {{ retornarTotal() | number: 2 }}</strong>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </fieldset>
-                                        </div>
+                                    <div class="col-sm-3">
+                                        <button type="button" class="btn btn-info" ng-click="buscarOrdenTicket()" ng-show="!facturacion.numeroTicket">
+                                            <span class="glyphicon glyphicon-search"></span> Buscar
+                                        </button>
+                                        <button type="button" class="btn btn-warning" ng-click="facturacion.numeroTicket=null;" ng-show="facturacion.numeroTicket">
+                                            <span class="glyphicon glyphicon-refresh"></span> Cambiar
+                                        </button>
                                     </div>
-                                </form>
-                                <br><br>
-                                <!--
-                                {{ facturacion | json }}
-								{{ facturacion | json }}
-								-->
-							</div>
+                                    <div class="col-sm-4 text-right">
+                                        <h4>
+                                            <b># Orden:</b>
+                                            {{infoOrden.idOrdenCliente}}
+                                        </h4>
+                                    </div>
+                                </div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">BUSCAR CLIENTE</label>
+									<div class="col-sm-4">
+										<input type="text" id="searchPrincipal" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )">
+									</div>
+									<div class="col-sm-4">
+										<button type="button" class="btn btn-warning" ng-click="buscarCliente( txtCliente, 'principal' );" readonly>
+											<span class="glyphicon glyphicon-search"></span>
+										</button>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-1 control-label">NIT</label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control" ng-model="facturacion.datosCliente.nit" ng-disabled="facturacion.datosCliente.idCliente!=1" id="cliente_nit" focus-enter>
+									</div>
+									<div class="col-sm-2 col-md-1">
+										<button type="button" class="btn btn-info" ng-click="editarCliente( facturacion.datosCliente, 'mostrar' );" ng-show="facturacion.datosCliente.idCliente && facturacion.datosCliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
+											<span class="glyphicon glyphicon-pencil"></span>
+										</button>
+									</div>
+									<label class="col-sm-1 control-label" ng-show="facturacion.datosCliente.cui.length >=10">CUI</label>
+									<div class="col-sm-3" ng-show="facturacion.datosCliente.cui.length >=10">
+										<kbd>{{ facturacion.datosCliente.cui }}</kbd>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-1 control-label">NOMBRE</label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control" ng-model="facturacion.datosCliente.nombre" ng-disabled="facturacion.datosCliente.idCliente!=1" focus-enter>
+									</div>
+									<label class="col-sm-2 col-lg-1 control-label">DIRECCION</label>
+									<div class="col-sm-5 col-lg-6">
+										<input type="text" class="form-control" ng-model="facturacion.datosCliente.direccion" ng-disabled="facturacion.datosCliente.idCliente!=1" focus-enter>
+									</div>
+								</div>
+                                <div class="row">
+                                    <div class="col-xs-4 col-sm-5 col-md-3 col-lg-4">
+                                        <fieldset class="fieldset">
+                                            <legend class="legend info">FORMAS DE PAGO</legend>
+                                            <div class="form-group input-sm">
+                                                <label class="col-md-12 control-label">TOTAL A COBRAR</label>
+                                                <div class="col-md-12">
+                                                    <div class="total">
+                                                        Q. {{ retornarTotal() | number: 2 }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group input-sm" ng-repeat="formaPago in facturacion.lstFormasPago">
+                                                <label class="col-md-12 control-label">{{ formaPago.formaPago | uppercase }}</label>
+                                                <div class="col-md-12 monto">
+                                                    <input type="number" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" class="form-control" ng-model="formaPago.monto" focus-enter>
+                                                </div>
+                                            </div>
+                                            <div class="form-group input-sm">
+                                                <label class="col-md-12 control-label">CAMBIO</label>
+                                                <div class="col-md-12">
+                                                    <div class="total">
+                                                    {{ totalVuelto() | number: 2 }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br><br><br>
+                                            <hr>
+                                            <div class="form-group">
+                                                <div class="text-center">
+                                                    <button type="button" class="btn btn-info" ng-click="consultaFacturaCliente()">
+                                                        <span class="glyphicon glyphicon-saved"></span> <b><u>F</u>ACTURAR</b> (F6)
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-xs-8 col-sm-7 col-md-9 col-lg-8">
+                                        <fieldset class="fieldset" ng-show="facturacion.lstOrden.length">
+                                            <legend class="legend info">DETALLE ORDEN</legend>
+                                            <div class="table-responsive">
+                                                <div class="text-right">
+                                                    <button type="button" class="btn btn-xs btn-default" ng-click="facturacion.agrupado=!facturacion.agrupado; consultarDetalleOrden();">
+                                                        <span class="glyphicon" ng-class="{'glyphicon-th-list': facturacion.agrupado, 'glyphicon-list-alt': !facturacion.agrupado}"></span> <strong>{{ facturacion.agrupado ? 'VER A DETALLE' : 'AGRUPAR ORDEN' }}</strong>
+                                                    </button>
+                                                </div>
+                                                <br>
+                                                <table class="table table-hover table-condensed">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center">
+                                                                <small>cobrar</small>
+                                                            </th>
+                                                            <th class="text-center col-sm-4 col-md-6 col-lg-5">
+                                                                Orden
+                                                            </th>
+                                                            <th class="text-center col-sm-2 col-md-2 col-lg-2">
+                                                                Cant.
+                                                            </th>
+                                                            <th class="text-right col-sm-2 col-md-1 col-lg-1">
+                                                                Precio
+                                                            </th>
+                                                            <th class="text-right col-sm-2 col-md-1 col-lg-2">
+                                                                Descuento
+                                                            </th>
+                                                            <th class="text-right col-sm-3 col-md-3 col-lg-2">
+                                                                Subtotal
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="item in facturacion.lstOrden" ng-class="{'warning': !item.cobrarTodo, 
+                                                        'border-warning':(item.descuento>0 || item.idDetalleOrdenMenu!=4), 'border-danger': item.descuento == item.precioMenu}" ng-dblclick="item.cobrarTodo=!item.cobrarTodo">
+                                                            <td class="text-center">
+                                                                <button type="button" class="btn btn-sm btn-default" ng-click="item.cobrarTodo=!item.cobrarTodo">
+                                                                    <span class="glyphicon " ng-class="{'glyphicon-check': item.cobrarTodo, 'glyphicon-unchecked': !item.cobrarTodo}"></span>
+                                                                </button>
+                                                            </td>
+                                                            <td>
+                                                                <div class="label-border btn-sm" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}" title="{{ item.tipoServicio }}" data-toggle="tooltip" data-placement="top" tooltip>
+                                                                    <span ng-show="item.idTipoServicio==2">R</span>
+                                                                    <span ng-show="item.idTipoServicio==3">D</span>
+                                                                    <span ng-show="item.idTipoServicio==1">L</span>
+                                                                </div>
+                                                                <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
+                                                                <span data-placement="top" data-title="{{item.estadoDetalleOrden}}" bs-tooltip>{{ item.descripcion }}</span>
+                                                                <br>
+                                                                <textarea class="form-control" rows="2" placeholder="Ingrese  justificación del descuento" ng-model="item.comentario" ng-show="item.descuento > 0 && item.cobrarTodo"></textarea>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div ng-show="!item.precioHabilitado">
+                                                                    <input type="number" class="form-control" ng-model="item.cantidad" max="{{ item.maximo }}" min="1" ng-pattern="/^[0-9]+?$/" ng-disabled="!item.cobrarTodo">
+                                                                </div>
+                                                                <div ng-show="item.precioHabilitado">
+                                                                    {{ item.cantidad }}
+                                                                </div>
+                                                            </td>
+                                                            <td class="text-right">
+                                                                {{ item.precioMenu | number: 2 }}
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <input type="number" class="form-control" ng-model="item.descuento" max="{{ item.precioMenu }}" min="0" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" ng-disabled="!item.cobrarTodo">
+                                                            </td>
+                                                            <td class="text-right">
+                                                                {{ ( item.cantidad * item.precioMenu ) -  item.descuento | number:2 }}
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="success">
+                                                            <td colspan="5" class="text-right">
+                                                                <strong>TOTAL</strong>
+                                                            </td>
+                                                            <td class="text-right" style="">
+                                                                <strong>Q. {{ retornarTotal() | number: 2 }}</strong>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </form>
 						</div>
 					</div>
 				</div>
@@ -520,6 +518,146 @@
                             </a>
                         </div>
                     </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" ng-click="$hide();">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        <b>Salir</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+
+
+<!-- MODA CAJA APERTURA / CIERRE DE CAJA -->
+<script type="text/ng-template" id="dial.caja.html">
+    <div class="modal" tabindex="-1" role="dialog" id="dial_printFactura">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content panel-info">
+                <div class="modal-header panel-heading text-center">
+                    <button type="button" class="close" ng-click="$hide();">&times;</button>
+                    <span class="glyphicon glyphicon-inbox"></span> APERTURA / CIERRE DE CAJA
+                </div>
+                <div class="modal-body" ng-controller="ctrlCaja">
+                    <div class="text-right">
+                        <p>
+                            <button type="button" class="btn btn-warning" ng-click="accionCaja='cierreCaja'" ng-show="caja.idCaja">
+                                <span class="glyphicon glyphicon-flag"></span> CERRAR CAJA
+                            </button>
+                            <button type="button" class="btn btn-success" ng-click="accionCaja='aperturarCaja'" ng-show="!caja.idCaja">
+                                <span class="glyphicon glyphicon-flag"></span> APERTURAR CAJA
+                            </button>
+                            <button type="button" class="btn btn-danger" ng-click="accionCaja=''" ng-show="accionCaja!=''" title="CANCELAR ACCIÓN" data-toggle="tooltip" data-placement="top" tooltip>
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </p>
+                    </div>
+                    <div class="alert alert-danger" role="alert" ng-show="caja.cajaAtrasada">
+                        <span class="glyphicon glyphicon-info-sign"></span> USTED NO HA REALIZADO EL CIERRE DE SU CAJA DE FECHA/HORA: <strong style="font-size: 18px">{{ caja.fechaHoraApertura }}</strong>
+                    </div>
+                    <fieldset class="fieldset">
+                        <legend class="legend info">APERTURA / CIERRE</legend>
+                        <form class="form-horizontal" autocomplete="off" novalidate>
+                            <div class="text-right">
+                                <label class="label" ng-class="{'label-danger': caja.idEstadoCaja == 2, 'label-success': caja.idEstadoCaja==1}" style="font-size: 17px;">
+                                    ESTADO {{ caja.estadoCaja | uppercase }}
+                                </label>
+                            </div>
+                            <br>
+                            <div class="form-group">
+                                <label class="col-sm-3 col-md-2 control-label">CAJERO</label>
+                                <div class="col-sm-6 col-md-5 col-lg-4">
+                                    <input type="text" class="form-control" ng-model="caja.cajero" placeholder="Cajero" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 col-md-2 control-label">CODIGO OPERADOR</label>
+                                <div class="col-sm-3 col-md-3 col-lg-2">
+                                    <input type="text" class="form-control" ng-model="caja.codigoUsuario" placeholder="Cajero" disabled>
+                                </div>
+                                <label class="col-sm-3 col-md-2 control-label">USUARIO</label>
+                                <div class="col-sm-3 col-md-3 col-lg-2">
+                                    <input type="text" class="form-control" ng-model="caja.usuario" placeholder="Cajero" disabled>
+                                </div>
+                            </div>
+                            <!--
+                            {{caja|json}}
+                        -->
+                            <!-- DENOMINACIONES -->
+                            <legend class="text-center" ng-show="accionCaja">
+                                <i class="fa fa-money" aria-hidden="true"></i> DENOMINACIONES
+                            </legend>
+                            <div class="form-group" ng-show="accionCaja">
+                                <div class="col-sm-6" ng-repeat="denominacion in caja.lstDenominaciones">
+                                    <div class="form-group">
+                                        <label class="col-sm-4">{{ denominacion.descripcion }} de {{ denominacion.denominacion }}</label>
+                                        <div class="col-sm-4">
+                                            <input type="number" min="0"  class="form-control" ng-model="denominacion.cantidad" placeholder="Cantidad" ng-pattern="/^[0-9]+?$/" step="0">
+                                        </div>
+                                        <div class="col-sm-4 text-right">
+                                            <kbd class="numEfectivo">
+                                                {{ ( denominacion.cantidad ? (denominacion.cantidad * denominacion.denominacion ) : '0' ) | number:2 }}
+                                            </kbd>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right" ng-show="accionCaja=='cierreCaja'">
+                                <button type="button" class="btn btn-sm btn-success" ng-click="caja.agregarFaltante=!caja.agregarFaltante">
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                    Agregar Faltante
+                                </button>
+                                <br><br>
+                            </div>
+                            <div class="form-group" ng-show="accionCaja=='cierreCaja' && caja.agregarFaltante">
+                                <div class="col-sm-6"></div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4">EFECTIVO FALTANTE</label>
+                                        <div class="col-sm-4">
+                                            <input type="number" min="0"  class="form-control" ng-model="caja.efectivoFaltante" placeholder="Total Efectivo" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="1">
+                                        </div>
+                                        <div class="col-sm-4 text-right">
+                                            <kbd class="numEfectivo">
+                                                {{ ( caja.efectivoFaltante ? caja.efectivoFaltante : '0' ) | number:2 }}
+                                            </kbd>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-md-6 col-lg-7"></div>
+                            <div class="col-sm-8 col-md-6 col-lg-5">
+                                <h4><b>
+                                <table class="table table-hover">
+                                    <tr ng-show="accionCaja=='cierreCaja'">
+                                        <td class="col-sm-7 text-right"><b>EFECTIVO INICIAL:</b></td>
+                                        <td class="col-sm-5 text-right">Q. {{ caja.efectivoInicial | number: 2 }}</td>
+                                    </tr>
+                                    <tr ng-show="caja.agregarFaltante && accionCaja=='cierreCaja' && caja.efectivoFaltante > 0">
+                                        <td class="col-sm-7 text-right"><b>EFECTIVO FALTANTE:</b></td>
+                                        <td class="col-sm-5 text-right">Q. {{ caja.efectivoFaltante | number: 2 }}</td>
+                                    </tr>
+                                    <tr ng-show="accionCaja">
+                                        <td class="col-sm-7 text-right"><b>EFECTIVO {{ accionCaja == 'cierreCaja' ? 'FINAL' : 'INICIAL' }}:</b></td>
+                                        <td class="col-sm-5 text-right">Q. {{ retornarTotal() | number: 2 }}</td>
+                                    </tr>
+                                </table>
+                                </b></h4>
+                            </div>
+                            <div class="form-group text-center">
+                                <button type="button" class="btn btn-success btn-lg" ng-show="accionCaja=='aperturarCaja'" ng-click="consultaCaja()">
+                                    <span class="glyphicon glyphicon-folder-open"></span> Aperturar Caja
+                                </button>
+                                <button type="button" class="btn btn-warning btn-lg" ng-show="accionCaja=='cierreCaja'" ng-click="consultaCaja()">
+                                    <span class="glyphicon glyphicon-folder-close"></span> Cerrar Caja
+                                </button>
+                            </div>
+                        </form>
+                    </fieldset>                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" ng-click="$hide();">
