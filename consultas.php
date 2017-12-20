@@ -591,6 +591,12 @@ switch ( $data->opcion )
 		echo json_encode( $orden->getRespuesta() );
 		break;
 
+	// GUARDAR MOVIMIENTO
+	case 'guardarMovimiento':
+		$evento = new Evento();
+		echo json_encode( $evento->guardarMovimiento( $data->movimiento ) );
+		break;
+
 	case 'iniEvento':
 		$consulta = new Consulta();
 		echo json_encode(

@@ -41,6 +41,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 			costoExtra            : '',
 			descripcionCostoExtra : '',
 			estadoEvento 		  : '',
+			lstMovimiento         : [],
 			idSalon               : $scope.lstSalon.length && $scope.lstSalon[ 0 ].idSalon
 		};
 	})();
@@ -94,7 +95,8 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 				descripcionCostoExtra : evento.descripcionCostoExtra,
 				idEstadoEvento        : evento.idEstadoEvento,
 				newIdEstadoEvento     : _idEstadoEvento,
-				estadoEvento          : evento.estadoEvento
+				estadoEvento          : evento.estadoEvento,
+				lstMovimiento         : evento.lstMovimiento
 			};
 
 			// SI NO ES CAMBIO DE ESTADO
@@ -330,6 +332,42 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 	// GUARDA MOVIMIENTO
 	$scope.guardarMovimiento = function () {
 		console.log( $scope.movimiento, $scope.accionMenu );
+
+		if ( !( $scope.movimiento.idFormaPago > 0 ) )
+			alertify.notify( "Debe seleccionar una forma de pago", "danger", 3 );
+
+		else if ( !( $scope.movimiento.monto > 0 ) )
+			alertify.notify( "El monto debe ser mayor a cero", "danger", 3 );
+
+		else if ( !( $scope.movimiento.motivo.length > 0 ) )
+			alertify.notify( "Debe especificar la descripción", "danger", 3 );
+
+		else
+		{
+			var datos = {
+				opcion     : 'guardarMovimiento',
+				movimiento : {
+					accion      : $scope.accionMenu,
+					idEvento    : $scope.evento.idEvento,
+					idFormaPago : $scope.movimiento.idFormaPago,
+					monto       : $scope.movimiento.monto,
+					motivo      : $scope.movimiento.motivo,
+				}
+			};
+
+			$http.post('consultas.php', datos )
+			.success(function (data) {
+				console.log( data );
+				alertify.notify( data.mensaje, data.respuesta, 3 );
+
+				if ( data.respuesta == 'success' ) {
+					$scope.evento.lstMovimiento = data.lstMovimiento;
+					$scope.accionMenu           = "";
+					$scope.movimiento.monto     = "";
+					$scope.movimiento.motivo    = "";
+				}
+			});
+		}
 	};
 
 	$scope.$watch('busquedaCliente', function (_new) {

@@ -493,10 +493,11 @@
                                                         <th>Forma Pago</th>
                                                         <th>Monto</th>
                                                         <th>Descripción</th>
+                                                        <th>Fecha Registro</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr ng-repeat="item in lstMovimiento">
+                                                    <tr ng-repeat="item in evento.lstMovimiento">
                                                         <td>
                                                             <button type="button" class="btn btn-xs btn-danger" ng-click="menuAccion( 'deleteMove', item )" ng-disabled="$parent.idEstadoEvento!=1" title="Eliminar" data-toggle="tooltip" data-placement="top" tooltip>
                                                                 <span class="glyphicon glyphicon-remove"></span>
@@ -505,10 +506,12 @@
                                                         <td>{{item.formaPago}}</td>
                                                         <td>{{item.monto}}</td>
                                                         <td>{{item.motivo}}</td>
+                                                        <td>{{formatoFecha( item.fechaRegistro, 'HH[:]mm [-] D[/]MM[/]YYYY' )}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
+                                        <!-- LISTA DE MENUS -->
                                     </div>
                                 </div>
                                 <!-- MOVIMIENTOS -->

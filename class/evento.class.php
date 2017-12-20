@@ -175,6 +175,109 @@ class Evento
 		);
  	}
 
+ 	// GUARDA MOVIMIENTO EVENTO
+ 	function guardarMovimiento( $movimiento )
+ 	{
+		$respuesta = "";
+		$mensaje   = "";
+		$lastId    = null;
+
+		$id                 = isset( $movimiento->id ) ? (int)$movimiento->id : 'NULL';
+		$idEstadoMovimiento = isset( $movimiento->idEstadoMovimiento ) ? (int)$movimiento->idEstadoMovimiento : 'NULL';
+		$idFormaPago        = (int)$movimiento->idFormaPago;
+		$idEvento           = (int)$movimiento->idEvento;
+		$monto              = (double)$movimiento->monto;
+		$motivo             = $this->con->real_escape_string( $movimiento->motivo );
+		$comentario         = isset( $movimiento->comentario ) ? "'" . $this->con->real_escape_string( $movimiento->comentario ) . "'" : "NULL";
+		$accion             = $movimiento->accion;
+
+		if ( !( $idFormaPago > 0 ) )
+			$msgError = "Forma de Pago no válido";
+
+		else if ( !( $monto > 0 ) )
+			$msgError = "Monto no válido, debe ser mayor a cero";
+
+		if ( !( strlen( $motivo ) > 3 ) )
+			$msgError = "Debe ingresar la descripción";
+
+		else
+		{
+			if ( $accion == 'insertMove' )
+	 			$sql = "CALL consultaMovimiento( 'insert', {$id}, 1, {$idEstadoMovimiento}, {$idFormaPago}, {$idEvento}, '{$motivo}', {$monto}, {$comentario} )";
+
+ 			$rs = $this->con->query( $sql );
+ 			@$this->con->next_result();
+
+ 			if ( $rs AND $row = $rs->fetch_object() )
+ 			{
+				$respuesta = $row->respuesta;
+				$mensaje   = $row->mensaje;
+ 				if ( $row->respuesta == 'success' AND $accion == 'insertMove' )
+					$lastId = $row->id;
+ 			}
+ 			else
+ 			{
+ 				$respuesta = "danger";
+				$mensaje   = "Error al ejecutar la consulta";
+ 			}
+		}
+
+		if ( isset( $msgError ) )
+		{
+			$respuesta = "danger";
+			$mensaje   = $msgError;
+		}
+
+		return array(
+			'respuesta'     => $respuesta,
+			'mensaje'       => $mensaje,
+			'lstMovimiento' => $this->lstMovimiento( $idEvento ),
+		);
+ 	}
+
+ 	// MOVIMIENTO DE EVENTO
+ 	function lstMovimiento( $idEvento )
+ 	{
+		$idEvento = (int)$idEvento;
+		$lst      = array();
+
+	 	$sql = "SELECT
+	 				m.idMovimiento,
+	 				m.monto,
+	 				m.motivo,
+	 				em.idEstadoMovimiento,
+	 				em.estadoMovimiento,
+	 				tm.idTipoMovimiento,
+	 				tm.tipoMovimiento,
+	 				fp.idFormaPago,
+	 				fp.formaPago,
+	 				lem.usuario,
+	 				lem.fechaRegistro
+	 			FROM movimiento AS m
+	 				
+	 				JOIN estadoMovimiento AS em
+	 					ON m.idEstadoMovimiento = em.idEstadoMovimiento
+
+					JOIN tipoMovimiento AS tm
+						ON m.idTipoMovimiento = tm.idTipoMovimiento
+
+					JOIN formaPago AS fp
+						ON m.idFormaPago = fp.idFormaPago
+
+					LEFT JOIN logEstadoMovimiento AS lem
+						ON m.idMovimiento = lem.idMovimiento AND m.idEstadoMovimiento = lem.idEstadoMovimiento
+
+	 			WHERE m.idEvento = {$idEvento} ";
+
+ 		$rs = $this->con->query( $sql );
+ 		if ( $rs->num_rows ) {
+ 			while ( $row = $rs->fetch_object() )
+ 				$lst[] = $row;
+ 		}
+
+		return $lst;
+ 	}
+
  	// CONSULTA MENUS DEL EVENTO
  	function consultaDetalleOrdenEvento( $idEvento )
  	{
@@ -244,6 +347,7 @@ class Evento
 			{
 				$row->numeroPersonas = (int)$row->numeroPersonas;
 				$row->lstMenu        = $this->consultaDetalleOrdenEvento( $row->idEvento );
+				$row->lstMovimiento  = $this->lstMovimiento( $row->idEvento );
 				$result = $row;
 			}
 		}
@@ -253,6 +357,7 @@ class Evento
 			{
 				$row->numeroPersonas = (int)$row->numeroPersonas;
 				$row->lstMenu        = $this->consultaDetalleOrdenEvento( $row->idEvento );
+				$row->lstMovimiento  = $this->lstMovimiento( $row->idEvento );
 				$result[] = $row;
 			}
 
