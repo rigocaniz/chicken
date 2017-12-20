@@ -98,7 +98,7 @@ if( !isset( $_SESSION[ 'idPerfil' ] ) AND !isset( $_SESSION[ 'username' ] )  ) {
 <body>
     <div class="back-login">
         <div class="login-block">
-            <div class="">
+            <div>
                 <img class="img-rounded" src="img/logo_churchil.png">
                 <h3>INGRESAR</h3>
             </div>

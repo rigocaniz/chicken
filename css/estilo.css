@@ -91,12 +91,12 @@ button,a{
 
 .login-block {
     width: 350px;
-    padding: 20px;
+    padding: 10px 20px;
     background: #fff;
     border-radius: 5px;
     border-top: 6px solid #ff5722;
     border-bottom: 3px solid #ff5722;
-    margin: 35px auto;
+    margin: 32px auto;
 }
 
 .spread {
@@ -127,10 +127,9 @@ button,a{
     text-align: center;
     font-size: 20px;
     text-transform: uppercase;
-    margin-top: 0;
+    margin-top: -10px;
     margin-bottom: 15px;
     color: #ff3d00;
-    text-shadow: 2px 2px 2px #cccccc;
     font-weight: bold;
 }
 

@@ -79,17 +79,11 @@ class Usuario
 		$idDestinoMenu = "NULL";
 
 		// SETEO VARIABLES GENERALES
-		$data->idPerfil      = isset( $data->idPerfil )			? (int)$data->idPerfil 			: NULL;
-		$data->usuario       = isset( $data->usuario )			? (string)$data->usuario 		: NULL;
-		$data->codigo        = isset( $data->codigo )				? (int)$data->codigo 			: NULL;
-		$data->nombres       = isset( $data->nombres )			? (string)$data->nombres 		: NULL;
-		$data->apellidos     = isset( $data->apellidos )			? (string)$data->apellidos 		: NULL;
-
- 		$data->idPerfil        = (int)$data->idPerfil > 0			? (int)$data->idPerfil 			: NULL;
- 		$data->usuario         = strlen( $data->usuario ) >= 1		? (string)$data->usuario 		: NULL;
- 		$data->codigo          = (int)$data->codigo > 0				? (int)$data->codigo 			: NULL;
- 		$data->nombres         = strlen( $data->nombres ) >= 3		? (string)$data->nombres 		: NULL;
- 		$data->apellidos       = strlen( $data->apellidos ) >= 2	? (string)$data->apellidos 		: NULL;
+		$data->idPerfil      = isset( $data->idPerfil )		? (int)$data->idPerfil 		: NULL;
+		$data->usuario       = isset( $data->usuario )		? (string)$data->usuario 	: NULL;
+		$data->codigo        = isset( $data->codigo )		? (int)$data->codigo 		: NULL;
+		$data->nombres       = isset( $data->nombres )		? (string)$data->nombres 	: NULL;
+		$data->apellidos     = isset( $data->apellidos )	? (string)$data->apellidos 	: NULL;
 
  		// VALIDACIONES
 		$idPerfil      = $validar->validarEntero( $data->idPerfil, NULL, TRUE, 'El perfil no es válido' );
@@ -97,7 +91,7 @@ class Usuario
 		$codigo        = $validar->validarEntero( $data->codigo, NULL, TRUE, 'El código del usuario no es válido' );
 		$nombres       = $this->con->real_escape_string( $validar->validarTexto( $data->nombres, NULL, TRUE, 3, 65, 'el nombre' ) );
 		$apellidos     = $this->con->real_escape_string( $validar->validarTexto( $data->apellidos, NULL, TRUE, 3, 65, 'los apellidos' ) );
-		$idDestinoMenu = isset( $data->idDestinoMenu )			? (int)$data->idDestinoMenu 			: NULL;
+		$idDestinoMenu = isset( $data->idDestinoMenu )	? (int)$data->idDestinoMenu : NULL;
 
  		// OBTENER RESULTADOS
  		if( $validar->getIsError() ):
