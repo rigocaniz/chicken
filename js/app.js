@@ -152,7 +152,6 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
 
     // CAPTURA TECLA PARA ATAJOS RAPIDOS
     $scope.pressKey = function ( key, altDerecho, event ) {
-        console.log( key );
 
         if ( $scope.loading )
             return false;

@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="css/estilo.css">
     <link rel="stylesheet" href="css/fileinput.css">
 </head>
-<body ng-controller="inicioCtrl" ng-keydown="pressKey( $event.keyCode, ( $event.altKey && $event.ctrlKey ), $event );">
+<body ng-controller="inicioCtrl" ng-keydown="pressKey( $event.keyCode, $event.shiftKey, $event );">
     <div id="divFocus">
         <h2>Haga clic aquí</h2>
     </div>
