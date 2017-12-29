@@ -159,12 +159,32 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
         if ( key == 117 )
             event.preventDefault();
 
-        if ( key != 17 && key != 18 && key != 92 && key != 91 ) {
-            $rootScope.$broadcast('keyPress', key, altDerecho, event );
-        }
-        else if( altDerecho && ( key == 92 || key == 91 ) ) {
+        if( altDerecho && ( key == 13 || key == 92 || key == 91 ) ) {
             $window.location.href = "#/";
         }
+
+        else if ( key != 17 && key != 18 && key != 92 && key != 91 ) {
+            $rootScope.$broadcast('keyPress', key, altDerecho, event );
+        }
+
+        if ( altDerecho && document.location.hash === "#/" ) {
+            switch( key )
+            {
+                case 79: // O
+                    $window.location.href = "#/orden";      break;
+                case 65: // A
+                    $window.location.href = "#/adminOrden";      break;
+                case 70: // F
+                    $window.location.href = "#/factura";      break;
+                case 69: // E
+                    $window.location.href = "#/evento";      break;
+                case 67: // C
+                    $window.location.href = "#/caja";      break;
+                case 73: // I
+                    $window.location.href = "#/inventario";      break;
+            }
+        }
+        console.log( "K:", key );
     };
 
     $scope.imagen = {
