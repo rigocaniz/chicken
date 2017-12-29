@@ -110,12 +110,10 @@ class Factura
 	 					$this->tiempo  = 3;
 	 				}
 
- 					if( $this->respuesta == 'success'  )
+ 					if( $this->respuesta == 'success'  ){
  						$this->consultaFormaPago( $accion, $idFactura, $total, $data->lstFormasPago );
-
- 					if( $this->respuesta == 'success'  )
  						$this->consultaDetalleFactura( $accion, $idFactura, $data->agrupado, $data->lstOrden );
-
+ 					}
 		 		}
 		 		else{
 		 			$this->respuesta = 'danger';
@@ -124,7 +122,6 @@ class Factura
 
 		 		if( $this->respuesta == 'success' )
 		 			$this->con->query( "COMMIT" );
-		 			//$this->con->query( "ROLLBACK" );
 		 		else
 		 			$this->con->query( "ROLLBACK" );
 	 		endif;

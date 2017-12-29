@@ -74,6 +74,10 @@
                         <button type="button" class="btn btn-xs btn-info" ng-click="showDialOrden( 'update', evento )" title="Modificar" data-toggle="tooltip" data-placement="top" tooltip>
                             <span class="glyphicon glyphicon-pencil"></span>
                         </button>
+                        <button type="button" class="btn btn-xs btn-primary">
+                            <span class="glyphicon glyphicon-shopping-cart"></span>
+                            <b>Facturar</b> (F10)
+                        </button>
                     </h4>
                 </div>
                 <div class="col-sm-6 col-xs-12">
@@ -310,7 +314,7 @@
                                                             <button type="button" class="btn btn-default" ng-disabled="$parent.accionMenu=='update'">
                                                                 <span ng-show="tipo=='menu'">Menú</span>
                                                                 <span ng-show="tipo=='combo'">Combo</span>
-                                                                <span ng-show="tipo=='otroMenu'">Personalizado</span>
+                                                                <span ng-show="tipo=='otroMenu'">Menú Person.</span>
                                                                 <span ng-show="tipo=='otroServicio'">Servicio</span>
                                                             </button>
                                                             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-disabled="$parent.accionMenu=='update'">
@@ -380,6 +384,7 @@
                                                     <tr>
                                                         <th></th>
                                                         <th>Tipo</th>
+                                                        <th>H. Desp.</th>
                                                         <th>Menú</th>
                                                         <th>Cantidad</th>
                                                         <th>P./Unidad</th>
@@ -396,6 +401,7 @@
                                                             </button>
                                                         </td>
                                                         <td>{{item.tipo}}</td>
+                                                        <td>{{item.horaDespacho}}</td>
                                                         <td>{{item.menu}}</td>
                                                         <td>{{item.cantidad}}</td>
                                                         <td>{{item.precioUnitario | number:2}}</td>

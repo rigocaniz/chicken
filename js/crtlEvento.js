@@ -94,6 +94,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 				costoExtra            : evento.costoExtra,
 				descripcionCostoExtra : evento.descripcionCostoExtra,
 				idEstadoEvento        : evento.idEstadoEvento,
+				idSalon        		  : evento.idSalon,
 				newIdEstadoEvento     : _idEstadoEvento,
 				estadoEvento          : evento.estadoEvento,
 				lstMovimiento         : evento.lstMovimiento
