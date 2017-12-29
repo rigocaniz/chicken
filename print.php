@@ -40,6 +40,11 @@ $conexion->close();
 <head>
 	<meta charset="UTF-8">
 	<title>Factura Print</title>
+	<style>
+		*{
+			font-family: Arial, Tahoma;
+		}
+	</style>
 </head>
 <body style="margin: 0;padding: 0;">
 	<?php $documento->render( $datos ); ?>

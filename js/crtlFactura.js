@@ -114,8 +114,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		if( !(factura.datosCliente.idCliente && factura.datosCliente.idCliente > 0) )
 			alertify.notify('Seleccione un cliente', 'warning', 4);
 		
-		else if( !(factura.numeroTicket && factura.numeroTicket > 0) )
-			alertify.notify('Ingrese un número de Ticket válido', 'warning', 4);
+		else if( !(factura.idOrdenCliente && factura.idOrdenCliente > 0) )
+			alertify.notify('Número de orden de Cliente no válido', 'warning', 4);
 		
 		else if( !(factura.lstOrden && factura.lstOrden.length > 0) )
 			alertify.notify('La lista de ordenes está vacia', 'warning', 4);

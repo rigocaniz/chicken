@@ -25,25 +25,25 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="#/orden" class="item-menu">
                 <img src="img/orden.png" alt="">
-                <span>Ordenes</span>
+                <span><u>O</u>rdenes</span>
             </a>
         </div>
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="#/adminOrden" class="item-menu">
                 <img src="img/orden1.png" alt="">
-                <span>Admin Orden</span>
+                <span><u>A</u>dmin Orden</span>
             </a>
         </div>
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="#/factura" class="item-menu">
                 <img src="img/factura.png" alt="">
-                <span>Facturacion</span>
+                <span><u>F</u>acturacion</span>
             </a>
         </div>
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="#/evento" class="item-menu">
                 <img src="img/evento.png">
-                <span>Evento</span>
+                <span><u>E</u>vento</span>
             </a>
         </div>
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
@@ -55,13 +55,13 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="#/caja" class="item-menu">
                 <img src="img/caja.png" alt="">
-                <span>Caja</span>
+                <span><u>C</u>aja</span>
             </a>
         </div>
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="#/inventario" class="item-menu">
                 <img src="img/inventario.png" alt="">
-                <span>Inventario</span>
+                <span><u>I</u>nventario</span>
             </a>
         </div>
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
