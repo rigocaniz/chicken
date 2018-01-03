@@ -378,7 +378,7 @@
                 <div class="modal-footer">
         			<button type="button" class="btn btn-success" ng-click="guardarOrden()">
         				<span class="glyphicon glyphicon-ok"></span>
-        				<b>Confirmar Orden</b>
+        				<b>Confirmar Orden (F6)</b>
         			</button>
                     <button type="button" class="btn btn-default" ng-click="$hide()">
                         <span class="glyphicon glyphicon-log-out"></span>

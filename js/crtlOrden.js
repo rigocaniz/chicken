@@ -60,6 +60,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 	/* ===== MOSTRAR DIALOGOS ===== */
 	$scope.openCantidad = function () {
 		$scope.cantidadInicial = 1;
+		$scope.menuActual      = {};
+
 
 		if ( !( $scope.ordenActual.noTicket > 0 ) )
 			$scope.idTipoServicio = 3;
@@ -84,6 +86,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			return false;
 
 		if ( $scope.buscarTicket > 0 ) {
+			$scope.lstOrdenCliente = [];
 			$scope.lstTicketBusqueda = [];
 			$scope.$parent.loading = true; // cargando...
 			
@@ -424,13 +427,13 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 			}
 
 			if ( index >= 0 ) {
-				$scope.ordenActual.lstAgregar[ index ].cantidad += $scope.cantidadInicial;
+				$scope.ordenActual.lstAgregar[ index ].cantidad += parseInt( $scope.cantidadInicial );
 			}
 			else{
 				$scope.ordenActual.lstAgregar.unshift({
 					idMenu         : $scope.menuActual.idMenu,
 					menu           : $scope.menuActual.menu,
-					cantidad       : $scope.cantidadInicial,
+					cantidad       : parseInt( $scope.cantidadInicial ),
 					precio         : $scope.menuActual.precio,
 					tipoServicio   : tipoServicio,
 					idTipoServicio : $scope.idTipoServicio,
@@ -999,24 +1002,24 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 		if ( $("#codigoRapido").is( ":focus" ) && key == 13 )
 			$scope.consultaMenuPorCodigo();
 
-		if ( altDerecho && key == 13 ) // {ALT-DERECHO} + {ENTER}
+		if ( altDerecho && !$("#observacionMenu").is(":focus") && key == 79 ) // {SHIFT} + {O}
 			document.getElementById("observacionMenu").focus();
 
 		// SELECCION DE TIPO DE SERVICIO
-		if ( altDerecho && key == 76 && $scope.ordenActual.noTicket > 0 ) // {L}
+		if ( altDerecho && !$("#observacionMenu").is(":focus") && key == 76 && $scope.ordenActual.noTicket > 0 ) // {L}
 			$scope.idTipoServicio = 1;
 
-		if ( altDerecho && key == 82 && $scope.ordenActual.noTicket > 0 ) // {R}
+		if ( altDerecho && !$("#observacionMenu").is(":focus") && key == 82 && $scope.ordenActual.noTicket > 0 ) // {R}
 			$scope.idTipoServicio = 2;
 
-		if ( altDerecho && key == 68 && !( $scope.ordenActual.noTicket > 0 ) ) // {D}
+		if ( altDerecho && !$("#observacionMenu").is(":focus") && key == 68 && !( $scope.ordenActual.noTicket > 0 ) ) // {D}
 			$scope.idTipoServicio = 3;
 
 		// SELECCION DE MENU
-		if ( altDerecho && key == 77 ) // {M}
+		if ( altDerecho && !$("#observacionMenu").is(":focus") && key == 77 ) // {M}
 			$scope.mostrarMenus( 'menu' );
 
-		if ( altDerecho && key == 67 ) // {C}
+		if ( altDerecho && !$("#observacionMenu").is(":focus") && key == 67 ) // {C}
 			$scope.mostrarMenus( 'combo' );
 
 		// CONFIRMA LA ORDEN DEL CLIENTE
