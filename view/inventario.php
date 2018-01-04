@@ -1,6 +1,6 @@
 <?php
     include '../class/sesion.class.php';
-    
+
     if( !$sesion->getAccesoModulo( 7 ) ):
         include 'errores/403.php';
         exit();
@@ -22,6 +22,10 @@
 						<span class="glyphicon glyphicon-home"></span>
 					</a>
 				</li>
+				<?php
+				// SOLO PARA PERFIL ADMINISTRADOR
+				if( $sesion->getIdPerfil() == 1 ):
+				?>
 				<li role="presentation" ng-class="{'active' : inventarioMenu=='inventario'}" ng-click="resetValores(); inventarioMenu='inventario'">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-list"></span> INVENTARIO
@@ -32,6 +36,7 @@
 						<span class="glyphicon glyphicon-share-alt"></span> TIPO PRODUCTO
 					</a>
 				</li>
+				<?php endif; ?>
 				<li role="presentation" ng-class="{'active' : inventarioMenu=='medidas'}" ng-click="resetValores(); inventarioMenu='medidas'">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-scale"></span> MEDIDAS
@@ -253,7 +258,7 @@
 									</div>
 									<div class="col-xs-5 col-sm-4 col-md-4">
 										<button type="button" class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaTipoProducto()" ng-disabled="loading">
-											<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
+											<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }} (F6)
 										</button>
 										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 4 )">
 											Cancelar
@@ -321,7 +326,7 @@
 									</div>
 									<div class="col-xs-5 col-sm-4 col-md-4">
 										<button type="button" class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMedida()" ng-disabled="loading">
-											<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }}
+											<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }} (F6)
 										</button>
 										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 6 )">
 											Cancelar
@@ -531,7 +536,7 @@
 								<div class="form-group" style="margin-top: 15px">
 									<div class="col-sm-12 text-center">
 										<button type="button" class="btn btn-success btn-lg noBorder" ng-click="consultaFactura( 'insert' )" ng-disabled="loading">
-											<span class="glyphicon glyphicon-saved"></span> Guardar
+											<span class="glyphicon glyphicon-saved"></span> Guardar (F6)
 										</button>
 									</div>
 								</div>
@@ -548,7 +553,7 @@
 
 <!-- DIALOGO LST FACTURAS COMPRAS -->
 <script type="text/ng-template" id="dial.editarFacturaCompra.html">
-	<div class="modal" tabindex="-1" role="dialog">
+	<div class="modal" tabindex="-1" role="dialog" id="dialEditarFacturaCompra">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content panel-danger">
 				<div class="modal-header panel-heading text-center">
@@ -604,7 +609,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-success" ng-click="consultaFactura( 'update' )">
-						<span class="glyphicon glyphicon-saved"></span> Guardar
+						<span class="glyphicon glyphicon-saved"></span> Guardar (F6)
 					</button>
 
 					<button type="button" class="btn btn-default" ng-click="facturaCompra={};$hide()">
@@ -617,7 +622,8 @@
 	</div>
 </script>
 
-<!-- DIALOGO LST INGRESO PRODUDCTOS -->
+
+<!-- DIALOGO LST INGRESO PRODUCTOS -->
 <script type="text/ng-template" id="dial.verDetalleFacturaCompra.html">
 	<div class="modal" tabindex="-1" role="dialog">
 		<div class="modal-dialog modal-lg">
@@ -672,49 +678,47 @@
 								<textarea class="form-control" ng-model="facturaCompra.comentario" placeholder="Ingresar comentario (Opcional)" disabled></textarea>
 							</div>
 						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-sm-10 col-sm-offset-1">
-									<table class="table table-hover">
-										<thead>
-											<tr>
-												<th class="text-center">No.</th>
-												<th class="col-sm-4 text-center">Producto</th>
-												<th class="col-sm-2 text-center">Tipo</th>
-												<th class="col-sm-3 text-center">Cantidad</th>
-												<th class="col-sm-2 text-center">Medida</th>
-												<th class="text-center">Total</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr ng-repeat="(ixProd, prod) in facturaCompra.lstProductos">
-												<td>
-													{{ prod.idProducto }}
-												</td>
-												<td>
-													{{ prod.producto }}
-												</td>
-												<td class="text-center">
-													{{ prod.tipoProducto }}
-												</td>
-												<td class="text-center">
-													{{ prod.cantidad }}
-												</td>
-												<td class="text-center">
-													{{ prod.medida }}
-												</td>
-												<td class="text-right">
-													{{ prod.costo }}
-												</td>
-											</tr>
-											<tr id="tb-title" ng-show="facturaCompra.lstProductos.length">
-												<td colspan="6" class="text-right">
-													<strong> TOTAL {{ subTotalQuetzales( 2 ) | number: 2 }}</strong>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th class="text-center">No.</th>
+											<th class="col-sm-4 text-center">Producto</th>
+											<th class="col-sm-2 text-center">Tipo</th>
+											<th class="col-sm-3 text-center">Cantidad</th>
+											<th class="col-sm-2 text-center">Medida</th>
+											<th class="text-center">Total</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="(ixProd, prod) in facturaCompra.lstProductos">
+											<td>
+												{{ prod.idProducto }}
+											</td>
+											<td>
+												{{ prod.producto }}
+											</td>
+											<td class="text-center">
+												{{ prod.tipoProducto }}
+											</td>
+											<td class="text-center">
+												{{ prod.cantidad }}
+											</td>
+											<td class="text-center">
+												{{ prod.medida }}
+											</td>
+											<td class="text-right">
+												{{ prod.costo }}
+											</td>
+										</tr>
+										<tr id="tb-title" ng-show="facturaCompra.lstProductos.length">
+											<td colspan="6" class="text-right">
+												<strong> TOTAL Q.{{ subTotalQuetzales( 2 ) | number: 2 }}</strong>
+											</td>
+										</tr>
+									</tbody>
+								</table>
 							</div>
 						</div>
 					</form>
@@ -729,6 +733,7 @@
 		</div>
 	</div>
 </script>
+
 
 <!-- DIALOGO LST FACTURAS COMPRAS -->
 <script type="text/ng-template" id="dial.lstFacturaCompra.html">
@@ -767,7 +772,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr dir-paginate="facturaCompra in detalleFacturaCompra.lstFacturaCompra | filter: filtroCancion | itemsPerPage: 25">
+							<tr dir-paginate="facturaCompra in detalleFacturaCompra.lstFacturaCompra | filter: filtroCancion | itemsPerPage: 25" ng-dblclick="editarFacturaCompra( facturaCompra, 'verDetalle' )">
 								<td class="text-center">
 									{{ $index + 1 }}
 								</td>
@@ -939,7 +944,7 @@
 
 <!-- DIALOGO CIERRE DIARIO -->
 <script type="text/ng-template" id="dial.cierreDiario.html">
-	<div class="modal" tabindex="-1" role="dialog">
+	<div class="modal" tabindex="-1" role="dialog" id="dialCierreDiario">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content panel-danger">
 				<div class="modal-header panel-heading text-center">
@@ -1033,7 +1038,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-warning" ng-click="consultaCierreDiario()" ng-disabled="loading">
-						<span class="glyphicon glyphicon-saved"></span> REALIZAR CIERRE
+						<span class="glyphicon glyphicon-saved"></span> REALIZAR CIERRE (F6)
 					</button>
 					<button type="button" class="btn btn-default" ng-click="$hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
@@ -1133,7 +1138,7 @@
 
 <!-- MODAL AGREGAR / EDITAR PRODUCTO -->
 <script type="text/ng-template" id="dialAdmin.producto.html">
-	<div class="modal" tabindex="-1" role="dialog">
+	<div class="modal" tabindex="-1" role="dialog" id="dialAdminProducto">
 		<div class="modal-dialog">
 			<div class="modal-content" ng-class="{'panel-warning': accion == 'insert', 'panel-info': accion == 'update'}">
 				<div class="modal-header panel-heading">
@@ -1224,7 +1229,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaProducto()" ng-disabled="loading">
-						<span class="glyphicon glyphicon-saved"></span> <strong><u>G</u></strong>uardar
+						<span class="glyphicon glyphicon-saved"></span> Guardar (F6)
 					</button>
 					<button type="button" class="btn btn-default" ng-click="resetValores( 1 ); $hide()">
 						<span class="glyphicon glyphicon-log-out"></span>

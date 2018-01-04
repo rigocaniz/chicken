@@ -25,59 +25,60 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
 		if ( $scope.$parent.loading )
 			return false;
+		console.log( 'event ', event, ' key ', key, ' altDerecho ', altDerecho );
 
-		console.log( !$scope.modalOpen() );
-		// TECLA A
-		if( altDerecho && key == 65 )
+		if( key == 117 )
 		{
-			if( !$scope.modalOpen() ) {
-				$scope.editarAccion( 'insert', null );
+			if( $scope.modalOpen( 'dialAdminProducto' ) )
+			{
+				$scope.consultaProducto();
+			}
+			else if( $scope.inventarioMenu == 'inventario' ){
+
+				if( $scope.modalOpen( 'dialCierreDiario' ) )
+					$scope.consultaCierreDiario();
+
+				else if( $scope.realizarReajuste && !$scope.modalOpen() )
+					$scope.guardarReajusteMasivo();
+			}
+			else if( $scope.inventarioMenu == 'tipoProducto' )
+			{
+				if( !$scope.modalOpen() )
+					$scope.consultaTipoProducto();
+			}
+			else if( $scope.inventarioMenu == 'medidas' )
+			{
+				if( !$scope.modalOpen() )
+					$scope.consultaMedida();
+			}
+			else if( $scope.inventarioMenu == 'compras' )
+			{
+				if( $scope.modalOpen( 'dialEditarFacturaCompra' ) )
+					$scope.consultaFactura( 'update' );
+				else if( !$scope.modalOpen() )
+					$scope.consultaFactura( 'insert' );
+			}
+			
+		}
+		else if( altDerecho && ( key == 71 || key == 83 || key == 84 || key == 77 || key == 82 || key == 67 ) && !$scope.modalOpen() )
+		{
+			if( $scope.inventarioMenu == 'inventario' ) {
+				if( key == 83 )
+					$scope.groupBy = 'sinFiltro';
+				else if( key == 84 )
+					$scope.groupBy = 'tipoProducto';
+				else if( key == 77 )
+					$scope.groupBy = 'medida';
+				else if( key == 82 )
+					$scope.realizarReajusteMasivo();
+				else if( key == 67 && $scope.realizarReajuste )
+					$scope.cancelarReajuste();
 			}
 			else
 				alertify.notify('Acción no válida', 'info', 3);
-
-			$timeout(function(){
-				$('#nit').focus();
-			},175);
-		}
-		// TECLA / G / S / T / M / R
-		else if( altDerecho && ( key == 71 || key == 83 || key == 84 || key == 77 || key == 82 || key == 67 ) )
-		{
-			if( $scope.modalOpen() && key == 71 ) {
-				$scope.consultaProducto();
-			}
-			else if( !$scope.modalOpen() && key == 71 )
-			{
-				alertify.notify('Acción no válida', 'info', 3);
-			}
-			else if( !$scope.modalOpen() && ( key == 83 || key == 84 || key == 77 || key == 82 || key == 67 ) )
-			{
-				if( $scope.inventarioMenu == 'inventario' ) {
-					if( key == 83 )
-						$scope.groupBy = 'sinFiltro';
-					else if( key == 84 )
-						$scope.groupBy = 'tipoProducto';
-					else if( key == 77 )
-						$scope.groupBy = 'medida';
-					else if( key == 82 )
-						$scope.realizarReajusteMasivo();
-					else if( key == 67 && $scope.realizarReajuste )
-						$scope.cancelarReajuste();
-				}
-				else
-					alertify.notify('Acción no válida', 'info', 3);
-			}
 		}
 
 	});
-
-
-	$scope.modalOpen = function ( _name ) {
-		if ( _name == undefined )
-			return $("body>div").hasClass('modal') && $("body>div").hasClass('top');
-		else
-			return !!( $( '#' + _name ).data() && $( '#' + _name ).data().$scope.$isShown );
-	};
 
 
 	$scope.dialIngreso                 = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
@@ -899,6 +900,15 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			total = disponibilidad;
 
 		return total;
+	};
+
+
+	/* ************************** CONSULTA SI EXISTE MODAL ABIERTO ********************** */
+	$scope.modalOpen = function ( _name ) {
+		if ( _name == undefined )
+			return $("body>div").hasClass('modal') && $("body>div").hasClass('top');
+		else
+			return !!( $( '#' + _name ).data() && $( '#' + _name ).data().$scope.$isShown );
 	};
 
 });
