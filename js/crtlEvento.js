@@ -76,7 +76,10 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 		}
 		else if ( _accion == 'update' )
 		{
-			var _idEstadoEvento = _status || '';
+			var _idEstadoEvento = _status || '', totalAnticipo = 0;
+
+			for (var ix = 0; ix < evento.lstMovimiento.length; ix++)
+				totalAnticipo += parseFloat( evento.lstMovimiento[ ix ].monto );
 
 			$scope.evento = {
 				idEvento              : evento.idEvento,
@@ -89,20 +92,21 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 				anticipo              : evento.anticipo,
 				numeroPersonas        : evento.numeroPersonas,
 				observacion           : evento.observacion,
-				descuento             : evento.descuento,
-				descripcionDescuento  : evento.descripcionDescuento,
-				costoExtra            : evento.costoExtra,
-				descripcionCostoExtra : evento.descripcionCostoExtra,
 				idEstadoEvento        : evento.idEstadoEvento,
 				idSalon        		  : evento.idSalon,
 				newIdEstadoEvento     : _idEstadoEvento,
 				estadoEvento          : evento.estadoEvento,
-				lstMovimiento         : evento.lstMovimiento
+				lstMovimiento         : evento.lstMovimiento,
+				totalAnticipo 		  : totalAnticipo
 			};
 
 			// SI NO ES CAMBIO DE ESTADO
 			$scope.lstMenuEvento = evento.lstMenu;
+			
+			$scope.totalEvento(); // CALCULA TOTAL EVENTO
 		}
+
+		console.log( $scope.accionEvento, $scope.lstMenuEvento, $scope.evento );
 
 		$scope.dialEvento.show();
 
@@ -183,19 +187,21 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 			.success(function (data) {
 				alertify.notify( data.mensaje, data.respuesta, 3 );
 
-				if ( data.respuesta == 'success' && $scope.accionEvento == 'insert' ) {
-					$scope.idTab           = 2;
-					$scope.accionMenu      = 'insert';
-					$scope.evento.idEvento = data.idEvento;
-					$scope.menu.cantidad   = angular.copy( $scope.evento.numeroPersonas );
+				if ( data.respuesta == 'success' ) {
+					if ( $scope.accionEvento == 'insert' )
+					{
+						$scope.idTab           = 2;
+						$scope.accionMenu      = 'insert';
+						$scope.evento.idEvento = data.idEvento;
+						$scope.menu.cantidad   = angular.copy( $scope.evento.numeroPersonas );
+					}
+					
+					// CONSULTA EVENTOS
+					$scope.consultaEvento();
+
+					if ( $scope.evento.newIdEstadoEvento > 0 )
+						$scope.dialEvento.hide();
 				}
-
-				// CONSULTA EVENTOS
-				$scope.consultaEvento();
-
-				if ( $scope.evento.newIdEstadoEvento > 0 )
-					$scope.dialEvento.hide();
-
 			});
 		}
 	};
@@ -264,6 +270,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 				precioUnitario : parseFloat( _menu.precioUnitario ),
 				otroMenu 	   : otroMenu,
 				idMenu 		   : ( _menu.idTipo != $scope.tipo ? '' : _menu.idMenu ),
+				horaDespacho   : _menu.horaDespacho,
 				idMenuCurrent  : _menu.idMenu,
 				menu  		   : _menu.menu,
 				comentario     : _menu.comentario
@@ -279,6 +286,10 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 				monto       : '',
 				motivo      : ''
 			};
+		}
+
+		else if ( _accion == 'deleteMove' ) {
+			$scope.movimiento = _menu;
 		}
 	};
 
@@ -322,11 +333,21 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 					$scope.menu.precioUnitario = 0;
 					$scope.menu.comentario     = '';
 					$scope.menu.otroMenu       = '';
-					
+
+					$scope.totalEvento(); // CALCULA TOTAL EVENTO
 					// CONSULTA EVENTOS
 					$scope.consultaEvento();
 				}
 			});
+		}
+	};
+
+	$scope.montoTotalEvento = 0;
+	$scope.totalEvento = function () {
+		$scope.montoTotalEvento = 0;
+		for (var i = 0; i < $scope.lstMenuEvento.length; i++) {
+			var menu = $scope.lstMenuEvento[ i ];
+			$scope.montoTotalEvento += ( parseInt( menu.cantidad ) * parseFloat( menu.precioUnitario ) );
 		}
 	};
 
@@ -348,11 +369,12 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 			var datos = {
 				opcion     : 'guardarMovimiento',
 				movimiento : {
-					accion      : $scope.accionMenu,
-					idEvento    : $scope.evento.idEvento,
-					idFormaPago : $scope.movimiento.idFormaPago,
-					monto       : $scope.movimiento.monto,
-					motivo      : $scope.movimiento.motivo,
+					accion       : $scope.accionMenu,
+					idEvento     : $scope.evento.idEvento,
+					idFormaPago  : $scope.movimiento.idFormaPago,
+					monto        : $scope.movimiento.monto,
+					motivo       : $scope.movimiento.motivo,
+					idMovimiento : $scope.movimiento.idMovimiento,
 				}
 			};
 

@@ -208,6 +208,11 @@ class Evento
 	 			$sql = "CALL consultaMovimiento( 'insert', {$id}, 1, {$idEstadoMovimiento}, {$idFormaPago}, {$idEvento}, '{$motivo}', {$monto}, {$comentario} )";
 			}
 
+			else if ( $accion == 'deleteMove' )
+			{
+	 			$sql = "CALL consultaMovimiento( 'delete', {$id}, NULL, NULL, NULL, NULL, NULL, NULL, NULL )";
+			}
+
  			$rs = $this->con->query( $sql );
  			@$this->con->next_result();
 

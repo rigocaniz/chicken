@@ -74,7 +74,7 @@
                         <button type="button" class="btn btn-xs btn-info" ng-click="showDialOrden( 'update', evento )" title="Modificar" data-toggle="tooltip" data-placement="top" tooltip>
                             <span class="glyphicon glyphicon-pencil"></span>
                         </button>
-                        <button type="button" class="btn btn-xs btn-primary">
+                        <button type="button" class="btn btn-xs btn-primary" ng-show="evento.idEstadoEvento==5">
                             <span class="glyphicon glyphicon-shopping-cart"></span>
                             <b>Facturar</b> (F10)
                         </button>
@@ -137,16 +137,53 @@
                 <div class="modal-header panel-heading">
                 	<button type="button" class="close" ng-click="$hide()">&times;</button>
                 	<span class="glyphicon glyphicon-calendar"></span>
-                    <span ng-show="accionEvento=='update'">Modificar Evento » # {{evento.idEvento}}</span>
-                    <span ng-show="accionEvento=='insert'">Nuevo Evento</span>
+                    <span ng-show="evento.newIdEstadoEvento!=5 && accionEvento=='update'">Modificar Evento » # {{evento.idEvento}}</span>
+                    <span ng-show="evento.newIdEstadoEvento!=5 && accionEvento=='insert'">Nuevo Evento</span>
+                    <span ng-show="evento.newIdEstadoEvento==5">FINALIZAR Y FACTURAR EVENTO » # {{evento.idEvento}}</span>
                 </div>
                 <div class="modal-body">
+                    <!-- FINALIZAR EVENTO -->
                     <div class="row" ng-show="evento.newIdEstadoEvento==5">
                         <div class="col-xs-12 text-center">
-                            <h4>¿Esta seguro de FINALIZAR el Evento?</h4>
-                            <button type="button" class="btn btn-primary" ng-click="guardarEvento()">Finalizar Evento</button>
+                            <h3 class="text-primary">{{evento.evento}} » {{formatoFecha( evento.fechaEvento, 'ddd D [de ] MMM [de] YYYY' )}}</h3>
+                            <h4>Cliente: <span ng-bind-html="evento.nombreCliente"></span></h4>
+                            <hr>
+                        </div>
+                        <div class="col-xs-7">
+                            <b>Menú(s) / Servicio(s)</b>
+                            <ul class="list-group">
+                                <li class="list-group-item" ng-repeat="item in lstMenuEvento">
+                                    <span>{{item.cantidad}} => {{item.menu}} ({{item.tipo}}) - <kbd>{{item.subTotal}}</kbd></span>
+                                </li>
+                                <li class="list-group-item text-right text-success">
+                                    <h4>Total Evento: <b>Q. {{montoTotalEvento | number:2}}</b></h4>
+                                </li>
+                            </ul>
+                            <b>Anticipo</b>
+                            <ul class="list-group">
+                                <li class="list-group-item" ng-repeat="item in evento.lstMovimiento">
+                                    <kbd>Q. {{item.monto}} ({{item.formaPago}})</kbd>
+                                    <p>{{item.motivo}}</p>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-5">
+                            <b>Monto Pendiente</b>
+                            <h3><b class="label label-primary">Q. {{ montoTotalEvento - evento.totalAnticipo | number:2 }}</b></h3>
+                            <hr>
+                            <b>Efectivo</b>
+                            <input type="number" class="form-control" ng-model="evento.montoEfectivo">
+                            <b>Tarjeta Crédito / Débito</b>
+                            <input type="number" class="form-control" ng-model="evento.montoTarjeta">
+                            <hr>
+                            <button type="button" class="btn btn-success" ng-click="guardarEvento()">
+                                <span class="glyphicon glyphicon-shopping-cart"></span>
+                                Finalizar y Facturar Evento
+                            </button>
                         </div>
                     </div>
+
+                    <!-- CANCELAR EVENTO -->
                     <div class="row" ng-show="evento.newIdEstadoEvento==10">
                         <div class="col-xs-12 text-center">
                             <h4>¿Esta seguro de CANCELAR el Evento?</h4>
@@ -162,6 +199,7 @@
                         </div>
                     </div>
 
+                    <!-- DATOS DEL EVENTO -->
                     <div class="row" ng-show="!(evento.newIdEstadoEvento>0)">
                         <!-- TABS -->
                         <div class="col-sm-12">
@@ -202,7 +240,7 @@
                                     <div class="row" style="margin-top:5px" ng-hide="evento.idCliente>0">
                                         <label class="col-xs-2">Cliente</label>
                                         <div class="col-xs-7">
-                                            <input type="text" class="form-control" ng-model="$parent.busquedaCliente" id="busquedaCliente">
+                                            <input type="text" autocomplete="off" class="form-control" ng-model="$parent.busquedaCliente" id="busquedaCliente">
                                             <div class="lstResultado" ng-show="lstResultado.length">
                                                 <ul>
                                                     <li ng-repeat="item in lstResultado" ng-click="seleccionarCliente( item )" ng-class="{'active':item.active}" ng-bind-html="item.cliente">
@@ -221,7 +259,7 @@
                                 	<div class="row" style="margin-top:5px">
                                         <label class="col-xs-2">Evento</label>
                                         <div class="col-xs-7">
-                                            <input type="text" class="form-control" ng-model="evento.evento" placeholder="Descripción de evento" id="evento" focus-enter>
+                                            <input type="text" autocomplete="off" class="form-control" ng-model="evento.evento" placeholder="Descripción de evento" id="evento" focus-enter>
                                         </div>
                                         <div class="col-xs-3" ng-show="accionEvento=='update'">
                                             <span class="label" ng-class="{'label-primary':evento.idEstadoEvento==1, 'label-success':evento.idEstadoEvento==5, 'label-danger':evento.idEstadoEvento==10}">
@@ -338,8 +376,8 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-xs-8">
-                                                        <input type="text" class="form-control" ng-model="menu.otroMenu" ng-show="tipo=='otroMenu' || tipo=='otroServicio'" id="inputMenu">
-                                                        <select class="form-control" ng-model="menu.idMenu" ng-show="tipo!='otroMenu' && tipo!='otroServicio'" id="selectMenu">
+                                                        <input type="text" class="form-control" ng-model="menu.otroMenu" ng-if="tipo=='otroMenu' || tipo=='otroServicio'" id="inputMenu">
+                                                        <select class="form-control" ng-model="menu.idMenu" ng-if="tipo!='otroMenu' && tipo!='otroServicio'" id="selectMenu">
                                                             <option value="{{item.idMenu}}" ng-repeat="item in lstMenu">{{item.menu}}</option>
                                                         </select>
                                                     </div>
@@ -417,6 +455,11 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
+                                            <div class="text-right">
+                                                <h4>
+                                                    <b>Total Evento:</b> <kbd>Q. {{montoTotalEvento | number:2}}</kbd>
+                                                </h4>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -437,21 +480,19 @@
                                         <div class="col-sm-12" ng-show="accionMenu=='deleteMove'">
                                             <fieldset class="fieldset">
                                                 <legend class="legend danger">Eliminar Anticipo</legend>
-                                                <!--
                                                 <div class="col-xs-12" style="margin-top:5px">
-                                                    <h4>Eliminar <kbd>{{menu.cantidad}} {{menu.menu}}</kbd></h4>
+                                                    <h4>Eliminar Anticipo</h4>
                                                 </div>
                                                 <div class="col-xs-12 text-center" style="margin-top:5px">
                                                     <button type="button" class="btn btn-sm btn-default" ng-click="$parent.accionMenu=''">
                                                         <span class="glyphicon glyphicon-remove"></span>
                                                         Cancelar
                                                     </button>
-                                                    <button type="button" class="btn btn-sm btn-danger" ng-click="guardarMenu()">
+                                                    <button type="button" class="btn btn-sm btn-danger" ng-click="guardarMovimiento()">
                                                         <span class="glyphicon glyphicon-remove"></span>
                                                         <b>Eliminar</b>
                                                     </button>
                                                 </div>
-                                                -->
                                             </fieldset>
                                         </div>
 

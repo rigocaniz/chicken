@@ -108,7 +108,7 @@ if( !isset( $_SESSION[ 'idPerfil' ] ) AND !isset( $_SESSION[ 'username' ] )  ) {
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-user"></i>
                         </span>
-                        <input class="form-control" type="text" name="username" value="<?= $username; ?>" maxlength="12" placeholder="Usuario" <?= $disabled; ?> />
+                        <input class="form-control" type="text" name="username" value="<?= $username; ?>" maxlength="12" placeholder="Usuario" <?= $disabled; ?> autofocus/>
                     </div>
                     <div class="form-group input-group">
                         <span class="input-group-addon">
