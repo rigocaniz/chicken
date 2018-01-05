@@ -39,12 +39,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			else if( $scope.modalOpen( 'dialAdminMenu' ) )
 				$scope.consultaMenu();
 		}
-		else{
-
-		}
-		// TECLA C
-		if( altDerecho && key == 65 )
-		{
+		else if( altDerecho && key == 65 ) {
 			if( !$scope.modalOpen() )
 			{
 				if( $scope.menuTab == 'menu' )
@@ -58,30 +53,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			$timeout(function(){
 				$('#nit').focus();
 			},175);
-		}
-		// TECLA G
-		else if( altDerecho && key == 71 )
-		{
-			if( $scope.modalOpen() )
-			{
-				if( $scope.menuTab == 'menu' )
-					$scope.consultaMenu();
-				else if( $scope.menuTab == 'combo' )
-					$scope.consultaCombo();
-			}
-			else
-				alertify.notify('Acción no válida', 'info', 3);
-		}
-
-		else if( !$scope.modalOpen() ) {
-			console.log( "prueba" );
-		}
-		// CUANDO ESTE ABIERTO ALGUN CUADRO DE DIALOGO
-		else{
-			// CUANDO EL DIALOGO DE NUEVA ORDEN ESTE ABIERTA
-			if ( $scope.modalOpen( 'dial_orden_cliente' ) ) {
-				
-			}
 		}
 
 	});

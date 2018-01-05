@@ -168,7 +168,6 @@
             $("#sidebar-wrapper").toggleClass("active");
         });
 
-
         $(document).ready(function(){
             $('[data-toggle=tooltip]').hover(function(){
                 $(this).tooltip('show');

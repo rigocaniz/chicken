@@ -114,10 +114,13 @@ class Factura
  						$this->consultaFormaPago( $accion, $idFactura, $total, $data->lstFormasPago );
  						$this->consultaDetalleFactura( $accion, $idFactura, $data->agrupado, $data->lstOrden );
  					}
+ 					elseif( $this->respuesta == 'danger' )
+ 						$this->respuesta .= ' (Facturar Cliente)';
+ 					
 		 		}
 		 		else{
 		 			$this->respuesta = 'danger';
-		 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+		 			$this->mensaje   = 'Error al ejecutar la instrucción (Facturar Cliente).';
 		 		}
 
 		 		if( $this->respuesta == 'success' )
@@ -174,6 +177,8 @@ class Factura
 								$this->tiempo = 2;
 								$guardados++;
 							}
+							elseif( $this->respuesta == 'danger' )
+								$this->mensaje .= ' (Detalle Factura)';
 
 							$cantidad--;
 						}
@@ -206,6 +211,8 @@ class Factura
 							$this->tiempo = 2;
 							$guardados++;
 						}
+						elseif( $this->respuesta == 'danger' )
+							$this->mensaje .= ' (Detalle Factura)';
 					}
 					else{
 						$this->respuesta = 'danger';
@@ -256,6 +263,8 @@ class Factura
 						//if( $formaPago->monto >= $total )
 							$total -= $monto;
 					}
+					elseif( $this->respuesta == 'danger' )
+						$this->mensaje .= ' (Forma de Pago)';
 				}
 				else{
 					$this->respuesta = 'danger';
@@ -311,7 +320,6 @@ class Factura
 				WHERE
 				    idOrdenCliente = {$idOrdenCliente} $where
 				GROUP BY IF( perteneceCombo, idDetalleOrdenCombo, idDetalleOrdenMenu ), perteneceCombo;";
-				//echo $sql;
 
 		if( $rs = $this->con->query( $sql ) ) {
 			while ( $row = $rs->fetch_object() ) {
@@ -331,7 +339,10 @@ class Factura
 
 				$index = -1;
 
-				$row->cobrarTodo = TRUE;
+				if( $agrupado )
+					$row->cobrarTodo = TRUE;
+				else
+					$row->cobrarTodo = FALSE;
 
 				$detalle = (object)array(
 						'idCombo'              => $row->idCombo,
