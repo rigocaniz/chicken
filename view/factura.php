@@ -54,7 +54,7 @@
                                     <label class="col-sm-2 control-label">TICKET</label>
                                     <div class="col-sm-4 col-md-3 col-lg-2">
                                         <div ng-show="!facturacion.numeroTicket">
-                                             <input type="text" id="ticket" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="buscarTicket">
+                                             <input type="text" id="ticket" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="buscarTicket" ng-disabled="facturacion.idOrdenCliente>0">
                                         </div>
                                         <div ng-show="facturacion.numeroTicket">
                                             <input type="text" class="form-control" ng-keypress="$event.keyCode == 13 && buscarOrdenTicket()" ng-model="facturacion.numeroTicket" disabled>
