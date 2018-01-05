@@ -101,6 +101,11 @@ switch ( $data->opcion )
 		echo json_encode( $menu->cargarMenu( $data->idMenu ) );
 		break;
 
+	case 'cargarLstPreciosMenu':
+		$menu = new Menu();
+		echo json_encode( $menu->cargarMenuPrecio( $data->idMenu ) );
+		break;
+
 	case 'cargarMenuPrecio':		// DATOS MENU PRECIO
 		$menu = new Menu();
 		$orden = new Orden();

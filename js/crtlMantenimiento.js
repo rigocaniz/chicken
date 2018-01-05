@@ -483,17 +483,16 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 
 	// CONSULTAR PRECIOS MENU
-	$scope.cargarLstPreciosMenu = function( idMenu )
-	{
-		$http.post('consultas.php',{opcion: 'cargarMenuPrecio', idMenu: idMenu})
+	$scope.cargarLstPreciosMenu = function( idMenu ){
+		$http.post('consultas.php',{opcion: 'cargarLstPreciosMenu', idMenu: idMenu})
 		.success(function(data){
+			console.log( 'lstPrecios', data );
 			$scope.menu.lstPrecios = data;
 		});
 	};
 
 	// CONSULTAR PRECIOS COMBO
-	$scope.cargarLstPreciosCombo = function( idCombo )
-	{
+	$scope.cargarLstPreciosCombo = function( idCombo ){
 		$http.post('consultas.php',{opcion: 'lstComboPrecio', idCombo: idCombo})
 		.success(function(data){
 			$scope.combo.lstPrecios = data;
