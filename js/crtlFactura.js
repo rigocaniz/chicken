@@ -143,7 +143,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			$http.post('consultas.php',{
 			    opcion : "consultaFacturaCliente",
 			    accion : $scope.accion,
-			    data   : $scope.factura
+			    data   : factura
 			}).success(function(data){
 			    console.log(data);		    
 				alertify.set('notifier','position', 'top-right');
