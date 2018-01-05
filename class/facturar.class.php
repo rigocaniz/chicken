@@ -110,13 +110,15 @@ class Factura
 	 					$this->tiempo  = 3;
 	 				}
 
- 					if( $this->respuesta == 'success'  ){
- 						$this->consultaFormaPago( $accion, $idFactura, $total, $data->lstFormasPago );
- 						$this->consultaDetalleFactura( $accion, $idFactura, $data->agrupado, $data->lstOrden );
- 					}
- 					elseif( $this->respuesta == 'danger' )
+ 					if( $this->respuesta == 'danger' )
  						$this->respuesta .= ' (Facturar Cliente)';
- 					
+ 					else
+ 					{
+	 					if( $this->respuesta == 'success'  )
+	 						$this->consultaFormaPago( $accion, $idFactura, $total, $data->lstFormasPago );
+						if( $this->respuesta == 'success'  )
+	 						$this->consultaDetalleFactura( $accion, $idFactura, $data->agrupado, $data->lstOrden );
+ 					}
 		 		}
 		 		else{
 		 			$this->respuesta = 'danger';
@@ -240,17 +242,15 @@ class Factura
 		$total     = (double)$total;
 
 		foreach ( $lstFormasPago AS $ixFormaPago => $formaPago ) {
+
 			if( isset( $formaPago->monto ) && $formaPago->monto > 0  ){
 
 				$idFormaPago = (int)$formaPago->idFormaPago;
 				$idFactura   = (int)$idFactura;
 				$monto       = (double)$formaPago->monto;
 
-				if( $monto > $total )
-					$monto = $monto - ( $monto - $total );
-
 				$sql = "CALL consultaFormaPago( '{$accion}', {$idFactura}, {$idFormaPago}, {$monto} );";
-				
+
 				if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 					$this->siguienteResultado();
 					$this->respuesta = $row->respuesta;
@@ -259,9 +259,7 @@ class Factura
 					if( $this->respuesta == 'success' ) {
 						$this->tiempo = 2;
 						$guardados++;
-
-						//if( $formaPago->monto >= $total )
-							$total -= $monto;
+						$total -= $monto;
 					}
 					elseif( $this->respuesta == 'danger' )
 						$this->mensaje .= ' (Forma de Pago)';
@@ -283,7 +281,7 @@ class Factura
 			$this->tiempo    = 7;
 		}
 		elseif( $total > 0  ){
-			$this->respuesta = 'warning';
+			$this->respuesta = 'danger';
 			$this->mensaje   = 'Los montos ingresados no cubren el <b>TOTAL DE LA ORDEN</b>';
 			$this->tiempo    = 8;
 		}
