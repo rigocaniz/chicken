@@ -94,7 +94,7 @@
 									<span class="glyphicon glyphicon-edit"></span> <strong><u>R</u></strong>EAJUSTE MASIVO
 								</button>
 								<button type="button" class="btn btn-danger" ng-click="cancelarReajuste()" ng-show="realizarReajuste">
-									<span class="glyphicon glyphicon-remove"></span> CANCELAR REAJUSTE
+									<span class="glyphicon glyphicon-remove"></span> <strong><u>C</u></strong>ANCELAR REAJUSTE
 								</button>
 							</div>
 							<br>
@@ -233,10 +233,10 @@
 							<hr>
 							<div class="text-center" ng-show="realizarReajuste">
 								<button type="button" class="btn btn-success" ng-click="guardarReajusteMasivo()" ng-disabled="loading">
-									<span class="glyphicon glyphicon-saved"></span> REALIZAR REAJUSTE
+									<span class="glyphicon glyphicon-saved"></span> REALIZAR REAJUSTE (F6)
 								</button>
 								<button type="button" class="btn btn-danger" ng-click="cancelarReajuste()">
-									<span class="glyphicon glyphicon-remove"></span> CANCELAR REAJUSTE
+									<span class="glyphicon glyphicon-remove"></span> <strong><u>C</u></strong>ANCELAR REAJUSTE
 								</button>
 							</div>
 						</div>

@@ -25,7 +25,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
 		if ( $scope.$parent.loading )
 			return false;
-		console.log( 'event ', event, ' key ', key, ' altDerecho ', altDerecho );
 
 		if( key == 117 )
 		{
@@ -58,11 +57,10 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				else if( !$scope.modalOpen() )
 					$scope.consultaFactura( 'insert' );
 			}
-			
 		}
-		else if( altDerecho && ( key == 71 || key == 83 || key == 84 || key == 77 || key == 82 || key == 67 ) && !$scope.modalOpen() )
+		else if( altDerecho && ( key == 65 || key == 71 || key == 83 || key == 84 || key == 77 || key == 82 || key == 67 ) && !$scope.modalOpen() )
 		{
-			if( $scope.inventarioMenu == 'inventario' ) {
+			if( $scope.inventarioMenu == 'inventario' && key != 65 ) {
 				if( key == 83 )
 					$scope.groupBy = 'sinFiltro';
 				else if( key == 84 )
@@ -73,7 +71,11 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 					$scope.realizarReajusteMasivo();
 				else if( key == 67 && $scope.realizarReajuste )
 					$scope.cancelarReajuste();
+				else if( key == 67 && !$scope.realizarReajuste )
+					$scope.realizarCierre();
 			}
+			else if( key == 65 )
+				$scope.editarAccion( 'insert', null );
 			else
 				alertify.notify('Acción no válida', 'info', 3);
 		}

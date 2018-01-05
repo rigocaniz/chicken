@@ -282,7 +282,7 @@ class Factura
 		}
 		elseif( $total > 0  ){
 			$this->respuesta = 'danger';
-			$this->mensaje   = 'Los montos ingresados no cubren el <b>TOTAL DE LA ORDEN</b>';
+			$this->mensaje   = 'El Total del monto ingresados no cubre el <b>TOTAL DE LA ORDEN</b>';
 			$this->tiempo    = 8;
 		}
 	}

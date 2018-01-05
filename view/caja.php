@@ -73,9 +73,7 @@
 									<input type="text" class="form-control" ng-model="caja.usuario" placeholder="Cajero" disabled>
 								</div>
 							</div>
-							<!--
-							{{caja|json}}
-						-->
+
 							<!-- DENOMINACIONES -->
 							<legend class="text-center" ng-show="accionCaja">
 								<i class="fa fa-money" aria-hidden="true"></i> DENOMINACIONES
@@ -139,10 +137,10 @@
 							</div>
 							<div class="form-group text-center">
 								<button type="button" class="btn btn-success btn-lg" ng-show="accionCaja=='aperturarCaja'" ng-click="consultaCaja()">
-									<span class="glyphicon glyphicon-folder-open"></span> Aperturar Caja
+									<span class="glyphicon glyphicon-folder-open"></span> Aperturar Caja (F6)
 								</button>
 								<button type="button" class="btn btn-warning btn-lg" ng-show="accionCaja=='cierreCaja'" ng-click="consultaCaja()">
-									<span class="glyphicon glyphicon-folder-close"></span> Cerrar Caja
+									<span class="glyphicon glyphicon-folder-close"></span> Cerrar Caja (F6)
 								</button>
 							</div>
 						</form>
