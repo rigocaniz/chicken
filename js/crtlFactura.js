@@ -114,7 +114,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		var efectivo = ( $scope.facturacion.lstFormasPago[ 0 ].monto | 0 ),
 			tarjeta  = ( $scope.facturacion.lstFormasPago[ 1 ].monto | 0 );
 
-		var vuelto = ( $scope.facturacion.total - ( efectivo + tarjeta ) );
+		var vuelto = ( ( efectivo + tarjeta ) - $scope.facturacion.total );
 		
 		if( !($scope.facturacion.datosCliente.idCliente && $scope.facturacion.datosCliente.idCliente > 0) )
 			alertify.notify('Seleccione un cliente', 'warning', 4);
