@@ -204,13 +204,12 @@
 			</div>
 		</div>
 	</div>
-
 </div>
 
 
 <!-- MODAL AGREGAR / EDITAR MENU -->
 <script type="text/ng-template" id="dial.adminMenu.html">
-	<div class="modal" tabindex="-1" role="dialog">
+	<div class="modal" tabindex="-1" role="dialog" id="dialAdminMenu">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content" ng-class="{'panel-warning': accion == 'insert', 'panel-info': accion == 'update'}">
 				<div class="modal-header panel-heading">
@@ -339,7 +338,7 @@
 				</div>
 				<div class="modal-footer">
 					<button class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaMenu()">
-						<span class="glyphicon glyphicon-saved"></span> <strong><u>G</u></strong>uardar
+						<span class="glyphicon glyphicon-saved"></span> Guardar (F6)
 					</button>
 					<button type="button" class="btn btn-default" ng-click="resetValores( 'menu' ); $hide();">
 						<span class="glyphicon glyphicon-log-out"></span>
@@ -354,7 +353,7 @@
 
 <!-- MODAL AGREGAR / EDITAR RECETA MENU -->
 <script type="text/ng-template" id="dial.recetaMenu.html">
-	<div class="modal" tabindex="-1" role="dialog">
+	<div class="modal" tabindex="-1" role="dialog" id="dialRecetaMenu">
 		<div class="modal-dialog modal-xl">
 			<div class="modal-content panel-danger">
 				<div class="modal-header panel-heading">
@@ -501,7 +500,7 @@
 				</div>
 				<div class="modal-footer">
 					<button class="btn btn-success" ng-click="actualizarLstReceta()">
-						<span class="glyphicon glyphicon-saved"></span> Guardar
+						<span class="glyphicon glyphicon-saved"></span> Guardar (F6)
 					</button>
 					<button type="button" class="btn btn-default" ng-click="resetValores( 'receta' ); $hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
@@ -516,7 +515,7 @@
 
 <!-- MODAL AGREGAR / EDITAR DETALLE COMBO -->
 <script type="text/ng-template" id="dial.detalleCombo.html">
-	<div class="modal" tabindex="-1" role="dialog">
+	<div class="modal" tabindex="-1" role="dialog" id="dialDetalleCombo">
 		<div class="modal-dialog modal-xl">
 			<div class="modal-content panel-danger">
 				<div class="modal-header panel-heading">
@@ -649,7 +648,7 @@
 				</div>
 				<div class="modal-footer">
 					<button class="btn btn-success" ng-click="actualizarLstDetalleCombo()">
-						<span class="glyphicon glyphicon-saved"></span> Guardar
+						<span class="glyphicon glyphicon-saved"></span> Guardar (F6)
 					</button>
 					<button type="button" class="btn btn-default" ng-click="resetValores( 'receta' ); $hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
@@ -664,7 +663,7 @@
 
 <!-- MODAL AGREGAR / EDITAR COMBO -->
 <script type="text/ng-template" id="dial.adminCombo.html">
-	<div class="modal" tabindex="-1" role="dialog">
+	<div class="modal" tabindex="-1" role="dialog" id="dialAdminCombo">
 		<div class="modal-dialog">
 			<div class="modal-content" ng-class="{'panel-warning': accion == 'insert', 'panel-info': accion == 'update'}">
 				<div class="modal-header panel-heading">
@@ -758,7 +757,7 @@
 				</div>
 				<div class="modal-footer">
 					<button class="btn" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaCombo()">
-						<span class="glyphicon glyphicon-saved"></span> <strong><u>G</u></strong>uardar
+						<span class="glyphicon glyphicon-saved"></span> Guardar (F6)
 					</button>
 					<button type="button" class="btn btn-default" ng-click="resetValores( 'combo' ); $hide()">
 						<span class="glyphicon glyphicon-log-out"></span>

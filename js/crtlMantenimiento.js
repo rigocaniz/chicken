@@ -24,7 +24,24 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		if ( $scope.$parent.loading )
 			return false;
 
-		console.log( !$scope.modalOpen() );
+		
+		if( key == 117 )
+		{
+			if( $scope.modalOpen( 'dialAdminCombo' ) )
+				$scope.consultaCombo();
+			
+			else if( $scope.modalOpen( 'dialDetalleCombo' ) )
+				$scope.actualizarLstDetalleCombo();
+			
+			else if( $scope.modalOpen( 'dialRecetaMenu' ) )
+				$scope.actualizarLstReceta();
+
+			else if( $scope.modalOpen( 'dialAdminMenu' ) )
+				$scope.consultaMenu();
+		}
+		else{
+
+		}
 		// TECLA C
 		if( altDerecho && key == 65 )
 		{
@@ -486,7 +503,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	$scope.cargarLstPreciosMenu = function( idMenu ){
 		$http.post('consultas.php',{opcion: 'cargarLstPreciosMenu', idMenu: idMenu})
 		.success(function(data){
-			console.log( 'lstPrecios', data );
 			$scope.menu.lstPrecios = data;
 		});
 	};
