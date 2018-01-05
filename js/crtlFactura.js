@@ -71,8 +71,11 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		if( $scope.retornarTotal() > 0 ){
 			for (var i = 0; i < $scope.facturacion.lstFormasPago.length; i++) {
 				var pago = $scope.facturacion.lstFormasPago[ i ];
-				if( (pago.monto && pago.monto > $scope.retornarTotal() ) && pago.idFormaPago == 1 ){
-					total += pago.monto;
+				
+				var montoTotal = parseFloat( pago.monto ) + ( $scope.facturacion.lstFormasPago[ 1 ].monto || 0 );
+
+				if( ( montoTotal && montoTotal > $scope.retornarTotal() ) && pago.idFormaPago == 1 ){
+					total = montoTotal;
 				}
 			}
 		}
@@ -111,8 +114,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	$scope.consultaFacturaCliente = function() {
 		$scope.facturacion.total = $scope.retornarTotal();
 		
-		var efectivo = ( $scope.facturacion.lstFormasPago[ 0 ].monto | 0 ),
-			tarjeta  = ( $scope.facturacion.lstFormasPago[ 1 ].monto | 0 );
+		var efectivo = ( $scope.facturacion.lstFormasPago[ 0 ].monto || 0 ),
+			tarjeta  = ( $scope.facturacion.lstFormasPago[ 1 ].monto || 0 );
 
 		var vuelto = ( ( efectivo + tarjeta ) - $scope.facturacion.total );
 		

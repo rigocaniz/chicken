@@ -88,8 +88,8 @@ class Caja
 	 					'efectivoFaltante'  => (double)$row->efectivoFaltante,
 	 					'idEstadoCaja'      => (int)$row->idEstadoCaja,
 	 					'estadoCaja'        => $row->estadoCaja,
-	 					'totalCierre'       => (double)8000,
-	 					'egresos'           => (double)500,
+	 					'totalCierre'       => 0,
+	 					'egresos'           => 0,
 	 					'agregarFaltante'   => FALSE,
 	 					'lstDenominaciones' => $this->lstDenominaciones( 1 )
 	 				);
@@ -103,12 +103,12 @@ class Caja
 
  	function consultaCaja( $accion, $data, $total )
  	{
- 		$idCaja           = "NULL";
- 		$idEstadoCaja     = "NULL";
- 		$efectivoInicial  = 0;
- 		$efectivoFinal    = 0;
- 		$efectivoSobrante = 0;
- 		$efectivoFaltante = 0;
+		$idCaja           = "NULL";
+		$idEstadoCaja     = "NULL";
+		$efectivoInicial  = 0;
+		$efectivoFinal    = 0;
+		$efectivoSobrante = 0;
+		$efectivoFaltante = 0;
 
  		// SETEO VARIABLES GENERALES
  		$data->combo        = isset( $data->combo ) 		? (string)$data->combo 			: NULL;
@@ -126,20 +126,37 @@ class Caja
 		$efectivoInicial = $validar->validarDinero( $data->efectivoInicial, NULL, TRUE, 'el EFECTIVO INICIAL' );
  		// VALIDACIONES
  		if( $accion == 'cierre' ):
-			$data->efectivoFaltante = isset( $data->efectivoFaltante ) 	? (double)$data->efectivoFaltante 	: 0;
-			$data->totalCierre      = isset( $data->totalCierre ) 		? (double)$data->totalCierre 		: 0;
- 		
-			$idCaja           = $validar->validarEntero( $data->idCaja, NULL, TRUE, 'El ID de la CAJA no es válido' );
-			$idEstadoCaja     = 2;
-			$efectivoFinal    = (double)$validar->validarDinero( $data->efectivoFinal, NULL, TRUE, 'el EFECTIVO FINAL' );
-			$efectivoFaltante = (double)$data->efectivoFaltante;
-			
-			$totalIngresado   = $efectivoFinal + $efectivoFaltante;
-			$totalIngresos    = (double)$data->totalCierre;
+			$idCaja        = $validar->validarEntero( $data->idCaja, NULL, TRUE, 'El ID de la CAJA no es válido' );
+			$efectivoFinal = (double)$validar->validarDinero( $data->efectivoFinal, NULL, TRUE, 'el EFECTIVO FINAL' );
 
-			$validar->validarCantidades( $totalIngresado, $totalIngresos );
-			$efectivoSobrante = ($totalIngresado <= $totalIngresos) ? 0 : ($totalIngresado - $totalIngresos);
 
+			$montoDespacho = 0;
+			$otrosIngresos = 0;
+			$egresos       = 0;
+			$totalIngresos = 0;
+
+			// CONSULTA CIERRE DE CAJA (ingresos, egresos, despacho)
+ 			$sql = "CALL consultaCuadre( {$idCaja}, 1 );";
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+				$this->siguienteResultado();
+				$montoDespacho = (double)$row->montoDespacho;
+				$otrosIngresos = (double)$row->ingresos;
+				$egresos       = (double)$row->egresos;
+				$totalIngresos = ( $montoDespacho + $otrosIngresos );
+	 		}
+
+	 		$montoEfectivo = ( $efectivoFinal - $efectivoInicial );
+	 		$montoIngresos = ( $totalIngresos - $egresos );
+	
+	 		// SI EL MONTO EN EFECTIVO ES MAYOR A LOS INGRESOS
+	 		if ( $montoEfectivo > $montoIngresos )
+				$efectivoSobrante = ( $montoEfectivo - $montoIngresos );
+
+	 		// SI EL MONTO EN EFECTIVO ES MENOR A LOS INGRESOS
+	 		if ( $montoEfectivo < $montoIngresos )
+				$efectivoFaltante = ( $montoIngresos - $montoEfectivo );
+
+			$idEstadoCaja = 2;
  		endif;
 
  		// OBTENER RESULTADO DE VALIDACIONES
@@ -161,6 +178,19 @@ class Caja
 	 				if( $accion == 'insert' AND $row->respuesta == 'success' ){
 	 					$idEstadoCaja = 1;
 	 					$idCaja       = $this->data = $row->id;
+	 				}
+
+	 				elseif( $accion == 'cierre' AND $row->respuesta == 'success' ){
+	 					$this->mensaje = "Caja cerrada correctamente";
+
+	 					// SI EXISTE SOBRANTE
+	 					if ( $efectivoFaltante > 0 )
+	 						$this->mensaje .= ", CON FALTANTE EN CAJA.!";
+
+	 					$this->data = (object)array(
+	 						'efectivoSobrante' => $efectivoSobrante,
+							'efectivoFaltante' => $efectivoFaltante,
+	 					);
 	 				}
 	 				// CONSULTAR ACCION INSERT EN CIERRE
 	 				$this->consultaDenominacionCaja( 'insert', $idCaja, $idEstadoCaja, $data->lstDenominaciones );
