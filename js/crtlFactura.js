@@ -110,28 +110,40 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 
 	$scope.consultaFacturaCliente = function() {
 		$scope.facturacion.total = $scope.retornarTotal();
-		var factura = $scope.facturacion;
 		
-		if( !(factura.datosCliente.idCliente && factura.datosCliente.idCliente > 0) )
+		var efectivo = ( $scope.facturacion.lstFormasPago[ 0 ].monto | 0 ),
+			tarjeta  = ( $scope.facturacion.lstFormasPago[ 1 ].monto | 0 );
+
+		var vuelto = ( $scope.facturacion.total - ( efectivo + tarjeta ) );
+		
+		if( !($scope.facturacion.datosCliente.idCliente && $scope.facturacion.datosCliente.idCliente > 0) )
 			alertify.notify('Seleccione un cliente', 'warning', 4);
 		
-		else if( !(factura.idOrdenCliente && factura.idOrdenCliente > 0) )
+		else if( !($scope.facturacion.idOrdenCliente && $scope.facturacion.idOrdenCliente > 0) )
 			alertify.notify('Número de orden de Cliente no válido', 'warning', 4);
 		
-		else if( !(factura.lstOrden && factura.lstOrden.length > 0) )
+		else if( !($scope.facturacion.lstOrden && $scope.facturacion.lstOrden.length > 0) )
 			alertify.notify('La lista de ordenes está vacia', 'warning', 4);
 		
-		else if( !(factura.total && factura.total > 0) )
+		else if( !($scope.facturacion.total && $scope.facturacion.total > 0) )
 			alertify.notify('El total del cobro debe ser mayor a 0', 'warning', 4);
 
+		else if( !( vuelto >= 0 ) )
+			alertify.notify('Verifique que la forma de pago este correcta', 'warning', 4);
+
 		else {
-			
+
+			var factura = angular.copy( $scope.facturacion );
+
+			// MONTO REAL EN EFECTIVO
+			factura.lstFormasPago[ 0 ].monto -= vuelto;
+
 			$scope.$parent.showLoading( 'Guardando...' );
 			
 			$http.post('consultas.php',{
 			    opcion : "consultaFacturaCliente",
 			    accion : $scope.accion,
-			    data   : $scope.facturacion
+			    data   : $scope.factura
 			}).success(function(data){
 			    console.log(data);		    
 				alertify.set('notifier','position', 'top-right');
