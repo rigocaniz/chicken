@@ -141,6 +141,9 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     $scope.formatoFecha = function function_name( fecha, formato ) {
         var _for = formato || "D [de] MMMM [de] YYYY";
 
+        if ( !fecha )
+            return fecha;
+
         if ( fecha.length == 8 )
             var txt = moment( fecha, 'HH:mm:ss' ).format( _for )
 

@@ -1,4 +1,4 @@
-app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
+app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location ){
 	$scope.lstTipoServicio = [];
 	$scope.lstTipoMenu     = [];
 	$scope.lstMenu         = [];
@@ -490,7 +490,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 					// SI EL PEDIDO ES A DOMICILIO
 					$timeout(function () {
 						if ( !( $scope.ordenActual.noTicket > 0 ) )
-							window.location.href = "#/factura/" + $scope.infoOrden.idOrdenCliente;
+							window.location.href = "#/factura/" + $scope.ordenActual.idOrdenCliente;
 					});
 
 					//$scope.lstOrdenCliente.push( data.data.ordenCliente );
@@ -914,7 +914,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal ){
 
 		// F10: FACTURAR ORDEN SELECCIONADA
 		if ( key == 121 && $scope.infoOrden.idOrdenCliente > 0 ) // {F10}
-			window.location.href = "#/factura/" + $scope.infoOrden.idOrdenCliente;
+			$location.path( "/factura/" + $scope.infoOrden.idOrdenCliente );
 
 		if ( key == 65 && $scope.infoOrden.idOrdenCliente > 0 ) // {O}
 			$scope.consultaOrden( $scope.infoOrden );
