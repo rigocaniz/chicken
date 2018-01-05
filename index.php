@@ -72,9 +72,11 @@
             <li>
                 <a href="#/inventario" onclick='$("#menu-close").click()'>Inventario</a>
             </li>
+            <!--
             <li>
                 <a href="#/promocion" onclick='$("#menu-close").click()'>Promociones</a>
             </li>
+        -->
             <li>
                 <a href="#/admin" onclick='$("#menu-close").click()'>Administración</a>
             </li>

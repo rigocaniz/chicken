@@ -677,7 +677,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		$scope.infoOrden = orden;
 		$http.post('consultas.php', { opcion : 'lstDetalleOrdenCliente', idOrdenCliente : orden.idOrdenCliente, todo : $scope.todoDetalle })
 		.success(function (data) {
-			$scope.$parent.loading    = false;
+			$scope.$parent.loading = false;
 			if ( data.lst ) {
 				
 

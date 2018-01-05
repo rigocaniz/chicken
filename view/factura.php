@@ -142,7 +142,7 @@
                                             <div class="form-group">
                                                 <div class="text-center">
                                                     <button type="button" class="btn btn-info" ng-click="consultaFacturaCliente()">
-                                                        <span class="glyphicon glyphicon-saved"></span> <b><u>F</u>ACTURAR</b> (F6)
+                                                        <span class="glyphicon glyphicon-saved"></span> <b>FACTURAR (F6)</b>
                                                     </button>
                                                 </div>
                                             </div>
@@ -471,7 +471,7 @@
 								</div>
 								<div class="col-sm-12 text-center">
 									<button type="button" class="btn btn-success" ng-click="consultaCliente()">
-										<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }} cliente
+										<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }} cliente (F6)
 									</button>
 									<button type="button" class="btn btn-default" ng-click="$parent.accionCliente='ninguna'; $parent.resetValores( 'cliente' )"> 
 										<span class="glyphicon glyphicon-log-out"></span> Cancelar

@@ -64,12 +64,14 @@
                 <span><u>I</u>nventario</span>
             </a>
         </div>
+        <!--
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="#/promocion" class="item-menu">
                 <img src="img/promocion.png" alt="">
                 <span>Promociones</span>
             </a>
         </div>
+        -->
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="#/admin" class="item-menu">
                 <img src="img/admins.png" alt="">

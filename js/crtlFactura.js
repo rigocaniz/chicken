@@ -206,7 +206,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		if ( $scope.modalOpen( 'dial_accionCliente' ) )
 		{
 			if ( key == 117 )
-				$scope.consultaCliente()
+				$scope.consultaCliente();
 		}
 
 		// SI ES PANTALLA PRINCIPAL Y PRESIONAR LA TECLA {F6}
@@ -490,6 +490,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	// SI EXISTE ORDEN DE CLIENTE
 	if ( $routeParams.idOrdenCliente && $routeParams.idOrdenCliente > 0 )
 	{
+		$scope.$parent.loading = false;
 		$scope.buscarOrdenTicket( $routeParams.idOrdenCliente );
 		$timeout(function(){
 			$('#searchPrincipal').focus();
