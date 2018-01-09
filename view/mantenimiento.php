@@ -292,6 +292,23 @@
 								</div>						
 							</div>
 							<div class="form-group">
+								<div class="col-xs-6 col-sm-6 col-md-4">
+									<label class="control-label">SE COCINA?</label>
+									<div>
+										<div class="btn-group btn-group-sm" role="group">
+										  	<button type="button" class="btn" ng-class="{'btn-primary':menu.seCocina,'btn-default':!menu.seCocina}" ng-click="menu.seCocina = 1">
+										  		<span class="glyphicon" ng-class="{'glyphicon-check':menu.seCocina, 'glyphicon-unchecked':!menu.seCocina}"></span>
+										  		SI
+										  	</button>
+										  	<button type="button" class="btn" ng-class="{'btn-primary':!menu.seCocina,'btn-default':menu.seCocina}" ng-click="menu.seCocina = 0">
+										  		<span class="glyphicon" ng-class="{'glyphicon-check':!menu.seCocina, 'glyphicon-unchecked':menu.seCocina}"></span>
+										  		NO
+										  	</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
 								<div class="col-sm-12">
 									<label class="control-label">DESCRIPCIÓN</label>
 									<textarea rows="3" class="form-control" placeholder="Ingrese la descripción del menu" ng-model='menu.descripcion' required></textarea>

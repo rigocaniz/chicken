@@ -166,15 +166,18 @@ class Menu
 				    idEstadoMenu,
 				    idDestinoMenu,
 				    codigoMenu AS codigo,
-				    tiempoAlerta
+				    tiempoAlerta,
+				    seCocina
 				FROM
 				    lstMenu
 				WHERE
 				    idMenu = {$idMenu};";
 		
 		if( $rs = $this->con->query( $sql ) ){
-			if( $row = $rs->fetch_object() )
+			if( $row = $rs->fetch_object() ){
+				$row->seCocina = (int)$row->seCocina;
 				$menu = $row;
+			}
 		}
 
 		return $menu;
@@ -266,7 +269,8 @@ class Menu
 					idTipoMenu,
 					tipoMenu,
 					codigoMenu,
-					tiempoAlerta
+					tiempoAlerta,
+					seCocina
 				FROM
 					lstMenu 
 				WHERE idEstadoMenu <> 3 {$where} 
@@ -289,7 +293,8 @@ class Menu
 						'idTipoMenu'    => (int)$row->idTipoMenu,
 						'tipoMenu'      => $row->tipoMenu,
 						'codigo'        => $row->codigoMenu,
-						'tiempoAlerta'  => (int)$row->tiempoAlerta
+						'tiempoAlerta'  => (int)$row->tiempoAlerta,
+						'seCocina'  	=> (int)$row->seCocina,
 				);
 
 				$menus->lstMenus[] = $menu;
@@ -334,7 +339,8 @@ class Menu
  					destinoMenu,
  					idTipoMenu,
  					tipoMenu,
- 					tiempoAlerta
+ 					tiempoAlerta,
+ 					seCocina
  				FROM lstMenu $where";
  		
  		if( $rs = $this->con->query( $sql ) ){
@@ -406,6 +412,7 @@ class Menu
 	 		$data->idDestinoMenu = isset( $data->idDestinoMenu ) 	? (int)$data->idDestinoMenu 	: NULL;
 	 		$data->idTipoMenu    = isset( $data->idTipoMenu )		? (int)$data->idTipoMenu 		: NULL;
 	 		$data->tiempoAlerta  = isset( $data->tiempoAlerta )		? (int)$data->tiempoAlerta 		: NULL;
+	 		$data->seCocina      = isset( $data->seCocina )			? (int)$data->seCocina 			: 1;
 	 
 	 		// VALIDACIONES
 	 		if( $accion == 'update' ):
@@ -430,7 +437,7 @@ class Menu
 	 			// INICIALIZAR TRANSACCION
 	 			$this->con->query( 'START TRANSACTION' );
 
-		 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu}, {$idTipoMenu}, {$codigo}, {$tiempoAlerta} );";
+		 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu}, {$idTipoMenu}, {$codigo}, {$tiempoAlerta}, {$data->seCocina} );";
 
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 			$this->siguienteResultado();
