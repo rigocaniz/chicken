@@ -249,6 +249,9 @@ class Factura
 				$idFactura   = (int)$idFactura;
 				$monto       = (double)$formaPago->monto;
 
+				if( $monto > $total )
+					$monto = $monto - ( $monto - $total );
+
 				$sql = "CALL consultaFormaPago( '{$accion}', {$idFactura}, {$idFormaPago}, {$monto} );";
 
 				if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
