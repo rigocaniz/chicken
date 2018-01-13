@@ -61,7 +61,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-3">
-                                        <button type="button" class="btn btn-info" ng-click="buscarOrdenTicket()" ng-show="!facturacion.numeroTicket">
+                                        <button type="button" class="btn btn-danger" ng-click="buscarOrdenTicket()" ng-show="!facturacion.numeroTicket">
                                             <span class="glyphicon glyphicon-search"></span> Buscar
                                         </button>
                                         <button type="button" class="btn btn-warning" ng-click="facturacion.numeroTicket=null;" ng-show="facturacion.numeroTicket">
@@ -93,7 +93,7 @@
 									</div>
 									<div class="col-sm-2 col-md-1">
 										<button type="button" class="btn btn-info" ng-click="editarCliente( facturacion.datosCliente, 'mostrar' );" ng-show="facturacion.datosCliente.idCliente && facturacion.datosCliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
-											<span class="glyphicon glyphicon-pencil"></span>
+											<span class="glyphicon glyphicon-pencil"></span> <u>E</u>ditar
 										</button>
 									</div>
 									<label class="col-sm-1 control-label" ng-show="facturacion.datosCliente.cui.length >=10">CUI</label>
@@ -428,19 +428,29 @@
                     	</div>
                     	<div class="col-sm-12" ng-show="$parent.accionCliente=='agregar' || $parent.accionCliente=='actualizar'">
                         	<form class="form-horizontal" autocomplete="off" novalidate>
-								<div class="form-group">
-									<label class="col-sm-2 control-label">NIT</label>
-									<div class="col-sm-3">
-										<input type="text" ng-model="$parent.cliente.nit" class="form-control" id="nit" ng-pattern="/^[0-9-\s]+?$/" maxlength="15" focus-enter>
-									</div>
-									<div class="col-sm-6">
-										<div class="text-right">
-											<label class="label" ng-class="{'label-success': accion == 'insert', 'label-info': accion == 'update'}" style="font-size: 14px;">
-												{{ accion == 'insert' ? 'AGREGAR' : 'ACTUALIZAR' }} CLIENTE
-											</label>
-										</div>
-									</div>
-								</div>
+                                <div class="text-right">
+                                    <label class="label" ng-class="{'label-success': accion == 'insert', 'label-info': accion == 'update'}" style="font-size: 14px;">
+                                        {{ accion == 'insert' ? 'AGREGAR' : 'ACTUALIZAR' }} CLIENTE
+                                    </label>
+                                </div>
+                                <br>
+                                <div class="pull-right">
+                                    <label>Tipo</label>
+                                    <div class="btn-group" role="group" aria-label="">
+                                        <div class="btn-group" role="group" aria-label="">
+                                            <button type="button" class="btn btn-default" ng-repeat="tc in lstTipoCliente" ng-click="$parent.cliente.idTipoCliente = tc.idTipoCliente" ng-class="{'btn-warning': tc.idTipoCliente == $parent.cliente.idTipoCliente}">
+                                                <span class="glyphicon" ng-class="{'glyphicon-check': tc.idTipoCliente == $parent.cliente.idTipoCliente, 'glyphicon-unchecked': tc.idTipoCliente != $parent.cliente.idTipoCliente}"></span>
+                                                {{ tc.tipoCliente }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">NIT</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" ng-model="$parent.cliente.nit" class="form-control" id="nit" ng-pattern="/^[0-9-\s]+?$/" maxlength="12" autofocus>
+                                    </div>
+                                </div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Nombre</label>
 									<div class="col-sm-9 col-md-8">
@@ -448,39 +458,30 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2 control-label">Cui (DPI)</label>
-									<div class="col-sm-4 col-md-3">
-										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="$parent.cliente.cui" focus-enter>
-									</div>
-									<label class="col-sm-2 control-label">Correo</label>
-									<div class="col-sm-4 col-md-3">
-										<input type="email" class="form-control"  maxlength="65" ng-model="$parent.cliente.correo" focus-enter>
-									</div>
-								</div>
-								<div class="form-group">
-									<label class="col-sm-2 control-label">Telefono</label>
-									<div class="col-sm-4 col-md-3">
-										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="8" ng-model="$parent.cliente.telefono" focus-enter>
-									</div>
-									<label class="col-sm-2 control-label">Tipo Cliente</label>
-									<div class="col-sm-4">
-										<div class="btn-group" role="group" aria-label="">
-										  	<button type="button" class="btn btn-default" ng-repeat="tc in lstTipoCliente" ng-click="$parent.cliente.idTipoCliente = tc.idTipoCliente" ng-class="{'btn-warning': tc.idTipoCliente == $parent.cliente.idTipoCliente}">
-										  		<span class="glyphicon" ng-class="{'glyphicon-check': tc.idTipoCliente == $parent.cliente.idTipoCliente, 'glyphicon-unchecked': tc.idTipoCliente != $parent.cliente.idTipoCliente}"></span>
-										  		{{ tc.tipoCliente }}
-										  	</button>
-										</div>
-									</div>	
-								</div>
-								<div class="form-group">
 									<label class="col-sm-2 control-label">Dirección</label>
 									<div class="col-sm-9 col-md-8">
-										<input type="text" class="form-control" maxlength="95" ng-model="$parent.cliente.direccion" ng-keypress="$event.keyCode==13 && consultaCliente()">
+										<input type="text" class="form-control" maxlength="95" ng-model="$parent.cliente.direccion">
 									</div>
 								</div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Cui (DPI)</label>
+                                    <div class="col-sm-4 col-md-3">
+                                        <input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="$parent.cliente.cui" focus-enter>
+                                    </div>
+                                    <label class="col-sm-2 control-label">Correo</label>
+                                    <div class="col-sm-4 col-md-3">
+                                        <input type="email" class="form-control"  maxlength="65" ng-model="$parent.cliente.correo" focus-enter>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Telefono</label>
+                                    <div class="col-sm-4 col-md-3">
+                                        <input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="8" ng-model="$parent.cliente.telefono" focus-enter>
+                                    </div>
+                                </div>
 								<div class="col-sm-12 text-center">
 									<button type="button" class="btn btn-success" ng-click="consultaCliente()">
-										<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }} cliente (F6)
+										<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }} Cliente (F6)
 									</button>
 									<button type="button" class="btn btn-default" ng-click="$parent.accionCliente='ninguna'; $parent.resetValores( 'cliente' )"> 
 										<span class="glyphicon glyphicon-log-out"></span> Cancelar
@@ -538,8 +539,6 @@
         </div>
     </div>
 </script>
-
-
 
 
 <!-- MODA CAJA APERTURA / CIERRE DE CAJA -->

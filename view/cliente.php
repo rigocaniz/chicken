@@ -59,26 +59,25 @@
 					<div class="panel panel-primary">
 						<div class="panel-body">
 							<form class="form-horizontal" autocomplete="off" novalidate>
+								<div class="text-right">
+									<label class="label" ng-class="{'label-success': accion == 'insert', 'label-info': accion == 'update'}" style="font-size: 14px;">
+										{{ accion == 'insert' ? 'AGREGAR' : 'ACTUALIZAR' }} CLIENTE
+									</label>
+								</div>
+								<br>
+								<div class="pull-right">
+									<label>Tipo</label>
+									<div class="btn-group" role="group" aria-label="">
+									  	<button type="button" class="btn btn-default" ng-repeat="tc in lstTipoCliente" ng-click="cliente.idTipoCliente = tc.idTipoCliente" ng-class="{'btn-warning': tc.idTipoCliente == cliente.idTipoCliente}">
+									  		<span class="glyphicon" ng-class="{'glyphicon-check': tc.idTipoCliente == cliente.idTipoCliente, 'glyphicon-unchecked': tc.idTipoCliente != cliente.idTipoCliente}"></span>
+									  		{{ tc.tipoCliente }}
+									  	</button>
+									</div>
+								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">NIT</label>
 									<div class="col-sm-3">
-										<input type="text" ng-model="cliente.nit" class="form-control" id="nit" ng-pattern="/^[0-9-\s]+?$/" maxlength="15" autofocus>
-									</div>
-									<label class="col-sm-1 control-label">Tipo</label>
-									<div class="col-sm-3">
-										<div class="btn-group" role="group" aria-label="">
-										  	<button type="button" class="btn btn-default" ng-repeat="tc in lstTipoCliente" ng-click="cliente.idTipoCliente = tc.idTipoCliente" ng-class="{'btn-warning': tc.idTipoCliente == cliente.idTipoCliente}">
-										  		<span class="glyphicon" ng-class="{'glyphicon-check': tc.idTipoCliente == cliente.idTipoCliente, 'glyphicon-unchecked': tc.idTipoCliente != cliente.idTipoCliente}"></span>
-										  		{{ tc.tipoCliente }}
-										  	</button>
-										</div>
-									</div>	
-									<div class="col-sm-3">
-										<div class="text-right">
-											<label class="label" ng-class="{'label-success': accion == 'insert', 'label-info': accion == 'update'}" style="font-size: 14px;">
-												{{ accion == 'insert' ? 'AGREGAR' : 'ACTUALIZAR' }} CLIENTE
-											</label>
-										</div>
+										<input type="text" ng-model="cliente.nit" class="form-control" id="nit" ng-pattern="/^[0-9-\s]+?$/" maxlength="12" autofocus>
 									</div>
 								</div>
 								<div class="form-group">
@@ -88,13 +87,19 @@
 									</div>
 								</div>
 								<div class="form-group">
+									<label class="col-sm-2 control-label">Dirección</label>
+									<div class="col-sm-9 col-md-8">
+										<input type="text" class="form-control"  maxlength="95" ng-model="cliente.direccion">
+									</div>
+								</div>
+								<div class="form-group">
 									<label class="col-sm-2 control-label">Cui (DPI)</label>
 									<div class="col-sm-4 col-md-3">
 										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="cliente.cui" ng-disabled="cliente.idTipoCliente==2">
 									</div>
 									<label class="col-sm-2 control-label">Correo</label>
 									<div class="col-sm-4 col-md-3">
-										<input type="email" class="form-control"  maxlength="65" ng-model="cliente.correo">
+										<input type="email" class="form-control" maxlength="65" ng-model="cliente.correo">
 									</div>
 								</div>
 								<div class="form-group">
@@ -103,15 +108,9 @@
 										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="8" ng-model="cliente.telefono">
 									</div>
 								</div>
-								<div class="form-group">
-									<label class="col-sm-2 control-label">Dirección</label>
-									<div class="col-sm-9 col-md-8">
-										<input type="text" class="form-control"  maxlength="95" ng-model="cliente.direccion" ng-keypress="$event.keyCode==13 && consultaCliente()">
-									</div>
-								</div>
 								<div class="col-sm-12 text-center">
 									<button type="button" class="btn btn-success" ng-click="consultaCliente()">
-										<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }} cliente
+										<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }} (F6)
 									</button>
 									<button type="button" class="btn btn-default" ng-click="resetValores( 'cliente' )"> 
 										<span class="glyphicon glyphicon-log-out"></span> Cancelar

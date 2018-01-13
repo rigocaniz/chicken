@@ -1,17 +1,31 @@
 app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
 	
-   	$scope.menuCliente = 'ingresar';
-    $scope.accion = 'insert';
-	
-	$scope.cliente  = {
-        'nit'           : null,
-        'nombre'        : '',
-        'cui'           : null,
-        'correo'        : '',
-        'telefono'      : null,
-        'direccion'     : '',
-        'idTipoCliente' : 1,
-    };  
+    $scope.menuCliente = 'ingresar';
+    $scope.accion      = 'insert';
+    $scope.txtCliente  = '';
+    $scope.lstClientes = [];
+
+    // TECLA PARA ATAJOS RAPIDOS
+    $scope.$on('keyPress', function( event, key, altDerecho )
+    {
+        // SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
+        if ( $scope.$parent.loading )
+            return false;
+    
+        if( key == 117 )
+        {
+            if( $scope.menuCliente == 'ingresar' && !$scope.modalOpen() )
+                $scope.consultaCliente();
+        }
+    });
+
+
+    $scope.modalOpen = function ( _name ) {
+        if ( _name == undefined )
+            return $("body>div").hasClass('modal') && $("body>div").hasClass('top');
+        else
+            return !!( $( '#' + _name ).data() && $( '#' + _name ).data().$scope.$isShown );
+    };
 
     $scope.resetValores = function( accion ){
         $scope.accion = 'insert';
@@ -31,10 +45,9 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
         }
     };
 
+    $scope.resetValores( 'cliente' );
    	$scope.dialBuscarCliente = $modal({scope: $scope,template:'dial.buscarCliente.html', show: false, backdrop: 'static'});
 
-	$scope.txtCliente  = '';
-	$scope.lstClientes = [];
 	$scope.buscarCliente = function( valor, accion ){
 		console.log( valor, accion );
 		if( valor.length == 0 && accion == 'principal'  ) {
@@ -52,21 +65,26 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
 	            valor  : valor,
 	        }).success(function(data){
 	        	console.log( data );
-	            if( data.length == 0 )
-	            {
+	            if( !data.encontrado ) {
 	            	$scope.lstClientes = [];
-	            	alertify.notify( 'No se encontraron resultados', 'info', 3 );
+	            	alertify.notify( 'No se encontró resultados, agregar <b>CLIENTE</b>', 'info', 5 );
+                    $scope.dialBuscarCliente.hide();
+                    $scope.txtCliente  = '';
+                    $scope.menuCliente = 'ingresar';
+                    $scope.accion      = 'insert';
+                    $scope.cliente     = data.lstResultados[ 0 ];
+                    $( '#nit' ).focus();
 	            }
-	        	else if( data.length == 1 ){
+	        	else if( data.lstResultados.length == 1 && data.encontrado ){
 	        		$scope.accion = 'update';
-	        		$scope.cliente = data[ 0 ];
+	        		$scope.cliente = data.lstResultados[ 0 ];
 	        		$scope.dialBuscarCliente.hide();
 	        		$scope.txtCliente = '';
 	        		$scope.menuCliente = 'ingresar';
 	        		$( '#ticket' ).focus();
 	        	}
-	            else if( data.length > 1 ){
-					$scope.lstClientes   = data;
+	            else if( data.lstResultados.length > 1 ){
+                    $scope.lstClientes = data.lstResultados;
 					if( accion == 'principal' )
 						$scope.dialBuscarCliente.show();
 					
@@ -87,8 +105,11 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
         if( !(cliente.nombre && cliente.nombre.length >= 3) )
             alertify.notify('El nombre debe tener más de 2 caracteres', 'warning', 4);
 
-		else if( cliente.cui != undefined && cliente.cui.length >= 1 && !(cliente.cui.length == 13) )
-            alertify.notify('El No. de CUI debe tener 13 dígitos', 'warning', 3);   
+        else if( !(cliente.direccion && cliente.direccion.length >= 8) )
+            alertify.notify('La dirección debe tener más de 7 caracteres', 'warning', 5);
+
+        else if( cliente.cui != undefined && cliente.cui.length >= 1 && !(cliente.cui.length == 13) )
+            alertify.notify('El No. de CUI debe tener 13 dígitos', 'warning', 3);
 
         else {
             $http.post('consultas.php',{

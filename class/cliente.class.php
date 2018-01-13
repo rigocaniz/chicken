@@ -91,33 +91,58 @@ class Cliente
 
  	function consultarCliente( $valor )
  	{
- 		$lstClientes = [];
- 		$where = "";
+ 		//$lstClientes = [];
+ 		$where       = "";
+ 		$tipo        = "";
+ 		
+ 		$resultado = new stdClass();
+
+ 		$resultado->encontrado    = FALSE;
+ 		$resultado->lstResultados = [];
 
  		if( strlen($valor) >= 2  AND strtoupper( $valor ) == 'CF' OR strtoupper( $valor ) == 'C/F' )
  			$where = "nit = 'CF'";
  		
  		elseif( preg_match('/^[0-9]{8}$/', $valor ) )
- 			$where = " !ISNULL( telefono ) AND  telefono = $valor";
+ 			$where = " !ISNULL( telefono ) AND telefono = $valor";
 
- 		else if( preg_match('/^[0-9-\s]{5,10}$/', $valor ) AND strlen( $valor ) >= 5  AND strlen( $valor ) <= 10 )
+ 		else if( preg_match('/^[0-9-\s]{5,10}$/', $valor ) AND strlen( $valor ) >= 5  AND strlen( $valor ) <= 10 ){
+ 			$tipo  = "nit";
  			$where = "nit = '$valor'";
+ 		}
 
- 		elseif( preg_match('/^[0-9-\s]{13,15}$/', $valor ) AND strlen( $valor) >= 13 AND strlen( $valor) <= 15 )
+ 		elseif( preg_match('/^[0-9-\s]{13,15}$/', $valor ) AND strlen( $valor) >= 13 AND strlen( $valor) <= 15 ){
+ 			$tipo  = "cui";
  			$where = "cui = $valor";
+ 		}
 
  		else {
+ 			$tipo  = "nombre";
  			$valor= str_replace(' ','%', $valor);
 			$where = "nombre LIKE '%{$valor}%'  LIMIT 20";
  		}
 
 	 	$sql = "SELECT * FROM vstCliente where $where ;";
 	 	
-	 	if( $rs = $this->con->query( $sql ) )
+	 	if( $rs = $this->con->query( $sql ) AND $rs->num_rows > 0 ){
+	 		$resultado->encontrado = TRUE;
 	 		while( $row = $rs->fetch_object() )
-	 			$lstClientes[] = $row;
+	 			$resultado->lstResultados[] = $row;
+	 	}
+	 	else{
+	 		$resultado->lstResultados[] = array(
+												'idCliente'     => null,
+												'nit'           => $tipo == 'nit' 		? $valor : '',
+												'nombre'        => $tipo == 'nombre' 	? $valor : '',
+												'cui'           => $tipo == 'cui' 		? $valor : '',
+												'correo'        => '',
+												'telefono'      => '',
+												'direccion'     => '',
+												'idTipoCliente' => 1,
+									 		);
+	 	}
 
-	 	return $lstClientes;
+	 	return $resultado;
  	}
 
  	function consultarClientes()

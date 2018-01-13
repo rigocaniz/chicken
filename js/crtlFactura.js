@@ -92,7 +92,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	$scope.dialReimpresion   = $modal({scope: $scope,template:'dial.reimpresion.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialCaja          = $modal({scope: $scope,template:'dial.caja.html', show: false, backdrop:false, keyboard: true });
 	
-	
 
 	$scope.seleccionarDeBusqueda = function ( orden ) {
 		$scope.miIndex = -1;
@@ -274,15 +273,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			return !!( $( '#' + _name ).data() && $( '#' + _name ).data().$scope.$isShown );
 	};
 	
-	$scope.cliente  = {
-        'nit'           : null,
-        'nombre'        : '',
-        'cui'           : null,
-        'correo'        : '',
-        'telefono'      : null,
-        'direccion'     : '',
-        'idTipoCliente' : 1,
-    };
 
     $scope.resetValores = function( accion ){
         $scope.accion = 'insert';
@@ -318,6 +308,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
         }
     };
 
+    $scope.resetValores( 'cliente' );
 
 	$scope.lstDetalleTicket = [];
 	$scope.$watch('accionCliente', function(){
@@ -445,13 +436,13 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			$scope.accionCliente = 'ninguna';
 			$scope.facturacion.datosCliente.nombre    = '';
 			$scope.facturacion.datosCliente.direccion = '';
-			$scope.txtCliente = '';
-			$scope.lstClientes = [];
+			$scope.txtCliente                         = '';
+			$scope.lstClientes                        = [];
+			// valor                                     = 'cf';
 			/*$timeout(function(){
 				$('#buscador').focus();
 			});
 	        $scope.dialAccionCliente.show();*/
-	        valor = 'cf';
 		}
 		
 		if( valor.length >= 1 ){
@@ -464,7 +455,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	            valor  : valor,
 	        }).success(function(data){
 	        	console.log( data );
-	            if( accion == 'principal' && data.length == 0 ) {
+	            if( accion == 'principal' && data.lstResultados.length == 0 ) {
 	            	$scope.accionCliente = 'ninguna';
 	            	$scope.facturacion.datosCliente.nombre    = '';
 					$scope.facturacion.datosCliente.direccion = '';
@@ -476,12 +467,12 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	            		$( '#nit' ).focus();
 	            	});
 	            }
-	            if( accion == 'busqueda' && data.length == 0 ) {
+	            if( accion == 'busqueda' && data.lstResultados.length == 0 ) {
 	            	alertify.notify( 'No se encontraron resultados', 'info', 3 );
 	            	$scope.lstClientes = [];
 	            }
-	        	else if( ( accion == 'principal' || accion == 'cf' ) && data.length == 1 ){
-	        		$scope.facturacion.datosCliente = data[ 0 ];
+	        	else if( ( accion == 'principal' || accion == 'cf' ) && data.lstResultados.length == 1 && data.encontrado ){
+	        		$scope.facturacion.datosCliente = data.lstResultados[ 0 ];
 	        		$scope.txtCliente = '';
                     
                     if( accion == 'cf' )
@@ -491,8 +482,15 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
                     	$( '#cliente_nit' ).focus();
                     });
 	        	}
-	            else if( data.length >= 1 ){
-					$scope.lstClientes   = data;
+	        	else if( (accion == 'principal' || accion == 'busqueda') && data.lstResultados.length == 1 && !data.encontrado ){
+	        		$scope.dialAccionCliente.show();
+	        		$scope.accionCliente = 'agregar';
+	        		$timeout(function(){
+	        			$scope.cliente = data.lstResultados[ 0 ];
+	        		});
+	        	}
+	            else if( data.lstResultados.length >= 1 ){
+					$scope.lstClientes   = data.lstResultados;
 					$scope.accionCliente = 'ninguna';
 					$scope.dialAccionCliente.show();
 	            }
