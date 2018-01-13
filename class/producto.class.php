@@ -808,14 +808,18 @@ class Producto
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
 					$producto = array(
-					 	'idProducto'               => (int)$row->idProducto,
-					 	'producto'                 => $row->producto,
-					 	'medida'                   => $row->medida,
-					 	'esPerecedero'             => (int)$row->perecedero ? 'SI' : 'NO',
-					 	'disponibilidad'           => (double)$row->disponibilidad,
-					 	'disponible'               => (double)$row->disponibilidad,
-					 	'esImportante'             => (int)$row->importante ? 'SI' : 'NO',
-					 	'importante'               => (int)$row->importante
+					 	'idProducto'        => (int)$row->idProducto,
+					 	'producto'          => $row->producto,
+					 	'medida'            => $row->medida,
+					 	'esPerecedero'      => (int)$row->perecedero ? 'SI' : 'NO',
+					 	'disponibilidad'    => (double)$row->disponibilidad,
+					 	'disponible'        => ($row->disponibilidad - 10),
+					 	'esImportante'      => (int)$row->importante ? 'SI' : 'NO',
+					 	'importante'        => (int)$row->importante,
+					 	'comentario'        => "",
+					 	'agregarComentario' => FALSE,
+					 	'alertaComentario'  => FALSE,
+					 	'mostrarAlerta'     => FALSE
 					);
 
 				$lstProductos[] = $producto;

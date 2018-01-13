@@ -149,13 +149,22 @@
                                         </fieldset>
                                     </div>
                                     <div class="col-xs-8 col-sm-7 col-md-9 col-lg-8">
+                                                {{ facturacion.lstOrden | json }}
                                         <fieldset class="fieldset" ng-show="facturacion.lstOrden.length">
                                             <legend class="legend info">DETALLE ORDEN</legend>
                                             <div class="table-responsive">
                                                 <div class="text-right">
-                                                    <button type="button" class="btn btn-xs btn-default" ng-click="facturacion.agrupado=!facturacion.agrupado; consultarDetalleOrden();">
-                                                        <span class="glyphicon" ng-class="{'glyphicon-th-list': facturacion.agrupado, 'glyphicon-list-alt': !facturacion.agrupado}"></span> <strong>{{ facturacion.agrupado ? 'VER A DETALLE' : 'AGRUPAR ORDEN' }}</strong>
-                                                    </button>
+                                                    <div class="btn-group" role="group" aria-label="...">
+                                                        <button type="button" class="btn btn-sm btn-default" ng-click="facturacion.tipoGrupo='agrupado'">
+                                                            <span class="glyphicon" ng-class="{'glyphicon-check': facturacion.tipoGrupo=='agrupado', 'glyphicon-unchecked': facturacion.tipoGrupo!='agrupado'}"></span> <strong>AGRUPADO</strong>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-default" ng-click="facturacion.tipoGrupo='detalle'">
+                                                            <span class="glyphicon" ng-class="{'glyphicon-check': facturacion.tipoGrupo=='detalle','glyphicon-unchecked': facturacion.tipoGrupo!='detalle'}"></span> <strong>A DETALLE</strong>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-default" ng-click="facturacion.tipoGrupo='individual'">
+                                                            <span class="glyphicon" ng-class="{'glyphicon-check': facturacion.tipoGrupo=='individual', 'glyphicon-unchecked': facturacion.tipoGrupo!='individual'}"></span> <strong>INDIVIDUALES</strong>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 <br>
                                                 <table class="table table-hover table-condensed">

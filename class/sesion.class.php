@@ -50,6 +50,11 @@ class Sesion
 		return (int)$this->getVariable( 'idPerfil' );
 	}
 
+	function getIdDestino()
+	{
+		return (int)$this->getVariable( 'getIdDestino' );
+	}	
+
 	function getNombreCorto()
 	{
 		return $this->getVariable( 'nombreCorto' );

@@ -35,7 +35,8 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			else if( $scope.inventarioMenu == 'inventario' ){
 
 				if( $scope.modalOpen( 'dialCierreDiario' ) )
-					$scope.consultaCierreDiario();
+					$scope.validacionCierreApertura();
+					//$scope.consultaCierreDiario();
 
 				else if( $scope.realizarReajuste && !$scope.modalOpen() )
 					$scope.guardarReajusteMasivo();
@@ -293,6 +294,27 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		$scope.dialCierreDiario.show();
 	};
 
+	$scope.validacionCierreApertura = function()
+	{
+		var diferencias = 0;
+		for (var i = 0; i < $scope.cierreDiario.lstProductos.length; i++) {
+			if( $scope.cierreDiario.lstProductos[ i ].disponible < $scope.cierreDiario.lstProductos[ i ].disponibilidad ){
+				
+				if( !$scope.cierreDiario.lstProductos[ i ].mostrarAlerta )
+					$scope.cierreDiario.lstProductos[ i ].mostrarAlerta = true;
+
+				if( $scope.cierreDiario.lstProductos[ i ].agregarComentario && !$scope.cierreDiario.lstProductos[ i ].comentario.length )
+					$scope.cierreDiario.lstProductos[ i ].alertaComentario = true;				
+
+				if( !($scope.cierreDiario.lstProductos[ i ].agregarComentario && $scope.cierreDiario.lstProductos[ i ].comentario.length)  )
+					diferencias++;
+			}
+		}
+		if( !diferencias )
+			$scope.consultaCierreDiario	();
+		else
+			alertify.notify( 'Existe(n) <b>' + diferencias + ' PRODUCTOS</b> con Faltantes, verifique', 'info', 7 );
+	};
 
 	$scope.consultaCierreDiario = function(){
 		if ( $scope.$parent.loading )
@@ -327,7 +349,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				}
 
 			});
-
 		}
 	};
 

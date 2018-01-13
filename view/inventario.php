@@ -994,9 +994,9 @@
 									<th class="text-center">No.</th>
 									<th class="col-sm-3 text-center">Producto</th>
 									<th class="col-sm-1 text-center">Perecedero</th>
-									<th class="col-sm-2 text-center">Disponible <br>Sistema(*)</th>
-									<th class="col-sm-2 text-center">Disponible <br>Fisico</th>
+									<th class="col-sm-2 text-center">Disponible</th>
 									<th class="col-sm-2 text-center">Medida</th>
+									<th class="col-sm-3 text-center"></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -1010,14 +1010,22 @@
 									<td class="text-center">
 										{{ inv.esPerecedero }}
 									</td>
-									<td class="text-center warning">
-										{{ inv.disponible }}
-									</td>
 									<td class="text-center success">
-										<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.disponibilidad" required>
+										<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.disponible" required>
 									</td>
 									<td class="text-center">
 										{{ inv.medida }}
+									</td>
+									<td>
+										<span class="text text-danger" ng-show="inv.mostrarAlerta">
+											<b>Existe un faltante de {{ ( inv.disponibilidad - inv.disponible ) }}</b>
+											<br>
+											<button type="button" class="btn btn-xs btn-default" ng-click="inv.agregarComentario=!inv.agregarComentario">
+												<span class="glyphicon glyphicon-plus"></span> Comentario
+											</button>
+											<textarea class="form-control" rows="2" ng-model="inv.comentario" ng-show="inv.agregarComentario"></textarea>
+											<span class="glyphicon glyphicon-info-sign" ng-show="!inv.comentario.length && inv.alertaComentario" title="Ingrese Comentario" data-toggle="tooltip" data-placement="top" tooltip></span> <span ng-show="!inv.comentario.length && inv.alertaComentario">Ingrese Comentario</span>
+										</span>
 									</td>
 								</tr>
 							</tbody>
@@ -1037,7 +1045,7 @@
 			
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-warning" ng-click="consultaCierreDiario()" ng-disabled="loading">
+					<button type="button" class="btn btn-warning" ng-click="validacionCierreApertura()" ng-disabled="loading">
 						<span class="glyphicon glyphicon-saved"></span> REALIZAR CIERRE (F6)
 					</button>
 					<button type="button" class="btn btn-default" ng-click="$hide()">

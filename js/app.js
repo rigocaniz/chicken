@@ -185,6 +185,10 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
                     $window.location.href = "#/caja";      break;
                 case 73: // I
                     $window.location.href = "#/inventario";      break;
+                case 77: // M
+                    $window.location.href = "#/mantenimiento";      break;
+                case 82: // R
+                    $window.location.href = "#/reportes";      break;
             }
         }
         console.log( "K:", key );

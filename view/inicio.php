@@ -81,7 +81,7 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="#/mantenimiento" class="item-menu">
                 <img src="img/mantenimiento.png" alt="">
-                <span>Mantenimientos</span>
+                <span><u>M</u>antenimientos</span>
             </a>
         </div>
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
@@ -93,7 +93,7 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="#/reporte" class="item-menu">
                 <img src="img/reporte.png" alt="">
-                <span>Reportes</span>
+                <span><u>R</u>eportes</span>
             </a>
         </div>
     </div>

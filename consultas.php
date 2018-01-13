@@ -337,7 +337,7 @@ switch ( $data->opcion )
 		echo json_encode( $producto->consultaCierreDiario( $data->accion, $data->data ) );
 		break;
 
-	case 'getListaProductos':			// INSERT / UPDATE LST PRODUCTOS INGRESO
+	case 'getListaProductos':			// CONSULTAR PRODUCTOS
 		$producto = new Producto();
 		echo json_encode( $producto->getListaProductos( $data->filtro ) );
 		break;
