@@ -19,7 +19,7 @@ class Consulta
 	// CATALOGO FORMAS PAGO
  	function catFormasPago()
  	{
- 		$lstFormasPago = [];
+ 		$catFormasPago = [];
 
  		$sql = "SELECT 
 				    idFormaPago, 
@@ -32,30 +32,44 @@ class Consulta
  		
  		if( $rs = $this->con->query( $sql ) ){
  			while( $row = $rs->fetch_object() ){
- 				$lstFormasPago[] = $row;
+ 				$catFormasPago[] = $row;
  			}
  		}
 
- 		return $lstFormasPago;
+ 		return $catFormasPago;
  	}
 
 
- 	// LST CATALOGO ESTADOS FACTURA
+ 	// CATALOGO ESTADOS FACTURA
  	function catEstadosFactura()
  	{
- 		$lstEstadosFactura = array();
+ 		$catEstadosFactura = array();
  		$sql = "SELECT idEstadoFactura, estadoFactura FROM estadoFactura;";
  		
  		if( $rs = $this->con->query( $sql ) ){
  			while ( $row = $rs->fetch_object() )
- 				$lstEstadosFactura[] = $row;
+ 				$catEstadosFactura[] = $row;
  		}
 
- 		return $lstEstadosFactura;
+ 		return $catEstadosFactura;
  	}
 
- 	
- 	// LST CATALOGO TIPOS DE SERVICIO
+	
+	// CATALOGO UBICACIÓN PRODUCTO
+ 	function catUbicacion()
+ 	{
+ 		$catUbicacion = array();
+ 		$sql = "SELECT * FROM ubicacion;";
+ 		
+ 		if( $rs = $this->con->query( $sql ) ){
+ 			while ( $row = $rs->fetch_object() )
+ 				$catUbicacion[] = $row;
+ 		}
+
+ 		return $catUbicacion;
+ 	}
+
+
  	function catTiposServicio()
  	{
  		$catTiposServicio = array();
@@ -70,7 +84,6 @@ class Consulta
  	}
 
 
-	// LST CATALOGO ESTADO MENU
  	function catEstadoMenu()
  	{
  		$catEstadoMenu = array();
@@ -85,7 +98,6 @@ class Consulta
  	}
 
 
- 	// LST CATALOGO MEDIDAS
 	function catMedidas()
  	{
  		$catMedidas = array();
@@ -100,7 +112,6 @@ class Consulta
  	}
 
 
- 	// LST CATALOGO MEDIDAS
 	function catDestinoMenu()
  	{
  		$catDestinoMenu = array();
@@ -115,7 +126,6 @@ class Consulta
  	}
 
 
-	// LST CATALOGO TIPOS PRODUCTO
  	function catTipoProducto()
  	{
  		$catTipoProducto = array();
@@ -130,7 +140,6 @@ class Consulta
  	}
 
 
- 	// LST CATALOGO ESTADOS ORDEN
 	function catEstadoOrden()
  	{
  		$catEstadoOrden = array();
@@ -145,7 +154,6 @@ class Consulta
  	}
 
 	
-	// LST CATALOGO TIPOS CLIENTE
  	function catTiposCliente()
  	{
  		$catTiposCliente = array();
@@ -161,7 +169,6 @@ class Consulta
  	}
 
 
- 	// LST CATALOGO TIPOS CLIENTE
  	function catEstadoCaja()
  	{
  		$catEstadoCaja = array();
@@ -176,7 +183,6 @@ class Consulta
  		return $catEstadoCaja;
  	}
 
- 	// LST CATALOGO TIPOS MENU
  	function catTipoMenu()
  	{
  		$lst = array();
@@ -191,7 +197,6 @@ class Consulta
  		return $lst;
  	}
 
- 	// LST CATALOGO SALON
  	function catSalon()
  	{
  		$lst = array();
@@ -206,7 +211,6 @@ class Consulta
  		return $lst;
  	}
 
- 	// LST CATALOGO TIPO DE MOVIMIENTO
  	function catTipoMovimiento()
  	{
  		$lst = array();

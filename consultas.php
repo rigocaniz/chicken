@@ -68,6 +68,17 @@ switch ( $data->opcion )
 		echo json_encode( $datos );
 		break;
 
+	case 'inicioInventario':	// INICIO DE INVENTARIO
+		$consulta = new Consulta();
+
+		$datos[ 'catMedidas' ]        = $consulta->catMedidas();
+		$datos[ 'catTipoProducto' ]   = $consulta->catTipoProducto();
+		$datos[ 'catEstadosFactura' ] = $consulta->catEstadosFactura();
+		$datos[ 'catUbicacion' ]      = $consulta->catUbicacion();
+		
+		echo json_encode( $datos );
+		break;
+
 	/////////////////////////
 	//***** CAJA
 	////////////////////////
@@ -204,6 +215,11 @@ switch ( $data->opcion )
 	case 'catFormasPago':				// CARGAR CATALOGO FORMAS DE PAGO
 		$consulta = new Consulta();
 		echo json_encode( $consulta->catFormasPago() );
+		break;
+
+	case 'catUbicacion':				// CARGAR CATALOGO UBICACIÓN PRODUCTO
+		$consulta = new Consulta();
+		echo json_encode( $consulta->catUbicacion() );
 		break;
 
 	case 'catEstadosFactura':			// CARGAR CATALOGO TIPOS DE SERVICIOS

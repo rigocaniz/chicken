@@ -642,8 +642,8 @@ class Producto
  		$disponibilidad = NULL;
 
 		// SETEO VARIABLES GENERALES
- 		$data->producto       = isset( $data->producto ) 	 	? (string)$data->producto 		: NULL;
  		$data->idUbicacion    = isset( $data->idUbicacion ) 	? (int)$data->idUbicacion 		: NULL;
+ 		$data->producto       = isset( $data->producto ) 	 	? (string)$data->producto 		: NULL;
  		$data->idTipoProducto = isset( $data->idTipoProducto ) 	? (int)$data->idTipoProducto 	: NULL;
  		$data->idMedida       = isset( $data->idMedida )		? (int)$data->idMedida 			: NULL;
  		$data->cantidadMinima = isset( $data->cantidadMinima ) 	? (double)$data->cantidadMinima : NULL;
@@ -660,8 +660,8 @@ class Producto
  			$idProducto       = $validar->validarEntero( $data->idProducto, NULL, TRUE, 'El ID del producto no es válido, verifique.' );
  		endif;
 
-		$producto       = $medida = $this->con->real_escape_string( $validar->validarTexto( $data->producto, NULL, TRUE, 3, 45, 'el nombre del producto' ) );
 		$idUbicacion    = $validar->validarEntero( $data->idUbicacion, NULL, TRUE, 'Seleccione la ubicacion del producto' );
+		$producto       = $medida = $this->con->real_escape_string( $validar->validarTexto( $data->producto, NULL, TRUE, 3, 45, 'el nombre del producto' ) );
 		$idTipoProducto = $validar->validarEntero( $data->idTipoProducto, NULL, TRUE, 'Seleccione el tipo de Producto' );
 		$idMedida       = $validar->validarEntero( $data->idMedida, NULL, TRUE, 'Seleccione el tipo de medida' );
 		$cantidadMinima = $validar->validarCantidad( $data->cantidadMinima, NULL, TRUE, 1, 50000, 'la cantidad Minima' );
@@ -679,7 +679,9 @@ class Producto
 	 		$this->mensaje   = $validar->getMsj();
 
  		else:
-	 		$sql = "CALL consultaProducto( '{$accion}', {$idProducto}, '{$producto}', {$idTipoProducto}, {$idMedida}, {$perecedero}, {$cantidadMinima}, {$cantidadMaxima}, {$disponibilidad}, {$importante} );";
+	 		$sql = "CALL consultaProducto( '{$accion}', {$idProducto}, '{$producto}', {$idTipoProducto}, {$idMedida}, {$perecedero}, {$cantidadMinima}, {$cantidadMaxima}, {$disponibilidad}, {$importante}, {$idUbicacion} );";
+
+	 		echo $sql;
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){	 			
 	 			$this->siguienteResultado();
@@ -846,6 +848,8 @@ class Producto
 				    cantidadMaxima,
 				    disponibilidad,
 				    importante,
+				    idUbicacion,
+				    ubicacion,
 				    usuarioProducto,
 				    DATE_FORMAT( fechaProducto, '%d/%m/%Y %h:%i %p' ) AS fechaProducto
 				FROM

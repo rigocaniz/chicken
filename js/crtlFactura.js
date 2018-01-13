@@ -228,7 +228,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			$scope.consultaFacturaCliente();
 
 		// TECLA C
-		if ( altDerecho && key == 67 ) {
+		if ( altDerecho && key == 67 && $scope.accionCliente == '' ) {
 			$scope.buscarCliente( 'CF', 'cf' )
 		}
 		// TECLA A

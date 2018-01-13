@@ -1161,6 +1161,15 @@
 						<legend class="legend">DATOS</legend>
 						<!-- FORMULARIO PRODUCTO -->
 						<form class="form-horizontal" role="form" name="$parent.formProducto">
+							<div class="text-right">
+								<label>Ubicación</label>
+								<div class="btn-group" role="group" aria-label="">
+								  	<button type="button" class="btn btn-default" ng-repeat="ubicacion in lstUbicacion" ng-click="producto.idUbicacion=ubicacion.idUbicacion">
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': producto.idUbicacion==ubicacion.idUbicacion, 'glyphicon-unchecked': producto.idUbicacion!=ubicacion.idUbicacion}"></span>
+								  		{{ ubicacion.ubicacion }}
+								  	</button>
+								</div>
+							</div>
 							<div class="form-group" ng-show="accion!='insert'">
 								<div class="col-sm-7">
 								</div>
@@ -1173,17 +1182,6 @@
 								<div class="col-sm-7">
 									<label class="control-label">Nombre Producto</label>
 									<input type="text" id="nombreProducto" class="form-control" ng-model="producto.producto" maxlength="45" required>
-								</div>
-								<div class="col-sm-3">
-									<label class="control-label">Ubicación</label>
-									<div class="btn-group" role="group" aria-label="">
-										<button type="button" class="btn btn-default">
-											Cocina
-										</button>
-										<button type="button" class="btn btn-default">
-											Barra
-										</button>
-									</div>
 								</div>
 							</div>
 							<div class="form-group">

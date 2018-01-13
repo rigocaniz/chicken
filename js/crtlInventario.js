@@ -7,7 +7,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	$scope.groupBy        = 'sinFiltro';
 
 	$scope.$watch('inventarioMenu', function( _old, _new){
-		console.log( _old, _new );
 		if( $scope.inventarioMenu == 'inventario' )
 			$scope.lstProductosInventario();
 		else if( $scope.realizarReajuste && $scope.inventarioMenu != 'inventario' )
@@ -584,17 +583,25 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		$http.post('consultas.php',{
 			opcion : 'catTipoProducto'
 		}).success(function(data){
-			$scope.lstTipoProducto = data;
+			$scope.lstTipoProducto = data || [];
 		})
 	};
 
-	$scope.lstEstadosFactura = [];
 	// ESTADOS FACTURA
 	$scope.catEstadosFactura = function(){
 		$http.post('consultas.php',{
 			opcion:'catEstadosFactura'
 		}).success(function(data){
-			$scope.lstEstadosFactura = data;
+			$scope.lstEstadosFactura = data || [];
+		})
+	};
+
+	// UBICACIÓN PRODUCTO
+	$scope.catUbicacion = function(){
+		$http.post('consultas.php',{
+			opcion:'catUbicacion'
+		}).success(function(data){
+			$scope.lstUbicacion = data || [];
 		})
 	};
 	
@@ -603,7 +610,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		$http.post('consultas.php',{
 			opcion:'catMedidas'
 		}).success(function(data){
-			$scope.lstMedidas = data;
+			$scope.lstMedidas = data || [];
 		})
 	};
 
@@ -693,9 +700,14 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	};
 
 	($scope.cargarInicio = function(){
-		$scope.catMedidas();
-		$scope.catTipoProducto();
-		$scope.catEstadosFactura();
+		$http.post('consultas.php', {opcion: 'inicioInventario'})
+		.success(function(data){
+			console.log( data );
+			$scope.lstMedidas        = data.catMedidas;
+			$scope.lstTipoProducto   = data.catTipoProducto;
+			$scope.lstEstadosFactura = data.catEstadosFactura;
+			$scope.lstUbicacion      = data.catUbicacion;
+		})
 		$scope.resetValores( 1 );
 	})();
 
