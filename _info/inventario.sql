@@ -174,8 +174,45 @@ BEGIN
 END$$
 
 
-/* --- CIERRE INVENTARIO --- */
-CREATE PROCEDURE consultaCierreDiario( _action VARCHAR(20), _idCierreDiario INT, _fechaCierre DATE, _comentario TEXT )
+/* --- CUADRE DE PRODUCTOS --- */
+CREATE PROCEDURE consultaCuadreProducto( _action VARCHAR(20), _idCuadreProducto INT, _fechaCuadre DATE, _comentario TEXT, _todos BOOLEAN, _idUbicacion CHAR(1), _idEstadoCuadre INT )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR 1062
+		SELECT 'info' AS 'respuesta', 'Error, ya se ha realizado el cierre de este día' AS 'mensaje';
+    
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
+
+	IF !sesionValida() THEN # SI LA SESION ES INVALIDA
+		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
+
+	ELSEIF _action = 'insert' THEN
+		INSERT INTO cuadreProducto ( fechaCuadre, comentario, usuario, fechaRegistro, todos, idUbicacion, idEstadoCuadre )
+			VALUES ( _fechaCuadre, _comentario, @usuario, NOW(), _todos, _idUbicacion, _idEstadoCuadre );
+		
+		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
+
+	ELSEIF _action = 'update' THEN
+		UPDATE cuadreProducto SET 
+			fechaCuadre    = _fechaCuadre,
+			comentario     = _comentario,
+			idEstadoCuadre = _idEstadoCuadre
+		WHERE idCuadreProducto = _idCuadreProducto;
+		
+		SELECT 'success' AS 'respuesta', 'Actualizado correctamente' AS 'mensaje';
+
+	ELSEIF _action = 'status' THEN
+		UPDATE cuadreProducto SET idEstadoCuadre = _idEstadoCuadre
+		WHERE idCuadreProducto = _idCuadreProducto;
+		
+		SELECT 'success' AS 'respuesta', 'Actualizado correctamente' AS 'mensaje';
+
+	ELSE
+		SELECT 'danger' AS 'respuesta', 'Acción no válida' AS 'mensaje';
+	END IF;
+END$$
+
+CREATE PROCEDURE consultaCuadreProductoDetalle( _action VARCHAR(20), _idCuadreProducto INT, _idProducto INT, _cantidadApertura DOUBLE(10,2), _cantidadCierre DOUBLE(10,2), _diferencia DOUBLE(10,2), _actualizarDisponibilidad BOOLEAN, _idEstadoCuadre INT )
 BEGIN
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
@@ -184,16 +221,26 @@ BEGIN
 		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
 
 	ELSEIF _action = 'insert' THEN
-		INSERT INTO cierreDiario ( fechaCierre, comentario, usuario, fechaRegistro) 
-			VALUES ( _fechaCierre, _comentario, @usuario, NOW() );
+		INSERT INTO cuadreProductoDetalle ( idCuadreProducto, idProducto, cantidadApertura, cantidadCierre, diferencia ) 
+			VALUES ( _idCuadreProducto, _idProducto, _cantidadApertura, _cantidadCierre, _diferencia );
+
+		# SI ACTUALIZA DISPONIBILIDAD DE PRODUCTO
+		IF _actualizarDisponibilidad AND _idEstadoCuadre = 3 THEN
+			UPDATE producto SET disponibilidad = _cantidadCierre WHERE idProducto = _idProducto;
+		END IF;
 		
-		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
+		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
 
 	ELSEIF _action = 'update' THEN
-		UPDATE cierreDiario SET 
-			fechaCierre = _fechaCierre,
-			comentario  = _comentario
-		WHERE idCierreDiario = _idCierreDiario;
+		UPDATE cuadreProductoDetalle SET
+			cantidadCierre = _cantidadCierre,
+			diferencia     = _diferencia
+		WHERE idCuadreProducto = _idCuadreProducto AND idProducto = _idProducto;
+
+		# SI ACTUALIZA DISPONIBILIDAD DE PRODUCTO
+		IF _actualizarDisponibilidad THEN
+			UPDATE producto SET disponibilidad = _cantidadCierre WHERE idProducto = _idProducto;
+		END IF;
 		
 		SELECT 'success' AS 'respuesta', 'Actualizado correctamente' AS 'mensaje';
 
@@ -203,62 +250,48 @@ BEGIN
 END$$
 
 
-CREATE PROCEDURE consultaCierreDiarioProducto( _action VARCHAR(20), _idCierreDiario INT, _idProducto INT, _cantidadCocina DOUBLE(10,2), _cantidadBodega DOUBLE(10,2), _cantidadMostrador DOUBLE(10,2), _actualizarDisponibilidad BOOLEAN )
-BEGIN
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
-		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
-
-	IF !sesionValida() THEN # SI LA SESION ES INVALIDA
-		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
-
-	ELSEIF _action = 'insert' THEN
-		INSERT INTO cierreDiarioProducto ( idCierreDiario, idProducto, cantidadCocina, cantidadBodega, cantidadMostrador ) 
-			VALUES ( _idCierreDiario, _idProducto, _cantidadCocina, _cantidadBodega, _cantidadMostrador );
-
-		# SI ACTUALIZA DISPONIBILIDAD DE PRODUCTO
-		IF _actualizarDisponibilidad THEN
-			UPDATE producto SET disponibilidad = ( _cantidadCocina + _cantidadBodega + _cantidadMostrador )
-				WHERE idProducto = _idProducto;
-		END IF;
-		
-		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
-
-	ELSE
-		SELECT 'danger' AS 'respuesta', 'Acción no válida' AS 'mensaje';
-	END IF;
-END$$
 
 
 
 
-CREATE VIEW vCierreDiario AS
+CREATE VIEW vCuadreProducto AS
 SELECT 
-	idCierreDiario,
-    fechaCierre,
+	idCuadreProducto,
+    fechaCuadre,
     comentario,
     usuario,
-    fechaRegistro AS 'fechaRegistroCierre'
-FROM cierreDiario;
+    fechaRegistro AS 'fechaRegistroCuadre',
+    todos,
+    u.idUbicacion,
+    u.ubicacion,
+    ec.idEstadoCuadre,
+    ec.estadoCuadre
+FROM cuadreProducto AS cp
+	JOIN estadoCuadre AS ec
+		ON ec.idEstadoCuadre = cp.idEstadoCuadre
+
+	JOIN ubicacion AS u
+		ON u.idUbicacion = cp.idUbicacion
+;
 
 
-CREATE VIEW vCierreDiarioProducto AS
+CREATE VIEW vCuadreProductoDetalle AS
 SELECT 
-	cd.idCierreDiario,
-    cd.fechaCierre,
-    cd.comentario,
-    cd.usuario,
-    cd.fechaRegistroCierre,
-    cdp.cantidadCocina,
-    cdp.cantidadBodega,
-    cdp.cantidadMostrador,
-    ( cdp.cantidadCocina + cdp.cantidadBodega + cdp.cantidadMostrador ) AS 'cantidadCierre',
+	cp.idCuadreProducto,
+    cp.fechaCuadre,
+    cp.comentario,
+    cp.usuario,
+    cp.fechaRegistroCuadre,
+    cpd.cantidadApertura,
+    cpd.cantidadCierre,
+    cpd.diferencia,
 	p.*
-FROM vCierreDiario AS cd
-	JOIN cierreDiarioProducto AS cdp
-		ON cd.idCierreDiario = cdp.idCierreDiario
+FROM vCuadreProducto AS cp
+	JOIN cuadreProductoDetalle AS cpd
+		ON cp.idCuadreProducto = cpd.idCuadreProducto
 	JOIN lstProducto AS p
-		ON cdp.idProducto = p.idProducto;
-
+		ON cpd.idProducto = p.idProducto
+;
 
 
 CREATE VIEW lstProducto AS
