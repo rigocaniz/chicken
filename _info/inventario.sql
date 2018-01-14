@@ -212,7 +212,7 @@ BEGIN
 	END IF;
 END$$
 
-CREATE PROCEDURE consultaCuadreProductoDetalle( _action VARCHAR(20), _idCuadreProducto INT, _idProducto INT, _cantidadApertura DOUBLE(10,2), _cantidadCierre DOUBLE(10,2), _diferencia DOUBLE(10,2), _actualizarDisponibilidad BOOLEAN, _idEstadoCuadre INT )
+CREATE PROCEDURE consultaCuadreProductoDetalle( _action VARCHAR(20), _idCuadreProducto INT, _idProducto INT, _cantidadApertura DOUBLE(10,2), _cantidadCierre DOUBLE(10,2), _diferenciaApertura DOUBLE(10,2), _diferenciaCierre DOUBLE(10,2), _actualizarDisponibilidad BOOLEAN, _idEstadoCuadre INT )
 BEGIN
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
@@ -221,8 +221,8 @@ BEGIN
 		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
 
 	ELSEIF _action = 'insert' THEN
-		INSERT INTO cuadreProductoDetalle ( idCuadreProducto, idProducto, cantidadApertura, cantidadCierre, diferencia ) 
-			VALUES ( _idCuadreProducto, _idProducto, _cantidadApertura, _cantidadCierre, _diferencia );
+		INSERT INTO cuadreProductoDetalle ( idCuadreProducto, idProducto, cantidadApertura, cantidadCierre, diferenciaApertura, diferenciaCierre ) 
+			VALUES ( _idCuadreProducto, _idProducto, _cantidadApertura, _cantidadCierre, _diferenciaApertura, _diferenciaCierre );
 
 		# SI ACTUALIZA DISPONIBILIDAD DE PRODUCTO
 		IF _actualizarDisponibilidad AND _idEstadoCuadre = 3 THEN
@@ -233,8 +233,8 @@ BEGIN
 
 	ELSEIF _action = 'update' THEN
 		UPDATE cuadreProductoDetalle SET
-			cantidadCierre = _cantidadCierre,
-			diferencia     = _diferencia
+			cantidadCierre     = _cantidadCierre,
+			diferenciaApertura = _diferenciaApertura
 		WHERE idCuadreProducto = _idCuadreProducto AND idProducto = _idProducto;
 
 		# SI ACTUALIZA DISPONIBILIDAD DE PRODUCTO
@@ -284,7 +284,8 @@ SELECT
     cp.fechaRegistroCuadre,
     cpd.cantidadApertura,
     cpd.cantidadCierre,
-    cpd.diferencia,
+    cpd.diferenciaApertura,
+    cpd.diferenciaCierre,
 	p.*
 FROM vCuadreProducto AS cp
 	JOIN cuadreProductoDetalle AS cpd
