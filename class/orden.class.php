@@ -868,16 +868,22 @@ class Orden
 		return $lst;
  	}
 
- 	public function menuPorCodigo( $codigoRapido, $cantidad )
+ 	public function menuPorCodigo( $codigoRapido, $cantidad, $idTipoServicio )
  	{
 		$datos        = (object)array( "menu" => NULL, "tipoMenu" => NULL );
 		$codigoRapido = (int)$codigoRapido;
 
- 		$sql = "SELECT idMenu, codigo, 'menu' AS 'tipoMenu'
-					FROM menu WHERE codigo = {$codigoRapido}
+ 		$sql = "SELECT m.idMenu, m.codigo, 'menu' AS 'tipoMenu', mp.precio
+					FROM menu AS m
+						JOIN menuPrecio AS mp
+							ON m.idMenu = mp.idMenu AND mp.idTipoServicio = {$idTipoServicio}
+				    WHERE m.codigo = {$codigoRapido}
 				UNION 
-				SELECT idCombo AS 'idMenu', codigo, 'combo' AS 'tipoMenu'
-					FROM combo WHERE codigo = {$codigoRapido} ";
+				SELECT c.idCombo AS 'idMenu', c.codigo, 'combo' AS 'tipoMenu', cp.precio
+					FROM combo AS c
+						JOIN comboPrecio AS cp
+							ON c.idCombo = cp.idCombo AND cp.idTipoServicio = {$idTipoServicio}
+				    WHERE c.codigo = {$codigoRapido} ";
 		if ( $rs = $this->con->query( $sql ) ) {
 			if ( $row = $rs->fetch_object() ) {
 
@@ -892,7 +898,7 @@ class Orden
 						'menu'                 => $info->menu,
 						'imagen'               => $info->imagen,
 						'cantidad'             => 1,
-						'precio'               => 0.00,
+						'precio'               => (double)$row->precio,
 						'lstPrecio'            => $menu->cargarMenuPrecio( $row->idMenu ),
 						'lstSinDisponibilidad' => $this->obtenerDisponiblidad( $cantidad, $row->idMenu, NULL ),
 					);
@@ -909,13 +915,41 @@ class Orden
 						'menu'                 => $info->combo,
 						'imagen'               => $info->imagen,
 						'cantidad'             => 1,
-						'precio'               => 0.00,
+						'precio'               => (double)$row->precio,
 						'lstPrecio'            => $combo->cargarComboPrecio( $row->idMenu ),
 						'lstSinDisponibilidad' => $this->obtenerDisponiblidad( $cantidad, NULL, $row->idMenu ),
 					);
 				}
 
 			}
+		}
+
+ 		return $datos;
+ 	}
+
+ 	public function precioDisponibilidad( $idMenu, $idCombo, $idTipoServicio, $cantidad )
+ 	{
+		$datos   = (object)array( "precio" => NULL, "lstSinDisponibilidad" => NULL );
+		$idMenu  = (int)$idMenu;
+		$idCombo = (int)$idCombo;
+
+		if ( $idMenu > 0 )
+		{
+			$sql = "SELECT precio FROM menuPrecio 
+					WHERE idMenu = {$idMenu} AND idTipoServicio = {$idTipoServicio} ";
+			$datos->lstSinDisponibilidad = $this->obtenerDisponiblidad( $cantidad, $idMenu, NULL );
+		}
+		else
+		{
+			$sql = "SELECT precio FROM comboPrecio 
+					WHERE idCombo = {$idCombo} AND idTipoServicio = {$idTipoServicio} ";
+			$datos->lstSinDisponibilidad = $this->obtenerDisponiblidad( $cantidad, NULL, $idCombo );
+		}
+
+		if ( $rs = $this->con->query( $sql ) ) {
+
+			if ( $row = $rs->fetch_object() )
+				$datos->precio = (double)$row->precio;
 		}
 
  		return $datos;
