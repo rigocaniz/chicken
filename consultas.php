@@ -550,7 +550,14 @@ switch ( $data->opcion )
 
 	case 'menuPorCodigo':
 		$orden = new Orden();
-		echo json_encode( $orden->menuPorCodigo( $data->codigoRapido, $data->cantidad ) );
+		echo json_encode( $orden->menuPorCodigo( $data->codigoRapido, $data->cantidad, $data->idTipoServicio ) );
+		break;
+
+	case 'precioDisponibilidad':
+		$orden = new Orden();
+		echo json_encode(
+			$orden->precioDisponibilidad( $data->idMenu, $data->idCombo, $data->idTipoServicio, $data->cantidad ) 
+		);
 		break;
 
 	case 'busquedaTicket':

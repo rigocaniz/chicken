@@ -340,7 +340,8 @@ class Menu
  					idTipoMenu,
  					tipoMenu,
  					tiempoAlerta,
- 					seCocina
+ 					seCocina,
+ 					codigoMenu
  				FROM lstMenu $where";
  		
  		if( $rs = $this->con->query( $sql ) ){

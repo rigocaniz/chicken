@@ -334,7 +334,7 @@
                 			<table class="table table-condensed table-hover">
                 				<thead>
                 					<tr>
-                						<th>Cantidad</th>
+                						<th width="110px">Cantidad</th>
                 						<th>Orden</th>
                 						<th>Subtotal</th>
                 						<th width="35px"></th>
@@ -346,7 +346,7 @@
                 							<button type="button" class="btn btn-xs btn-default" ng-click="ordenCantidad( ordenActual.lstAgregar.indexOf( item ), 0, item.cantidad, item.precio )">
                 								<span class="glyphicon glyphicon-minus"></span>
                 							</button>
-                							<b style="font-size:17px">{{item.cantidad}}</b>
+                                            <input type="text" class="input-sm" ng-model="item.cantidad" ng-change="total()" style="width:43px;border:solid 1px #ccc;padding: 0 7px;">
                 							<button type="button" class="btn btn-xs btn-info" ng-click="ordenCantidad( ordenActual.lstAgregar.indexOf( item ), 1, item.cantidad, item.precio )">
                 								<span class="glyphicon glyphicon-plus"></span>
                 							</button>
@@ -400,6 +400,28 @@
                 </div>
                 <div class="modal-body">
                 	<div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-xs-4">
+                                <h4>Tipo de Servicio</h4>
+                            </div>
+                            <div class="col-xs-8">
+                                <button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=1,'btn-info':idTipoServicio==1}" 
+                                    ng-click="$parent.idTipoServicio=1" ng-disabled="!(ordenActual.noTicket>0)" style="margin-right:4px;margin-top:5px">
+                                    <b>Para <u>L</u>levar</b>
+                                    <span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==1"></span>
+                                </button>
+                                <button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=2,'btn-info':idTipoServicio==2}" 
+                                    ng-click="$parent.idTipoServicio=2" ng-disabled="!(ordenActual.noTicket>0)" style="margin-right:4px;margin-top:5px">
+                                    <b><u>R</u>estaurante</b>
+                                    <span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==2"></span>
+                                </button>
+                                <button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=3,'btn-info':idTipoServicio==3}" 
+                                    ng-click="$parent.idTipoServicio=3" ng-disabled="ordenActual.noTicket>0" style="margin-right:4px;margin-top:5px">
+                                    <b>A <u>D</u>omicilio</b>
+                                    <span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==3"></span>
+                                </button>
+                            </div>
+                        </div>
                 		<div class="col-xs-12 col-sm-6 col-sm-offset-3">
                 			<h3 class="text-center">Cantidad</h3>
 							<div class="input-group">
@@ -408,7 +430,7 @@
 		                                <span class="glyphicon glyphicon-minus"></span>
 		                            </button>
 								</span>
-                				<input type="text" class="form-control input-lg" ng-model="$parent.cantidadInicial" id="cantidadInicial" numbers-only>
+                				<input type="text" class="form-control input-lg" ng-model="$parent.cantidadInicial" id="cantidadInicial" numbers-only autocomplete="off">
 								<span class="input-group-btn">
 		                            <button type="button" class="btn btn-lg btn-default" ng-click="$parent.cantidadInicial = changeInt( $parent.cantidadInicial, true, 1, 500 )">
 		                                <span class="glyphicon glyphicon-plus"></span>
@@ -416,7 +438,6 @@
 								</span>
 							</div>
                 		</div>
-            			<hr>
                     </div>
                     <!-- CODIGO O MODAL ( MENU | COMBO ) -->
             		<div class="row" style="margin-top: 6px" ng-hide="menuActual.idMenu>0">
@@ -432,7 +453,8 @@
 		                				<b class="hidden-xs"><u>C</u>ombo</b>
 		                			</button>
 		                		</span>
-                        		<input type="text" class="form-control input-lg" ng-model="$parent.codigoRapido" placeholder="Código Rápido" id="codigoRapido" numbers-only>
+                        		<input type="text" class="form-control input-lg" ng-model="$parent.codigoRapido" id="codigoRapido"
+                                    placeholder="Código Rápido | Menú | Combo">
 								<span class="input-group-btn">
 		                            <button type="button" class="btn btn-lg btn-primary" ng-click="consultaMenuPorCodigo()">
 		                                <span class="glyphicon glyphicon-search"></span>
@@ -450,27 +472,6 @@
                 			<h4>{{menuActual.menu}} <kbd>{{tipoMenu}}</kbd></h4>
                 			<h3>Q. {{menuActual.precio | number:2}}</h3>
                 		</div>
-                		<div class="col-sm-6 col-xs-4">
-            				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=2,'btn-info':idTipoServicio==2}" 
-            					ng-click="$parent.idTipoServicio=2" ng-disabled="!(ordenActual.noTicket>0)" style="margin-right:4px;margin-top:5px">
-            					<b><u>R</u>estaurante</b>
-            					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==2"></span>
-            				</button>
-            			</div>
-                		<div class="col-sm-6 col-xs-4">
-            				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=1,'btn-info':idTipoServicio==1}" 
-            					ng-click="$parent.idTipoServicio=1" ng-disabled="!(ordenActual.noTicket>0)" style="margin-right:4px;margin-top:5px">
-            					<b>Para <u>L</u>levar</b>
-            					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==1"></span>
-            				</button>
-            			</div>
-                		<div class="col-sm-6 col-xs-4">
-            				<button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=3,'btn-info':idTipoServicio==3}" 
-            					ng-click="$parent.idTipoServicio=3" ng-disabled="ordenActual.noTicket>0" style="margin-right:4px;margin-top:5px">
-            					<b>A <u>D</u>omicilio</b>
-            					<span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==3"></span>
-            				</button>
-            			</div>
                 		<div class="col-xs-12" ng-show="lstSinDisponibilidad.length">
 							<p class="alert alert-danger" ng-repeat="item in lstSinDisponibilidad">
 								<kbd>{{item.producto}}</kbd> Requerido: <b>{{item.cantidadRequerida}} {{item.medida}}</b> > Disponible: <b>{{item.disponibilidad}} {{item.medida}}</b>
@@ -518,7 +519,7 @@
                 	<div class="row" ng-show="tipoMenu=='menu'">
                 		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstMenu track by $index">
                 			<button type="button" class="menu-btn" ng-click="seleccionarMenu( item )">
-	                			<span class="codigo">{{item.idMenu}}</span>
+	                			<span class="codigo">COD: <b>{{item.codigoMenu}}</b></span>
 	                			<img ng-src="{{item.imagen}}">
 	                			<span class="menu">{{item.menu}}</span>
                 			</button>
@@ -527,7 +528,7 @@
                    <div class="row" ng-show="tipoMenu=='combo'">
                 		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstCombo track by $index">
                 			<button type="button" class="menu-btn" ng-click="seleccionarMenu( item )">
-	                			<span class="codigo">{{item.idCombo}}</span>
+	                			<span class="codigo">COD: <b>{{item.codigoCombo}}</b></span>
 	                			<img ng-src="{{item.imagen}}">
 	                			<span class="menu">{{item.combo}}</span>
                 			</button>

@@ -187,7 +187,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	// 2. CONSULTA ORDEN YA CREADA
 	$scope.consultaOrden = function ( orden ) {
 		$scope.dialOrden.hide();
-		$scope.dialOrdenCliente.show();
 		$scope.accionOrden = 'modificar';
 
 		$scope.ordenActual = {
@@ -197,6 +196,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 			lstAgregar     : [],
 			lstPedidos     : []
 		};
+		$scope.openCantidad();
 	};
 
 	// #2 => CREA UNA NUEVA ORDEN
@@ -233,7 +233,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 					
 					// MUESTRA DIALOGO DE ORDEN GENERADA
 					$scope.dialOrden.hide();
-					$scope.dialOrdenCliente.show();
 
 					$scope.ordenActual = {
 						idOrdenCliente : data.data,
@@ -242,6 +241,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 						lstAgregar   : [],
 						lstPedidos   : []
 					};
+					$scope.openCantidad();
 				}
 				else{
 					alertify.set('notifier','position', 'top-right');
@@ -276,7 +276,11 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		if ( $scope.tipoMenu == 'menu' && $scope.idTipoMenu > 0 ) {
 			$scope.$parent.loading = true; // cargando...
 			$scope.lstMenu = [];
-			$http.post('consultas.php', { opcion : 'lstMenu', idTipoMenu : $scope.idTipoMenu, idEstadoMenu : 1 })
+			$http.post('consultas.php', { 
+				opcion       : 'lstMenu',
+				idTipoMenu   : $scope.idTipoMenu,
+				idEstadoMenu : 1
+			})
 			.success(function (data) {
 				$scope.$parent.loading = false; // cargando...
 				if ( data.length ) {
@@ -288,7 +292,10 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		else if ( $scope.tipoMenu == 'combo' ) {
 			$scope.$parent.loading = true; // cargando...
 			$scope.lstCombo = [];
-			$http.post('consultas.php', { opcion : 'lstCombo', idEstadoMenu : 1 })
+			$http.post('consultas.php', { 
+				opcion       : 'lstCombo',
+				idEstadoMenu : 1
+			})
 			.success(function (data) {
 				$scope.$parent.loading = false; // cargando...
 				if ( data.length ) {
@@ -303,7 +310,13 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		if ( $scope.$parent.loading )
 			return false;
 
-		var datos;
+		var datos = { 
+			opcion         : 'precioDisponibilidad',
+			idMenu         : 0,
+			idCombo        : 0,
+			idTipoServicio : $scope.idTipoServicio,
+			cantidad       : $scope.cantidadInicial
+		};
 
 		if ( $scope.tipoMenu == 'menu' ) {
 			$scope.menuActual = {
@@ -312,7 +325,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				imagen : menu.imagen,
 			};
 
-			datos = { opcion : 'cargarMenuPrecio', idMenu : menu.idMenu, cantidad : $scope.cantidadInicial };
+			datos.idMenu = menu.idMenu;
 		}
 		else if ( $scope.tipoMenu == 'combo' ) {
 			$scope.menuActual = {
@@ -320,7 +333,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				menu   : menu.combo,
 				imagen : menu.imagen,
 			};
-			datos = { opcion : 'cargarComboPrecio', idCombo : menu.idCombo, cantidad : $scope.cantidadInicial };
+
+			datos.idCombo = menu.idCombo;
 		}
 
 		$scope.menuActual.precio    = 0;
@@ -333,15 +347,23 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		$http.post('consultas.php', datos )
 		.success(function (data) {
 			$scope.$parent.loading = false; // cargando...
+			console.log( data );
 
-			if ( data.lstPrecios && data.lstPrecios.length ) {
-				$scope.menuActual.lstPrecio = data.lstPrecios;
+			if ( data.precio && data.precio > 0 ) {
+				$scope.menuActual.precio 	= data.precio;
 				$scope.lstSinDisponibilidad = data.lstSinDisponibilidad;
+
+				$scope.dialOrdenMenu.hide();
+				if ( data.lstSinDisponibilidad.length )
+				{
+					$scope.dialCantidad.show();
+				}
+				else{
+					$scope.agregarOrdenLista();
+				}
 			}
 		});
 
-		$scope.dialOrdenMenu.hide();
-		$scope.dialCantidad.show();
 	};
 
 	// #4 => AGREGAR MENU Y CANTIDAD A ORDEN A AGREGAR
@@ -518,7 +540,12 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 			$scope.$parent.loading = true; // cargando...
 			$scope.lstSinDisponibilidad = [];
 
-			$http.post('consultas.php', { opcion : 'menuPorCodigo', codigoRapido : $scope.codigoRapido, cantidad : $scope.cantidadInicial })
+			$http.post('consultas.php', { 
+				opcion         : 'menuPorCodigo',
+				codigoRapido   : $scope.codigoRapido,
+				cantidad       : $scope.cantidadInicial,
+				idTipoServicio : $scope.idTipoServicio
+			})
 			.success(function (data) {
 				console.log( data );
 
@@ -529,6 +556,11 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 					$scope.menuActual           = data.menu;
 					$scope.tipoMenu             = data.tipoMenu;
 					$scope.observacion          = "";
+
+					// SI EXISTE DISPONIBILIDAD Y SE ENCUENTRA EL MENU, SE AGREGA
+					if ( !data.menu.lstSinDisponibilidad.length )
+						$scope.agregarOrdenLista();
+
 					$scope.lstSinDisponibilidad = data.menu.lstSinDisponibilidad;
 				}
 				
@@ -751,6 +783,21 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		}
 	};
 
+	$scope.total = function () {
+		var total = 0;
+
+		for (var i = 0; i < $scope.ordenActual.lstAgregar.length; i++) {
+			actual          = $scope.ordenActual.lstAgregar[ i ];
+			actual.cantidad = parseInt( actual.cantidad );
+			actual.precio   = parseFloat( actual.precio );
+
+			if ( actual.cantidad && actual.precio )
+				total += ( actual.cantidad * actual.precio );
+		}
+
+		$scope.ordenActual.totalAgregar = total;
+	};
+
 	// QUITAR ELEMENTO DE ORDEN
 	$scope.quitarElemento = function ( index, cantidad, precio ) {
 		$scope.ordenActual.totalAgregar -= ( cantidad * precio );
@@ -759,6 +806,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 		// SI CAMBIA EL TIPO DE SERVICIO
 	
+	/*
 	$scope.watchPrecio = function () {
 		$scope.menuActual.precio = 0;
 
@@ -769,7 +817,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 					break;
 				}
 		}
-	};
+	};*/
 
 	$scope.cancelarMenu = function () {
 		if ( $scope.menuActual && $scope.menuActual.idMenu > 0 ) 
@@ -816,16 +864,16 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 	// SI CAMBIA EL Tipo de Servicio
 	$scope.$watch('idTipoServicio', function ( _new, _old ) {
-		$scope.watchPrecio();
+//		$scope.watchPrecio();
 
 		if ( _new )
 			$scope.filtroServicio = _new;
 	});
 
 	// SI CAMBIA LA Lista de Precio
-	$scope.$watch('menuActual.lstPrecio', function ( _new, _old ) {
-		$scope.watchPrecio();
-	});
+	//$scope.$watch('menuActual.lstPrecio', function ( _new, _old ) {
+	//	$scope.watchPrecio();
+	//});
 
 
 	// SI CAMBIA EL INDEX DE PEDIDO
