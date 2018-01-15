@@ -289,7 +289,7 @@ class Combo
  		if ( !IS_NULL( $idCombo ) AND $idCombo > 0 )
  			$where = " WHERE idCombo = $idCombo ";
 
- 		$sql = "SELECT idCombo, combo, imagen, descripcion, idEstadoMenu, estadoMenu FROM lstCombo " . $where;
+ 		$sql = "SELECT idCombo, combo, imagen, descripcion, idEstadoMenu, estadoMenu, codigoCombo FROM lstCombo " . $where;
  		
  		if( $rs = $this->con->query( $sql ) ){
 
