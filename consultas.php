@@ -348,14 +348,14 @@ switch ( $data->opcion )
 		echo json_encode( $producto->cargarLstIngresoProducto( $data->idFacturaCompra ) );
 		break;		
 
-	case 'consultaCierreDiario':			// INSERT / UPDATE CIERRE DEL DIA
+	case 'consultaCuadreProducto':			// INSERT / UPDATE // APERTURA Y CIERRE DIARIO DE PRODUCTOS
 		$producto = new Producto();
-		echo json_encode( $producto->consultaCierreDiario( $data->accion, $data->data ) );
+		echo json_encode( $producto->consultaCuadreProducto( $data->data->accion, $data->data ) );
 		break;
 
-	case 'getListaProductos':			// CONSULTAR PRODUCTOS
+	case 'accionCuadreProducto':			// CONSULTAR PRODUCTOS
 		$producto = new Producto();
-		echo json_encode( $producto->getListaProductos( $data->filtro ) );
+		echo json_encode( $producto->accionCuadreProducto( $data->idUbicacion ) );
 		break;
 		
 	case 'consultaFactura':			// INSERT / UPDATE LST PRODUCTOS INGRESO

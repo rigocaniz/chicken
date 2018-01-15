@@ -150,25 +150,32 @@ class Producto
  	}
 
 
-	//	CREATE PROCEDURE consultaCierreDiario( _action VARCHAR(20), _idCierreDiario INT, _fechaCierre DATE, _comentario TEXT )
-	function consultaCierreDiario( $accion, $data )
+	//	CONSULTA CUADRE PRODUCTO
+	function consultaCuadreProducto( $accion, $data )
 	{
  		if( count( $data->lstProductos ) ){
 
-		 	$action         = "NULL";
-		 	$idCierreDiario = "NULL";
-		 	$fechaCierre    = "NULL";
-		 	$comentario	    = "NULL";
+		 	$idCuadreProducto = "NULL";
+		 	$fechaCuadre      = "NULL";
+		 	$comentario	      = "NULL";
+		 	$todos            = "NULL";
 
-		 	$data->fechaCierre = isset( $data->fechaCierre ) 	? $data->fechaCierre 			: NULL;
-		 	$data->comentario  = isset( $data->comentario ) 	? (string)$data->comentario 	: NULL;
+		 	$data->fechaCuadre    = isset( $data->fechaCuadre ) 	? $data->fechaCuadre 			: NULL;
+		 	$data->comentario     = isset( $data->comentario ) 	 	? (string)$data->comentario 	: NULL;
+		 	$data->idEstadoCuadre = isset( $data->idEstadoCuadre ) 	? (int)$data->idEstadoCuadre 	: NULL;
 
 		 	$validar = new Validar();
-		 	if( $accion == 'update' )
-		 	{
-		 		$data->idCierreDiario = isset( $data->idCierreDiario ) ? $data->idCierreDiario : NULL;
-		 		$idCierreDiario = $validar->validarEntero( $data->idCierreDiario, NULL, TRUE, 'El ID del Cierre Diario no es válido' );
+		 	if( $accion == 'insert' ) {		 		
+			 	$todos             = isset( $data->cierreTodos ) 	? (int)$data->todos 		: 1;
+			 	$data->idUbicacion = isset( $data->idUbicacion ) 	? (int)$data->idUbicacion 	: NULL;
+			 	$idUbicacion       = $validar->validarEntero( $data->idUbicacion, NULL, TRUE, 'ID ubicación no es válido' );
 		 	}
+		 	elseif( $accion == 'update' ) {
+		 		$data->idCuadreProducto = isset( $data->idCuadreProducto ) ? $data->idCuadreProducto : NULL;
+		 		$idCuadreProducto       = $validar->validarEntero( $data->idCuadreProducto, NULL, TRUE, 'ID del Cuadre no es válido' );
+		 	}
+
+		 	$idEstadoCuadre = $validar->validarEntero( $data->idEstadoCuadre, NULL, TRUE, 'ID del Estado de Cuadre no es válido' );
 
 		 	// OBTENER RESULTADO DE VALIDACIONES
 	 		if( $validar->getIsError() ):
@@ -176,17 +183,20 @@ class Producto
 		 		$this->mensaje   = $validar->getMsj();
 
 	 		else:
-
-			 	$fechaCierre    = $data->fechaCierre;
+			 	$fechaCuadre    = $data->fechaCuadre;
 			 	$comentario     = $this->con->real_escape_string( $data->comentario );
 			 	$actualizarDisp = (int)$data->actualizarDisp;
-			 	$todos          = (int)$data->cierreTodos;
 
 	 			// INICIALIZAR TRANSACCIÓN
 				$this->con->query( "START TRANSACTION" );
 
-				$sql = "CALL consultaCierreDiario( '{$accion}', {$idCierreDiario}, '{$fechaCierre}', '{$comentario}', {$todos} );";
 
+_action VARCHAR(20), _idCuadreProducto INT, _fechaCuadre DATE, _comentario TEXT, _todos BOOLEAN, _idUbicacion CHAR(1), _idEstadoCuadre INT 
+
+
+				$sql = "CALL consultaCuadreProducto( '{$accion}', {$idCuadreProducto}, '{$fechaCuadre}', '{$comentario}', {$todos}, {$idUbicacion}, {$idEstadoCuadre} );";
+
+				echo $sql;
 		 		if( $rs = $this->con->query( $sql ) ){
 		 			
 		 			$this->siguienteResultado();
@@ -200,13 +210,15 @@ class Producto
 
 		 					// REALIZAR CIERRA POR PRODUCTO
 		 					if( $this->respuesta <> 'danger' )
-		 						$this->consultaCierreDiarioProducto( $accion, $idCierreDiario, $data->lstProductos, $data->cierreTodos, $actualizarDisp );
+		 						$this->consultaCuadreProductoDetalle( $accion, $idCierreDiario, $data->lstProductos, $data->cierreTodos, $actualizarDisp );
+		 					elseif( $this->respuesta == 'danger' )
+		 						$this->mensaje .= " (CUADRE DE PRODUCTOS)";
 		 				}
 		 			}
 		 		}
 		 		else{
 		 			$this->respuesta = 'danger';
-		 			$this->mensaje   = 'Error al ejecutar la instrucción de  Cierre.';
+		 			$this->mensaje   = 'Error al ejecutar la instrucción (CUADRE DE PRODUCTOS).';
 		 		}
 
 
@@ -227,8 +239,8 @@ class Producto
 	}
 
 
-	// consultaCierreDiarioProducto
-	function consultaCierreDiarioProducto( $accion, $idCierreDiario, $lstProductos, $cierreTodos = TRUE, $actualizarDisponibilidad = FALSE )
+	// consultaCuadreProductoDetalle
+	function consultaCuadreProductoDetalle( $accion, $idCuadreProducto, $lstProductos, $cierreTodos = TRUE, $idEstadoCuadre, $actualizarDisponibilidad = FALSE )
 	{
 		if( count( $lstProductos ) ) {
 
@@ -241,12 +253,15 @@ class Producto
 
 				if( !$omitir )
 				{
-					$idProducto               = (int)$producto->idProducto;
-					$cantidad                 = (double)$producto->disponibilidad;
-					$actualizarDisponibilidad = (int)$actualizarDisponibilidad;
+					$idProducto       = (int)$producto->idProducto;
+					$cantidadApertura = (double)$producto->cantidadApertura;
+					$disponibilidad   = (double)$producto->disponibilidad;
+					$disponible       = (double)$producto->disponible;
+					$diferencia       = (double)$disponibilidad - (double)$disponible;
+					$comentario       = (string)$producto->comentario;
 
 			 		// REALIZAR CONSULTA
-					$sql = "CALL consultaCierreDiarioProducto( '{$accion}', {$idCierreDiario}, {$idProducto}, {$cantidad}, {$actualizarDisponibilidad} );";
+					$sql = "CALL consultaCuadreProductoDetalle( '{$accion}', {$idCuadreProducto}, {$idProducto}, {$cantidadApertura}, {$cantidadCierre}, {$diferencia}, {$actualizarDisponibilidad}, {$idEstadoCuadre} );";
 
 			 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 			 			$this->siguienteResultado();
@@ -681,8 +696,6 @@ class Producto
  		else:
 	 		$sql = "CALL consultaProducto( '{$accion}', {$idProducto}, '{$producto}', {$idTipoProducto}, {$idMedida}, {$perecedero}, {$cantidadMinima}, {$cantidadMaxima}, {$disponibilidad}, {$importante}, {$idUbicacion} );";
 
-	 		echo $sql;
-
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){	 			
 	 			$this->siguienteResultado();
 
@@ -786,45 +799,117 @@ class Producto
 		return $lstProductos;
 	}
 
-	// BUSCAR PRODUCTO(S)
-	function getListaProductos( $filtro )
-	{
 
+	// REALIZAR APERTURAR / CIERRE DE INVENTARIO
+	function accionCuadreProducto( $idUbicacion )
+	{ 		
+		$detalleCuadre = new StdClass();
+		sleep( 1 );
+		$idUbicacion = (int)$idUbicacion;
+		$fechaCuadre = date("Y-m-d");
+
+		$sql = "SELECT 
+				    idCuadreProducto,
+				    fechaCuadre,
+				    comentario,
+				    usuario,
+				    fechaRegistroCuadre,
+				    todos,
+				    idUbicacion,
+				    ubicacion,
+				    idEstadoCuadre,
+				    estadoCuadre
+				FROM
+				    vCuadreproducto
+				WHERE
+				    idUbicacion = {$idUbicacion} AND ( fechaCuadre = 1 OR fechaCuadre = 2 );";
+ 		
+ 		if( $rs = $this->con->query( $sql ) AND $rs->num_rows AND $row = $rs->fetch_object() ){
+ 			
+			$row->cierreAtrasada = FALSE;
+			if( $row->fechaCuadre <> $fechaCuadre )
+				$row->cierreAtrasada = TRUE;
+
+ 			$dataCaja = array(
+				    'accion'              => 'update',
+				    'idCuadreProducto'    => (int)$row->idCuadreProducto,
+				    'cierreAtrasada'      => $row->cierreAtrasada,
+				    'fechaCuadre'         => $row->fechaCuadre,
+				    'comentario'          => $row->comentario,
+				    'actualizarDisp'      => TRUE,
+				    'usuario'             => $row->usuario,
+				    'fechaRegistroCuadre' => $row->fechaRegistroCuadre,
+				    'todos'               => $row->todos,
+				    'botonBloqueado'      => TRUE,
+				    'idUbicacion'         => (int)$row->idUbicacion,
+				    'idEstadoCuadre'      => (int)$row->idEstadoCuadre,
+				    'estadoCuadre'        => $row->estadoCuadre,
+				    'lstProductos'        => $this->getListaProductos( $row->idUbicacion )
+ 				);
+ 		}
+		else {
+			$dataCaja = array(
+					'accion'              => 'insert',
+					'idCuadreProducto'    => NULL,
+					'cierreAtrasada'      => FALSE,
+					'fechaCuadre'         => $fechaCuadre,
+					'comentario'          => "",
+					'actualizarDisp'      => TRUE,
+					'usuario'             => $this->ses->getUsuario(),
+					'fechaRegistroCuadre' => $fechaCuadre,
+					'todos'               => TRUE,
+					'botonBloqueado'      => FALSE,
+					'idUbicacion'         => $idUbicacion,
+					'idEstadoCuadre'      => 1,
+					'estadoCuadre'        => 'APERTURAR INVENTARIO',
+					'lstProductos'        => $this->getListaProductos( $idUbicacion )
+			);
+
+		}
+
+ 		return (object)$dataCaja;
+	}
+
+	// OBTENER LISTA DE PRODUCTOS UBICACION
+	public function getListaProductos( $idUbicacion = NULL )
+	{
 		$lstProductos = array();
 
 		$sql = "SELECT 
-			    idProducto,
-			    producto,
-			    idMedida,
-			    medida,
-			    idTipoProducto,
-			    tipoProducto,
-			    perecedero,
-			    cantidadMinima,
-			    cantidadMaxima,
-			    disponibilidad,
-			    importante
-			FROM
-			    lstProducto";
+				    idProducto,
+				    producto,
+				    idMedida,
+				    medida,
+				    idTipoProducto,
+				    tipoProducto,
+				    perecedero,
+				    cantidadMinima,
+				    cantidadMaxima,
+				    disponibilidad,
+				    importante,
+				    idUbicacion,
+				    ubicacion
+				FROM
+				    lstproducto WHERE idUbicacion = {$idUbicacion};";
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
-					$producto = array(
-					 	'idProducto'        => (int)$row->idProducto,
-					 	'producto'          => $row->producto,
-					 	'medida'            => $row->medida,
-					 	'esPerecedero'      => (int)$row->perecedero ? 'SI' : 'NO',
-					 	'disponibilidad'    => (double)$row->disponibilidad,
-					 	'disponible'        => ($row->disponibilidad - 10),
-					 	'esImportante'      => (int)$row->importante ? 'SI' : 'NO',
-					 	'importante'        => (int)$row->importante,
-					 	'comentario'        => "",
-					 	'agregarComentario' => FALSE,
-					 	'alertaComentario'  => FALSE,
-					 	'mostrarAlerta'     => FALSE
-					);
-
-				$lstProductos[] = $producto;
+				$lstProductos[] = array(
+								 	'idProducto'        => (int)$row->idProducto,
+								 	'producto'          => $row->producto,
+								 	'medida'            => $row->medida,
+								 	'esPerecedero'      => (int)$row->perecedero ? 'SI' : 'NO',
+								 	'disponibilidad'    => (double)$row->disponibilidad,
+								 	'disponible'        => 0,
+								 	'esImportante'      => (int)$row->importante ? 'SI' : 'NO',
+								 	'importante'        => (int)$row->importante,
+								 	'comentario'        => "",
+								 	'agregarComentario' => FALSE,
+								 	'alertaComentario'  => FALSE,
+								 	'mostrarAlerta'     => FALSE,
+								 	'ubicacion'         => $row->ubicacion,
+								 	'idUbicacion'       => (int)$row->idUbicacion
+								);
 			}
 		}
 

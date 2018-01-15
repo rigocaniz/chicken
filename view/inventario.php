@@ -87,7 +87,7 @@
 								</div>
 							</div>
 							<div class="text-left">
-								<button type="button" class="btn btn-danger" ng-click="realizarCierre()" ng-disabled="realizarReajuste">
+								<button type="button" class="btn btn-danger" ng-click="modalAccionCuadreProducto()" ng-disabled="realizarReajuste">
 									<span class="glyphicon glyphicon-list-alt"></span> <strong><u>C</u></strong>IERRE DE PRODUCTOS
 								</button>
 								<button type="button" class="btn btn-primary" ng-click="realizarReajusteMasivo()" ng-show="!realizarReajuste">
@@ -950,10 +950,19 @@
 				<div class="modal-header panel-heading text-center">
 					<button type="button" class="close" ng-click="$hide()">&times;</button>
 					<span class="glyphicon glyphicon-list-alt"></span>
-					REALIZAR CIERRE DIARIO DE INVENTARIO
+					APERTURA Y CIERRE DIARIO DE INVENTARIO
 				</div>
 				<div class="modal-body">
-					<form class="form-horizontal" role="form" name="$parent.formCierre">
+					<label>SELECCIONE UBICACIÓN</label>
+					<br>
+					<div class="btn-group" role="group" aria-label="">
+						<button type="button" class="btn btn-default" ng-repeat="ubicacion in lstUbicacion" ng-click="accionCuadreProducto( ubicacion.idUbicacion );">
+					  		<span class="glyphicon" ng-class="{'glyphicon-check': $parent.idUbicacion==ubicacion.idUbicacion, 'glyphicon-unchecked': $parent.idUbicacion!=ubicacion.idUbicacion}"></span>
+					  		{{ ubicacion.ubicacion }}
+					  	</button>
+					</div>
+					<form class="form-horizontal" role="form" name="$parent.formCierre" ng-show="$parent.idUbicacion > 0">
+						<hr>
 						<div class="form-group">
 							<div class="col-sm-4">
 								<label class="control-label">FECHA DEL CIERRE</label>
@@ -961,18 +970,18 @@
 								  	<span class="input-group-addon">
     									<span class="fa fa-calendar"></span>
 								  	</span>
-    								<input type="text" class="form-control" ng-model="cierreDiario.fechaCierre" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker>
+    								<input type="text" class="form-control" ng-model="cierreDiario.fechaRegistroCuadre" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker>
 								</div>
 							</div>
 							<div class="col-sm-4">
 								<label class="control-label">SELECCIONAR OPCIÓN</label>
 								<div class="btn-group" role="group" aria-label="">
-								  	<button type="button" class="btn" ng-click="cierreDiario.cierreTodos=true" ng-class="{'btn-info': cierreDiario.cierreTodos, 'btn-default': !cierreDiario.cierreTodos}" title="Todos los productos" data-toggle="tooltip" data-placement="top" tooltip>
-								  		<span class="glyphicon" ng-class="{'glyphicon-check': cierreDiario.cierreTodos, 'glyphicon-unchecked': !cierreDiario.cierreTodos}"></span>
+								  	<button type="button" class="btn" ng-click="cierreDiario.todos=true" ng-disabled="cierreDiario.botonBloqueado" ng-class="{'btn-info': cierreDiario.todos, 'btn-default': !cierreDiario.todos}" title="Todos los productos" data-toggle="tooltip" data-placement="top" tooltip>
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': cierreDiario.todos, 'glyphicon-unchecked': !cierreDiario.todos}"></span>
 								  		Todos
 								  	</button>
-								  	<button type="button" class="btn" ng-click="cierreDiario.cierreTodos=false" ng-class="{'btn-info': !cierreDiario.cierreTodos, 'btn-default': cierreDiario.cierreTodos}" title="Solo productos importantes" data-toggle="tooltip" data-placement="top" tooltip>
-								  		<span class="glyphicon" ng-class="{'glyphicon-check': !cierreDiario.cierreTodos, 'glyphicon-unchecked': cierreDiario.cierreTodos}"></span>
+								  	<button type="button" class="btn" ng-click="cierreDiario.todos=false" ng-disabled="cierreDiario.botonBloqueado" ng-class="{'btn-info': !cierreDiario.todos, 'btn-default': cierreDiario.todos}" title="Solo productos importantes" data-toggle="tooltip" data-placement="top" tooltip>
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': !cierreDiario.todos, 'glyphicon-unchecked': cierreDiario.todos}"></span>
 								  		Importantes
 								  	</button>
 								</div>
@@ -988,7 +997,7 @@
 								<input type="text" class="form-control" ng-model="cierreDiario.idCierreDiario" readonly>
 							</div>	
 						</div>
-						<table class="table table-hover">
+						<table class="table table-hover table-condensed" ng-show="cierreDiario.lstProductos.length">
 							<thead>
 								<tr>
 									<th class="text-center">No.</th>
@@ -1000,7 +1009,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="inv in cierreDiario.lstProductos" ng-show="cierreDiario.cierreTodos || (!cierreDiario.cierreTodos && inv.importante == 1 )" ng-class="{'border-success': inv.importante == 1}">
+								<tr ng-repeat="inv in cierreDiario.lstProductos" ng-show="cierreDiario.todos || (!cierreDiario.todos && inv.importante == 1 )" ng-class="{'border-success': inv.importante == 1}">
 									<td class="text-right">
 										{{ $index + 1 }}
 									</td>
@@ -1030,6 +1039,11 @@
 								</tr>
 							</tbody>
 						</table>
+						<div ng-show="!cierreDiario.lstProductos.length">
+							<div class="alert alert-warning" role="alert">
+								NO SE ENCONTRARON PRODUCTOS EN LA UBICACIÓN SELECCIONADA
+							</div>
+						</div>
 						<div class="form-group">
 							<div class="col-sm-12">
 								<label class="control-label">INGRESAR COMENTARIO</label>

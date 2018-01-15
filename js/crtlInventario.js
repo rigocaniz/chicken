@@ -137,16 +137,20 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	};
 	
 	$scope.cierreDiario = {};
-
-	$scope.getListaProductos = function(){
+	$scope.accionCuadreProducto = function( idUbicacion ){
+		$scope.$parent.showLoading( 'Consultando...' );
+		$scope.idUbicacion = idUbicacion;
 		$http.post('consultas.php',{
-			opcion : "getListaProductos",
-			filtro : $scope.cierreDiario.cierreTodos
+			opcion      : 'accionCuadreProducto',
+			idUbicacion : idUbicacion
 		}).success(function(data){
-			console.log( data );
-			$scope.cierreDiario.lstProductos = data;
+			console.log( "producto", data );
+			$scope.cierreDiario = data;
+			$scope.cierreDiario.fechaRegistroCuadre = moment( data.fechaRegistroCuadre );
+			$scope.$parent.hideLoading();
 		})
 	};
+
 
 	$scope.realizarReajuste = false;
 	$scope.realizarReajusteMasivo = function()
@@ -278,7 +282,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		}
 	};
 
-	$scope.realizarCierre = function(){
+
+	$scope.modalAccionCuadreProducto = function(){
+		/*
 		$scope.accion == 'insert';
 		$scope.cierreDiario = {
 			cierreTodos    : true,
@@ -288,8 +294,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			comentario     : '',
 			lstProductos   : []
 		};
-
-		$scope.getListaProductos();
+		*/
+		//$scope.accionCuadreProducto();
+		$scope.idUbicacion = null;
 		$scope.dialCierreDiario.show();
 	};
 
@@ -310,12 +317,13 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			}
 		}
 		if( !diferencias )
-			$scope.consultaCierreDiario	();
+			$scope.consultaCuadreProducto();
 		else
 			alertify.notify( 'Existe(n) <b>' + diferencias + ' PRODUCTOS</b> con Faltantes, verifique', 'info', 7 );
 	};
 
-	$scope.consultaCierreDiario = function(){
+	//REALIZAR APERTURA Y CIERRE DIARIO DE PRODUCTOS
+	$scope.consultaCuadreProducto = function(){
 		if ( $scope.$parent.loading )
 			return false;
 
@@ -324,15 +332,15 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		if( $scope.accion == 'update' && !(cierreDiario.idCierreDiario && cierreDiario.idCierreDiario > 0) )
 			alertify.notify( 'El código del cierra no es válido', 'warning', 4 );
 		
-		else if( !(cierreDiario.fechaCierre) )
-			alertify.notify( 'Ingrese la fecha de cierre', 'warning', 3 );
+		else if( !(cierreDiario.fechaRegistroCuadre) )
+			alertify.notify( 'Ingrese una fecha válida', 'warning', 3 );
 		
 		else
 		{
 			$scope.$parent.showLoading( 'Guardando...' );
 
 			$http.post('consultas.php',{
-				opcion : "consultaCierreDiario",
+				opcion : "consultaCuadreProducto",
 				accion : $scope.accion,
 				data   : $scope.cierreDiario
 			}).success(function(data){
