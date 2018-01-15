@@ -953,6 +953,9 @@
 					APERTURA Y CIERRE DIARIO DE INVENTARIO
 				</div>
 				<div class="modal-body">
+					<div class="pull-right" ng-show="$parent.idUbicacion > 0">
+						<span class="label label-default" style="font-size: 14px;">{{ cierreDiario.estadoCuadre }}</span>
+					</div>
 					<label>SELECCIONE UBICACIÓN</label>
 					<br>
 					<div class="btn-group" role="group" aria-label="">

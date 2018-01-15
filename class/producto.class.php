@@ -190,13 +190,9 @@ class Producto
 	 			// INICIALIZAR TRANSACCIÓN
 				$this->con->query( "START TRANSACTION" );
 
-
-_action VARCHAR(20), _idCuadreProducto INT, _fechaCuadre DATE, _comentario TEXT, _todos BOOLEAN, _idUbicacion CHAR(1), _idEstadoCuadre INT 
-
-
 				$sql = "CALL consultaCuadreProducto( '{$accion}', {$idCuadreProducto}, '{$fechaCuadre}', '{$comentario}', {$todos}, {$idUbicacion}, {$idEstadoCuadre} );";
 
-				echo $sql;
+				//echo $sql;
 		 		if( $rs = $this->con->query( $sql ) ){
 		 			
 		 			$this->siguienteResultado();
@@ -218,7 +214,7 @@ _action VARCHAR(20), _idCuadreProducto INT, _fechaCuadre DATE, _comentario TEXT,
 		 		}
 		 		else{
 		 			$this->respuesta = 'danger';
-		 			$this->mensaje   = 'Error al ejecutar la instrucción (CUADRE DE PRODUCTOS).';
+		 			$this->mensaje   = 'Error al ejecutar la instrucción (CUADRE DE PRODUCTOS)';
 		 		}
 
 
@@ -253,31 +249,43 @@ _action VARCHAR(20), _idCuadreProducto INT, _fechaCuadre DATE, _comentario TEXT,
 
 				if( !$omitir )
 				{
-					$idProducto       = (int)$producto->idProducto;
-					$cantidadApertura = (double)$producto->cantidadApertura;
-					$disponibilidad   = (double)$producto->disponibilidad;
-					$disponible       = (double)$producto->disponible;
-					$diferencia       = (double)$disponibilidad - (double)$disponible;
-					$comentario       = (string)$producto->comentario;
+					$cantidadApertura   = 0;
+					$cantidadCierre     = 0;
+					$comentarioApertura = '';
+					$comentarioCierre   = '';
+					$diferenciaApertura = NULL;
+					$diferenciaCierre   = NULL;
+
+					$idProducto = (int)$producto->idProducto;
+					if( $accion == 'insert' ){
+						$cantidadApertura = (double)$producto->disponible;
+						$comentarioApertura = $producto->comentario;
+						$diferenciaApertura = $producto->disponible - $producto->disponibilidad;
+					}
+					else{
+						$cantidadCierre = (double)$producto->disponible;
+						$comentarioCierre = $producto->comentario;
+						$diferenciaCierre = $producto->disponible - $producto->disponibilidad;
+					}
 
 			 		// REALIZAR CONSULTA
-					$sql = "CALL consultaCuadreProductoDetalle( '{$accion}', {$idCuadreProducto}, {$idProducto}, {$cantidadApertura}, {$cantidadCierre}, {$diferencia}, {$actualizarDisponibilidad}, {$idEstadoCuadre} );";
+					$sql = "CALL consultaCuadreProductoDetalle( '{$accion}', {$idCuadreProducto}, {$idProducto}, {$cantidadApertura}, {$cantidadCierre}, {$diferenciaApertura}, {$diferenciaCierre}, {$actualizarDisponibilidad}, {$idEstadoCuadre}, '{$comentarioApertura}', '{$comentarioCierre}' );";
 
 			 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 			 			$this->siguienteResultado();
 
 		 				$this->respuesta = $row->respuesta;
-		 				$this->mensaje   = $row->mensaje;
+		 				if( $this->respuesta == 'danger' )
+		 					$this->mensaje = $row->mensaje . " (D. Cuadre Producto)";
 			 		}
 			 		else{
 			 			$this->respuesta = 'danger';
-			 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+			 			$this->mensaje   = 'Error al ejecutar la instrucción (D. Cuadre Producto)';
 			 		}
 
 			 		// DETENER SI HAY ERROR
 			 		if( $this->respuesta == 'danger' )
 			 			break;
-					
 				}
 			}
 		}
@@ -804,7 +812,7 @@ _action VARCHAR(20), _idCuadreProducto INT, _fechaCuadre DATE, _comentario TEXT,
 	function accionCuadreProducto( $idUbicacion )
 	{ 		
 		$detalleCuadre = new StdClass();
-		sleep( 1 );
+		//sleep( 1 );
 		$idUbicacion = (int)$idUbicacion;
 		$fechaCuadre = date("Y-m-d");
 

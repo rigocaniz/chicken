@@ -304,6 +304,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	{
 		var diferencias = 0;
 		for (var i = 0; i < $scope.cierreDiario.lstProductos.length; i++) {
+			$scope.cierreDiario.lstProductos[ i ].mostrarAlerta = false;
 			if( $scope.cierreDiario.lstProductos[ i ].disponible < $scope.cierreDiario.lstProductos[ i ].disponibilidad ){
 				
 				if( !$scope.cierreDiario.lstProductos[ i ].mostrarAlerta )
@@ -316,6 +317,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 					diferencias++;
 			}
 		}
+		
 		if( !diferencias )
 			$scope.consultaCuadreProducto();
 		else
