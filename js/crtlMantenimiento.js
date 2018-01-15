@@ -558,7 +558,9 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				'descripcion'   : '',
 				'imagen'        : '',
 				'subirImagen'   : true,
-				'lstPrecios'    : angular.copy( $scope.lstTipoServicio )
+				'tabMenu' : 'precios',
+				'lstPrecios'    : angular.copy( $scope.lstTipoServicio ),
+				'lstReceta'    : []
 			};
 
 			$scope.dialAdminMenu.show();
