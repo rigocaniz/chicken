@@ -26,6 +26,16 @@
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/estilo.css">
     <link rel="stylesheet" href="css/fileinput.css">
+    <!-- jQuery -->
+    <script src="node-app/node_modules/socket.io-client/dist/socket.io.js"></script>
+    <script src="js/libs/jquery-3.2.1.min.js"></script>
+    <script src="js/libs/angular.min.js"></script>
+    <script src="js/libs/bootstrap.min.js"></script>
+    <script src="js/libs/angular-route.min.js"></script>
+    <script src="js/libs/ngstrap.js"></script>
+    <script src="js/libs/dirPagination.js"></script>
+    <script src="js/libs/fileinput.js"></script>
+    <script src="js/libs/moment.min.js"></script>
 </head>
 <body ng-controller="inicioCtrl" ng-keydown="pressKey( $event.keyCode, $event.shiftKey, $event );">
     <div id="divFocus">
@@ -34,7 +44,7 @@
 
     <input type="hidden" id="resuFoni" value="<?= $token; ?>">
     <div class="cargando" id="cargando" ng-show="loading">
-        <div class="loading-bro">
+        <div class="loading-bro ng-cloak">
             <h1>{{ loadingText }}</h1>
             <svg id="load" x="0px" y="0px" viewBox="0 0 150 150">
                 <circle id="loading-inner" cx="75" cy="75" r="60"/>
@@ -131,18 +141,8 @@
             </div>
         </div>
     </div>
-
-    <!-- jQuery -->
-    <script src="node-app/node_modules/socket.io-client/dist/socket.io.js"></script>
-    <script src="js/libs/jquery-3.2.1.min.js"></script>
-    <script src="js/libs/bootstrap.min.js"></script>
-    <script src="js/libs/angular.min.js"></script>
-    <script src="js/libs/angular-route.min.js"></script>
-    <script src="js/libs/ngstrap.js"></script>
-    <script src="js/libs/dirPagination.js"></script>
-    <script src="js/libs/fileinput.js"></script>
-    <script src="js/libs/moment.min.js"></script>
     
+    <!-- CONTROLADORES -->
     <script src="js/app.js"></script>
     <script src="js/rutas.js"></script>
     <script src="js/directivas.js"></script>
