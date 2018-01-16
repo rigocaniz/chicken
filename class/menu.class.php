@@ -31,7 +31,6 @@ class Menu
  	// LST RECETA(S) POR MENU
  	function lstRecetaMenu( $idMenu )
  	{
- 		
  		$idMenu = (int)$idMenu;
  		$lstReceta = array();
 
@@ -60,14 +59,16 @@ class Menu
 
 
  	// ACTUALIZAR LISTA RECETA MENU
- 	function actualizarLstReceta( $accion, $lstRecetaProductos )
+ 	function actualizarLstReceta( $accion, $lstRecetaProductos, $idMenu = NULL )
  	{
  		if( count( $lstRecetaProductos ) ) {
 
  			foreach ( $lstRecetaProductos AS $data ) {
 
+ 				if( is_null( $idMenu ) )
+		 			$idMenu = (int)$data->idMenu;
+				
 				// ASIGNACIÓN DE VARIABLES
-		 		$idMenu      = (int)$data->idMenu;
 		 		$idProducto  = (int)$data->idProducto;
 				$cantidad    = (double)$data->cantidad;
 				$observacion = strlen( $data->observacion )	? $this->con->real_escape_string( $data->observacion )	: "NULL";
@@ -87,7 +88,6 @@ class Menu
 		 			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
 		 		}
  			}
- 			
  		}
  		else{
  			$this->respuesta = 'warning';
@@ -212,6 +212,7 @@ class Menu
 
 		return $menuPrecio;
 	}
+
 
 	// OBTENER TOTAL PRODUCTOS
 	function getTotalPagMenu( $limite = 25, $busqueda )
@@ -380,9 +381,8 @@ class Menu
  		$sql = "SELECT idMenu, precio, idTipoServicio, tipoServicio FROM lstMenuPrecio;";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() ){
+ 			while( $row = $rs->fetch_object() )
  				$lstMenuPrecio[] = $row;
- 			}
  		}
 
  		return $lstMenuPrecio;
@@ -449,10 +449,14 @@ class Menu
 	 				if( ( $accion == 'insert' OR $accion == 'update' ) AND $this->respuesta == 'success' ){
 	 					if( $accion == 'insert' )
 	 						$idMenu = $this->data = (int)$row->id;
+	 					
 	 					// INSERTAR PRECIOS
-	 					$this->consultaMenuPrecio( 'insert', $idMenu, $data->lstPrecios );
-	 				}
+	 					if( count( $data->lstPrecios ) AND $this->respuesta == 'success' )
+	 						$this->consultaMenuPrecio( 'insert', $idMenu, $data->lstPrecios );
 
+	 					if( isset( $data->lstRecetaMenu ) AND  count( $data->lstRecetaMenu ) AND $this->respuesta == 'success' )
+	 						$this->actualizarLstReceta( 'insert', $data->lstRecetaMenu, $idMenu );
+	 				}
 		 		}
 		 		else{
 		 			$this->respuesta = 'danger';

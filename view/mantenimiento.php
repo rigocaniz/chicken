@@ -97,6 +97,7 @@
 							      			</label>
 							      		</div>
 								      	<div class="caption">
+								      		<span class="badge">CÓD: {{ m.codigo }}</span>
 								        	<p class="spread">
 								        		<strong class="una-linea">{{ m.menu | uppercase }}</strong>
 								        	</p>
@@ -104,8 +105,7 @@
 							        		<button type="button" class="btn btn-info btn-sm" ng-click="actualizarMenuCombo( 'menu', m)">
 							        			<span class="glyphicon glyphicon-edit"></span> Editar
 							        		</button>
-
-							        		<button type="button" class="btn btn-warning btn-sm" ng-click="cargarRecetaMenu( m )">
+							        		<button type="button" class="btn btn-default btn-sm" ng-click="cargarRecetaMenu( m )">
 							        			<span class="glyphicon glyphicon-list"></span> Receta
 							        		</button>
 
@@ -160,6 +160,7 @@
 							      			</label>
 							      		</div>
 								      	<div class="caption">
+								      		<span class="badge">CÓD: {{ c.codigo }}</span>
 								      		<p class="spread">
 								        		<strong class="una-linea">{{ c.combo | uppercase }}</strong>
 								        	</p>
@@ -320,17 +321,17 @@
 							    	<li role="presentation" ng-class="{'active': menu.tabMenu=='precios'}" ng-click="menu.tabMenu='precios'">
 							    		<a href="" aria-controls="home" role="tab" data-toggle="tab">PRECIOS</a>
 							    	</li>
-							    	<li role="presentation" ng-class="{'active': menu.tabMenu=='receta'}" ng-click="menu.tabMenu='receta'">
+							    	<li role="presentation" ng-class="{'active': menu.tabMenu=='receta'}" ng-click="menu.tabMenu='receta'" ng-show="accion=='insert'">
 							    		<a href="" aria-controls="profile" role="tab" data-toggle="tab">RECETA</a>
 							    	</li>
 							  	</ul>
 							  	<br>
 							  	<div class="tab-content">
-							    	<div role="tabpanel" class="tab-pane" ng-class="{'active': menu.tabMenu=='precios'}" ng-show="menu.tabMenu=='precios">
+							    	<div role="tabpanel" class="tab-pane" ng-class="{'active': menu.tabMenu=='precios'}">
 										<div class="form-group">
 											<legend class="text-center">
 												<small>
-													<i class="fa fa-money" aria-hidden="true"></i> AGREGAR PRECIOS
+													<i class="fa fa-money" aria-hidden="true"></i> PRECIOS DEL MENÚ
 												</small>
 											</legend>
 											<table class="table table-hover">
@@ -351,20 +352,17 @@
 															{{ lp.tipoServicio }}
 														</td>
 														<td class="text-right">
-															<!--
-															<input type="number" min="0" ng-init="accion== 'update' ? lp.precio : lp.precio=0" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+?$/" step="any" required>
-															-->
 															<input type="number" min="0" max="999" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
 														</td>
 														<td class="text-right">
-															<kbd>Q. {{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>
+															<kbd class="numEfectivo">Q. {{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>
 														</td>
 													</tr>
 												</tbody>
 											</table>
 										</div>
 							    	</div>
-							    	<div role="tabpanel" class="tab-pane" ng-class="{'active': menu.tabMenu=='receta'}" ng-show="menu.tabMenu=='receta">
+							    	<div role="tabpanel" class="tab-pane" ng-class="{'active': menu.tabMenu=='receta'}">
 										<fieldset class="fieldset">
 											<legend class="legend">Ingresar Receta</legend>
 											<div class="form-group">
@@ -387,7 +385,7 @@
 												</div>
 												<div class="col-sm-4 col-md-3">
 													<label class="control-label">Cantidad ({{ prod.medida }}) </label>
-													<input type="number" min="0.01" ng-keydown="$event.keyCode == 13 && agregarIngresoProducto();" ng-model="prod.cantidad" id="cantidad" class="form-control" placeholder="Cantidad" >
+													<input type="number" min="0.01" ng-keydown="$event.keyCode == 13 && agregaReceta();" ng-model="prod.cantidad" id="cantidad" class="form-control" placeholder="Cantidad" >
 												</div>
 											</div>
 											<div class="form-group">
@@ -397,13 +395,65 @@
 												</div>
 												<div class="col-sm-4">
 													<br>
-													<button type="button" class="btn btn-sm btn-warning" ng-click="agregarIngresoProducto();">
+													<button type="button" class="btn btn-sm btn-warning" ng-click="agregaReceta();">
 														<span class="glyphicon glyphicon-plus"></span> Agregar
 													</button>
 													<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 'producto' )">
 														<span class="glyphicon glyphicon-remove"></span> Cancelar
 													</button>
 												</div>
+											</div>
+											<table class="table table-hover" ng-show="menu.lstRecetaMenu.length">
+												<thead>
+													<tr>
+														<th class="text-center col-sm-4">Producto</th>
+														<th class="text-center col-sm-2">Tipo de Producto</th>
+														<th class="text-center col-sm-3">Cantidad</th>
+														<th class="text-center col-sm-1">Medida</th>
+														<th class="text-center col-sm-1">Editar</th>
+														<th class="text-center col-sm-1">Eliminar</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr ng-repeat="(ixReceta, receta) in menu.lstRecetaMenu">
+														<td>
+															{{ receta.producto }}<br>
+															<button type="button" class="btn btn-default btn-xs" ng-click="receta.mostrar=!receta.mostrar">
+																<span class="glyphicon" ng-class="{'glyphicon-eye-open': receta.mostrar, 'glyphicon-eye-close': !receta.mostrar}"></span> {{ receta.mostrar ? 'Ocultar' : 'Mostrar' }} 
+															</button>
+															<div ng-show="receta.mostrar || receta.editar">
+																<div ng-show="receta.editar">
+																	<textarea rows="2" class="form-control" ng-model="receta.observacion"></textarea>
+																</div>
+																<div ng-show="receta.mostrar && !receta.editar">
+																	{{ receta.observacion }}
+																</div>
+															</div>
+														</td>
+														<td class="text-center">
+															{{ receta.tipoProducto }}
+														</td>
+														<td class="text-right">
+															<input type="number" min="0" class="form-control" ng-model="receta.cantidad" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required ng-disabled="!receta.editar">
+														</td>
+														<td class="text-center">
+															{{ receta.medida }}
+														</td>
+														<td class="text-center">
+															<button type="button" class="btn btn-info btn-sm" ng-click="receta.editar=!receta.editar">
+																<span class="glyphicon glyphicon-pencil"></span>
+															</button>
+														</td>
+														<td class="text-center">
+															<button type="button" class="btn btn-danger btn-sm" ng-click="eliminarProductoReceta( ixReceta )">
+																<span class="glyphicon glyphicon-trash"></span>
+															</button>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+											<div class="alert alert-warning text-right" role="alert" ng-show="!menu.lstRecetaMenu.length">
+												<span class="glyphicon glyphicon-info-sign"></span> NO SE HA INGRESADO LA RECETA DEL MENÚ
 											</div>
 										</fieldset>
 							    	</div>
@@ -632,7 +682,7 @@
 						</ul>
 
 						<form class="form-horizontal" role="form" name="formMenu" autocomplete="off">
-							<!-- INGRESAR RECETA -->
+							<!-- INGRESAR MENUS COMBO -->
 							<fieldset class="fieldset">
 								<legend class="legend">Ingresar Menu</legend>
 								<div class="form-group">
@@ -794,38 +844,141 @@
 									<textarea rows="3" class="form-control" placeholder="Ingrese descripción del Combo" ng-model='combo.descripcion'></textarea>
 								</div>
 							</div>
+							<!-- MENU TABS -->
+							<div>
+							  	<ul class="nav nav-tabs" role="tablist">
+							    	<li role="presentation" ng-class="{'active': combo.tabMenu=='precios'}" ng-click="combo.tabMenu='precios'">
+							    		<a href="" aria-controls="home" role="tab" data-toggle="tab">PRECIOS</a>
+							    	</li>
+							    	<li role="presentation" ng-class="{'active': combo.tabMenu=='menus'}" ng-click="combo.tabMenu='menus'" ng-show="accion=='insert'">
+							    		<a href="" aria-controls="profile" role="tab" data-toggle="tab">MENUS</a>
+							    	</li>
+							  	</ul>
+							  	<br>
+							  	<div class="tab-content">
+							    	<div role="tabpanel" class="tab-pane" ng-class="{'active': combo.tabMenu=='precios'}">
+										<legend class="text-center">
+											<small>
+												<i class="fa fa-money" aria-hidden="true"></i> PRECIOS DEL COMBO
+											</small>
+										</legend>
+										<table class="table table-hover">
+											<thead>
+												<tr>
+													<th class="text-center col-sm-2">No.</th>
+													<th class="text-center col-sm-4">Tipo Servicio</th>
+													<th class="text-center col-sm-3">Q. Precio</th>
+													<th class="text-center col-sm-3"></th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-repeat="lp in combo.lstPrecios">
+													<td class="text-center">
+														{{ $index + 1 }}
+													</td>
+													<td>
+														{{ lp.tipoServicio }}
+													</td>
+													<td class="text-right">
+														<input type="number" min="0" max="999" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
+													</td>
+													<td class="text-right">
+														<kbd class="numEfectivo">Q. {{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+							    	</div>
+							    	<div role="tabpanel" class="tab-pane" ng-class="{'active': combo.tabMenu=='menus'}">
+										<fieldset class="fieldset">
+											<legend class="legend">Ingresar Menu</legend>
+											<div class="form-group">
+												<div class="col-sm-7 col-md-5">
+													<label class="control-label">MENU</label>
+													<div ng-show="!menuD.seleccionado">
+
+														<input type="text" id="menu" class="form-control" ng-model="menuD.menu" maxlength="35" placeholder="Ingresar Menu" ng-change="buscarMenu( menuD.menu )" ng-keydown="seleccionKeyElemento( $event.keyCode, 'menu' );">
+														<ul class="list-group ul-list" ng-show="lstBusqueda.length">
+
+														    <li class="list-group-item" ng-class="{'active': $parent.idxElSeleccionado == ixMenu}" ng-repeat="(ixMenu, menu) in lstBusqueda" ng-click="seleccionarElemento( menu, 'menu' )" ng-mouseenter="$parent.idxElSeleccionado = ixMenu">
+														    	<strong>{{ menu.menu }}</strong> 
+														    </li>
+														</ul>
+													</div>
+													<div ng-show="menuD.seleccionado">
+														<input type="text" class="form-control" ng-model="menuD.menu" placeholder="Ingrese Menu" disabled>
+													</div>
+												</div>
+												<div class="col-sm-4 col-md-3">
+													<label class="control-label">CANTIDAD</label>
+													<input type="number" min="0" ng-pattern="/^[0-9]+?$/" step="any" ng-keydown="$event.keyCode == 13 && agregarMenuC();" ng-model="menuD.cantidad" id="cantidad" class="form-control" placeholder="Cantidad" >
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="col-sm-4">
+													<button type="button" class="btn btn-sm btn-warning" ng-click="agregarMenuC();">
+														<span class="glyphicon glyphicon-plus"></span> Agregar
+													</button>
+													<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 'comboDetalle' )">
+														<span class="glyphicon glyphicon-remove"></span> Cancelar
+													</button>
+												</div>
+											</div>
+										</fieldset>
+										<br><br>
+										<legend class="text-center legend-red">
+											<span class="glyphicon glyphicon-file"></span> DETALLE DEL COMBO
+										</legend>
+										<div class="form-group">
+											<table class="table table-hover" ng-show="combo.lstMenusCombo.length">
+												<thead>
+													<tr>
+														<th class="text-center col-sm-1">ID MENU</th>
+														<th class="text-center col-sm-3">MENU</th>
+														<th class="text-center col-sm-2">ESTADO MENU</th>
+														<th class="text-center col-sm-3">Cantidad</th>
+														<th class="text-center col-sm-1">Editar</th>
+														<th class="text-center col-sm-1">Eliminar</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr ng-repeat="(ixMenu, detalleCombo) in combo.lstMenusCombo">
+														<td class="text-center">
+															<img class="img-thumbnail" width="50px" height="50px" ng-src="{{ detalleCombo.imagen }}" alt="Menu">
+															<label class="label label-info">
+																MENU #{{ detalleCombo.idMenu }}
+															</label>
+														</td>
+														<td class="text-center">
+															{{ detalleCombo.menu }}
+														</td>
+														<td class="text-center" ng-class="{'warning': detalleCombo.idEstadoMenu==2}">
+															{{ detalleCombo.estadoMenu }}
+														</td>
+														<td class="text-right">
+															<input type="number" min="0" class="form-control" ng-model="detalleCombo.cantidad" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required ng-disabled="!detalleCombo.editar">
+														</td>
+														<td class="text-center">
+															<button type="button" class="btn btn-info btn-sm" ng-click="detalleCombo.editar=!detalleCombo.editar">
+																<span class="glyphicon glyphicon-pencil"></span>
+															</button>
+														</td>
+														<td class="text-center">
+															<button type="button" class="btn btn-danger btn-sm" ng-click="eliminarMenuCombo( ixMenu )">
+																<span class="glyphicon glyphicon-trash"></span>
+															</button>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+											<div class="alert alert-warning text-right" role="alert" ng-show="!combo.lstMenusCombo.length">
+												<span class="glyphicon glyphicon-info-sign"></span> NO SE HA INGRESADO EL DETALLE DEL COMBO
+											</div>
+										</div>
+							    	</div>
+							    </div>
+							</div>
 							<div class="form-group">
-								<legend class="text-center">
-									<small>
-										<i class="fa fa-money" aria-hidden="true"></i> AGREGAR PRECIOS
-									</small>
-								</legend>
-								<table class="table table-hover">
-									<thead>
-										<tr>
-											<th class="text-center col-sm-2">No.</th>
-											<th class="text-center col-sm-4">Tipo Servicio</th>
-											<th class="text-center col-sm-3">Q. Precio</th>
-											<th class="text-center col-sm-3"></th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-repeat="lp in combo.lstPrecios">
-											<td class="text-center">
-												{{ $index + 1 }}
-											</td>
-											<td>
-												{{ lp.tipoServicio }}
-											</td>
-											<td class="text-right">
-												<input type="number" min="0" max="999" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
-											</td>
-											<td class="text-right">
-												<kbd>Q. {{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>
-											</td>
-										</tr>
-									</tbody>
-								</table>
 							</div>
 						</form>
 					</fieldset>

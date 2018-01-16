@@ -24,12 +24,10 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		if ( $scope.$parent.loading )
 			return false;
 
-		
-		if( key == 117 )
-		{
+		if( key == 117 ) {
 			if( $scope.modalOpen( 'dialAdminCombo' ) )
 				$scope.consultaCombo();
-			
+
 			else if( $scope.modalOpen( 'dialDetalleCombo' ) )
 				$scope.actualizarLstDetalleCombo();
 			
@@ -67,7 +65,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 
 	$scope.$on('cargarLista', function( event, data ){
-		console.log( ":::", event, ":::", data );
 		if( data == 'menu' )
 			$scope.verListaMenu();
 		else if( data == 'combo' )
@@ -99,8 +96,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	};
 
 	// ACTUALIZAR LST RECETA
-	$scope.actualizarLstReceta = function()
-	{
+	$scope.actualizarLstReceta = function() {
 		var objMenu = $scope.objMenu;
 
 		if( !(objMenu.lstRecetaMenu && objMenu.lstRecetaMenu.length > 0) )
@@ -150,8 +146,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	// BUSCAR MENUS
 	$scope.lstBusqueda = [];
 	$scope.buscarMenu = function( nombreMenu ){
-		if( nombreMenu.length && !$scope.menuD.seleccionado )
-		{
+		if( nombreMenu.length && !$scope.menuD.seleccionado ) {
 			$http.post('consultas.php',{opcion: 'buscarMenu', nombreMenu: nombreMenu})
 			.success(function(data){
 				console.log('buscarMenu::: ',data);
@@ -163,15 +158,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	};
 
 
-	$scope.menuD = {
-		idCombo      : null,
-		idMenu       : null,
-		menu         : '',
-		cantidad     : null,
-		seleccionado : false
-	};
-	$scope.agregarMenuDetalleCombo = function()
-	{
+	$scope.agregarMenuDetalleCombo = function(){
 		var menuD = $scope.menuD;
 
 		if( !(menuD.idMenu) )
@@ -202,10 +189,8 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	};
 
 	// ACTUALIZAR LST RECETA
-	$scope.actualizarLstDetalleCombo = function()
-	{
+	$scope.actualizarLstDetalleCombo = function() {
 		var objCombo = $scope.objCombo;
-
 		console.log( objCombo );
 
 		if( !(objCombo.lstDetalleCombo && objCombo.lstDetalleCombo.length > 0) )
@@ -229,8 +214,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		}
 	};
 
-	$scope.eliminarDetalleCombo = function( idCombo, idMenu )
-	{
+	$scope.eliminarDetalleCombo = function( idCombo, idMenu ){
 		$http.post('consultas.php',{
 			opcion : 'consultaComboDetalle',
 			accion : 'delete',
@@ -274,9 +258,8 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 	// CARGAR RECETA MENU
 	$scope.objMenu = {};
-	$scope.cargarRecetaMenu = function( menu )
-	{
-		$scope.objMenu = menu;
+	$scope.cargarRecetaMenu = function( menu ) {
+		$scope.objMenu = angular.copy( menu );
 		if( $scope.objMenu.idMenu > 0 ){
 			$scope.lstRecetaMenu( $scope.objMenu.idMenu, true );
 		}
@@ -284,8 +267,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	
 
 	// CONSULTAR LISTA RECETA MENU
-	$scope.lstRecetaMenu = function( idMenu, abrirModal )
-	{
+	$scope.lstRecetaMenu = function( idMenu, abrirModal ) {
 		$http.post('consultas.php',{opcion: 'lstRecetaMenu', idMenu: idMenu})
 		.success(function(data){
 			$scope.objMenu.lstRecetaMenu = data;
@@ -294,18 +276,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		});
 	};
 
-	
-	$scope.prod = {
-		idMenu         : null,
-		idProducto     : null,
-		nombreProducto : '',
-		medida         : '',
-		cantidad       : null,
-		observacion    : '',
-		seleccionado   : false
-	};
-	$scope.agregarIngresoProducto = function()
-	{
+	$scope.agregarIngresoProducto = function() {
 		var prod = $scope.prod;
 
 		if( !(prod.idProducto && prod.idProducto > 0) )
@@ -374,8 +345,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 
 	// SELECCIONAR PRODUCTO
-	$scope.seleccionarElemento = function( valores, elemento )
-	{
+	$scope.seleccionarElemento = function( valores, elemento ) {
 		console.log( valores, ' ::: ', elemento );
 		if( elemento == 'producto' )
 		{
@@ -388,6 +358,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 					idProducto   : valores.idProducto,
 					producto     : valores.producto,
 					medida       : valores.medida,
+					tipoProducto : valores.tipoProducto,
 					observacion  : '',
 					cantidad     : null,
 					seleccionado : true
@@ -395,7 +366,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 				$('#cantidad').focus();
 			}
-
 		}
 		else if( elemento == 'menu' )
 		{
@@ -407,13 +377,13 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 					idCombo      : $scope.objCombo.idCombo,
 					idMenu       : valores.idMenu,
 					menu         : valores.menu,
+					estadoMenu   : valores.estadoMenu,
 					cantidad     : null,
 					seleccionado : true
 				};
 
 				$('#cantidad').focus();
 			}
-
 		}
 		
 		$scope.lstBusqueda = [];
@@ -436,7 +406,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	};
 
 	$scope.realizarBusqueda = function(){
-
 		if( $scope.menuTab == 'menu' )
 			$scope.verListaMenu();
 
@@ -526,104 +495,51 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	$scope.actualizarMenuCombo = function( tipo, data )
 	{
 		console.log( 'tipo: ', tipo, ' data: ', data );
-
 		$scope.accion = 'update';
 		if( tipo == 'menu' ){
 			$scope.menu = angular.copy( data );
+			$scope.menu.tabMenu = 'precios';
 			$scope.cargarLstPreciosMenu( $scope.menu.idMenu );
 			$timeout(function(){
 				$scope.dialAdminMenu.show();
 			});
 		}
-
 		else if( tipo == 'combo' ){
 			$scope.combo = angular.copy( data );
+			$scope.combo.tabMenu = 'precios';
 			$scope.cargarLstPreciosCombo( $scope.combo.idCombo );
 			$timeout(function(){
 				$scope.dialAdminCombo.show();
 			});
 		}
 	};
-
-	$scope.agregarMenuCombo = function( tipo ){
-		
-		$scope.accion = 'insert';
-		if( tipo == 'menu' ){
-			$scope.menu = {
-				'idEstadoMenu'  : 1,
-				'menu'          : '',
-				'idDestinoMenu' : 1,
-				'idTipoMenu'    : 1,
-				'tiempoAlerta'  : 0,
-				'descripcion'   : '',
-				'imagen'        : '',
-				'subirImagen'   : true,
-				'tabMenu' : 'precios',
-				'lstPrecios'    : angular.copy( $scope.lstTipoServicio ),
-				'lstReceta'    : []
-			};
-
-			$scope.dialAdminMenu.show();
-			$timeout(function(){
-				$('#nombreMenu').focus();
-			}, 175);
-		}
-
-		else if( tipo == 'combo' ){
-			$scope.combo = {
-				'idEstadoMenu' : 1,
-				'combo'        : '',
-				'descripcion'  : '',
-				'subirImagen'  : true,
-				'imagen'       : '',
-				'lstPrecios'   : angular.copy( $scope.lstTipoServicio )
-			}
-			$scope.dialAdminCombo.show();
-			$timeout(function(){
-				$('#nombreCombo').focus();
-			}, 175);
-		}
-
-	};
 	
-	// AGREGAR PRECIOS SEGÚN TIPO SERVICIO
-	$scope.precios = {
-		idTipoServicio : null,
-		precio         : 0
-	};
 
-	$scope.agregaPrecio = function( tipo ){
-		var precio = $scope.precios;
-		var error = false;
+	$scope.agregaReceta = function() {
+		var prod = $scope.prod, encontrado = false;
 
-		if( tipo == 'menu' )
-		{
+		if( !(prod.cantidad && prod.cantidad > 0) )
+			alertify.notify( 'La cantidad ingresada debe ser mayor a 0', 'danger', 5 );
 
-			if( !(precio.idTipoServicio && precio.idTipoServicio > 0 ) )
-			{
-				alertify.notify( 'Seleccione el tipo de servicio', 'warning', 5 );
+		else{
+			for (var i = 0; i < $scope.menu.lstRecetaMenu.length; i++) {
+				if( $scope.menu.lstRecetaMenu[ i ].idProducto == $scope.prod.idProducto ){
+					alertify.notify( 'El Producto ya se encuentra agregado', 'info', 5 );
+					encontrado = true;
+					break;
+				}
 			}
-			else if( !(precio.precio && precio.precio > 0 ) ){
-				alertify.notify( 'El precio debe ser mayor a 0', 'warning', 5 );
-			}
-			else{
-				$scope.menu.lstPrecios.push({
-					idTipoServicio : precio.idTipoServicio,
-					precio         : parseFloat( precio.precio ),
-					editar         : false
-				});
-				alertify.notify( 'Agregado', 'success', 4 );
-
-				$scope.precios = {
-					idTipoServicio : null,
-					precio         : 0
-				};
-			}
-
 		}
-		
+
+		if( !encontrado ){
+			$scope.menu.lstRecetaMenu.push( $scope.prod );
+			$scope.resetValores( 'producto' );
+		}
 	};
 
+	$scope.eliminarProductoReceta = function( index ){
+		$scope.menu.lstRecetaMenu.splice( index, 1 );
+	};
 
 	// REGISTRAR MENU
 	$scope.consultaMenu = function(){
@@ -705,19 +621,23 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				'descripcion'   : '',
 				'imagen'        : '',
 				'subirImagen'   : true,
-				'lstPrecios'    : []
+				'tabMenu'       : 'precios',
+				'lstPrecios'    : angular.copy( $scope.lstTipoServicio ),
+				'lstRecetaMenu' : []
 			};
 		}
 		else if( accion == 'combo' )
 		{
 			$scope.combo = {
-				'idEstadoMenu' : 1,
-				'combo'        : '',
-				'descripcion'  : '',
-				'subirImagen'  : true,
-				'imagen'       : '',
+				'idEstadoMenu'   : 1,
+				'combo'          : '',
+				'descripcion'    : '',
+				'subirImagen'    : true,
+				'imagen'         : '',
+				'tabMenu'        : 'precios',
+				'lstPrecios'     : angular.copy( $scope.lstTipoServicio ),
+				'lstMenusCombo' : []
 			}
-
 		}
 		else if( accion == 'producto' )
 		{
@@ -731,13 +651,10 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				observacion    : '',
 				seleccionado   : false
 			};
-
 			$timeout(function(){
 				$( '#producto' ).focus();
 			}, 100);
-
 		}
-
 		else if( accion == 'comboDetalle' )
 		{
 			$scope.menuD = {
@@ -747,12 +664,10 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				cantidad     : null,
 				seleccionado : false
 			};
-
 			$timeout(function(){
 				$( '#menu' ).focus();
 			}, 100);
 		}
-
 		else if( accion == 'receta' )
 		{
 			$scope.objMenu     = {};
@@ -761,6 +676,49 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		}
 	};
 
+	$scope.agregarMenuCombo = function( tipo ){
+		$scope.accion = 'insert';
+		if( tipo == 'menu' ){
+			$scope.resetValores( 'producto' );
+			$scope.resetValores( tipo );
+			$scope.dialAdminMenu.show();
+			$timeout(function(){
+				$('#nombreMenu').focus();
+			}, 175);
+		}
+
+		else if( tipo == 'combo' ){
+			$scope.resetValores( 'comboDetalle' );
+			$scope.resetValores( tipo );
+			$scope.dialAdminCombo.show();
+			$timeout(function(){
+				$('#nombreCombo').focus();
+			}, 175);
+		}
+	};
+
+
+	$scope.agregarMenuC = function(){
+		var menuD = $scope.menuD;
+
+		if( !(menuD.idMenu) )
+			alertify.notify( 'Ingrese una cantidad entera', 'danger', 5 );
+		
+		else if( !(menuD.idMenu > 0) )
+			alertify.notify( 'El código del Menu no es válido', 'danger', 5 );
+		
+		else if( !(menuD.cantidad && menuD.cantidad > 0) )
+			alertify.notify( 'La cantidad ingresada debe ser mayor a 0', 'danger', 5 );
+		
+		else{
+			$scope.combo.lstMenusCombo.push( $scope.menuD );
+			$scope.resetValores( 'comboDetalle' );
+		}
+	};
+
+	$scope.eliminarMenuCombo = function( index ){
+		$scope.combo.lstMenusCombo.splice( index, 1 );
+	};
 
 	// REGISTRAR COMBO
 	$scope.consultaCombo = function(){
@@ -814,7 +772,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 					$scope.resetValores( 'combo' );
 				}
 			});
-			
 		}
 	};
 

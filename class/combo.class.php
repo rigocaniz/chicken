@@ -487,7 +487,11 @@ class Combo
 	 					if( $accion == 'insert' )
 	 						$idCombo = $this->data = (int)$row->id;
 	 					// INSERTAR PRECIOS
-	 					$this->consultaComboPrecio( 'insert', $idCombo, $data->lstPrecios );
+	 					if( count( $data->lstPrecios ) AND $this->respuesta == 'success' )
+	 						$this->consultaComboPrecio( 'insert', $idCombo, $data->lstPrecios );
+
+	 					if( isset( $data->lstMenusCombo ) AND count( $data->lstPrecios ) AND $this->respuesta == 'success' )
+	 						$this->actualizarLstDetalleCombo( 'insert', $data->lstMenusCombo, $idCombo );
 	 				}
 		 		}
 		 		else{
@@ -514,14 +518,15 @@ class Combo
 
 
  	// ACTUALIZAR LISTA DETALLE COMBO
-	function actualizarLstDetalleCombo( $accion, $lstDetalleCombo )
+	function actualizarLstDetalleCombo( $accion, $lstDetalleCombo, $idCombo = NULL )
  	{
  		if( count( $lstDetalleCombo ) ) {
-
  			foreach ( $lstDetalleCombo AS $data ) {
 
 				// ASIGNACIÓN DE VARIABLES
-				$idCombo     = (int)$data->idCombo;
+				if( is_null( $idCombo ) )
+					$idCombo = (int)$data->idCombo;
+
 				$idMenu      = (int)$data->idMenu;
 				$cantidad    = (double)$data->cantidad;
 
@@ -540,7 +545,6 @@ class Combo
 		 			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
 		 		}
  			}
- 			
  		}
  		else{
  			$this->respuesta = 'warning';
@@ -554,7 +558,6 @@ class Combo
 	// GUARDAR // ACTUALIZAR => COMBO PRECIO
 	function consultaComboPrecio( $accion, $idCombo, $lstPrecios )
  	{
- 		
  		foreach ( $lstPrecios AS $ixPrecio => $precio ) {
 
 	 		$validar = new Validar();
