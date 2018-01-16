@@ -36,6 +36,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	$scope.dialOrdenBusqueda    = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialOrdenCancelar    = $modal({scope: $scope,template:'dial.orden.cancelar.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialCancelarDetalle  = $modal({scope: $scope,template:'dial.orden.cancelar-parcial.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialEditarDetalle    = $modal({scope: $scope,template:'dial.orden.editar.html', show: false, backdrop:false, keyboard: true });
 
 	($scope.init = function () {
 		// CONSULTA TIPO DE SERVICIOS
@@ -754,7 +755,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 					data.lst[ ix ].estados = lstEstados;
 				}
 
-				console.log( data.lst );
+				console.log( data.lst, data.total );
 				$scope.infoOrden.lstOrden = data.lst;
 				$scope.infoOrden.total    = data.total;
 			}
@@ -768,6 +769,33 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		$scope.itemDetalle = itemDetalle;
 		$scope.comentario  = "";
 		$scope.dialCancelarDetalle.show();
+	};
+
+	// EDITAR ORDEN
+	$scope.accionDetalleOrden = 'tipoServicio';
+	$scope.editarDetalle = function ( item ) {
+
+		$scope.itemDetalle = {
+			descripcion     : item.descripcion,
+			imagen          : item.imagen,
+			cantidad        : item.cantidad,
+			lstMenus        : angular.copy( item.lstMenus ),
+			lstDetalle      : angular.copy( item.lstDetalle ),
+			idTipoServicio  : item.idTipoServicio,
+			lstTipoServicio : angular.copy( $scope.lstTipoServicio )
+		};
+
+		for (var ixT = 0; ixT < $scope.itemDetalle.lstTipoServicio.length; ixT++) {
+			
+			$scope.itemDetalle.lstTipoServicio[ ixT ].cantidad = 0;
+
+			if ( item.idTipoServicio == $scope.itemDetalle.lstTipoServicio[ ixT ].idTipoServicio )
+				$scope.itemDetalle.lstTipoServicio[ ixT ].cantidad = item.cantidad;
+		}
+		
+		console.log( $scope.itemDetalle );
+
+		$scope.dialEditarDetalle.show();
 	};
 
 
@@ -957,7 +985,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		if ( key == 8 && !$("#buscarTicket").is(":focus") ) // {BACK}
 			$scope.auxKeyTicket( 'back', 0, 'buscarTicket' );
 
-		if ( key == 117 ) // {F6}
+		if ( key == 13 || key == 117 ) // {F6}
 			$scope.buscarOrdenTicket();
 
 		// F10: FACTURAR ORDEN SELECCIONADA

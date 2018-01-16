@@ -145,6 +145,7 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
+                                    <th width="35px"></th>
                                     <th></th>
                                     <th>Cantidad</th>
                                     <th>Orden</th>
@@ -154,7 +155,14 @@
                             </thead>
                             <tbody>
                                 <tr ng-repeat="item in infoOrden.lstOrden track by $index">
-                                    <td><img ng-src="{{item.imagen}}" style="height:40px"></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-default" ng-click="editarDetalle( item )" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <img ng-src="{{item.imagen}}" style="height:40px">
+                                    </td>
                                     <td>{{item.cantidad}}</td>
                                     <td>
                                         <button type="button" class="label-border" ng-click="item.showTipoServicio=!item.showTipoServicio"
@@ -176,7 +184,7 @@
                                     </td>
                                     <td>{{item.subTotal | number:2}}</td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarDetalle( item.lstDetalle )">
+                                        <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarDetalle( item.lstDetalle )" title="Cancelar" data-toggle="tooltip" data-placement="top" tooltip>
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
                                     </td>
@@ -416,7 +424,7 @@
                                     <span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==2"></span>
                                 </button>
                                 <button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=3,'btn-info':idTipoServicio==3}" 
-                                    ng-click="$parent.idTipoServicio=3" ng-disabled="ordenActual.noTicket>0" style="margin-right:4px;margin-top:5px">
+                                    ng-click="$parent.idTipoServicio=3" style="margin-right:4px;margin-top:5px">
                                     <b>A <u>D</u>omicilio</b>
                                     <span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==3"></span>
                                 </button>
@@ -454,7 +462,7 @@
 		                			</button>
 		                		</span>
                         		<input type="text" class="form-control input-lg" ng-model="$parent.codigoRapido" id="codigoRapido"
-                                    placeholder="Código Rápido | Menú | Combo">
+                                    placeholder="Código Rápido" numbers-only autocomplete="off">
 								<span class="input-group-btn">
 		                            <button type="button" class="btn btn-lg btn-primary" ng-click="consultaMenuPorCodigo()">
 		                                <span class="glyphicon glyphicon-search"></span>
@@ -724,6 +732,85 @@
                     <button type="button" class="btn btn-default" ng-click="$hide()">
                         <span class="glyphicon glyphicon-log-out"></span>
                         <b>Salir sin Cancelar</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script> 
+
+
+<!-- CANCELAR DETALLE ORDEN -->
+<script type="text/ng-template" id="dial.orden.editar.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-primary">
+                <div class="modal-header panel-heading">
+                    <button type="button" class="close" ng-click="$hide()">&times;</button>
+                    <span class="glyphicon glyphicon-pencil"></span>
+                    Modificar Detalle Orden
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-4 text-right">
+                            <img ng-src="{{itemDetalle.imagen}}" height="80px">
+                        </div>
+                        <div class="col-sm-8">
+                            <h2>{{itemDetalle.descripcion}}</h2>
+                            <h3>Cantidad: <kbd><b>{{itemDetalle.cantidad}}</b></kbd></h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <button type="button" class="btn" ng-class="{'btn-primary':accionDetalleOrden=='tipoServicio', 'btn-default':accionDetalleOrden!='tipoServicio'}" ng-click="accionDetalleOrden='tipoServicio'">
+                                <span class="glyphicon glyphicon-retweet"></span>
+                                <b>Cambiar Tipo Servicio</b>
+                            </button>
+                            <button type="button" class="btn" ng-class="{'btn-primary':accionDetalleOrden=='reasignar', 'btn-default':accionDetalleOrden!='reasignar'}" ng-click="accionDetalleOrden='reasignar'">
+                                <span class="glyphicon glyphicon-share-alt"></span>
+                                <b>Re-asignar a Otra Orden</b>
+                            </button>
+                        </div>
+                        <hr class="col-sm-10 col-sm-offset-1">
+                    </div>
+
+                    <!-- SI ES CAMBIO DE TIPO DE SERVICIO -->
+                    <div class="row"  ng-show="accionDetalleOrden=='tipoServicio'">
+                        <div class="col-sm-10 col-sm-offset-1">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo de Servicio</th>
+                                        <th>Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="tipo in itemDetalle.lstTipoServicio">
+                                        <td>{{tipo.tipoServicio}}</td>
+                                        <td>
+                                            <input type="number" class="form-control" ng-model="tipo.cantidad">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SI ES RE-ASIGNACION -->
+                    <div class="row"  ng-show="accionDetalleOrden=='reasignar'">
+                        <div class="col-sm-12 text-center">
+                            <h4>Reasignación</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" ng-click="editarOrdenParcial()">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        <b>Confirmar</b>
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="$hide()">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        <b>Salir sin Modificar</b>
                     </button>
                 </div>
             </div>
