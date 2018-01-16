@@ -936,12 +936,12 @@ class Producto
 				    medida,
 				    idTipoProducto,
 				    tipoProducto,
+				    idUbicacion,
 				    perecedero,
 				    cantidadMinima,
 				    cantidadMaxima,
 				    disponibilidad,
 				    importante,
-				    idUbicacion,
 				    ubicacion,
 				    usuarioProducto,
 				    DATE_FORMAT( fechaProducto, '%d/%m/%Y %h:%i %p' ) AS fechaProducto
@@ -1047,6 +1047,7 @@ class Producto
 					 	'medida'          => $row->medida,
 					 	'idTipoProducto'  => (int)$row->idTipoProducto,
 					 	'tipoProducto'    => $row->tipoProducto,
+					 	'idUbicacion'     => (int)$row->idUbicacion,
 					 	'perecedero'      => $row->perecedero,
 					 	'esPerecedero'    => (int)$row->perecedero ? 'SI' : 'NO',
 					 	'cantidadMinima'  => (double)$row->cantidadMinima,
@@ -1071,7 +1072,6 @@ class Producto
 
 				if( $alertaStock == 3 )
 					$lstProductos[ $ixSolicitud ]['totalStockAlto'] ++;
-
 
 				$lstProductos[ $ixSolicitud ]['totalProductos'] ++;
 			}
