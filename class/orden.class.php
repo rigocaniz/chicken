@@ -598,42 +598,41 @@ class Orden
 						'idDetalleOrdenCombo'       => $row->idDetalleOrdenCombo,
 						'idEstadoDetalleOrdenCombo' => $row->idEstadoDetalleOrdenCombo,
 					);
+			endwhile;
 
-
-				// RECORRE MENUS AGREGADOS
-				foreach ( $lst as $ix => $menu )
+			// RECORRE MENUS AGREGADOS
+			foreach ( $lst as $ix => $menu )
+			{
+				$arrCombo = array();
+				$count    = 0;
+				// RECORRE DETALLE PARA CONTAR NUMERO REAL DE MENUS Y COMBOS
+				foreach ( $menu->lstDetalle as $ixd => $detalle )
 				{
-					$arrCombo = array();
-					$count    = 0;
-					// RECORRE DETALLE PARA CONTAR NUMERO REAL DE MENUS Y COMBOS
-					foreach ( $menu->lstDetalle as $ixd => $detalle )
+					if ( $menu->esCombo )
 					{
-						if ( $menu->esCombo )
-						{
-							$ixC = -1;
-							foreach ( $arrCombo as $ic => $combo ) {
-								if ( $combo == $detalle->idDetalleOrdenCombo ) {
-									$ixC = $ic;
-									break;
-								}
+						$ixC = -1;
+						foreach ( $arrCombo as $ic => $combo ) {
+							if ( $combo == $detalle->idDetalleOrdenCombo ) {
+								$ixC = $ic;
+								break;
 							}
-
-							// SI NO ESTA EL ID DETALLE ORDEN COMBO
-							if ( $ixC == -1 )
-								$arrCombo[] = $detalle->idDetalleOrdenCombo;
 						}
-						else
-							$count++;
-					}
 
-					$lst[ $ix ]->cantidad = $menu->esCombo ? count( $arrCombo ) : $count;
-					$lst[ $ix ]->subTotal = ( $lst[ $ix ]->cantidad * $menu->precio );
+						// SI NO ESTA EL ID DETALLE ORDEN COMBO
+						if ( $ixC == -1 )
+							$arrCombo[] = $detalle->idDetalleOrdenCombo;
+					}
+					else
+						$count++;
 				}
 
-
+				$lst[ $ix ]->cantidad = $menu->esCombo ? count( $arrCombo ) : $count;
+				$lst[ $ix ]->subTotal = ( $lst[ $ix ]->cantidad * $menu->precio );
+				
 				// SUMA EL TOTAL DE LA ORDEN
-				$total += (double)$precioMenu;
-			endwhile;
+				$total += (double)$lst[ $ix ]->subTotal;
+			}
+
  		}
 
  		return array(
