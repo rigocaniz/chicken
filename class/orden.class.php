@@ -1022,10 +1022,10 @@ class Orden
  	}
 
  	// CAMBIA TIPO SERVICIO ORDEN
- 	public function cambiarServicio( $idOrdenCliente, $lstDetalle, $idTipoServicio )
+ 	public function cambiarServicio( $idOrdenCliente, $lstDetalle )
  	{
 
- 		if ( count( $lstDetalle ) AND $idOrdenCliente > 0 AND $idTipoServicio > 0 ):
+ 		if ( count( $lstDetalle ) AND $idOrdenCliente > 0 ):
  			$validar = new Validar();
 
 		 	$this->con->query( "START TRANSACTION" );
@@ -1034,6 +1034,7 @@ class Orden
 
 				$item->idDetalleOrdenCombo = (int)$item->idDetalleOrdenCombo;
 				$item->idDetalleOrdenMenu  = (int)$item->idDetalleOrdenMenu;
+				$idTipoServicio            = (int)$item->idTipoServicio;
 
 				if ( $item->idDetalleOrdenCombo > 0 )
 					$sql = "CALL consultaDetalleOrdenCombo( 'tipoServicio', {$item->idDetalleOrdenCombo}, NULL, NULL, NULL, NULL, {$idTipoServicio}, NULL, NULL, NULL, NULL );";

@@ -574,7 +574,7 @@ switch ( $data->opcion )
 	// CAMBIA SERVICIO DE ORDEN
 	case 'cambiarServicio':
 		$orden = new Orden();
-		echo json_encode( $orden->cambiarServicio( $data->idOrdenCliente, $data->lstDetalle, $data->idTipoServicio ) );
+		echo json_encode( $orden->cambiarServicio( $data->idOrdenCliente, $data->lstDetalle ) );
 		break;
 
 	// CAMBIA ESTADO DE ORDENES

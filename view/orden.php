@@ -165,18 +165,10 @@
                                     </td>
                                     <td>{{item.cantidad}}</td>
                                     <td>
-                                        <button type="button" class="label-border" ng-click="item.showTipoServicio=!item.showTipoServicio"
-                                        ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}">
+                                        <button type="button" class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}">
                                             <span ng-show="item.idTipoServicio==2" title="Restaurante" data-toggle="tooltip" data-placement="top" tooltip>R</span>
                                             <span ng-show="item.idTipoServicio==3" title="A Domicilio" data-toggle="tooltip" data-placement="top" tooltip>D</span>
                                             <span ng-show="item.idTipoServicio==1" title="Para Llevar" data-toggle="tooltip" data-placement="top" tooltip>L</span>
-                                            <span class="lst_servicio" ng-show="item.showTipoServicio">
-                                                <ul>
-                                                    <li class="list-group-item" ng-hide="item.idTipoServicio==2" ng-click="cambiarServicio( infoOrden.idOrdenCliente, item.lstDetalle, 2 )">Restaurante</li>
-                                                    <li class="list-group-item" ng-hide="item.idTipoServicio==3" ng-click="cambiarServicio( infoOrden.idOrdenCliente, item.lstDetalle, 3 )">A Domicilio</li>
-                                                    <li class="list-group-item" ng-hide="item.idTipoServicio==1" ng-click="cambiarServicio( infoOrden.idOrdenCliente, item.lstDetalle, 1 )">Para Llevar</li>
-                                                </ul>
-                                            </span>
                                         </button>
                                         <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
                                         <span>{{item.descripcion}}</span>
@@ -762,11 +754,11 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-12 text-center">
-                            <button type="button" class="btn" ng-class="{'btn-primary':accionDetalleOrden=='tipoServicio', 'btn-default':accionDetalleOrden!='tipoServicio'}" ng-click="accionDetalleOrden='tipoServicio'">
+                            <button type="button" class="btn" ng-class="{'btn-primary':accionDetalleOrden=='tipoServicio', 'btn-default':accionDetalleOrden!='tipoServicio'}" ng-click="$parent.accionDetalleOrden='tipoServicio'">
                                 <span class="glyphicon glyphicon-retweet"></span>
                                 <b>Cambiar Tipo Servicio</b>
                             </button>
-                            <button type="button" class="btn" ng-class="{'btn-primary':accionDetalleOrden=='reasignar', 'btn-default':accionDetalleOrden!='reasignar'}" ng-click="accionDetalleOrden='reasignar'">
+                            <button type="button" class="btn" ng-class="{'btn-primary':accionDetalleOrden=='reasignar', 'btn-default':accionDetalleOrden!='reasignar'}" ng-click="$parent.accionDetalleOrden='reasignar'">
                                 <span class="glyphicon glyphicon-share-alt"></span>
                                 <b>Re-asignar a Otra Orden</b>
                             </button>
@@ -788,7 +780,7 @@
                                     <tr ng-repeat="tipo in itemDetalle.lstTipoServicio">
                                         <td>{{tipo.tipoServicio}}</td>
                                         <td>
-                                            <input type="number" class="form-control" ng-model="tipo.cantidad">
+                                            <input type="number" class="form-control" ng-model="tipo.cantidad" id="input_ts_{{$index}}" focus-enter>
                                         </td>
                                     </tr>
                                 </tbody>

@@ -645,34 +645,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		}
 	};
 
-	// => CAMBIAR SERVICIO DE ORDEN
-	$scope.cambiarServicio = function ( idOrdenCliente, lstDetalle, idTipoServicio ) {
-		console.log( idOrdenCliente, lstDetalle, idTipoServicio );
-		if ( $scope.$parent.loading )
-			return false;
-
-		$scope.$parent.loading = true; // cargando...
-
-		// CONSULTA PRECIOS DEL MENU
-		$http.post('consultas.php', { 
-			opcion         : 'cambiarServicio',
-			idOrdenCliente : idOrdenCliente,
-			lstDetalle     : lstDetalle,
-			idTipoServicio : idTipoServicio
-		})
-		.success(function (data) {
-			console.log( data );
-
-			$scope.$parent.loading = false; // cargando...
-
-			if ( data.mensaje != undefined ) {
-				alertify.set('notifier','position', 'top-right');
-				alertify.notify( data.mensaje, data.respuesta, 3 );
-			}
-		});
-	};
-
-
 
 	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% DIALOGO PARA BUSQUEDA DE ORDEN %%%%%%%%%%%%%%%%%%%%%% */
 	$scope.modalBuscar = function () {
@@ -787,7 +759,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 		for (var ixT = 0; ixT < $scope.itemDetalle.lstTipoServicio.length; ixT++) {
 			
-			$scope.itemDetalle.lstTipoServicio[ ixT ].cantidad = 0;
+			$scope.itemDetalle.lstTipoServicio[ ixT ].cantidad = '';
 
 			if ( item.idTipoServicio == $scope.itemDetalle.lstTipoServicio[ ixT ].idTipoServicio )
 				$scope.itemDetalle.lstTipoServicio[ ixT ].cantidad = item.cantidad;
@@ -796,6 +768,86 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		console.log( $scope.itemDetalle );
 
 		$scope.dialEditarDetalle.show();
+
+		$timeout(function () {
+			document.getElementById("input_ts_0") && document.getElementById("input_ts_0").focus();
+		});
+	};
+
+	// GUARDAR MODIFICACION DE DATALLE DE ORDEN
+	$scope.editarOrdenParcial = function () {
+		if ( $scope.$parent.loading )
+			return false;
+
+		var error = false;
+		if ( $scope.accionDetalleOrden == 'tipoServicio' )
+		{
+			var total 	   		= 0,
+				_current 		= null,
+				lstDetalle 		= [],
+				cantidadMenus 	= angular.copy( $scope.itemDetalle.cantidad );
+
+			// RECORRER TIPOS DE SERVICIO
+			for (var ix = 0; ix < $scope.itemDetalle.lstTipoServicio.length; ix++)
+			{
+				_current = $scope.itemDetalle.lstTipoServicio[ ix ];
+				total    += ( _current.cantidad || 0 );
+
+				// EXISTE CANTIDAD Y TIPO DE SERVICIO ES DIFERENTE AL ACTUAL
+				if( _current && _current.cantidad && _current.idTipoServicio != $scope.itemDetalle.idTipoServicio )
+				{
+					for (var im = 1; im <= _current.cantidad; im++)
+					{
+						var index = ( cantidadMenus - im );
+						
+						if ( $scope.itemDetalle.lstMenus[ index ] === undefined )
+							break;
+
+						lstDetalle.push({
+							idDetalleOrdenMenu  : $scope.itemDetalle.lstMenus[ index ].idDetalleOrdenMenu,
+							idDetalleOrdenCombo : $scope.itemDetalle.lstMenus[ index ].idDetalleOrdenCombo,
+							idTipoServicio 		: _current.idTipoServicio
+						});
+					};
+
+					cantidadMenus -= _current.cantidad;
+				}
+			}
+
+			// SI EL TOTAL ES DIFERENTE
+			if ( total != $scope.itemDetalle.cantidad )
+			{
+				alertify.notify('La suma de los Tipos de Servicios debe ser igual a: ' + $scope.itemDetalle.cantidad, 'danger', 5);
+				error = true;
+			}
+
+			// SI NO SE HIZO NINGUNA MODIFICACION
+			else if ( lstDetalle.length === 0 )
+			{
+				alertify.notify('Ningún cambio realizado ', 'info', 5);
+				$scope.dialEditarDetalle.hide();
+			}
+
+			else
+			{
+				$scope.$parent.loading = true; // cargando...
+
+				var datos = {
+					opcion         : 'cambiarServicio',
+					idOrdenCliente : $scope.infoOrden.idOrdenCliente,
+					lstDetalle     : lstDetalle
+				};
+
+				// CONSULTA PRECIOS DEL MENU
+				$http.post('consultas.php', datos )
+				.success(function (data) {
+					$scope.$parent.loading = false; // cargando...
+
+					alertify.notify( ( data.mensaje || data ), ( data.respuesta || 'danger' ), 5 );
+					$scope.dialEditarDetalle.hide();
+				});
+			}
+		}
 	};
 
 

@@ -249,11 +249,11 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-3" ng-show="!lstResultado.length && $parent.busquedaCliente.length>3">
-                                            <a href="#/cliente" class="btn btn-primary" ng-click="dialOrden.hide()">
+                                            <button type="button" class="btn btn-primary" ng-click="newClient()">
                                                 <span class="glyphicon glyphicon-plus"></span>
                                                 Cliente
                                                 <span class="glyphicon glyphicon-user"></span>
-                                            </a>
+                                            </button>
                                         </div>
                                     </div>
                                 	<div class="row" style="margin-top:5px">

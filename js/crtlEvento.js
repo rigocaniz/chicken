@@ -123,18 +123,20 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 			$scope.lstResultado = [];
 			$http.post('consultas.php', { opcion : 'consultarCliente', valor: $scope.busquedaCliente } )
 			.success(function (data) {
-				if ( Array.isArray( data ) && data.length )
+				if ( Array.isArray( data.lstResultados ) && data.lstResultados.length )
 				{
-					for (var ic = 0; ic < data.length; ic++)
+					for (var ic = 0; ic < data.lstResultados.length; ic++)
 					{
-						$scope.lstResultado.push({
-							idCliente : data[ ic ].idCliente,
-							cliente   : $sce.trustAsHtml( '<b>' + data[ ic ].nombre + '</b> (' + data[ ic ].nit + ') » ' + data[ ic ].direccion ),
-							active    : false
-						});
+						if ( data.lstResultados[ ic ].idCliente > 0 )
+							$scope.lstResultado.push({
+								idCliente : data.lstResultados[ ic ].idCliente,
+								cliente   : $sce.trustAsHtml( '<b>' + data.lstResultados[ ic ].nombre + '</b> (' + data.lstResultados[ ic ].nit + ') » ' + data.lstResultados[ ic ].direccion ),
+								active    : false
+							});
 					}
 
-					$scope.lstResultado[ 0 ].active = true;
+					if ( $scope.lstResultado && $scope.lstResultado.length )
+						$scope.lstResultado[ 0 ].active = true;
 				}
 			});
 		}
@@ -391,6 +393,13 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 				}
 			});
 		}
+	};
+
+	$scope.newClient = function () {
+		$scope.dialEvento.hide();
+		$timeout(function () {
+			window.location.href = "#/cliente";
+		});
 	};
 
 	$scope.$watch('busquedaCliente', function (_new) {
