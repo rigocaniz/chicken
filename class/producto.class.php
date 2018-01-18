@@ -29,23 +29,77 @@ class Producto
 
  	function cargarFechaCierre( $fechaCierre )
  	{
- 		$fechaCierreP = array(
- 				'encontrado' => 0
- 			);
+ 		$fechaCuadreP = new StdClass();
+ 		$fechaCuadreP->ubicacionSeleccionada = 1;
+ 		$fechaCuadreP->lstUbicacion          = [];
 
  		$sql = "SELECT 
-				    idCierreDiario,
-				     DATE_FORMAT(fechaCierre, '%d/%m/%Y' ) AS fechaCierre,
-				    comentario,
-				    usuario,
-				    DATE_FORMAT(fechaRegistroCierre, '%d/%m/%Y %h:%i %p') AS fechaHora,
-				    todos
+					idCuadreProducto,
+					fechaCuadre,
+					comentario,
+					usuario,
+					fechaRegistroCuadre,
+					todos,
+					idUbicacion,
+					ubicacion,
+					idEstadoCuadre,
+					estadoCuadre
 				FROM
-				    vCierreDiario
-				WHERE
-				    fechaCierre = '{$fechaCierre}';";
+					vCuadreproducto WHERE fechaCuadre = '{$fechaCierre}';";
  		
- 		if( $rs = $this->con->query( $sql ) AND $rs->num_rows > 0 AND $row = $rs->fetch_object() ){
+ 		if( $rs = $this->con->query( $sql ) AND $rs->num_rows > 0 ){
+
+ 			while ( $row = $rs->fetch_object() ) {
+ 				$iUbicacion      = -1;
+ 				$iCuadreProducto = -1;
+
+ 				foreach ( $fechaCuadreP->lstUbicacion AS $ixUbicacion => $ubicacion ) {
+ 					if( $ubicacion['idUbicacion'] == $row->idUbicacion ){
+ 						$iUbicacion = $ixUbicacion;
+						break;
+					}
+ 				}
+
+ 				// AGREGAR UBICACIÓN
+ 				if( $iUbicacion == -1 ){
+ 					$iUbicacion = count( $fechaCuadreP->lstUbicacion );
+ 					$fechaCuadreP->lstUbicacion[ $iUbicacion ] = array(
+ 						'idUbicacion'       => $row->idUbicacion,
+ 						'ubicacion'         => $row->ubicacion,
+ 						'lstCuadreProducto' => []
+ 					);
+
+ 					if( $iUbicacion == 1 )
+ 						$fechaCuadreP->ubicacionSeleccionada = $row->idUbicacion;
+ 				}
+
+
+
+ 				foreach ( $fechaCuadreP->lstUbicacion[ $iUbicacion ][ 'lstCuadreProducto' ] AS $ixCuadreProducto => $cuadreProducto ) {
+ 					if( $cuadreProducto['idCuadreProducto'] == $row->idCuadreProducto ){
+ 						$iCuadreProducto = $ixCuadreProducto;
+						break;
+					}
+ 				}
+
+ 				 // AGREGAR CUADRE
+ 				if( $iCuadreProducto == -1 ){
+ 					$iCuadreProducto = count( $fechaCuadreP->lstUbicacion[ $iUbicacion ][ 'lstCuadreProducto' ] );
+ 					$fechaCuadreP->lstUbicacion[ $iUbicacion ][ 'lstCuadreProducto' ][ $iCuadreProducto ] = array(
+ 						'idCuadreProducto'     => $row->idCuadreProducto,
+ 						'fechaRegistroCuadre'  => $row->fechaRegistroCuadre,
+ 						'usuario'              => $row->usuario,
+ 						'comentario'           => $row->comentario,
+ 						'mostrar'              => TRUE,
+ 						'todos'                => $row->todos,
+ 						'lstCuadreProdDetalle' => []
+ 					);
+ 				}
+
+ 				$fechaCuadreP->lstUbicacion[ $iUbicacion ][ 'lstCuadreProducto' ][ $iCuadreProducto ][ 'lstCuadreProdDetalle' ] = $this->cuadreProductoDetalle( $row->idCuadreProducto );
+ 			}
+ 			/*
+			$fechaCuadreP->encontrado = TRUE;
 
  			$fechaCierreP = array(
 					'encontrado'     => 1,
@@ -54,38 +108,25 @@ class Producto
 					'comentario'     => $row->comentario,
 					'usuario'        => $row->usuario,
 					'fechaHora'      => $row->fechaHora,
-					'lstProductos'   => $this->cargarCierreDiarioProd( $row->idCierreDiario ),
+					'lstProductos'   => ,
 					'todos'          => (int)$row->todos ? TRUE : FALSE
  				);
+ 			*/
  		}
 
- 		return (object)$fechaCierreP;
+ 		return $fechaCuadreP;
  	}
 
 
  	// CARGAR CIERRE DIARIO PRODUCTO
- 	function cargarCierreDiarioProd( $idCierreDiario )
+ 	function cuadreProductoDetalle( $idCuadreProducto )
  	{
  		$lstCierreDiarioProd = array();
 
- 		$sql = "SELECT 
- 					idCierreDiario, 
-					fechaCierre, 
-					cantidadCierre, 
-					idProducto, 
-					producto, 
-					idMedida, 
-					medida, 
-					idTipoProducto, 
-					tipoProducto, 
-					perecedero, 
-					importante
- 				FROM vCierreDiarioProducto 
- 				WHERE idCierreDiario = {$idCierreDiario};";
- 		
+ 		$sql = "SELECT * FROM vCuadreProductoDetalle WHERE idCuadreProducto = {$idCuadreProducto};";
  		if( $rs = $this->con->query( $sql ) ){
  			while( $row = $rs->fetch_object() ){
- 				$row->importante = (int)$row->importante ? TRUE : FALSE;
+ 				$row->importante       = (int)$row->importante ? TRUE : FALSE;
  				$lstCierreDiarioProd[] = $row;
  			}
  		}
@@ -372,7 +413,6 @@ class Producto
  	// CONSULTAR REAJUSTE INVENTARIO INDIVIDUAL
  	function consultaReajusteInventario( $accion, $data )
  	{
- 		//var_dump( $accion, $data );
  		$this->con->query( "START TRANSACTION" );
  		$this->consultaReajuste( $accion, $data->observacion );
 
@@ -458,10 +498,6 @@ class Producto
 
 	function consultaFactura( $accion, $data )
 	{
-		//var_dump( $data );
-
-		$validar = new Validar();
-
 		// INICIALIZACIÓN VAR
  		$idFacturaCompra = 'NULL';
  		$idEstadoFactura = 'NULL';
@@ -478,7 +514,8 @@ class Producto
  		$data->comentario      = isset( $data->comentario )		  	? (string)$data->comentario 	: NULL;
  		$data->comentario      = strlen( $data->comentario )	  	? (string)$data->comentario 	: NULL;
  		
- 		
+		$validar = new Validar();
+
  		// VALIDACIONES
 		$idEstadoFactura = $validar->validarEntero( $data->idEstadoFactura, NULL, TRUE, 'El ID del estado de factura no es válido' );
 		$noFactura       = $this->con->real_escape_string( $validar->validarTexto( $data->noFactura, NULL, TRUE, 'El No. de factura no es válido' ) );
@@ -555,7 +592,6 @@ class Producto
 	// GUARDAR // ELIMINAR => INGRESO
 	function consultaIngreso( $accion, $idFacturaCompra, $data )
 	{
-
 		$validar = new Validar();
 
 		// INICIALIZACIÓN VAR
@@ -828,7 +864,7 @@ class Producto
 				FROM
 				    vCuadreproducto
 				WHERE
-				    idUbicacion = {$idUbicacion} AND ( idEstadoCuadre = 1 OR idEstadoCuadre = 2 );";
+				    idUbicacion = {$idUbicacion} AND idEstadoCuadre = 1;";
  		
  		if( $rs = $this->con->query( $sql ) AND $rs->num_rows AND $row = $rs->fetch_object() ){
  			
@@ -841,15 +877,15 @@ class Producto
 				    'idCuadreProducto'    => (int)$row->idCuadreProducto,
 				    'cierreAtrasada'      => $row->cierreAtrasada,
 				    'fechaCuadre'         => $row->fechaCuadre,
-				    'comentario'          => $row->comentario,
+				    'comentario'          => '',
 				    'actualizarDisp'      => TRUE,
 				    'usuario'             => $row->usuario,
 				    'fechaRegistroCuadre' => $row->fechaRegistroCuadre,
 				    'todos'               => $row->todos,
 				    'botonBloqueado'      => TRUE,
 				    'idUbicacion'         => (int)$row->idUbicacion,
-				    'idEstadoCuadre'      => (int)$row->idEstadoCuadre == 1 ? 2 : 1,
-				    'estadoCuadre'        => $row->idEstadoCuadre == 1 ? 'CERRAR INVENTARIO' : 'APERTURAR INVENTARIO',
+				    'idEstadoCuadre'      => 2,
+				    'estadoCuadre'        => 'CERRAR INVENTARIO',
 				    'lstProductos'        => $this->getListaProductos( $row->idUbicacion )
  				);
  		}

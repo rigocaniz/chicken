@@ -87,8 +87,8 @@
 								</div>
 							</div>
 							<div class="text-left">
-								<button type="button" class="btn btn-danger" ng-click="modalAccionCuadreProducto()" ng-disabled="realizarReajuste">
-									<span class="glyphicon glyphicon-list-alt"></span> <strong><u>C</u></strong>IERRE DE PRODUCTOS
+								<button type="button" class="btn btn-default" ng-click="modalAccionCuadreProducto()" ng-disabled="realizarReajuste">
+									<span class="glyphicon glyphicon-list-alt"></span> <strong><u>C</u></strong>UADRE DE PRODUCTOS
 								</button>
 								<button type="button" class="btn btn-primary" ng-click="realizarReajusteMasivo()" ng-show="!realizarReajuste">
 									<span class="glyphicon glyphicon-edit"></span> <strong><u>R</u></strong>EAJUSTE MASIVO
@@ -832,7 +832,7 @@
 <!-- DIALOGO CONSULTAR CIERRE DIARIO -->
 <script type="text/ng-template" id="dial.verCierreDiario.html">
 	<div class="modal" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog modal-xl">
 			<div class="modal-content panel-primary">
 				<div class="modal-header panel-heading text-center">
 					<button type="button" class="close" ng-click="$hide()">&times;</button>
@@ -853,77 +853,106 @@
 							</div>	
 						</div>
 						<hr>
-						<div ng-show="fechaCierreP.encontrado">
-							<div class="form-group">
-								<div class="col-sm-3 col-xs-6">
-									<label class="control-label">FECHA DE CIERRE</label>
-									<div class="input-group">
-									  	{{ fechaCierreP.fechaCierre }}
-									</div>
-								</div>s
-								<div class="col-sm-3 col-xs-6">
-									<label class="control-label">REALIZADO POR:</label>
-									<div>
-										<kbd>{{ fechaCierreP.usuario | uppercase }}</kbd>
-									</div>
-								</div>
-								<div class="col-sm-3 col-xs-6">
-									<label class="control-label">FECHA / HORA:</label>
-									<div>
-										<kbd>{{ fechaCierreP.fechaHora }}</kbd>
-									</div>
-								</div>
-								<div class="col-sm-3 col-xs-6">
-									<label class="control-label">TIPO DE CIERRE:</label>
-									<div>
-										<kbd>{{ fechaCierreP.todos ? 'TODOS LOS PRODUCTOS' : 'PRODUCTOS IMPORTANTES' }}</kbd>
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-12">
-									<label class="control-label">COMENTARIO:</label>
-									<div>
-										{{ fechaCierreP.comentario }}
-									</div>
-								</div>
-							</div>
-							<table class="table table-hover">
-								<thead>
-									<tr>
-										<th class="col-sm-1 text-center">No.</th>
-										<th class="col-sm-3 text-center">Producto</th>
-										<th class="col-sm-2 text-center">Tipo Producto</th>
-										<th class="col-sm-1 text-center">Perecedero</th>
-										<th class="col-sm-2 text-center">Cantidad</th>
-										<th class="col-sm-2 text-center">Medida</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="inv in fechaCierreP.lstProductos" ng-class="{'border-success':inv.importante}">
-										<td class="text-right">
-											{{ $index + 1 }}
-										</td>
-										<td>
-											{{ inv.producto }}
-										</td>
-										<td class="text-center">
-											{{ inv.tipoProducto }}
-										</td>
-										<td class="text-center">
-											{{ inv.perecedero ? 'SI' : 'NO' }}
-										</td>
-										<td class="text-center success">
-											{{ inv.cantidadCierre }}
-										</td>
-										<td class="text-center">
-											{{ inv.medida }}
-										</td>
-									</tr>
-								</tbody>
-							</table>
+						<div ng-show="fechaCuadreP.lstUbicacion.length">
+							<ul class="nav nav-tabs" role="tablist">
+						    	<li role="presentation" ng-class="{'active': fechaCuadreP.ubicacionSeleccionada == ubicacion.idUbicacion}" ng-repeat="(ixUbicacion, ubicacion) in fechaCuadreP.lstUbicacion" ng-click="fechaCuadreP.ubicacionSeleccionada = ubicacion.idUbicacion">
+						    		<a href="" aria-controls="home" role="tab" data-toggle="tab">{{ ubicacion.ubicacion }}</a>
+						    	</li>
+						  	</ul>
+
+						  	<div class="tab-content">
+						    	<div role="tabpanel" class="tab-pane" ng-class="{'active': fechaCuadreP.ubicacionSeleccionada == ubicacion.idUbicacion}"  ng-repeat="(ixUbicacion, ubicacion) in fechaCuadreP.lstUbicacion">
+						    		<br>
+						    		<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+						    			<div class="panel panel-default" ng-repeat="(ixCuadreProducto, cuadreProducto) in ubicacion.lstCuadreProducto">
+						    				<div class="panel-heading">
+						    					<button type="button" class="btn btn-sm btn-info" ng-click="cuadreProducto.mostrar=!cuadreProducto.mostrar">
+						    						<span class="glyphicon" ng-class="{'glyphicon-chevron-right': cuadreProducto.mostrar, 'glyphicon-chevron-down': !cuadreProducto.mostrar}"></span>
+						    					</button>
+						    					CUADRE #{{ cuadreProducto.idCuadreProducto }}
+						    				</div>
+						    				<div class="panel-body" ng-show="cuadreProducto.mostrar">
+												<div class="form-group">
+													<div class="col-sm-3 col-xs-6">
+														<label class="control-label">REALIZADO POR:</label>
+														<div>
+															<kbd>{{ cuadreProducto.usuario | uppercase }}</kbd>
+														</div>
+													</div>
+													<div class="col-sm-4 col-xs-6">
+														<label class="control-label">FECHA / HORA:</label>
+														<div>
+															<kbd>{{ formatoFecha( cuadreProducto.fechaRegistroCuadre, 'D [de] MMMM [de] YYYY HH:MM a' ) }}</kbd>
+														</div>
+													</div>
+													<div class="col-sm-4 col-xs-6">
+														<label class="control-label">TIPO DE CIERRE:</label>
+														<div>
+															<kbd>{{ cuadreProducto.todos ? 'TODOS LOS PRODUCTOS' : 'PRODUCTOS IMPORTANTES' }}</kbd>
+														</div>
+													</div>
+												</div>
+												<div class="form-group" ng-show="cuadreProducto.comentario.length">
+													<div class="col-sm-12">
+														<label class="control-label">COMENTARIO:</label>
+														<div>
+															{{ cuadreProducto.comentario }}
+														</div>
+													</div>
+												</div>
+						    					<table class="table table-hover">
+													<thead>
+														<tr>
+															<th class="col-sm-1 text-center">No.</th>
+															<th class="col-sm-3 text-center">Producto</th>
+															<th class="col-sm-2 text-center">Tipo Producto</th>
+															<th class="col-sm-1 text-center">Perecedero</th>
+															<th class="text-center success" colspan="2">APERTURA</th>
+															<th class="text-center warning" colspan="2">CIERRE</th>
+															<th class="col-sm-2 text-center">Medida</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr ng-repeat="inv in cuadreProducto.lstCuadreProdDetalle" ng-class="{'border-success':inv.importante}">
+															<td class="text-right">
+																{{ $index + 1 }}
+															</td>
+															<td>
+																{{ inv.producto }}
+															</td>
+															<td class="text-center">
+																{{ inv.tipoProducto }}
+															</td>
+															<td class="text-center">
+																{{ inv.perecedero ? 'SI' : 'NO' }}
+															</td>
+															<td class="text-right success">
+																{{ inv.cantidadApertura }}
+															</td>
+															<td class="text-right success">
+																{{ inv.diferenciaApertura }}
+															</td>
+															<td class="text-right warning">
+																{{ inv.cantidadCierre }}
+															</td>
+															<td class="text-right warning">
+																{{ inv.diferenciaCierre }}
+															</td>
+															<td class="text-center">
+																{{ inv.medida }}
+															</td>
+														</tr>
+													</tbody>
+												</table>
+						    				</div>
+						    				
+						    			</div>
+						    		</div>
+						    	</div>
+						  </div>
+
 						</div>
-						<div ng-show="!fechaCierreP.encontrado && fechaCierre">
+						<div ng-show="!fechaCuadreP.lstUbicacion.length && fechaCierre">
 							<div class="alert alert-warning" role="alert">
 								<span class="glyphicon glyphicon-info-sign"></span> NO SE ENCONTRARON RESULTADOS
 							</div>

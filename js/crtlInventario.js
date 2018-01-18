@@ -315,7 +315,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			}
 		}
 		else
-			alertify.notify( 'Existe(n) <b>' + diferencias + ' PRODUCTOS</b> con Faltantes, verifique', 'info', 7 );
+			alertify.notify( 'Existe(n) <b>' + diferencias + ' PRODUCTOS</b> con faltantes, verifique', 'info', 7 );
 	};
 
 	// TIPOS DE PRODUCTO
@@ -359,7 +359,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		$scope.dialVerCierreDiario.show();
 	};
 
-	$scope.fechaCierreP = {};
+	$scope.fechaCuadreP = {};
 	$scope.cargarFechaCierre = function( fechaCierre ){
 		if( fechaCierre ) {
 			var fechaCierre = $filter('date')( fechaCierre,"yyyy-MM-dd");
@@ -368,7 +368,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 				fechaCierre : fechaCierre
 			}).success(function(data){
 				console.log( data );
-				$scope.fechaCierreP = data;
+				$scope.fechaCuadreP = data;
 			})	
 		}
 	};

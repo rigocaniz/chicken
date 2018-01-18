@@ -116,29 +116,40 @@
                                         <fieldset class="fieldset">
                                             <legend class="legend info">FORMAS DE PAGO</legend>
                                             <div class="form-group input-sm">
-                                                <label class="col-md-12 control-label">TOTAL A COBRAR</label>
-                                                <div class="col-md-12">
+                                                <label class="col-sm-12 control-label">TOTAL A COBRAR</label>
+                                                <div class="col-sm-12">
                                                     <div class="total">
                                                         Q. {{ retornarTotal() | number: 2 }}
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="form-group input-sm" ng-repeat="formaPago in facturacion.lstFormasPago">
-                                                <label class="col-md-12 control-label">{{ formaPago.formaPago | uppercase }}</label>
-                                                <div class="col-md-12 monto">
+                                                <label class="col-sm-12 control-label">{{ formaPago.formaPago | uppercase }}</label>
+                                                <div class="col-sm-12 monto">
                                                     <input type="number" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" class="form-control" ng-model="formaPago.monto" focus-enter>
                                                 </div>
                                             </div>
                                             <div class="form-group input-sm">
-                                                <label class="col-md-12 control-label">CAMBIO</label>
-                                                <div class="col-md-12">
+                                                <label class="col-sm-12 control-label">CAMBIO</label>
+                                                <div class="col-sm-12">
                                                     <div class="total">
                                                     {{ totalVuelto() | number: 2 }}
                                                     </div>
                                                 </div>
                                             </div>
-                                            <br><br><br>
-                                            <hr>
+                                            <div class="clearfix"></div>
+                                            <br>
+                                            <div class="text-right">
+                                                <div class="btn-group btn-group-sm" role="group" aria-label="">
+                                                    <button type="button" class="btn btn-default" ng-click="impresionFactura.type='d'">
+                                                        <span class="glyphicon" ng-class="{'glyphicon-check': impresionFactura.type=='d', 'glyphicon-unchecked': impresionFactura.type!='d'}"></span> Detalle
+                                                    </button>
+                                                    <button type="button" class="btn btn-default" ng-click="impresionFactura.type='g'">
+                                                        <span class="glyphicon" ng-class="{'glyphicon-check': impresionFactura.type=='g', 'glyphicon-unchecked': impresionFactura.type!='g'}"></span> General
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <br>
                                             <div class="form-group">
                                                 <div class="text-center">
                                                     <button type="button" class="btn btn-info" ng-click="consultaFacturaCliente()">
@@ -149,7 +160,7 @@
                                         </fieldset>
                                     </div>
                                     <div class="col-xs-8 col-sm-7 col-md-9 col-lg-8">
-                                                {{ facturacion.lstOrden | json }}
+                                        {{ facturacion.lstOrden | json }}
                                         <fieldset class="fieldset" ng-show="facturacion.lstOrden.length">
                                             <legend class="legend info">DETALLE ORDEN</legend>
                                             <div class="table-responsive">

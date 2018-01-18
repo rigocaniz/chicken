@@ -71,12 +71,10 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		if( $scope.retornarTotal() > 0 ){
 			for (var i = 0; i < $scope.facturacion.lstFormasPago.length; i++) {
 				var pago = $scope.facturacion.lstFormasPago[ i ];
-				
 				var montoTotal = parseFloat( pago.monto ) + ( $scope.facturacion.lstFormasPago[ 1 ].monto || 0 );
 
-				if( ( montoTotal && montoTotal > $scope.retornarTotal() ) && pago.idFormaPago == 1 ){
+				if( ( montoTotal && montoTotal > $scope.retornarTotal() ) && pago.idFormaPago == 1 )
 					total = montoTotal;
-				}
 			}
 		}
 
@@ -106,7 +104,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	};
 
 	$scope.impresionFactura = {
-		type      : 'g',
+		type      : 'd',
 		idFactura : null
 	};
 
@@ -265,15 +263,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		}
 	});
 
-
-	$scope.modalOpen = function ( _name ) {
-		if ( _name == undefined )
-			return $("body>div").hasClass('modal') && $("body>div").hasClass('top');
-		else
-			return !!( $( '#' + _name ).data() && $( '#' + _name ).data().$scope.$isShown );
-	};
-	
-
     $scope.resetValores = function( accion ){
         $scope.accion = 'insert';
         if( accion == 'cliente' ) {
@@ -287,11 +276,11 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
                 'idTipoCliente' : 1,
             };
         }
-        else if( accion == 'lstClientes' ) {
+        else if( accion == 'lstClientes' )
             $scope.lstClientes = [];
-        }
+
         else if( 'facturacion' ){
-        	$scope.facturacion = {
+			$scope.facturacion = {
 				datosCliente : {
 					nit          : '',
 					nombre       : '',
@@ -299,6 +288,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				},
 				agrupado: true,
 				idEstadoFactura : 1,
+				idOrdenCliente  : null,
 				numeroTicket    : null,
 				noFactura       : null,
 				total           : 0,
@@ -309,6 +299,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
     };
 
     $scope.resetValores( 'cliente' );
+    $scope.resetValores( 'facturacion' );
 
 	$scope.lstDetalleTicket = [];
 	$scope.$watch('accionCliente', function(){
@@ -423,9 +414,9 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 					alertify.notify( "No se encontro información del TICKET", 'info', 3 );
 				}
 			});
-		}else{
-			alertify.notify( "El No. de Ticket debe ser mayor a 0", 'info', 3 );
 		}
+		else
+			alertify.notify( "El No. de Ticket debe ser mayor a 0", 'info', 3 );
 	};
 
 	// BUSCARCLIENTE
@@ -509,8 +500,17 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			$('#searchPrincipal').focus();
 		});
 	}
-	else
+	else{
 		$timeout(function(){
 			$('#ticket').focus();
 		});
+	}
+
+
+	$scope.modalOpen = function ( _name ) {
+		if ( _name == undefined )
+			return $("body>div").hasClass('modal') && $("body>div").hasClass('top');
+		else
+			return !!( $( '#' + _name ).data() && $( '#' + _name ).data().$scope.$isShown );
+	};
 });
