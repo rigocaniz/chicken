@@ -34,7 +34,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 			else if( $scope.inventarioMenu == 'inventario' ){
 
 				if( $scope.modalOpen( 'dialCierreDiario' ) )
-					$scope.validacionCierreApertura();
+					$scope.consultaCuadreProducto();
 
 				else if( $scope.realizarReajuste && !$scope.modalOpen() )
 					$scope.guardarReajusteMasivo();
@@ -260,8 +260,13 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		$scope.dialCierreDiario.show();
 	};
 
-	$scope.validacionCierreApertura = function()
-	{
+
+	//REALIZAR APERTURA Y CIERRE DIARIO DE PRODUCTOS
+	$scope.consultaCuadreProducto = function(){
+		if ( $scope.$parent.loading )
+			return false;
+
+
 		var diferencias = 0;
 		for (var i = 0; i < $scope.cierreDiario.lstProductos.length; i++) {
 			$scope.cierreDiario.lstProductos[ i ].mostrarAlerta = false;
@@ -279,44 +284,38 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		}
 		
 		if( !diferencias )
-			$scope.consultaCuadreProducto();
+		{
+			var cierreDiario = $scope.cierreDiario;
+
+			if( $scope.accion == 'update' && !(cierreDiario.idCierreDiario && cierreDiario.idCierreDiario > 0) )
+				alertify.notify( 'El código del cierra no es válido', 'warning', 4 );
+			
+			else if( !(cierreDiario.fechaRegistroCuadre) )
+				alertify.notify( 'Ingrese una fecha válida', 'warning', 3 );
+			
+			else
+			{
+				$scope.$parent.showLoading( 'Guardando...' );
+
+				$http.post('consultas.php',{
+					opcion : "consultaCuadreProducto",
+					accion : $scope.accion,
+					data   : $scope.cierreDiario
+				}).success(function(data){
+					console.log( data );
+					alertify.set('notifier','position', 'top-right');
+					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+					$scope.$parent.hideLoading();
+					if( data.respuesta == 'success' ) {
+						$scope.resetValores( 'cierreDiario' );
+						$scope.dialCierreDiario.hide();
+						$scope.lstProductosInventario();
+					}
+				});
+			}
+		}
 		else
 			alertify.notify( 'Existe(n) <b>' + diferencias + ' PRODUCTOS</b> con Faltantes, verifique', 'info', 7 );
-	};
-
-	//REALIZAR APERTURA Y CIERRE DIARIO DE PRODUCTOS
-	$scope.consultaCuadreProducto = function(){
-		if ( $scope.$parent.loading )
-			return false;
-
-		var cierreDiario = $scope.cierreDiario;
-
-		if( $scope.accion == 'update' && !(cierreDiario.idCierreDiario && cierreDiario.idCierreDiario > 0) )
-			alertify.notify( 'El código del cierra no es válido', 'warning', 4 );
-		
-		else if( !(cierreDiario.fechaRegistroCuadre) )
-			alertify.notify( 'Ingrese una fecha válida', 'warning', 3 );
-		
-		else
-		{
-			$scope.$parent.showLoading( 'Guardando...' );
-
-			$http.post('consultas.php',{
-				opcion : "consultaCuadreProducto",
-				accion : $scope.accion,
-				data   : $scope.cierreDiario
-			}).success(function(data){
-				console.log( data );
-				alertify.set('notifier','position', 'top-right');
-				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
-				$scope.$parent.hideLoading();
-				if( data.respuesta == 'success' ) {
-					$scope.resetValores( 'cierreDiario' );
-					$scope.dialCierreDiario.hide();
-					$scope.lstProductosInventario();
-				}
-			});
-		}
 	};
 
 	// TIPOS DE PRODUCTO

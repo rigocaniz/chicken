@@ -1029,14 +1029,15 @@
 										{{ inv.medida }}
 									</td>
 									<td>
-										<span class="text text-danger" ng-show="inv.mostrarAlerta">
+										<span class="text text-danger" ng-show="inv.mostrarAlerta && inv.disponible < inv.disponibilidad">
 											<b>Existe un faltante de {{ ( inv.disponibilidad - inv.disponible ) }}</b>
 											<br>
 											<button type="button" class="btn btn-xs btn-default" ng-click="inv.agregarComentario=!inv.agregarComentario">
 												<span class="glyphicon glyphicon-plus"></span> Comentario
 											</button>
 											<textarea class="form-control" rows="2" ng-model="inv.comentario" ng-show="inv.agregarComentario"></textarea>
-											<span class="glyphicon glyphicon-info-sign" ng-show="!inv.comentario.length && inv.alertaComentario" title="Ingrese Comentario" data-toggle="tooltip" data-placement="top" tooltip></span> <span ng-show="!inv.comentario.length && inv.alertaComentario">Ingrese Comentario</span>
+											<span class="glyphicon glyphicon-info-sign" ng-show="!inv.comentario.length && inv.alertaComentario" title="Ingrese Comentario" data-toggle="tooltip" data-placement="top" tooltip></span>
+											<span ng-show="!inv.comentario.length && inv.alertaComentario">Ingrese Comentario</span>
 										</span>
 									</td>
 								</tr>
@@ -1059,10 +1060,9 @@
 							</div>
 						</div>
 					</form>
-			
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-warning" ng-click="validacionCierreApertura()" ng-disabled="loading">
+					<button type="button" class="btn btn-warning" ng-click="consultaCuadreProducto()" ng-disabled="loading" ng-show="cierreDiario.lstProductos.length">
 						<span class="glyphicon glyphicon-saved"></span> REALIZAR CIERRE (F6)
 					</button>
 					<button type="button" class="btn btn-default" ng-click="$hide()">

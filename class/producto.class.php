@@ -155,21 +155,23 @@ class Producto
 	{
  		if( count( $data->lstProductos ) ){
 
-		 	$idCuadreProducto = "NULL";
-		 	$fechaCuadre      = "NULL";
-		 	$comentario	      = "NULL";
-		 	$todos            = "NULL";
+		 	$idCuadreProducto     = "NULL";
+		 	$fechaCuadre          = "NULL";
+		 	$comentario	          = "NULL";
+		 	$todos                = "NULL";
+
+		 	$validar = new Validar();
 
 		 	$data->fechaCuadre    = isset( $data->fechaCuadre ) 	? $data->fechaCuadre 			: NULL;
 		 	$data->comentario     = isset( $data->comentario ) 	 	? (string)$data->comentario 	: NULL;
 		 	$data->idEstadoCuadre = isset( $data->idEstadoCuadre ) 	? (int)$data->idEstadoCuadre 	: NULL;
+		 	$data->idUbicacion    = isset( $data->idUbicacion ) 	? (int)$data->idUbicacion 	: NULL;
+		 	
+		 	$idUbicacion = $validar->validarEntero( $data->idUbicacion, NULL, TRUE, 'ID ubicación no es válido' );
 
-		 	$validar = new Validar();
-		 	if( $accion == 'insert' ) {		 		
-			 	$todos             = isset( $data->cierreTodos ) 	? (int)$data->todos 		: 1;
-			 	$data->idUbicacion = isset( $data->idUbicacion ) 	? (int)$data->idUbicacion 	: NULL;
-			 	$idUbicacion       = $validar->validarEntero( $data->idUbicacion, NULL, TRUE, 'ID ubicación no es válido' );
-		 	}
+		 	if( $accion == 'insert' )
+			 	$todos = isset( $data->todos ) 	? (int)$data->todos : 1;
+
 		 	elseif( $accion == 'update' ) {
 		 		$data->idCuadreProducto = isset( $data->idCuadreProducto ) ? $data->idCuadreProducto : NULL;
 		 		$idCuadreProducto       = $validar->validarEntero( $data->idCuadreProducto, NULL, TRUE, 'ID del Cuadre no es válido' );
@@ -192,39 +194,36 @@ class Producto
 
 				$sql = "CALL consultaCuadreProducto( '{$accion}', {$idCuadreProducto}, '{$fechaCuadre}', '{$comentario}', {$todos}, {$idUbicacion}, {$idEstadoCuadre} );";
 
-				//echo $sql;
-		 		if( $rs = $this->con->query( $sql ) ){
-		 			
+		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 			$this->siguienteResultado();
-		 			if( $row = $rs->fetch_object() ){
-		 				$this->respuesta = $row->respuesta;
-		 				$this->mensaje   = $row->mensaje;
+		 			
+	 				$this->respuesta = $row->respuesta;
+	 				$this->mensaje   = $row->mensaje;
 
-		 				if( ( $accion == 'insert' OR $accion == 'update' ) AND $this->respuesta == 'success' ){
-		 					if( $accion == 'insert' )
-		 					 	$idCierreDiario = $this->data = (int)$row->id;
+	 				if( ( $accion == 'insert' OR $accion == 'update' ) AND $this->respuesta == 'success' ){
+	 					if( $accion == 'insert' )
+	 					 	$idCuadreProducto = $this->data = (int)$row->id;
 
-		 					// REALIZAR CIERRA POR PRODUCTO
-		 					if( $this->respuesta <> 'danger' )
-		 						$this->consultaCuadreProductoDetalle( $accion, $idCierreDiario, $data->lstProductos, $data->cierreTodos, $actualizarDisp );
-		 					elseif( $this->respuesta == 'danger' )
-		 						$this->mensaje .= " (CUADRE DE PRODUCTOS)";
-		 				}
-		 			}
+	 					// REALIZAR CIERRA POR PRODUCTO
+	 					if( $this->respuesta <> 'danger' )
+	 						$this->consultaCuadreProductoDetalle( $accion, $idCuadreProducto, $data->lstProductos, $data->todos, $idEstadoCuadre,  $actualizarDisp );
+
+	 					elseif( $this->respuesta == 'danger' )
+	 						$this->mensaje .= " (CUADRE DE PRODUCTOS)";
+	 				}
 		 		}
 		 		else{
 		 			$this->respuesta = 'danger';
 		 			$this->mensaje   = 'Error al ejecutar la instrucción (CUADRE DE PRODUCTOS)';
 		 		}
 
-
+		 		// FINALIZAR TRANSACCIÓN
 		 		if( $this->respuesta == 'success' )
 		 			$this->con->query( "COMMIT" );
 		 		else
 		 			$this->con->query( "ROLLBACK" );
 
 	 		endif;
-
  		}
  		else{
  			$this->respuesta = 'info';
@@ -235,16 +234,16 @@ class Producto
 	}
 
 
-	// consultaCuadreProductoDetalle
-	function consultaCuadreProductoDetalle( $accion, $idCuadreProducto, $lstProductos, $cierreTodos = TRUE, $idEstadoCuadre, $actualizarDisponibilidad = FALSE )
+	function consultaCuadreProductoDetalle( $accion, $idCuadreProducto, $lstProductos, $todos = TRUE, $idEstadoCuadre, $actualizarDisp = FALSE )
 	{
 		if( count( $lstProductos ) ) {
 
-			$cierreTodos = (int)$cierreTodos;
+			$todos          = (int)$todos;
+			$actualizarDisp = (int)$actualizarDisp;
 			foreach ( $lstProductos AS $producto ) {
 
 				$omitir = FALSE;
-				if( !$cierreTodos AND !$producto->importante )
+				if( !$todos AND !$producto->importante )
 					$omitir = TRUE;
 
 				if( !$omitir )
@@ -253,8 +252,8 @@ class Producto
 					$cantidadCierre     = 0;
 					$comentarioApertura = '';
 					$comentarioCierre   = '';
-					$diferenciaApertura = NULL;
-					$diferenciaCierre   = NULL;
+					$diferenciaApertura = 'NULL';
+					$diferenciaCierre   = 'NULL';
 
 					$idProducto = (int)$producto->idProducto;
 					if( $accion == 'insert' ){
@@ -269,7 +268,7 @@ class Producto
 					}
 
 			 		// REALIZAR CONSULTA
-					$sql = "CALL consultaCuadreProductoDetalle( '{$accion}', {$idCuadreProducto}, {$idProducto}, {$cantidadApertura}, {$cantidadCierre}, {$diferenciaApertura}, {$diferenciaCierre}, {$actualizarDisponibilidad}, {$idEstadoCuadre}, '{$comentarioApertura}', '{$comentarioCierre}' );";
+					$sql = "CALL consultaCuadreProductoDetalle( '{$accion}', {$idCuadreProducto}, {$idProducto}, {$cantidadApertura}, {$cantidadCierre}, {$diferenciaApertura}, {$diferenciaCierre}, {$actualizarDisp}, {$idEstadoCuadre}, '{$comentarioApertura}', '{$comentarioCierre}' );";
 
 			 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 			 			$this->siguienteResultado();
@@ -812,9 +811,8 @@ class Producto
 	function accionCuadreProducto( $idUbicacion )
 	{ 		
 		$detalleCuadre = new StdClass();
-		//sleep( 1 );
-		$idUbicacion = (int)$idUbicacion;
-		$fechaCuadre = date("Y-m-d");
+		$idUbicacion   = (int)$idUbicacion;
+		$fechaCuadre   = date("Y-m-d");
 
 		$sql = "SELECT 
 				    idCuadreProducto,
@@ -830,7 +828,7 @@ class Producto
 				FROM
 				    vCuadreproducto
 				WHERE
-				    idUbicacion = {$idUbicacion} AND ( fechaCuadre = 1 OR fechaCuadre = 2 );";
+				    idUbicacion = {$idUbicacion} AND ( idEstadoCuadre = 1 OR idEstadoCuadre = 2 );";
  		
  		if( $rs = $this->con->query( $sql ) AND $rs->num_rows AND $row = $rs->fetch_object() ){
  			
@@ -850,8 +848,8 @@ class Producto
 				    'todos'               => $row->todos,
 				    'botonBloqueado'      => TRUE,
 				    'idUbicacion'         => (int)$row->idUbicacion,
-				    'idEstadoCuadre'      => (int)$row->idEstadoCuadre,
-				    'estadoCuadre'        => $row->estadoCuadre,
+				    'idEstadoCuadre'      => (int)$row->idEstadoCuadre == 1 ? 2 : 1,
+				    'estadoCuadre'        => $row->idEstadoCuadre == 1 ? 'CERRAR INVENTARIO' : 'APERTURAR INVENTARIO',
 				    'lstProductos'        => $this->getListaProductos( $row->idUbicacion )
  				);
  		}
