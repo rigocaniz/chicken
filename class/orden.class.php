@@ -350,6 +350,54 @@ class Orden
  		endif;
  	}
 
+
+ 	// REASIGNAR DETALLE ORDEN
+ 	function reasignarDetalleOrden( $idOrdenCliente, $idOrdenClienteDestino, $lstDetalleOrden )
+ 	{
+	 	$this->con->query( "START TRANSACTION" );
+
+		foreach ( $lstDetalleOrden as $ix => $item ):
+
+			if ( $item->idDetalleOrdenMenu > 0 )
+				$sql = "CALL consultaDetalleOrdenMenu( 'asignarOtroCliente', {$item->idDetalleOrdenMenu}, {$idOrdenClienteDestino}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL )";
+			
+			else if ( $item->tipoMenu == 'combo' )
+				$sql = "CALL consultaDetalleOrdenCombo( 'asignarOtroCliente', {$item->idDetalleOrdenCombo}, {$idOrdenClienteDestino}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );";
+
+	 		if( $rs = $this->con->query( $sql ) ){
+	 			@$this->con->next_result();
+	 			if( $row = $rs->fetch_object() ) {
+					$this->respuesta = $row->respuesta;
+					$this->mensaje   = $row->mensaje;
+
+					// SI SE GUARDO VA CONCATENANDO LOS IDS GENERADOS
+					/*
+					if ( $this->respuesta == 'success' ) {
+						if ( $item->tipoMenu == 'menu' )
+							$idOrdenesMenu .= $row->ids;
+
+						else if ( $item->tipoMenu == 'combo' )
+							$idOrdenesCombo .= $row->ids;
+					}*/
+	 			}
+	 		}
+	 		else{
+	 			$this->respuesta = 'danger';
+	 			$this->mensaje   = 'Error al ejecutar la instrucción: ' . $this->con->error;
+	 			break;
+	 		}
+	 		
+	 		if ( $this->respuesta == 'danger' ) break;
+		endforeach;
+
+		if ( $this->respuesta == 'success' ) {
+	 		$this->con->query( "COMMIT" );
+		}
+	 	else
+	 		$this->con->query( "ROLLBACK" );
+ 	}
+
+
  	public function lstMenuAgregado( $txtIdMenu, $txtIdCombo, $idOrdenCliente = 0 )
  	{
  		$lst = array();

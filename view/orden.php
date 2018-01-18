@@ -732,7 +732,7 @@
 </script> 
 
 
-<!-- CANCELAR DETALLE ORDEN -->
+<!-- EDITAR DETALLE ORDEN -->
 <script type="text/ng-template" id="dial.orden.editar.html">
     <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg">
@@ -790,8 +790,38 @@
 
                     <!-- SI ES RE-ASIGNACION -->
                     <div class="row"  ng-show="accionDetalleOrden=='reasignar'">
-                        <div class="col-sm-12 text-center">
-                            <h4>Reasignación</h4>
+                        <div class="col-sm-10 col-sm-offset-1" ng-hide="itemDetalle.destinoOrden.idOrdenCliente>0">
+                            <div class="input-group">
+                                <input type="text" class="form-control input-lg" ng-model="itemDetalle.busqueda" id="it_busqueda" numbers-only autocomplete="off" placeholder="# de Ticket" ng-keydown="$event.keyCode==13 && buscarOrdenTicket( itemDetalle.busqueda )">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-lg btn-info" ng-click="buscarOrdenTicket( itemDetalle.busqueda )">
+                                        <span class="glyphicon glyphicon-search"></span>
+                                        <b>Buscar</b>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-sm-12" ng-show="itemDetalle.destinoOrden.idOrdenCliente>0">
+                            <div class="col-sm-6">
+                                <span class="etiqueta"># de Ticket:</span>
+                                <span class="valor ng-binding">{{itemDetalle.destinoOrden.numeroTicket}}</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="etiqueta">Fecha Orden:</span>
+                                <span class="valor ng-binding">{{formatoFecha( itemDetalle.destinoOrden.fechaRegistro, 'ddd DD - HH:mm' )}}</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="etiqueta">Usuario Orden:</span>
+                                <span class="valor ng-binding">{{itemDetalle.destinoOrden.usuarioPropietario}}</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-10 col-sm-offset-1" ng-show="itemDetalle.destinoOrden.idOrdenCliente>0">
+                            <div class="col-sm-5 text-right">
+                                <h4 class="text-primary">Cantidad a Reasignar</h4>
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control input-lg" ng-model="itemDetalle.cantidadReasignar" numbers-only autocomplete="off" required>
+                            </div>
                         </div>
                     </div>
                 </div>

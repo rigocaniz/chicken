@@ -1,3 +1,4 @@
+DELIMITER $$
 
 CREATE PROCEDURE consultaOrdenCliente( _action VARCHAR(20), _idOrdenCliente INT, _numeroTicket INT, _usuarioResponsable VARCHAR(15), _idEstadoOrden INT, _usuarioBarra VARCHAR(15), _comentario TEXT )
 BEGIN
@@ -71,7 +72,7 @@ BEGIN
 	END IF;
 END$$
 
-CREATE PROCEDURE consultaDetalleOrdenMenu( _action VARCHAR(20), _idDetalleOrdenMenu INT, _idOrdenCliente INT, _idMenu INT, _cantidad DOUBLE(10,2), _idEstadoDetalleOrden INT, _idTipoServicio INT, _idFactura INT, _usuarioResponsable VARCHAR(15), _observacion TEXT )
+CREATE PROCEDURE consultaDetalleOrdenMenu( _action VARCHAR(20), _idDetalleOrdenMenu INT, _idOrdenCliente INT, _idMenu INT, _cantidad DOUBLE(10,2), _idEstadoDetalleOrden INT, _idTipoServicio INT, _idFactura INT, _usuarioResponsable VARCHAR(15), _observacion TEXT, _comentario TEXT )
 BEGIN
 	DECLARE _estadoActualDetalle INT;
 	DECLARE _estadoActualOrden INT;
@@ -80,15 +81,28 @@ BEGIN
 	DECLARE _perteneceCombo BOOLEAN;
     DECLARE _sinIngredientes BOOLEAN DEFAULT FALSE;
 	DECLARE _ids TEXT DEFAULT '';
+	DECLARE _yaFacturado BOOLEAN DEFAULT FALSE;
+    DECLARE _seCocina BOOLEAN DEFAULT TRUE;
+
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
 
 	# ESTADO DETALLE ORDEN MENU 
 	IF !ISNULL( _idDetalleOrdenMenu ) THEN
-		SELECT idEstadoDetalleOrden, perteneceCombo, idMenu, idOrdenCliente  
-				INTO
-			_estadoActualDetalle, _perteneceCombo, _idMenuActual, _idOrdenCliente
-		FROM detalleOrdenMenu WHERE idDetalleOrdenMenu = _idDetalleOrdenMenu;
+		SELECT dom.idEstadoDetalleOrden, dom.perteneceCombo, dom.idMenu, IFNULL( _idOrdenCliente, dom.idOrdenCliente ), 
+			IFNULL( _idTipoServicio, dom.idTipoServicio), IF( !ISNULL( dof.idFactura ), TRUE, FALSE )
+		INTO
+			_estadoActualDetalle, _perteneceCombo, _idMenuActual, _idOrdenCliente, 
+            _idTipoServicio, _yaFacturado
+		FROM detalleOrdenMenu AS dom
+			JOIN menu AS m 
+				ON dom.idMenu = m.idMenu
+                
+			LEFT JOIN detalleOrdenFactura AS dof
+				ON dom.idDetalleOrdenMenu = dof.idDetalleOrdenMenu
+                
+		WHERE dom.idDetalleOrdenMenu = _idDetalleOrdenMenu
+		LIMIT 1;
 	END IF;
 
 	# ESTADO ORDEN CLIENTE 
@@ -100,10 +114,13 @@ BEGIN
 	ELSEIF _action = 'insert' THEN
 		# SUMA CANTIDAD DE MENUS ORDENADOS POR CLIENTE
         UPDATE ordenCliente SET numMenu = numMenu + _cantidad WHERE idOrdenCliente = _idOrdenCliente;
+        
+        SELECT seCocina INTO _seCocina FROM menu WHERE idMenu = _idMenu;
 		
         WHILE _cantidad > 0 DO
-			INSERT INTO detalleOrdenMenu (idOrdenCliente, idMenu, cantidad, idEstadoDetalleOrden, idTipoServicio, usuario, usuarioResponsable, perteneceCombo, observacion )
-			VALUES (_idOrdenCliente, _idMenu, 1, 1, _idTipoServicio, @usuario, IFNULL( _usuarioResponsable, @usuario ), 0, _observacion );
+			INSERT INTO detalleOrdenMenu 
+				(idOrdenCliente, idMenu, cantidad, idEstadoDetalleOrden, idTipoServicio, usuario, usuarioResponsable, perteneceCombo, observacion )
+			VALUES (_idOrdenCliente, _idMenu, 1, IF( _seCocina, 1, 3 ), _idTipoServicio, @usuario, IFNULL( _usuarioResponsable, @usuario ), 0, _observacion );
 
 			SET _ids = CONCAT( _ids, '_', LAST_INSERT_ID() );
 			
@@ -115,6 +132,8 @@ BEGIN
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', _ids AS 'ids';
 
 	ELSEIF _action = 'cancel' THEN
+		SET @comentario = _comentario;
+        
         # SI ES DIFERENTE A PENDIENTE
 		IF _estadoActualDetalle != 1 THEN
 			SELECT 'warning' AS 'respuesta', 'Estado actual no permite cancelar' AS 'mensaje';
@@ -132,7 +151,14 @@ BEGIN
 		END IF;
         
     ELSEIF _action = 'estado' THEN
-		IF ( ( _idEstadoDetalleOrden > _estadoActualDetalle ) OR @isAdmin ) THEN
+		SET @comentario = _comentario;
+        
+        # SI ES PARA RESTAURANTE DEBE DE ESTAR := SERVIDO
+        IF ( _idTipoServicio = 2 AND _idEstadoDetalleOrden = 6 AND _estadoActualDetalle != 4 ) THEN
+			
+            SELECT 'danger' AS 'respuesta', 'Estado actual no permite Facturar' AS 'mensaje';
+        
+		ELSEIF ( ( _idEstadoDetalleOrden > _estadoActualDetalle ) OR @isAdmin ) THEN
 			
             # SI SE VA EMPEZAR A COCINAR, VERIFICA EXISTENCIA DE PRODUCTO
             IF _idEstadoDetalleOrden = 2 THEN
@@ -150,16 +176,24 @@ BEGIN
             # SI NO EXISTEN NINGUN INCONVENIENTE
             ELSE
 				# CAMBIA ESTADO A DETALLE DE ORDEN
-				UPDATE detalleOrdenMenu SET
-					idEstadoDetalleOrden = _idEstadoDetalleOrden
+				UPDATE detalleOrdenMenu    SET   idEstadoDetalleOrden = _idEstadoDetalleOrden
 				WHERE idDetalleOrdenMenu = _idDetalleOrdenMenu;
                 
                 # NUMERO DE ORDENES CON ESTADO ANTERIOR
                 SELECT COUNT( * ) INTO _numEstadoAnterior
 					FROM detalleOrdenMenu WHERE idOrdenCliente = _idOrdenCliente AND idEstadoDetalleOrden < _idEstadoDetalleOrden ;
+
+
+				# SI ES SERVIDO Y YA SE ENCUENTRA FACTURADO, CAMBIA DETALLE A FACTURADO
+				IF _idEstadoDetalleOrden = 4 AND _yaFacturado THEN
+					UPDATE detalleOrdenMenu    SET   idEstadoDetalleOrden = 6
+					WHERE idDetalleOrdenMenu = _idDetalleOrdenMenu;
+				END IF;
 				
                 # SI PERTENECE A COMOB
                 IF _perteneceCombo THEN
+                	SET @detalleComboPendiente = NULL;
+
 					# NUMERO DE ORDENES CON ESTADO ANTERIOR
 					SELECT SUM( IF( dom.idEstadoDetalleOrden < _idEstadoDetalleOrden, 1, 0 ) ), dcmo.idDetalleOrdenCombo
 						INTO @detalleComboPendiente, @idDetalleOrdenCombo
@@ -175,6 +209,17 @@ BEGIN
                     IF @detalleComboPendiente = 0 THEN
 						UPDATE detalleOrdenCombo SET idEstadoDetalleOrden = _idEstadoDetalleOrden 
 							WHERE idDetalleOrdenCombo = @idDetalleOrdenCombo;
+
+						# VERIFICA SI YA ESTA FACTURADO
+						SELECT TRUE INTO _yaFacturado FROM detalleOrdenFactura WHERE idDetalleOrdenCombo = @idDetalleOrdenCombo;
+
+						# SI TODOS LOS MENUS DEL COMBO ESTAN SERVIDOS Y ESTA FACTURADO, CAMBIA ESTADO DE COMBO A FACTURADO
+						IF _idEstadoDetalleOrden = 4 AND _yaFacturado THEN
+							UPDATE detalleOrdenCombo SET idEstadoDetalleOrden = 6 
+								WHERE idDetalleOrdenCombo = @idDetalleOrdenCombo;
+
+						END IF;
+
                     END IF;
                 END IF;
 				
@@ -250,12 +295,8 @@ BEGIN
 		ELSEIF ISNULL( _estadoActualDetalle ) THEN
 			SELECT 'danger' AS 'respuesta', 'Existe información faltante' AS 'mensaje';
 
-		# SI EL OrdenCliente ESTA EN ESTADO: Finalizado (3), Cancelado (10)
-		ELSEIF ( ( _estadoActualOrden = 3 OR _estadoActualOrden = 10 ) AND !@isAdmin ) THEN
-			SELECT 'danger' AS 'respuesta', 'No es posible realizar asignación, por estado actual de la Orden del Cliente' AS 'mensaje';
-
 		# SI EL DETALLE ESTA EN ESTADO: Realizado (6), Cancelado (10)
-		ELSEIF ( _estadoActualDetalle = 5 OR _estadoActualDetalle = 6 OR _estadoActualDetalle = 10 ) THEN
+		ELSEIF ( _estadoActualDetalle = 6 OR _estadoActualDetalle = 10 ) THEN
 			SELECT 'danger' AS 'respuesta', 'No es posible realizar la asignación, por estado actual de pedido' AS 'mensaje';
 			
 		ELSE
@@ -275,10 +316,16 @@ BEGIN
 	DECLARE finCursor BOOLEAN DEFAULT FALSE;
 	DECLARE _idMenu INT;
     DECLARE _cantidad INT;
+    DECLARE _seCocina BOOLEAN;
 
     # DECLARACION DE CURSOR PARA OBTENER DETALLE DE COMBO
     DEClARE cursorMenu CURSOR FOR 
-		SELECT idMenu, cantidad FROM comboDetalle WHERE idCombo = _idCombo;
+		SELECT cd.idMenu, cd.cantidad, m.seCocina
+        FROM comboDetalle AS cd
+			JOIN menu AS m
+				ON cd.idMenu = m.idMenu
+                
+        WHERE cd.idCombo = _idCombo;
 
 	# SI YA NO HAY MAS DETALLE DE COMBO
     DECLARE CONTINUE HANDLER FOR NOT FOUND 
@@ -288,7 +335,7 @@ BEGIN
 
 	loopMenu: LOOP
 
-		FETCH cursorMenu INTO _idMenu, _cantidad;
+		FETCH cursorMenu INTO _idMenu, _cantidad, _seCocina;
         
 		IF finCursor THEN 
 			LEAVE loopMenu;
@@ -298,7 +345,7 @@ BEGIN
         WHILE _cantidad >= 1 DO
 			INSERT INTO detalleOrdenMenu
 				( idOrdenCliente, idMenu, cantidad, idEstadoDetalleOrden, idTipoServicio, usuario, usuarioResponsable, perteneceCombo, observacion )
-			VALUES ( _idOrdenCliente, _idMenu, 1, _idEstadoDetalleOrden, _idTipoServicio, @usuario, _usuarioResponsable, 1, _observacion );
+			VALUES ( _idOrdenCliente, _idMenu, 1, IF( _seCocina, _idEstadoDetalleOrden, 3 ), _idTipoServicio, @usuario, _usuarioResponsable, 1, _observacion );
             
             SET @idDetalleOrdenMenu = LAST_INSERT_ID();
             
@@ -313,17 +360,18 @@ BEGIN
 	CLOSE cursorMenu;
 END$$
 
-CREATE PROCEDURE consultaDetalleOrdenCombo( _action VARCHAR(20), _idDetalleOrdenCombo INT, _idOrdenCliente INT, _idCombo INT, _cantidad DOUBLE(10,2), _idEstadoDetalleOrden INT, _idTipoServicio INT, _idFactura INT, _usuarioResponsable VARCHAR(15), _observacion TEXT )
+CREATE PROCEDURE consultaDetalleOrdenCombo( _action VARCHAR(20), _idDetalleOrdenCombo INT, _idOrdenCliente INT, _idCombo INT, _cantidad DOUBLE(10,2), _idEstadoDetalleOrden INT, _idTipoServicio INT, _idFactura INT, _usuarioResponsable VARCHAR(15), _observacion TEXT, _comentario TEXT )
 BEGIN
-	DECLARE _estadoActualDetalle INT DEFAULT NULL;
-	DECLARE _estadoActualOrden INT DEFAULT NULL;
+	DECLARE _estadoActualDetalle INT;
+	DECLARE _estadoActualOrden INT;
     DECLARE _ids TEXT DEFAULT '';
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
 
 	# ESTADO DETALLE ORDEN MENU 
-	SELECT idEstadoDetalleOrden, idOrdenCliente INTO _estadoActualDetalle, _idOrdenCliente 
-		FROM detalleOrdenCombo WHERE idDetalleOrdenCombo = _idDetalleOrdenCombo;
+	SELECT idEstadoDetalleOrden, IFNULL( _idOrdenCliente, idOrdenCliente ), IFNULL( _idTipoServicio, idTipoServicio )
+		INTO _estadoActualDetalle, _idOrdenCliente, _idTipoServicio
+	FROM detalleOrdenCombo WHERE idDetalleOrdenCombo = _idDetalleOrdenCombo;
 
 	# ESTADO ORDEN CLIENTE 
 	SELECT idEstadoOrden INTO _estadoActualOrden FROM ordenCliente WHERE idOrdenCliente = _idOrdenCliente;
@@ -355,6 +403,9 @@ BEGIN
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', _ids AS 'ids';
         
 	ELSEIF _action = 'cancel' THEN
+		
+        SET @comentario = _comentario;
+    
         # SI ES DIFERENTE A PENDIENTE
 		IF _estadoActualDetalle != 1 THEN
 			SELECT 'warning' AS 'respuesta', 'Estado actual no permite cancelar' AS 'mensaje';
@@ -377,7 +428,15 @@ BEGIN
 		END IF;
 
 	ELSEIF _action = 'estado' THEN
-		IF ( ( _idEstadoDetalleOrden > _estadoActualDetalle ) OR @isAdmin ) THEN
+		
+        SET @comentario = _comentario;
+        
+        # SI ES PARA RESTAURANTE DEBE DE ESTAR := SERVIDO
+        IF ( _idTipoServicio = 2 AND _idEstadoDetalleOrden = 6 AND _estadoActualDetalle != 4 ) THEN
+			
+            SELECT 'danger' AS 'respuesta', 'Estado actual no permite Facturar' AS 'mensaje';
+        
+		ELSEIF ( ( _idEstadoDetalleOrden > _estadoActualDetalle ) OR @isAdmin ) THEN
 			UPDATE detalleOrdenCombo SET
 				idEstadoDetalleOrden = _idEstadoDetalleOrden
 			WHERE idDetalleOrdenCombo = _idDetalleOrdenCombo;
@@ -395,8 +454,10 @@ BEGIN
 			SET dom.idEstadoDetalleOrden = _idEstadoDetalleOrden;
 
 			SELECT 'success' AS 'respuesta', 'Cambio de estado realizado correctamente' AS 'mensaje';
+            
 		ELSE
 			SELECT 'danger' AS 'respuesta', 'No se puede retornar a un estado anterior' AS 'mensaje';
+            
 		END IF;
 
 	ELSEIF _action = 'responsable' THEN
@@ -436,12 +497,8 @@ BEGIN
 		IF ISNULL( _estadoActualDetalle ) THEN
 			SELECT 'danger' AS 'respuesta', 'Existe información faltante' AS 'mensaje';
 
-		# SI EL OrdenCliente ESTA EN ESTADO: Finalizado (3), Cancelado (10)
-		ELSEIF ( ( _estadoActualOrden = 3 OR _estadoActualOrden = 10 ) AND !@isAdmin ) THEN
-			SELECT 'danger' AS 'respuesta', 'No es posible realizar asignación, por estado actual de la Orden del Cliente' AS 'mensaje';
-
 		# SI EL DETALLE ESTA EN ESTADO: Realizado (6), Cancelado (10)
-		ELSEIF ( _estadoActualDetalle = 5 OR _estadoActualDetalle = 6 OR _estadoActualDetalle = 10 ) THEN
+		ELSEIF ( _estadoActualDetalle = 6 OR _estadoActualDetalle = 10 ) THEN
 			SELECT 'danger' AS 'respuesta', 'No es posible realizar la asignación, por estado actual de pedido' AS 'mensaje';
 			
 		ELSE
@@ -463,37 +520,61 @@ BEGIN
 	END IF;
 END$$
 
-
-
-CREATE PROCEDURE ordenVistaTicket( _idEstadoOrden INT, _limit INT, _idOrdenCliente INT, _usuarioResponsable VARCHAR(15), _usuarioBarra VARCHAR(15) )
+CREATE FUNCTION obtenerDisponiblidad( _idMenu INT, _idCombo INT, _cantidad INT )
+RETURNS TEXT
 BEGIN
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
-		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
+	DECLARE _resultado TEXT;
+    
+	IF !ISNULL( _idMenu ) AND _cantidad > 0 THEN
+		SELECT
+			GROUP_CONCAT(
+				CONCAT(
+					( r.cantidad * _cantidad ), '#i#',
+					p.disponibilidad, '#i#',
+					p.producto, '#i#',
+					m.medida
+				) SEPARATOR '=r='
+			) 	 INTO 	_resultado
+		FROM receta AS r
+			
+			JOIN producto AS p
+				ON r.idProducto = p.idProducto
+				
+			JOIN medida AS m
+				ON m.idMedida = p.idMedida
+                
+		WHERE r.idMenu = _idMenu AND p.disponibilidad < ( r.cantidad * _cantidad ) LIMIT 1;
+        
+	ELSEIF !ISNULL( _idCombo ) AND _cantidad > 0 THEN
+		
+        SELECT
+			GROUP_CONCAT(
+				CONCAT(
+					( cd.cantidad * r.cantidad * _cantidad ), '#i#',
+					p.disponibilidad, '#i#',
+					p.producto, '#i#',
+					m.medida
+				) SEPARATOR '=r='
+			) 	 INTO 	_resultado
+		FROM comboDetalle AS cd
+			
+            JOIN receta AS r
+				ON r.idMenu = cd.idMenu
+			
+			JOIN producto AS p
+				ON r.idProducto = p.idProducto
+				
+			JOIN medida AS m
+				ON m.idMedida = p.idMedida
+                
+		WHERE cd.idCombo = _idCombo AND p.disponibilidad < ( cd.cantidad * r.cantidad * _cantidad ) LIMIT 1;
+        
+	END IF;
 
-	# LISTA DE ORDENES
-	SELECT
-		oc.idOrdenCliente,
-		oc.numeroTicket,
-		oc.usuarioPropietario,
-		oc.usuarioResponsable,
-		oc.usuarioBarra,
-		oc.fechaRegistro,
-		oc.numMenu,
-		eo.idEstadoOrden,
-		eo.estadoOrden
-	FROM ordenCliente AS oc
-		JOIN estadoOrden AS eo ON oc.idEstadoOrden = eo.idEstadoOrden
-	WHERE
-		IF( ISNULL( _idOrdenCliente ), TRUE, oc.idOrdenCliente = _idOrdenCliente )
-		AND IF( ISNULL( _idEstadoOrden ), TRUE, oc.idEstadoOrden = _idEstadoOrden  )
-		AND IF( ISNULL( _usuarioResponsable ), TRUE, oc.usuarioResponsable = _usuarioResponsable  )
-		AND IF( ISNULL( _usuarioBarra ), TRUE, oc.usuarioBarra = _usuarioBarra  )
-	LIMIT _limit;
-
-	# ESTADO ORDEN CLIENTE 
-	SELECT idEstadoOrden INTO _estadoActualOrden FROM ordenCliente WHERE idOrdenCliente = _idOrdenCliente;
-
+	RETURN _resultado;
 END$$
+
+
 
 
 

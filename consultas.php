@@ -618,6 +618,13 @@ switch ( $data->opcion )
 		echo json_encode( $orden->getRespuesta() );
 		break;
 
+	// REASIGNAR DETALLE DE ORDEN
+	case 'reasignarDetalleOrden':
+		$orden = new Orden();
+		$orden->reasignarDetalleOrden( $data->idOrdenCliente, $data->idOrdenClienteDestino, $data->lstDetalle ) ;
+		echo json_encode( $orden->getRespuesta() );
+		break;
+
 	// GUARDAR MOVIMIENTO
 	case 'guardarMovimiento':
 		$evento = new Evento();
