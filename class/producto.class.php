@@ -86,6 +86,8 @@ class Producto
  				if( $iCuadreProducto == -1 ){
  					$iCuadreProducto = count( $fechaCuadreP->lstUbicacion[ $iUbicacion ][ 'lstCuadreProducto' ] );
  					$fechaCuadreP->lstUbicacion[ $iUbicacion ][ 'lstCuadreProducto' ][ $iCuadreProducto ] = array(
+ 						'estadoCuadre'         => $row->estadoCuadre,
+ 						'noCuadre'             => $iCuadreProducto + 1,
  						'idCuadreProducto'     => $row->idCuadreProducto,
  						'fechaRegistroCuadre'  => $row->fechaRegistroCuadre,
  						'usuario'              => $row->usuario,

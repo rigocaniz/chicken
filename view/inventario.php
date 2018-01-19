@@ -622,7 +622,6 @@
 	</div>
 </script>
 
-
 <!-- DIALOGO LST INGRESO PRODUCTOS -->
 <script type="text/ng-template" id="dial.verDetalleFacturaCompra.html">
 	<div class="modal" tabindex="-1" role="dialog">
@@ -859,7 +858,6 @@
 						    		<a href="" aria-controls="home" role="tab" data-toggle="tab">{{ ubicacion.ubicacion }}</a>
 						    	</li>
 						  	</ul>
-
 						  	<div class="tab-content">
 						    	<div role="tabpanel" class="tab-pane" ng-class="{'active': fechaCuadreP.ubicacionSeleccionada == ubicacion.idUbicacion}"  ng-repeat="(ixUbicacion, ubicacion) in fechaCuadreP.lstUbicacion">
 						    		<br>
@@ -869,7 +867,10 @@
 						    					<button type="button" class="btn btn-sm btn-info" ng-click="cuadreProducto.mostrar=!cuadreProducto.mostrar">
 						    						<span class="glyphicon" ng-class="{'glyphicon-chevron-right': cuadreProducto.mostrar, 'glyphicon-chevron-down': !cuadreProducto.mostrar}"></span>
 						    					</button>
-						    					CUADRE #{{ cuadreProducto.idCuadreProducto }}
+						    					CUADRE #{{ cuadreProducto.noCuadre }}
+						    					<div class="pull-right">
+						    						<b>ESTADO {{ cuadreProducto.estadoCuadre | uppercase}}</b>
+						    					</div>
 						    				</div>
 						    				<div class="panel-body" ng-show="cuadreProducto.mostrar">
 												<div class="form-group">
@@ -900,16 +901,22 @@
 														</div>
 													</div>
 												</div>
-						    					<table class="table table-hover">
+						    					<table class="table table-hover table-condensed">
 													<thead>
 														<tr>
-															<th class="col-sm-1 text-center">No.</th>
-															<th class="col-sm-3 text-center">Producto</th>
-															<th class="col-sm-2 text-center">Tipo Producto</th>
-															<th class="col-sm-1 text-center">Perecedero</th>
-															<th class="text-center success" colspan="2">APERTURA</th>
-															<th class="text-center warning" colspan="2">CIERRE</th>
-															<th class="col-sm-2 text-center">Medida</th>
+															<th class="col-sm-1 text-center" rowspan="2">No.</th>
+															<th class="col-sm-3 text-center" rowspan="2">Producto</th>
+															<th class="col-sm-2 text-center" rowspan="2">Tipo <br>Producto</th>
+															<th class="col-sm-1 text-center" rowspan="2">Perecedero</th>
+															<th class="text-center table-bordered" colspan="2">APERTURA</th>
+															<th class="text-center table-bordered" colspan="2">CIERRE</th>
+															<th class="col-sm-2 text-center" rowspan="2">Medida</th>
+														</tr>
+														<tr>
+															<th class="text-center table-bordered">Cantidad</th>
+															<th class="text-center table-bordered">Diferencia</th>
+															<th class="text-center table-bordered">Cantidad</th>
+															<th class="text-center table-bordered">Diferencia</th>
 														</tr>
 													</thead>
 													<tbody>
@@ -926,16 +933,16 @@
 															<td class="text-center">
 																{{ inv.perecedero ? 'SI' : 'NO' }}
 															</td>
-															<td class="text-right success">
+															<td class="text-right table-bordered">
 																{{ inv.cantidadApertura }}
 															</td>
-															<td class="text-right success">
+															<td class="text-right table-bordered" ng-class="{'danger' : inv.diferenciaApertura < 0, 'success': inv.diferenciaApertura > 0}">		
 																{{ inv.diferenciaApertura }}
 															</td>
-															<td class="text-right warning">
+															<td class="text-right table-bordered">
 																{{ inv.cantidadCierre }}
 															</td>
-															<td class="text-right warning">
+															<td class="text-right table-bordered " ng-class="{'danger' : inv.diferenciaCierre < 0, 'success': inv.diferenciaCierre > 0}">
 																{{ inv.diferenciaCierre }}
 															</td>
 															<td class="text-center">
@@ -1092,7 +1099,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-warning" ng-click="consultaCuadreProducto()" ng-disabled="loading" ng-show="cierreDiario.lstProductos.length">
-						<span class="glyphicon glyphicon-saved"></span> REALIZAR CIERRE (F6)
+						<span class="glyphicon glyphicon-saved"></span> GUARDAR (F6)
 					</button>
 					<button type="button" class="btn btn-default" ng-click="$hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
