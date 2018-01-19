@@ -1,4 +1,6 @@
-CREATE PROCEDURE consultaProducto( _action VARCHAR(20), _idProducto INT, _producto VARCHAR(45), _idTipoProducto INT, _idMedida INT, _perecedero BOOLEAN, _cantidadMinima DOUBLE(10,2), _cantidadMaxima DOUBLE(10,2), _disponibilidad DOUBLE(10,2), _importante BOOLEAN )
+DELIMITER $$
+
+CREATE PROCEDURE consultaProducto( _action VARCHAR(20), _idProducto INT, _producto VARCHAR(45), _idTipoProducto INT, _idMedida INT, _perecedero BOOLEAN, _cantidadMinima DOUBLE(10,2), _cantidadMaxima DOUBLE(10,2), _disponibilidad DOUBLE(10,2), _importante BOOLEAN, _idUbicacion CHAR(1) )
 BEGIN
 	DECLARE EXIT HANDLER FOR 1062
 		SELECT 'danger' AS 'respuesta', 'Error, producto duplicado' AS 'mensaje';
@@ -11,19 +13,22 @@ BEGIN
 		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
 
 	ELSEIF _action = 'insert' THEN
-		INSERT INTO producto ( producto, idTipoProducto, idMedida, perecedero, cantidadMinima, cantidadMaxima, disponibilidad, importante, fechaRegistro, usuario )
-			VALUES ( _producto, _idTipoProducto, _idMedida, _perecedero, _cantidadMinima, _cantidadMaxima, _disponibilidad, _importante, NOW(), @usuario );
-		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
+		INSERT INTO producto ( producto, idTipoProducto, idMedida, perecedero, cantidadMinima, cantidadMaxima, disponibilidad, importante, idUbicacion, fechaRegistro, usuario )
+			VALUES ( _producto, _idTipoProducto, _idMedida, _perecedero, _cantidadMinima, _cantidadMaxima, _disponibilidad, _importante, _idUbicacion, NOW(), @usuario );
+		
+        SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
 
 	ELSEIF _action = 'update' THEN
 		UPDATE producto SET 
 			producto       = _producto, 
 			idTipoProducto = _idTipoProducto, 
+            idUbicacion    = _idUbicacion,
 			idMedida       = _idMedida, 
 			perecedero     = _perecedero, 
 			cantidadMinima = _cantidadMinima, 
 			cantidadMaxima = _cantidadMaxima,
-			importante     = _importante
+			importante     = _importante,
+            idUbicacion    = _idUbicacion
 		WHERE idProducto = _idProducto;
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje';
 
@@ -82,7 +87,6 @@ BEGIN
 	END IF;
 END$$
 
-/* --- FACTURA --- */
 CREATE PROCEDURE consultaFactura( _action VARCHAR(20), _idFacturaCompra INT, _idEstadoFactura INT, _noFactura VARCHAR(15), _proveedor VARCHAR(45), _fechaFactura DATE, _comentario TEXT )
 BEGIN
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
@@ -113,7 +117,6 @@ BEGIN
 	END IF;
 END$$
 
-# INGRESO DE PRODUCTO
 CREATE PROCEDURE consultaIngreso( _action VARCHAR(20), _idIngreso INT, _cantidad DOUBLE(10,2), _costo DOUBLE(12,2), _idProducto INT, _idFacturaCompra INT )
 BEGIN
 
@@ -138,7 +141,25 @@ BEGIN
 	END IF;
 END$$
 
-CREATE PROCEDURE consultaReajusteInventario( _action VARCHAR(20), _idProducto INT, _cantidad DOUBLE(10,2), _observacion TEXT, _esIncremento BOOLEAN )
+CREATE PROCEDURE consultaReajuste( _action VARCHAR(20), _observacion TEXT )
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+		SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
+
+	IF !sesionValida() THEN # SI LA SESION ES INVALIDA
+		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
+
+	ELSEIF _action = 'insert' THEN
+		INSERT INTO reajuste( observacion, usuario, fechaRegistro) 
+			VALUES ( _observacion, @usuario, NOW() );
+
+		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
+	ELSE
+		SELECT 'danger' AS 'respuesta', 'Acción no válida' AS 'mensaje';
+	END IF;
+END$$
+
+CREATE PROCEDURE consultaReajusteProducto( _action VARCHAR(20), _idReajuste INT, _idProducto INT, _cantidad DOUBLE(10,2), _esIncremento BOOLEAN )
 BEGIN
 	DECLARE _disponibilidad DOUBLE(10,2);
 
@@ -155,8 +176,8 @@ BEGIN
 			SELECT 'danger' AS 'respuesta', 'La disponibilidad no puede ser menor a cero' AS 'mensaje';
 
 		ELSE
-			INSERT INTO reajusteInventario (idProducto, cantidad, observacion, esIncremento, usuario, fechaRegistro) 
-				VALUES ( _idProducto, _cantidad, _observacion, _esIncremento, @usuario, NOW() );
+			INSERT INTO reajusteProducto( idReajuste, idProducto, cantidad, esIncremento ) 
+				VALUES ( _idReajuste, _idProducto, _cantidad, _esIncremento );
 			
 			IF _esIncremento THEN
 				UPDATE producto SET disponibilidad = disponibilidad + _cantidad
@@ -173,8 +194,6 @@ BEGIN
 	END IF;
 END$$
 
-
-/* --- CUADRE DE PRODUCTOS --- */
 CREATE PROCEDURE consultaCuadreProducto( _action VARCHAR(20), _idCuadreProducto INT, _fechaCuadre DATE, _comentario TEXT, _todos BOOLEAN, _idUbicacion CHAR(1), _idEstadoCuadre INT )
 BEGIN
 	DECLARE CONTINUE HANDLER FOR 1062
@@ -253,8 +272,6 @@ END$$
 
 
 
-
-
 CREATE VIEW vCuadreProducto AS
 SELECT 
 	idCuadreProducto,
@@ -274,7 +291,6 @@ FROM cuadreProducto AS cp
 	JOIN ubicacion AS u
 		ON u.idUbicacion = cp.idUbicacion
 ;
-
 
 CREATE VIEW vCuadreProductoDetalle AS
 SELECT 
@@ -298,6 +314,30 @@ FROM vCuadreProducto AS cp
 ;
 
 
+CREATE VIEW lstReajusteProducto AS
+SELECT
+	r.idReajuste,
+	p.idProducto,
+	producto,
+	idMedida,
+	medida,
+	idTipoProducto,
+	tipoProducto,
+	perecedero,
+	cantidadMinima,
+	cantidadMaxima,
+	disponibilidad,
+	importante,
+	rp.cantidad,
+	rp.esIncremento,
+	r.observacion,
+	r.usuario AS 'usuarioReajuste',
+	r.fechaRegistro AS 'fechaReajuste'
+FROM reajuste AS r
+	JOIN reajusteProducto AS rp ON r.idReajuste = rp.idReajuste
+	JOIN lstProducto AS p ON rp.idProducto = p.idProducto
+;
+
 CREATE VIEW lstProducto AS
 SELECT
 	p.idProducto,
@@ -311,17 +351,25 @@ SELECT
 	p.cantidadMaxima,
 	p.disponibilidad,
 	p.importante,
+    u.idUbicacion,
+    u.ubicacion,
 	p.usuario AS 'usuarioProducto',
 	p.fechaRegistro AS 'fechaProducto'
 FROM producto AS p
 	JOIN medida AS m
 		ON m.idMedida = p.idMedida
+        
 	JOIN tipoProducto AS tp
-		ON tp.idTipoProducto = p.idTipoProducto;
+		ON tp.idTipoProducto = p.idTipoProducto
+	
+    JOIN ubicacion AS u
+		ON u.idUbicacion = p.idUbicacion
+;
 
 CREATE VIEW lstIngresoProducto AS
 SELECT
 	i.idIngreso,
+    i.idFacturaCompra,
 	p.idProducto,
 	producto,
 	idMedida,
@@ -334,6 +382,7 @@ SELECT
 	disponibilidad,
 	importante,
 	i.cantidad,
+    i.costo,
 	i.usuario AS 'usuarioIngreso',
 	i.fechaRegistro AS 'fechaIngreso'
 FROM lstProducto AS p
@@ -356,32 +405,6 @@ FROM facturaCompra AS fc
 		ON fc.idFacturaCompra = fce.idFacturaCompra AND fc.idEstadoFactura = fce.idEstadoFactura
 	JOIN estadoFactura AS ef 
 		ON fc.idEstadoFactura = ef.idEstadoFactura;
-
-
-
-CREATE VIEW lstReajusteProducto AS
-SELECT
-	ri.idReajusteInventario,
-	p.idProducto,
-	producto,
-	idMedida,
-	medida,
-	idTipoProducto,
-	tipoProducto,
-	perecedero,
-	cantidadMinima,
-	cantidadMaxima,
-	disponibilidad,
-	importante,
-	ri.cantidad,
-	ri.observacion,
-	ri.esIncremento,
-	ri.usuario AS 'usuarioReajuste',
-	ri.fechaRegistro AS 'fechaReajuste'
-FROM lstProducto AS p
-	JOIN reajusteInventario AS ri ON ri.idProducto = p.idProducto;
-
-
 
 
 

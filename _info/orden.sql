@@ -599,7 +599,6 @@ FROM detalleComboMenu AS dcm
 		ON doc.idTipoServicio = cp.idTipoServicio AND doc.idCombo = cp.idCombo
 ;
 
-
 CREATE OR REPLACE VIEW vOrdenes AS
 SELECT
 	dom.idDetalleOrdenMenu,
@@ -673,6 +672,5 @@ SELECT
 FROM ordenCliente AS oc
 	JOIN estadoOrden AS eo
 		ON oc.idEstadoOrden = eo.idEstadoOrden;
-
 
 

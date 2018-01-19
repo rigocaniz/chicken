@@ -1,3 +1,4 @@
+DELIMITER $$
 
 CREATE PROCEDURE consultaEvento( _action VARCHAR(15), _idEvento INT, _evento VARCHAR(75), _idCliente INT, _fechaEvento DATE, _idSalon INT, _idEstadoEvento INT, _numeroPersonas INT, _horaInicio TIME, _horaFinal TIME, _observacion TEXT, _comentario TEXT )
 COMMENT 'INSERTA / ACTUALIZA EVENTO'
@@ -10,6 +11,9 @@ BEGIN
     
     IF !sesionValida() THEN # SI LA SESION ES INVALIDA
 		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
+        
+	ELSEIF _fechaEvento < CURDATE() THEN
+		SELECT 'danger' AS 'respuesta', 'Fecha de evento NO puede ser menor al actual' AS 'mensaje';
 	
 	ELSEIF _action = 'insert' THEN
 		INSERT INTO evento ( evento, idCliente, fechaEvento, idSalon, idEstadoEvento, numeroPersonas, horaInicio, horaFinal, observacion, usuario, fechaRegistro ) 
@@ -18,19 +22,25 @@ BEGIN
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
         
     ELSEIF _action = 'update' THEN
-		UPDATE evento SET
-			evento         = _evento,
-			idCliente      = _idCliente,
-			fechaEvento    = _fechaEvento,
-			idSalon        = _idSalon,
-			idEstadoEvento = _idEstadoEvento, 
-			numeroPersonas = _numeroPersonas,
-			horaInicio     = _horaInicio,
-			horaFinal      = _horaFinal,
-			observacion    = _observacion
-		WHERE idEvento = _idEvento;
-		
-		SELECT 'success' AS 'respuesta', 'Actualizado correctamente' AS 'mensaje';
+		IF _idEstadoEvento = 5 AND _fechaEvento != curdate() THEN
+			SELECT 'warning' AS 'respuesta', CONCAT( 'No se puede finalizar evento, corresponde a otra fecha: ', DATE_FORMAT( _fechaEvento, '%d/%m/%Y' ) )AS 'mensaje';
+        
+        ELSE
+			UPDATE evento SET
+				evento         = _evento,
+				idCliente      = _idCliente,
+				fechaEvento    = _fechaEvento,
+				idSalon        = _idSalon,
+				idEstadoEvento = _idEstadoEvento, 
+				numeroPersonas = _numeroPersonas,
+				horaInicio     = _horaInicio,
+				horaFinal      = _horaFinal,
+				observacion    = _observacion
+			WHERE idEvento = _idEvento;
+			
+			SELECT 'success' AS 'respuesta', 'Actualizado correctamente' AS 'mensaje';
+        END IF;
+        
     ELSE
 		SELECT 'danger' AS 'respuesta', 'Acción no válida' AS 'mensaje';
     END IF;
@@ -207,38 +217,45 @@ BEGIN
     END IF;
 END$$
 
-
-
-CREATE PROCEDURE consultaMovimiento( _action VARCHAR(15), _idMovimiento INT, _idCaja INT, _idTipoMovimiento INT, _idEstadoMovimiento INT, _idFormaPago INT, _idEvento INT, _motivo VARCHAR(60), _monto DOUBLE( 10,2 ), _comentario TEXT )
-COMMENT 'INSERTAR / ACTUALIZAR / ELIMINAR OTRO SERVICIO DE EVENTO'
+CREATE PROCEDURE consultaMovimiento( _action VARCHAR(15), _idMovimiento INT, _idTipoMovimiento INT, 
+	_idEstadoMovimiento INT, _idFormaPago INT, _idEvento INT, _motivo VARCHAR(60), _monto DOUBLE(10,2), _comentario TEXT )
 BEGIN
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION
-        SELECT 'danger' AS 'respuesta', 'Ocurrio un error al guardar la información' AS 'mensaje';
-	
-	SET @comentario = _comentario;
+	DECLARE _idCaja INT;
 
-    IF !sesionValida() THEN # SI LA SESION ES INVALIDA
+    # OTHERS ERRORS
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        SELECT 'danger' AS 'respuesta', 'Ocurrio un error desconocido' AS 'mensaje';
+    
+    SET @comentario = _comentario;
+    
+    # SI TIENE UNA APERTURA PENDIENTE
+	SELECT idCaja INTO _idCaja FROM caja WHERE usuario = @usuario AND idEstadoCaja = 1 ORDER BY idCaja DESC LIMIT 1;
+    
+	# SI LA SESION ES INVALIDA
+    IF !sesionValida() THEN
 		SELECT 'danger' AS 'respuesta', 'Sesión no válida' AS 'mensaje';
+	
+    # SI LA CAJA NO ESTA HABILITADA
+	ELSEIF ISNULL( _idCaja ) THEN
+		SELECT 'danger' AS 'respuesta', 'No tiene ningúna Caja Abierta' AS 'mensaje';
 
 	ELSEIF _action = 'insert' THEN
-		INSERT INTO movimiento( idCaja, idTipoMovimiento, idEstadoMovimiento, idFormaPago, idEvento, motivo, monto ) 
-			VALUES ( _idCaja, _idTipoMovimiento, _idEstadoMovimiento, _idFormaPago, _idEvento, _motivo, _monto );
-
+    
+		INSERT INTO movimiento ( idCaja, idTipoMovimiento, idEstadoMovimiento, idFormaPago, idEvento, motivo, monto ) 
+		VALUES ( _idCaja, _idTipoMovimiento, _idEstadoMovimiento, _idFormaPago, _idEvento, _motivo, _monto );
+			
 		SELECT 'success' AS 'respuesta', 'Guardado correctamente' AS 'mensaje', LAST_INSERT_ID() AS 'id';
-        
-    ELSEIF _action = 'status' THEN
-		UPDATE movimiento SET idEstadoMovimiento = _idEstadoMovimiento
-			WHERE idMovimiento = _idMovimiento;
-		
-		SELECT 'success' AS 'respuesta', 'Realizado correctamente' AS 'mensaje';
-	
+	 
+    ELSEIF _action = 'delete' AND @isAdmin THEN
+    
+		DELETE FROM movimiento WHERE idMovimiento = _idMovimiento;
+			
+		SELECT 'success' AS 'respuesta', 'Eliminado correctamente' AS 'mensaje';
+    
     ELSE
-
 		SELECT 'danger' AS 'respuesta', 'Acción no válida' AS 'mensaje';
     END IF;
-END$$
-
-
+end$$
 
 CREATE PROCEDURE consultaDetalleOrdenEvento( _idEvento INT )
 COMMENT 'CONSULTAR DETALLE ORDEN'
@@ -252,7 +269,7 @@ BEGIN
 		(SELECT
 			em.idEventoMenu AS 'id',
 			em.cantidad,
-			em.horaDespacho,
+			TIME_FORMAT( em.horaDespacho, '%H:%i' ) AS 'horaDespacho',
 			em.precioUnitario,
 			( em.cantidad * em.precioUnitario )AS 'subTotal',
 			em.fechaRegistro,
@@ -271,7 +288,7 @@ BEGIN
 		(SELECT
 			ec.idEventoCombo AS 'id',
 			ec.cantidad,
-			ec.horaDespacho,
+            TIME_FORMAT( ec.horaDespacho, '%H:%i' ) AS 'horaDespacho',
 			ec.precioUnitario,
 			( ec.cantidad * ec.precioUnitario )AS 'subTotal',
 			ec.fechaRegistro,
@@ -290,7 +307,7 @@ BEGIN
 		(SELECT
 			idOtroMenu AS 'id',
 			cantidad,
-			horaDespacho,
+			TIME_FORMAT( horaDespacho, '%H:%i' ) AS 'horaDespacho',
 			precioUnitario,
 			( cantidad * precioUnitario )AS 'subTotal',
 			fechaRegistro,
@@ -302,11 +319,26 @@ BEGIN
 			'Otro Menú' AS 'tipo'
 		FROM otroMenu
 		WHERE idEvento = _idEvento)
+        UNION ALL
+        # DETALLE DE OTRO SERVICIO
+		(SELECT
+			idOtroServicio AS 'id',
+			cantidad,
+			NULL AS 'horaDespacho',
+			precioUnitario,
+			( cantidad * precioUnitario )AS 'subTotal',
+			fechaRegistro,
+			comentario,
+			NULL AS 'idMenu',
+			otroServicio AS 'menu',
+			'' AS 'imagen',
+			'otroServicio' AS 'idTipo',
+			'Otro Servicio' AS 'tipo'
+		FROM otroServicio
+		WHERE idEvento = _idEvento)
         ORDER BY fechaRegistro ASC;
 	END IF;
 END$$
-
-
 
 
 CREATE OR REPLACE VIEW vEvento AS
@@ -342,8 +374,8 @@ FROM evento AS e
 	
     JOIN salon AS s
 		ON s.idSalon = e.idSalon
+        
 ;
-
 
 CREATE OR REPLACE VIEW vOtroServicio AS
 SELECT
