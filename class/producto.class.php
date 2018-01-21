@@ -100,20 +100,6 @@ class Producto
 
  				$fechaCuadreP->lstUbicacion[ $iUbicacion ][ 'lstCuadreProducto' ][ $iCuadreProducto ][ 'lstCuadreProdDetalle' ] = $this->cuadreProductoDetalle( $row->idCuadreProducto );
  			}
- 			/*
-			$fechaCuadreP->encontrado = TRUE;
-
- 			$fechaCierreP = array(
-					'encontrado'     => 1,
-					'idCierreDiario' => $row->idCierreDiario,
-					'fechaCierre'    => $row->fechaCierre,
-					'comentario'     => $row->comentario,
-					'usuario'        => $row->usuario,
-					'fechaHora'      => $row->fechaHora,
-					'lstProductos'   => ,
-					'todos'          => (int)$row->todos ? TRUE : FALSE
- 				);
- 			*/
  		}
 
  		return $fechaCuadreP;
@@ -875,6 +861,7 @@ class Producto
 				$row->cierreAtrasada = TRUE;
 
  			$dataCaja = array(
+				    'fechaHabilitada'     => !$row->cierreAtrasada,
 				    'accion'              => 'update',
 				    'idCuadreProducto'    => (int)$row->idCuadreProducto,
 				    'cierreAtrasada'      => $row->cierreAtrasada,
@@ -893,6 +880,7 @@ class Producto
  		}
 		else {
 			$dataCaja = array(
+					'fechaHabilitada'     => TRUE,
 					'accion'              => 'insert',
 					'idCuadreProducto'    => NULL,
 					'cierreAtrasada'      => FALSE,

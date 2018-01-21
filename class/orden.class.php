@@ -565,9 +565,8 @@ class Orden
 				$row->idCombo             = (int)$row->idCombo;
 				$row->idMenu              = (int)$row->idMenu;
 				$row->idDetalleOrdenCombo = (int)$row->idDetalleOrdenCombo;
-
-				$row->perteneceCombo = (int)$row->perteneceCombo;
-				$img = ( $row->perteneceCombo ? $row->imagenCombo : $row->imagen );
+				$row->perteneceCombo      = (int)$row->perteneceCombo;
+				$img                      = ( $row->perteneceCombo ? $row->imagenCombo : $row->imagen );
 
 				$img = file_exists( $img ) ? $img : 'img-menu/notFound.png';
 
@@ -596,18 +595,24 @@ class Orden
 					$index = count( $lst );
 					// AGREGA UNA NUEVA ORDEN
 					$lst[ $index ] = (object)array(
-						'idCombo'        => $row->idCombo,
-						'idMenu'         => $row->idMenu,
-						'esCombo'        => $row->perteneceCombo,
-						'cantidad'       => 0,
-						'precio'         => $precioMenu,
-						'subTotal'       => 0,
-						'descripcion'    => ( $row->perteneceCombo ? $row->combo : $row->menu ),
-						'imagen'         => ( strlen( (string)$img ) ? $img : 'img-menu/notFound.png' ),
-						'idTipoServicio' => $row->idTipoServicio,
-						'tipoServicio'   => $row->tipoServicio,
-						'lstDetalle'     => array(),
-						'lstMenus'       => array()
+						'cobrarTodo'       => TRUE,
+						'descuento'        => 0,
+						'cantidadRestante' => 0,
+						'agrupado'         => TRUE,
+						'maximo'           => 0,
+						
+						'idCombo'          => $row->idCombo,
+						'idMenu'           => $row->idMenu,
+						'esCombo'          => $row->perteneceCombo,
+						'cantidad'         => 0,
+						'precio'           => $precioMenu,
+						'subTotal'         => 0,
+						'descripcion'      => ( $row->perteneceCombo ? $row->combo : $row->menu ),
+						'imagen'           => ( strlen( (string)$img ) ? $img : 'img-menu/notFound.png' ),
+						'idTipoServicio'   => $row->idTipoServicio,
+						'tipoServicio'     => $row->tipoServicio,
+						'lstDetalle'       => array(),
+						'lstMenus'         => array()
 					);
 				}
 
@@ -674,8 +679,10 @@ class Orden
 						$count++;
 				}
 
-				$lst[ $ix ]->cantidad = $menu->esCombo ? count( $arrCombo ) : $count;
-				$lst[ $ix ]->subTotal = ( $lst[ $ix ]->cantidad * $menu->precio );
+				$lst[ $ix ]->cantidadRestante = $menu->esCombo ? count( $arrCombo ) : $count;
+				$lst[ $ix ]->cantidad         = $menu->esCombo ? count( $arrCombo ) : $count;
+				$lst[ $ix ]->maximo           = $menu->esCombo ? count( $arrCombo ) : $count;
+				$lst[ $ix ]->subTotal         = ( $lst[ $ix ]->cantidad * $menu->precio );
 				
 				// SUMA EL TOTAL DE LA ORDEN
 				$total += (double)$lst[ $ix ]->subTotal;
@@ -1056,14 +1063,13 @@ class Orden
 				    fechaRegistro,
 				    numMenu
 				FROM vOrdenCliente 
-				WHERE DATE( fechaRegistro ) >= DATE_SUB( CURDATE(), INTERVAL 1 DAY ) $where
+				/*WHERE DATE( fechaRegistro ) >= DATE_SUB( CURDATE(), INTERVAL 1 DAY ) $where */
+				WHERE ( idEstadoOrden <> 5 AND idEstadoOrden <> 10 )  $where
 				ORDER BY idOrdenCliente DESC LIMIT 5";
 
 		if ( $rs = $this->con->query( $sql ) ) {
-
-			while( $row = $rs->fetch_object() ) {
+			while( $row = $rs->fetch_object() )
 				$lst[] = $row;
-			}
 		}
 
 		return $lst;
@@ -1072,7 +1078,6 @@ class Orden
  	// CAMBIA TIPO SERVICIO ORDEN
  	public function cambiarServicio( $idOrdenCliente, $lstDetalle )
  	{
-
  		if ( count( $lstDetalle ) AND $idOrdenCliente > 0 ):
  			$validar = new Validar();
 
