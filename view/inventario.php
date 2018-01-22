@@ -1009,7 +1009,7 @@
 								  	<span class="input-group-addon">
     									<span class="fa fa-calendar"></span>
 								  	</span>
-    								<input type="text" class="form-control" ng-model="cierreDiario.fechaRegistroCuadre" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker>
+    								<input type="text" class="form-control" ng-model="cierreDiario.fechaRegistroCuadre" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker ng-disabled="!cierreDiario.fechaHabilitada">
 								</div>
 							</div>
 							<div class="col-sm-4">

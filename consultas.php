@@ -515,13 +515,6 @@ switch ( $data->opcion )
 		echo json_encode( $orden->lstDetalleOrdenCliente( $data->idOrdenCliente, $todo ) );
 		break;
 
-
-	case 'lstDetalleOrden':// 	prueba
-		$factura = new Factura();
-		$todo = true;
-		echo json_encode( $factura->lstDetalleOrdenCliente( $data->idOrdenCliente, $todo, $data->agrupado ) );
-		break;
-
 	case 'consultaFacturaCliente':// 	prueba
 		$factura = new Factura();
 		echo json_encode( $factura->consultaFacturaCliente( $data->accion, $data->data ) );

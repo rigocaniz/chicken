@@ -1,0 +1,42 @@
+    <td class="text-center" ng-hide="facturacion.tipoGrupo=='agrupado'">
+        <button type="button" class="btn btn-sm btn-default" ng-click="item.cobrarTodo=!item.cobrarTodo">
+            <span class="glyphicon " ng-class="{'glyphicon-check': item.cobrarTodo, 'glyphicon-unchecked': !item.cobrarTodo}"></span>
+        </button>
+    </td>
+    <td>
+        <div class="label-border btn-sm" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}" title="{{ item.tipoServicio }}" data-toggle="tooltip" data-placement="top" tooltip>
+            <span ng-show="item.idTipoServicio==2">R</span>
+            <span ng-show="item.idTipoServicio==3">D</span>
+            <span ng-show="item.idTipoServicio==1">L</span>
+        </div>
+        <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
+        <span data-placement="top" data-title="{{item.estadoDetalleOrden}}" bs-tooltip>{{ item.descripcion }}</span>
+        <br>
+        <textarea class="form-control" rows="2" placeholder="Ingrese  justificación del descuento" ng-model="item.comentario" ng-show="item.descuento > 0 && item.cobrarTodo"></textarea>
+    </td>
+    <td class="text-center">
+        <div ng-show="!item.precioHabilitado">
+            <input type="number" class="form-control" ng-model="item.cantidad" max="{{ item.maximo }}" min="1" ng-pattern="/^[0-9]+?$/" ng-disabled="!item.cobrarTodo">
+        </div>
+        <div ng-show="item.precioHabilitado">
+            {{ item.cantidad }}
+        </div>
+    </td>
+    <td class="text-right">
+        {{ item.precio | number: 2 }}
+    </td>
+    <td class="text-right">
+        <input type="number" class="form-control" ng-model="item.descuento" max="{{ (item.cantidad * item.precio) }}" min="0" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" ng-disabled="!item.cobrarTodo">
+    </td>
+    <td class="text-right">
+        {{ ( item.cantidad * item.precio ) -  item.descuento | number:2 }}
+    </td>
+</tr>
+<tr class="success">
+    <td ng-hide="facturacion.tipoGrupo=='agrupado'"></td>
+    <td colspan="4" class="text-right">
+        <strong>TOTAL</strong>
+    </td>
+    <td class="text-right" style="">
+        <strong>Q. {{ retornarTotalOrden() | number: 2 }}</strong>
+    </td>
