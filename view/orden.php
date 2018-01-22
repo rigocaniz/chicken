@@ -9,13 +9,17 @@
 
 <div class="col-xs-12" style="margin-top:5px">
 	<div class="row">
-        <div class="col-sm-4 col-xs-5" style="margin-bottom:9px">
+        <div class="col-sm-5 col-xs-6" style="margin-bottom:9px">
             <button type="button" class="btn btn-success" ng-click="nuevaOrden()">
                 <span class="glyphicon glyphicon-plus"></span>
                 <u>N</u>ueva Orden
             </button>
+            <button type="button" class="btn btn-default" ng-click="dialUltimasOrdenes.show()">
+                <span class="glyphicon glyphicon-print"></span>
+                Últimas Ordenes
+            </button>
         </div>
-		<div class="col-sm-offset-2 col-sm-5 col-xs-6">
+		<div class="col-sm-offset-2 col-sm-4 col-xs-5">
             <div class="input-group">
                 <input type="number" class="form-control" ng-model="buscarTicket" id="buscarTicket" ng-class="{'input-focus':buscarTicket>0}"
                     placeholder="Ingrese # Ticket + ENTER" style="font-size:19px;padding: 1px 14px;font-weight:normal">
@@ -838,4 +842,52 @@
             </div>
         </div>
     </div>
-</script> 
+</script>
+
+
+<!-- IMPRIMIR ULTIMAS ORDENES -->
+<script type="text/ng-template" id="dial.ultimas.ordenes.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-primary">
+                <div class="modal-header panel-heading">
+                    <button type="button" class="close" ng-click="$hide()">&times;</button>
+                    <span class="glyphicon glyphicon-print"></span>
+                    Imprimir Últimas Ordenes
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <blockquote>
+                                <p>Imprime las Últimas Ordenes Pendientes, opcional se puede imprimir las últimas ordenes facturadas.</p>
+                            </blockquote>
+                        </div>
+                        <div class="col-sm-12 text-center" ng-init="siFacturados=false;facturados=''">
+                            <h4>Incluir Facturados</h4>
+                            <button type="button" class="btn" ng-class="{'btn-primary':siFacturados,'btn-default':!siFacturados}" ng-click="siFacturados=true">
+                                <b>SI</b>
+                            </button>
+                            <button type="button" class="btn" ng-class="{'btn-primary':!siFacturados,'btn-default':siFacturados}" ng-click="siFacturados=false; facturados=''">
+                                <b>NO</b>
+                            </button>
+                        </div>
+                        <div class="col-sm-6 col-sm-offset-3" ng-show="siFacturados">
+                            <label>Ingrese los Últimos Facturados</label>
+                            <input type="text" class="form-control input-lg" ng-model="facturados">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-info" target="_blank" ng-href="orden.print.php?tipo=pendientes&facturados={{ facturados }}">
+                        <span class="glyphicon glyphicon-print"></span>
+                        <b>Imprimir Últimas Ordenes</b>
+                    </a>
+                    <button type="button" class="btn btn-default" ng-click="$hide()">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        <b>Salir</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

@@ -43,6 +43,8 @@ $conexion->close();
 	<style>
 		*{
 			font-family: Arial, Tahoma;
+			margin: 0;
+			padding: 0;
 		}
 	</style>
 </head>

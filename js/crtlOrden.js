@@ -37,6 +37,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	$scope.dialOrdenCancelar    = $modal({scope: $scope,template:'dial.orden.cancelar.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialCancelarDetalle  = $modal({scope: $scope,template:'dial.orden.cancelar-parcial.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialEditarDetalle    = $modal({scope: $scope,template:'dial.orden.editar.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialUltimasOrdenes   = $modal({scope: $scope,template:'dial.ultimas.ordenes.html', show: false, backdrop:false, keyboard: true });
 
 	($scope.init = function () {
 		// CONSULTA TIPO DE SERVICIOS
