@@ -562,8 +562,8 @@ class Orden
 		if( $rs = $this->con->query( $sql ) ) {
 			while ( $row = $rs->fetch_object() ):
 
-				$row->idCombo             = (int)$row->idCombo;
-				$row->idMenu              = (int)$row->idMenu;
+				$row->idCombo             = (int)$row->idCombo?:NULL;
+				$row->idMenu              = (int)$row->idMenu?:NULL;
 				$row->idDetalleOrdenCombo = (int)$row->idDetalleOrdenCombo;
 
 				$row->perteneceCombo = (int)$row->perteneceCombo;
@@ -584,7 +584,11 @@ class Orden
 				foreach ( $lst as $ix => $item ):
 					if (
 						$row->idTipoServicio == $item->idTipoServicio
-						AND ( $row->perteneceCombo ? $row->idCombo == $item->idCombo : $row->idMenu == $item->idMenu )
+						AND ( 
+							( $row->perteneceCombo AND $row->perteneceCombo == $item->esCombo AND $row->idCombo == $item->idCombo )
+							OR 
+							( !$row->perteneceCombo AND $row->perteneceCombo == $item->esCombo AND $row->idMenu == $item->idMenu )
+						)
 					){
 						$index = $ix;
 						break;
@@ -630,7 +634,7 @@ class Orden
 						break;
 					}
 					
-					else if ( $row->idDetalleOrdenMenu == $menu->idDetalleOrdenMenu )
+					else if ( !$row->perteneceCombo AND $row->idDetalleOrdenMenu == $menu->idDetalleOrdenMenu )
 					{
 						$ixMD = $ixm;
 						break;
@@ -1372,6 +1376,85 @@ class Orden
 			$usuario = "usuarioCocina";
 
  		return $usuario;
+ 	}
+
+ 	// CONSULTA ORDENES
+ 	public function getOrdenesCliente( $idEstadoOrden = NULL, $limite = NULL )
+ 	{
+		$lst = array();
+
+ 		$limit = "";
+ 		$where = " ( idEstadoOrden BETWEEN 1 AND 5 ) ";
+
+		// SI EL ESTADO ES DIFERENTE A PENDIENTE Y LIMITE ES MAYOR A CERO
+ 		if ( $limite > 0 AND $idEstadoOrden > 1 )
+ 		{
+ 			$limit = " LIMIT " . $limite;
+			$where = " idEstadoOrden = " . $idEstadoOrden;
+ 		}
+
+ 		$sql = "SELECT
+					idOrdenCliente,
+				    numeroTicket,
+				    usuarioPropietario,
+				    estadoOrden,
+				    DATE_FORMAT( fechaRegistro, '%d/%m/%Y - %H:%i' )AS 'fechaHora'
+				FROM vOrdenCliente 
+				WHERE $where
+				ORDER BY idOrdenCliente DESC " . $limit;
+
+		if( $rs = $this->con->query( $sql ) ) {
+			while ( $rowOrden = $rs->fetch_object() )
+			{
+				$lst[] = (object)array(
+					'idOrdenCliente'     => $rowOrden->idOrdenCliente,
+					'numeroTicket'       => $rowOrden->numeroTicket,
+					'usuarioPropietario' => $rowOrden->usuarioPropietario,
+					'estadoOrden'        => $rowOrden->estadoOrden,
+					'fechaHora'          => $rowOrden->fechaHora,
+					'lstDetalle'         => array(),
+				);
+
+				$sql = "(SELECT
+							SUM( cantidad ) AS 'cantidad',
+							codigoMenu,
+							menu,
+							( CASE WHEN idTipoServicio = 1 THEN 'L' 
+						        WHEN idTipoServicio = 2 THEN 'R' 
+						        WHEN idTipoServicio = 3 THEN 'D' END )AS 'idTipoServicio',
+							IFNULL( observacion, '' )AS 'observacion'
+						FROM vOrdenes 
+						WHERE idOrdenCliente = {$rowOrden->idOrdenCliente} AND !perteneceCombo
+							AND idEstadoDetalleOrden != 10
+						GROUP BY idMenu)
+							UNION
+						(SELECT
+							SUM( doc.cantidad )AS 'cantidad',
+							c.codigo AS 'codigoMenu',
+							c.combo,
+							( CASE WHEN ts.idTipoServicio = 1 THEN 'L' 
+						        WHEN ts.idTipoServicio = 2 THEN 'R' 
+						        WHEN ts.idTipoServicio = 3 THEN 'D' END )AS 'idTipoServicio',
+							IFNULL( doc.observacion, '' )AS 'observacion'
+						FROM detalleOrdenCombo AS doc
+							JOIN combo AS c
+								ON doc.idCombo = c.idCombo
+							JOIN tipoServicio AS ts
+								ON doc.idTipoServicio = ts.idTipoServicio
+						WHERE doc.idOrdenCliente = {$rowOrden->idOrdenCliente}
+							AND doc.idEstadoDetalleOrden != 10
+						GROUP BY doc.idCombo, doc.idTipoServicio ) ";
+
+				if( $result = $this->con->query( $sql ) )
+				{
+					while ( $row = $result->fetch_object() )
+						$lst[ count( $lst ) - 1 ]->lstDetalle[] = $row;
+				}
+
+ 			}
+ 		}
+
+ 		return $lst;
  	}
 
  	function getRespuesta()
