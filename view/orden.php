@@ -339,7 +339,8 @@
                 				<thead>
                 					<tr>
                 						<th width="110px">Cantidad</th>
-                						<th>Orden</th>
+                                        <th>Orden</th>
+                						<th>Observación</th>
                 						<th>Subtotal</th>
                 						<th width="35px"></th>
                 					</tr>
@@ -359,9 +360,11 @@
                 							<span class="glyphicon glyphicon-gift" ng-show="item.tipoMenu=='combo'"></span>
                 							<span>
                 								{{item.menu}} ({{item.tipoMenu}}) 
-                								<span class="label label-info" ng-show="item.observacion.length>2">{{item.observacion}}</span>
-                							</span>
-                						</td>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" ng-model="item.observacion">
+                                        </td>
                 						<td>{{(item.precio*item.cantidad) | number:2}}</td>
                 						<td>
                 							<button type="button" class="btn btn-xs btn-danger" ng-click="quitarElemento( ordenActual.lstAgregar.indexOf( item ), item.cantidad, item.precio )">

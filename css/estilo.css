@@ -829,8 +829,37 @@ position: absolute;
     border-bottom-color:#000
 }
 
-tr.tr_alert{
-    border-left: solid 11px #d13131;
+.tdTotal{
+    display: inline-block;
+    padding: 2px 8px;
+    color: #303030;
+    border: solid 1px rgba(0, 0, 0, 0.28);
+    background: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 15px;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    box-shadow: 0px 1px 0px 1px rgba(0, 0, 0, 0.26);
+    -moz-box-shadow: 0px 1px 0px 1px rgba(0, 0, 0, 0.26);
+    -webkit-box-shadow: 0px 1px 0px 1px rgba(0, 0, 0, 0.26);
+}
+
+tr.tr_alert td{
+    color: #fff;
+    animation: tr_alerta 1s linear infinite;
+}
+
+@keyframes tr_alerta {
+  0% {
+    background-color: #d91616;
+  }
+  50% {
+    background-color: #810202;
+  }
+  100% {
+    background-color: #d91616;
+  }
 }
 
 .panel-menu{

@@ -116,7 +116,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		if ( $scope.idEstadoOrden > 0 && $scope.idDestinoMenu > 0 ) {
 
 			var datos = { 
-				opcion               : 'lstOrdenPorMenu',
+				opcion               : 'consultaOrdenesCocina',
 				idEstadoDetalleOrden : $scope.idEstadoOrden,
 				idDestinoMenu        : $scope.idDestinoMenu
 			};
@@ -124,14 +124,15 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			$scope.$parent.loading = true; // cargando...
 			$http.post('consultas.php', datos)
 			.success(function (data) {
+				console.log( data );
 				$scope.$parent.loading = false; // cargando...
 
 				if ( Array.isArray( data.lstMenu ) ) 
 				{
 					$scope.ixMenuActual = -1;
 					$scope.lstMenus     = data.lstMenu;
+					$scope.ixMenuActual = 0;
 				}
-				
 			});
 		}
 	};
@@ -345,6 +346,9 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.$watch('ixMenuActual', function (_new) {
 		$scope.ixMenuFocus = -1;
 		$scope.scroll( 'ixm_', _new );
+
+		if ( _new >= 0 )
+			document.getElementById( "input_" + _new ) && document.getElementById( "input_" + _new ).focus();
 	});
 
 	// ------------- SCROLL ELEMENT -----------------

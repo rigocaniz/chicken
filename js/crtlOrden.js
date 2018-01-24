@@ -1086,7 +1086,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	// ATAJOS DIALOGO ORDEN CLIENTE
 	$scope._keyDialOrden = function ( key, altDerecho ) {
 		// ABRE MODAL DE CANTIDAD Y CONSULTA DE MENU
-		if ( key == 65 ) // {A}
+		if ( altDerecho && key == 65 ) // {A}
 			$scope.openCantidad();
 
 		// CONFIRMA LA ORDEN DEL CLIENTE

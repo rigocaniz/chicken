@@ -1462,6 +1462,120 @@ class Orden
  		return $lst;
  	}
 
+
+ 	// LISTA DE ORDENS PARA ### COCINA ###
+ 	public function consultaOrdenesCocina( $idEstadoDetalleOrden, $idDestinoMenu )
+ 	{
+ 		$idEstadoDetalleOrden = (int)$idEstadoDetalleOrden;
+		$idDestinoMenu        = (int)$idDestinoMenu;
+		$where    = $limit 	  = "";
+
+		$lst = array();
+
+		// SI ESTA DEFINIDO EL USUARIO RESPONSABLE
+		$where = " AND ( responsableDetalle = '{$this->sess->getUsuario()}' OR usuarioDetalle = '{$this->sess->getUsuario()}' ) ";
+
+		if ( ( $idEstadoDetalleOrden != 1 AND $idEstadoDetalleOrden != 2 ) )
+			$limit = " LIMIT 50";
+
+ 		$sql = "SELECT
+					idOrdenCliente, 
+					numeroTicket, 
+				    SUM( cantidad )AS 'cantidad',
+				    idMenu,
+				    menu,
+				    imagen,
+				    codigoMenu,
+				    tiempoAlerta,
+				    perteneceCombo,
+				    idCombo,
+				    combo,
+				    GROUP_CONCAT( DISTINCT observacion SEPARATOR ' -.- ' )AS 'observacion',
+				    MIN( fechaRegistro )AS 'fechaRegistro'
+				FROM vOrdenes 
+				WHERE idEstadoOrden = {$idEstadoDetalleOrden}
+				GROUP BY idOrdenCliente, idMenu, idCombo
+				ORDER BY idMenu ASC, idOrdenCliente ASC
+				$limit ";
+
+		if( $rs = $this->con->query( $sql ) )
+		{
+			while ( $row = $rs->fetch_object() ):
+				$row->cantidad = (int)$row->cantidad;
+
+				$ixM = -1;
+				foreach ($lst as $_ixM => $menu) {
+					if ( $menu->idMenu == $row->idMenu ) {
+						$ixM = $_ixM;
+						break;
+					}
+				}
+
+				if ( $ixM === -1 )
+				{
+					$ixM = count( $lst );
+
+					$lst[] = (object)array(
+						'idMenu'         => $row->idMenu,
+						'menu'           => $row->menu,
+						'codigoMenu'     => $row->codigoMenu,
+						'total'          => 0,
+						'imagen'         => $row->imagen,
+						'tiempoAlerta'   => $row->tiempoAlerta,
+						'lstOrden'       => array(),
+					);
+				}
+
+
+				$ixO = -1;
+				foreach ($lst[ $ixM ]->lstOrden as $_ixO => $orden) {
+					if ( $orden->idOrdenCliente == $row->idOrdenCliente ) {
+						$ixO = $_ixO;
+						break;
+					}
+				}
+
+				if ( $ixO === -1 )
+				{
+					$ixO = count( $lst[ $ixM ]->lstOrden );
+
+					$lst[ $ixM ]->lstOrden[] = (object)array(
+						'idOrdenCliente' => $row->idOrdenCliente,
+						'numeroTicket'   => $row->numeroTicket,
+						'fechaRegistro'  => $row->fechaRegistro,
+						'observacion'    => "",
+						'total'          => 0,
+						'lstDetalle'     => array(),
+					);
+				}
+
+				// SUMA TOTAL POR MENU
+				$lst[ $ixM ]->total += $row->cantidad;
+
+				// SUMA TOTAL POR ORDEN DE CLIENTE
+				$lst[ $ixM ]->lstOrden[ $ixO ]->total += $row->cantidad;
+
+				if ( strlen( $row->observacion ) )
+				{
+					$lst[ $ixM ]->lstOrden[ $ixO ]->observacion .= $row->observacion . " -.- ";
+					$lst[ $ixM ]->lstOrden[ $ixO ]->observacion = rtrim( $lst[ $ixM ]->lstOrden[ $ixO ]->observacion, " -.- " );
+				}
+
+				// DETALLE DE ORDEN CLIENTE
+				$lst[ $ixM ]->lstOrden[ $ixO ]->lstDetalle[] = (object)array(
+					'cantidad'       => $row->cantidad,
+					'perteneceCombo' => $row->perteneceCombo,
+					'idCombo'        => $row->idCombo,
+					'combo'          => $row->combo,
+				);
+
+			endwhile;
+		}
+
+		return $lst;
+ 	}
+
+
  	function getRespuesta()
  	{
  		return $respuesta = array( 

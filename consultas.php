@@ -533,6 +533,14 @@ switch ( $data->opcion )
 		);
 		break;
 
+	// LISTA DE ORDENES => PARA COCINA
+	case 'consultaOrdenesCocina':
+		$orden = new Orden();
+		echo json_encode(
+			array( 'lstMenu' => $orden->consultaOrdenesCocina( $data->idEstadoDetalleOrden, $data->idDestinoMenu ) )
+		);
+		break;
+
 	// LISTA DE ORDENES DETALLE => POR TICKET
 	case 'lstOrdenPorTicket':
 		$orden = new Orden();

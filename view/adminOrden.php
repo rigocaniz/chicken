@@ -110,9 +110,11 @@
 						<button type="button" class="btn" ng-click="$parent.ixMenuActual=($parent.ixMenuActual==$index?-1:$index)" ng-disabled="seleccionMenu.si || seleccionTicket.si"
 							ng-class="{'danger':(difMinutos( menu.primerTiempo )>menu.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}">
 							<span class="glyphicon" ng-class="{'glyphicon-chevron-down':$parent.ixMenuActual==$index, 'glyphicon-chevron-right':$parent.ixMenuActual!=$index}"></span>
-							<span class="badge">{{menu.numMenus}}</span>
-							{{menu.menu}} 
+							<span class="badge">{{menu.total}}</span>
+							{{menu.menu}} <b>#{{menu.codigoMenu}}</b>
 						</button>
+						<input type="text" class="form-control" ng-model="menu.seleccionados" style="width:125px;display:inline-block" 
+							placeholder="# Productos" id="input_{{$index}}">
 					</div>
 					<div class="col-xs-6 text-right">
 						<button type="button" class="btn btn-sm btn-default" ng-click="selItemMenu( true )" ng-disabled="ixMenuActual!=$index || seleccionTicket.si" title="TODOS">
@@ -129,36 +131,34 @@
 							<table class="table table-hover">
 								<thead>
 									<tr>
-										<th>Tipo Servicio</th>
+										<th>Cantidad</th>
+										<th>#Orden</th>
+										<th>#Ticket</th>
 										<th>Lapso</th>
+										<th>Observación</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="item in menu.detalle track by $index" style="cursor:pointer;position: relative;" 
-										ng-class="{'success':item.selected, 'tr_alert':(difMinutos( item.fechaRegistro )>menu.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) ),'tr_focus':$parent.ixMenuFocus==$index}"
+									<tr ng-repeat="item in menu.lstOrden track by $index" style="cursor:pointer;position: relative;" 
+										ng-class="{'success':item.selected, 'tr_alert':!item.selected && (difMinutos( item.fechaRegistro )>menu.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}"
 										ng-click="selItemMenu( !item.selected, $index )"
-										id="ixm_item_{{item.idDetalleOrdenMenu}}">
+										id="ixm_{{menu.idMenu}}_{{item.idOrdenCliente}}">
+										<td><span class="tdTotal">{{item.total}}</span></td>
+										<td><h4>#{{item.idOrdenCliente}}</h4></td>
 										<td>
-											<span class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}">
-	                                            <span ng-show="item.idTipoServicio==2">R</span>
-	                                            <span ng-show="item.idTipoServicio==3">D</span>
-	                                            <span ng-show="item.idTipoServicio==1">L</span>
-	                                        </span>
-											{{item.tipoServicio}}
-											<span class="label-ticket">
+											<span class="label-ticket" ng-show="item.numeroTicket>0" style="font-size:15px">
 												<span class="glyphicon glyphicon-bookmark"></span>
 												{{item.numeroTicket}}
 											</span>
-											<span class="label label-warning" ng-show="item.perteneceCombo">
-												<span class="glyphicon glyphicon-gift"></span>
-											</span>
-											<p class="label label-info" ng-show="item.observacion.length>3">
-												<span class="glyphicon glyphicon-star"></span>
-												<span>{{item.observacion}}</span>
-											</p>
 										</td>
+										<td><h5>{{tiempoTranscurrido( item.fechaRegistro )}}</h5></td>
 										<td>
-											<span>{{tiempoTranscurrido( item.fechaRegistro )}}</span>
+											<h4 ng-show="item.observacion.length">
+												<span class="label label-warning">
+													<span class="glyphicon glyphicon-star"></span>
+													{{item.observacion}}
+												</span>
+											</h4>
 										</td>
 									</tr>
 								</tbody>
