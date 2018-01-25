@@ -527,13 +527,12 @@ legend.legend2{
 .acciones{
     z-index: 1000;
     position: fixed;
-    height: 86px;
     width: 100%;
     text-align: center;
     top: 0;
-    background: rgba(250, 244, 237, 0.95);
-    border-bottom: solid 4px rgb(220, 134, 53);
-    padding: 4px 17px 0px 20px;
+    background: rgb(255, 241, 225);
+    border-bottom: solid 4px rgb(215, 114, 19);
+    padding: 4px 17px 8px 20px;
     border-radius: 0px 0px 13px 13px;
     -moz-border-radius: 0px 0px 13px 13px;
     -webkit-border-radius: 0px 0px 13px 13px;

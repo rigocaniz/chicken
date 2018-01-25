@@ -584,6 +584,13 @@ switch ( $data->opcion )
 		echo json_encode( $orden->cambioEstadoOrden( $data->idEstadoOrden, $data->lstOrdenes ) );
 		break;
 
+	// CAMBIA ESTADO DE ORDENES DE COCINA
+	case 'cambioEstadoCocina':
+		$orden = new Orden();
+		echo json_encode( $orden->cambioEstadoCocina( $data->idEstadoOrden, $data->lstOrdenes ) );
+		break;
+
+
 	// INI - ADMIN. ORDEN
 	case 'iniOrdenAdmin':				// CARGAR CATALOGO DESTINO MENU
 		$usuario = new Usuario();

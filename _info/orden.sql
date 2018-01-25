@@ -79,7 +79,6 @@ BEGIN
     DECLARE _idMenuActual INT;
     DECLARE _numEstadoAnterior INT;
 	DECLARE _perteneceCombo BOOLEAN;
-    DECLARE _sinIngredientes BOOLEAN DEFAULT FALSE;
 	DECLARE _ids TEXT DEFAULT '';
 	DECLARE _yaFacturado BOOLEAN DEFAULT FALSE;
     DECLARE _seCocina BOOLEAN DEFAULT TRUE;
@@ -160,82 +159,66 @@ BEGIN
         
 		ELSEIF ( ( _idEstadoDetalleOrden > _estadoActualDetalle ) OR @isAdmin ) THEN
 			
-            # SI SE VA EMPEZAR A COCINAR, VERIFICA EXISTENCIA DE PRODUCTO
-            IF _idEstadoDetalleOrden = 2 THEN
-				SELECT TRUE INTO _sinIngredientes 
-                FROM receta AS r
-					JOIN producto AS p
-						ON r.idProducto = p.idProducto AND p.disponibilidad < r.cantidad
-                WHERE r.idMenu = _idMenuActual LIMIT 1;
-			END IF;
+			# CAMBIA ESTADO A DETALLE DE ORDEN
+			UPDATE detalleOrdenMenu    SET   idEstadoDetalleOrden = _idEstadoDetalleOrden
+			WHERE idDetalleOrdenMenu = _idDetalleOrdenMenu;
             
-            # SI NO EXISTEN INGREDIENTES SUFICIENTES
-			IF _sinIngredientes THEN
-				SELECT 'danger' AS 'respuesta', 'No hay suficientes ingredientes para prepara el Menú' AS 'mensaje';
-            
-            # SI NO EXISTEN NINGUN INCONVENIENTE
-            ELSE
-				# CAMBIA ESTADO A DETALLE DE ORDEN
-				UPDATE detalleOrdenMenu    SET   idEstadoDetalleOrden = _idEstadoDetalleOrden
+            # NUMERO DE ORDENES CON ESTADO ANTERIOR
+            SELECT COUNT( * ) INTO _numEstadoAnterior
+				FROM detalleOrdenMenu WHERE idOrdenCliente = _idOrdenCliente AND idEstadoDetalleOrden < _idEstadoDetalleOrden ;
+
+
+			# SI ES SERVIDO Y YA SE ENCUENTRA FACTURADO, CAMBIA DETALLE A FACTURADO
+			IF _idEstadoDetalleOrden = 4 AND _yaFacturado THEN
+				UPDATE detalleOrdenMenu    SET   idEstadoDetalleOrden = 6
 				WHERE idDetalleOrdenMenu = _idDetalleOrdenMenu;
+			END IF;
+			
+            # SI PERTENECE A COMOB
+            IF _perteneceCombo THEN
+            	SET @detalleComboPendiente = NULL;
+
+				# NUMERO DE ORDENES CON ESTADO ANTERIOR
+				SELECT SUM( IF( dom.idEstadoDetalleOrden < _idEstadoDetalleOrden, 1, 0 ) ), dcmo.idDetalleOrdenCombo
+					INTO @detalleComboPendiente, @idDetalleOrdenCombo
+				FROM detalleComboMenu AS dcm
+					JOIN detalleComboMenu AS dcmo
+						ON dcmo.idDetalleOrdenCombo = dcm.idDetalleOrdenCombo
+					LEFT JOIN detalleOrdenMenu AS dom
+						ON dom.idDetalleOrdenMenu = dcmo.idDetalleOrdenMenu
+							AND dcm.idDetalleOrdenMenu != dom.idDetalleOrdenMenu
+				WHERE dcm.idDetalleOrdenMenu = _idDetalleOrdenMenu;
                 
-                # NUMERO DE ORDENES CON ESTADO ANTERIOR
-                SELECT COUNT( * ) INTO _numEstadoAnterior
-					FROM detalleOrdenMenu WHERE idOrdenCliente = _idOrdenCliente AND idEstadoDetalleOrden < _idEstadoDetalleOrden ;
+                # SI DETALLE ES IGUAL A CERO CAMBIA DE ESTADO COMBO
+                IF @detalleComboPendiente = 0 THEN
+					UPDATE detalleOrdenCombo SET idEstadoDetalleOrden = _idEstadoDetalleOrden 
+						WHERE idDetalleOrdenCombo = @idDetalleOrdenCombo;
 
+					# VERIFICA SI YA ESTA FACTURADO
+					SELECT TRUE INTO _yaFacturado FROM detalleOrdenFactura WHERE idDetalleOrdenCombo = @idDetalleOrdenCombo;
 
-				# SI ES SERVIDO Y YA SE ENCUENTRA FACTURADO, CAMBIA DETALLE A FACTURADO
-				IF _idEstadoDetalleOrden = 4 AND _yaFacturado THEN
-					UPDATE detalleOrdenMenu    SET   idEstadoDetalleOrden = 6
-					WHERE idDetalleOrdenMenu = _idDetalleOrdenMenu;
-				END IF;
-				
-                # SI PERTENECE A COMOB
-                IF _perteneceCombo THEN
-                	SET @detalleComboPendiente = NULL;
-
-					# NUMERO DE ORDENES CON ESTADO ANTERIOR
-					SELECT SUM( IF( dom.idEstadoDetalleOrden < _idEstadoDetalleOrden, 1, 0 ) ), dcmo.idDetalleOrdenCombo
-						INTO @detalleComboPendiente, @idDetalleOrdenCombo
-					FROM detalleComboMenu AS dcm
-						JOIN detalleComboMenu AS dcmo
-							ON dcmo.idDetalleOrdenCombo = dcm.idDetalleOrdenCombo
-						LEFT JOIN detalleOrdenMenu AS dom
-							ON dom.idDetalleOrdenMenu = dcmo.idDetalleOrdenMenu
-								AND dcm.idDetalleOrdenMenu != dom.idDetalleOrdenMenu
-					WHERE dcm.idDetalleOrdenMenu = _idDetalleOrdenMenu;
-                    
-                    # SI DETALLE ES IGUAL A CERO CAMBIA DE ESTADO COMBO
-                    IF @detalleComboPendiente = 0 THEN
-						UPDATE detalleOrdenCombo SET idEstadoDetalleOrden = _idEstadoDetalleOrden 
+					# SI TODOS LOS MENUS DEL COMBO ESTAN SERVIDOS Y ESTA FACTURADO, CAMBIA ESTADO DE COMBO A FACTURADO
+					IF _idEstadoDetalleOrden = 4 AND _yaFacturado THEN
+						UPDATE detalleOrdenCombo SET idEstadoDetalleOrden = 6 
 							WHERE idDetalleOrdenCombo = @idDetalleOrdenCombo;
 
-						# VERIFICA SI YA ESTA FACTURADO
-						SELECT TRUE INTO _yaFacturado FROM detalleOrdenFactura WHERE idDetalleOrdenCombo = @idDetalleOrdenCombo;
+					END IF;
 
-						# SI TODOS LOS MENUS DEL COMBO ESTAN SERVIDOS Y ESTA FACTURADO, CAMBIA ESTADO DE COMBO A FACTURADO
-						IF _idEstadoDetalleOrden = 4 AND _yaFacturado THEN
-							UPDATE detalleOrdenCombo SET idEstadoDetalleOrden = 6 
-								WHERE idDetalleOrdenCombo = @idDetalleOrdenCombo;
-
-						END IF;
-
-                    END IF;
                 END IF;
-				
-                # CAMBIA ESTADO A ORDEN PRINCIPAL SI TODOS CAMBIARON
-                IF _numEstadoAnterior = 0 THEN
-					UPDATE ordenCliente SET idEstadoOrden = _idEstadoDetalleOrden
-						WHERE idOrdenCliente = _idOrdenCliente AND idEstadoOrden < _idEstadoDetalleOrden;
-				END IF;
-                
-                # DESCUENTA DE NUMERO MENUS DE TICKET
-				IF ! _perteneceCombo AND _idEstadoDetalleOrden = 10 THEN
-					UPDATE ordenCliente SET numMenu = numMenu - 1 WHERE idOrdenCliente = _idOrdenCliente;
-				END IF;
-
-				SELECT 'success' AS 'respuesta', 'Cambio de estado guardado correctamente' AS 'mensaje';
             END IF;
+			
+            # CAMBIA ESTADO A ORDEN PRINCIPAL SI TODOS CAMBIARON
+            IF _numEstadoAnterior = 0 THEN
+				UPDATE ordenCliente SET idEstadoOrden = _idEstadoDetalleOrden
+					WHERE idOrdenCliente = _idOrdenCliente AND idEstadoOrden < _idEstadoDetalleOrden;
+			END IF;
+            
+            # DESCUENTA DE NUMERO MENUS DE TICKET
+			IF ! _perteneceCombo AND _idEstadoDetalleOrden = 10 THEN
+				UPDATE ordenCliente SET numMenu = numMenu - 1 WHERE idOrdenCliente = _idOrdenCliente;
+			END IF;
+
+			SELECT 'success' AS 'respuesta', 'Cambio de estado guardado correctamente' AS 'mensaje';
 		
         ELSE
 			SELECT 'danger' AS 'respuesta', 'No se puede retornar a un estado anterior' AS 'mensaje';
@@ -573,6 +556,8 @@ BEGIN
 
 	RETURN _resultado;
 END$$
+
+
 
 
 

@@ -131,7 +131,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				{
 					$scope.ixMenuActual = -1;
 					$scope.lstMenus     = data.lstMenu;
-					$scope.ixMenuActual = 0;
 				}
 			});
 		}
@@ -169,6 +168,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 	// CAMBIA ESTADO ACTUAL A PROCESO SIGUIENTE, SELECCION
 	$scope.continuarProcesoMenu = function () {
+		/*
 		var lst = [], idEstadoDestino = 0, msjError = '';
 
 		if ( $scope.seleccionMenu.si )
@@ -227,35 +227,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 		else
 			$scope.guardarEstadoDetalleOrden( lst, idEstadoDestino );
-	};
-
-	// GUARDA CAMBIO DE ESTADO DETALLE ORDEN
-	$scope.guardarEstadoDetalleOrden = function ( lst, idEstadoDestino ) {
-		if ( $scope.$parent.loading ) return false;
-
-		// REALIZA CONSULTA HACIA EL SERVIDOR
-		if ( idEstadoDestino > 0 && lst.length ) 
-		{
-			var datos = { 
-				opcion        : 'cambioEstadoDetalleOrden',
-				idEstadoOrden : idEstadoDestino,
-				lstOrdenes    : lst
-			};
-
-			$scope.$parent.loading = true; // cargando...
-
-			$http.post('consultas.php', datos)
-			.success(function (data) {
-				$scope.$parent.loading = false; // cargando...
-
-				alertify.set('notifier','position', 'top-right');
-				alertify.notify( data.mensaje, data.respuesta, 4 );
-
-				// SI LA RESPUESTA ES SUCCESS
-				if ( data.respuesta == 'success' ) 
-					$scope.reset();
-			});
-		}
+	*/
 	};
 
 	$scope.reset = function () {
@@ -508,7 +480,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	// SI SE PERMITE ACCION
 	$scope.permitirAccion = function ( noMostrarAlerta ) {
 		var respuesta = true;
-		if ( $scope.seleccionMenu.si || $scope.seleccionTicket.si ) {
+		if ( $scope.seleccionCocina.si || $scope.seleccionTicket.si ) {
 			if ( !noMostrarAlerta ) {
 				alertify.set('notifier','position', 'top-right');
 				alertify.notify( "Existen elementos seleccionados", 'info', 2 );
@@ -528,7 +500,111 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 
 	/* ************************** SELECCION DE MENUS ********************** */
+	// CANTIDAD A COCINAR
+	$scope.seleccionCocina = {};
+	$scope.cantidadCocinar = function ( menu, _index ) {
+		$scope.seleccionCocina = {};
+
+		var siParcial = true; // SI APLICA SELECCION PARCIAL
+
+		var todoRecorrido = false,
+			aSeleccionar = angular.copy( menu.seleccionados );
+
+		$scope.seleccionCocina = {
+			si 			  : false,
+			index 		  : _index,
+			idMenu        : angular.copy( menu.idMenu ),
+			menu          : angular.copy( menu.menu ),
+			imagen        : angular.copy( menu.imagen ),
+			seleccionados : angular.copy( menu.seleccionados ),
+			lstOrden 	  : [],
+			observaciones : ""
+		};
+
+
+		for (var ixO = 0; ixO < menu.lstOrden.length; ixO++) {
+			var seleccionados = 0;
+
+			// SI CUBRE LA TOTALIDAD DE LA ORDEN
+			if ( aSeleccionar >= menu.lstOrden[ ixO ].total && !todoRecorrido )
+				seleccionados = angular.copy( menu.lstOrden[ ixO ].total );
+
+			// SI YA SE RECORRIO TODAS LAS ORDENES, SELECCIONA EL PRIMERO QUE FUE IGNORADO
+			else if ( todoRecorrido && aSeleccionar && !( menu.lstOrden[ ixO ].seleccionados > 0 ) )
+				seleccionados = aSeleccionar;
+
+			// SI NO CUMPLE ENTONCES SELECCIONADOS ES 0
+			else if ( !todoRecorrido )
+				menu.lstOrden[ ixO ].seleccionados = 0;
+
+			// SI LOS SELECCIONADOS ES MAYOR A CERO
+			if ( seleccionados > 0 )
+			{
+				$scope.seleccionCocina.si = true;
+
+				// SI EXISTE COMENTARIO SE AGREGA
+				if ( menu.lstOrden[ ixO ].observacion.length )
+					$scope.seleccionCocina.observaciones += menu.lstOrden[ ixO ].observacion;
+
+				// AGREGA ORDEN A LISTA
+				$scope.seleccionCocina.lstOrden.push({
+					idOrdenCliente : angular.copy( menu.lstOrden[ ixO ].idOrdenCliente ),
+					numeroTicket   : angular.copy( menu.lstOrden[ ixO ].numeroTicket ),
+					seleccionados  : seleccionados,
+					total          : angular.copy( menu.lstOrden[ ixO ].total ),
+					observacion    : angular.copy( menu.lstOrden[ ixO ].observacion ),
+				});
+
+				menu.lstOrden[ ixO ].seleccionados = angular.copy( seleccionados );
+				aSeleccionar -= seleccionados;
+			}
+
+			// SI LLEGO AL FINAL DEL RECORRIDO
+			if ( ( ixO + 1 ) === menu.lstOrden.length && !todoRecorrido )
+			{
+				todoRecorrido = true;
+
+				// SI ES POSIBLE SELECCIONAR ORDENES DE MANERA PARCIAL
+				if ( aSeleccionar > 0 && siParcial )
+					ixO = -1;
+			}
+		}
+	};
+
+	// GUARDA CAMBIO DE ESTADO DETALLE ORDEN
+	$scope.guardarEstadoDetalleOrden = function () {
+		if ( $scope.$parent.loading ) return false;
+
+		// REALIZA CONSULTA HACIA EL SERVIDOR
+		if ( $scope.seleccionCocina.si ) 
+		{
+			var datos = { 
+				opcion        : 'cambioEstadoCocina',
+				idEstadoOrden : ( $scope.idEstadoOrden + 1 ),
+				lstOrdenes    : $scope.seleccionCocina,
+			};
+
+			$scope.$parent.loading = true; // cargando...
+
+			$http.post('consultas.php', datos)
+			.success(function (data) {
+				$scope.$parent.loading = false; // cargando...
+
+				alertify.set('notifier','position', 'top-right');
+				alertify.notify( ( data.mensaje || data ), ( data.respuesta || 'danger' ), 5 );
+
+				// SI LA RESPUESTA ES SUCCESS
+				//if ( data.respuesta == 'success' ) 
+				//	$scope.reset();
+			});
+		}
+	};
+
+
+
+
 	// SELECCIONA O DESELECCIONA TODOS
+/*
 	$scope.selItemMenu = function ( seleccionado, ixDetalle ) {
 		if ( !( $scope.ixMenuActual >= 0 ) )
 			return false;
@@ -594,9 +670,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 			if ( seleccionado )
 				$scope.seleccionMenu.si = true;
+
 		}
 	};
-
+*/
 	// SELECCIONA O DESELECCIONA TECLA -+
 	$scope.selItemKey = function ( seleccionar ) {
 		if ( !( $scope.ixMenuActual >= 0 ) )
@@ -868,7 +945,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 	// AUX -> ATAJO INICIO
 	$scope._keyInicio = function ( key, altDerecho ) {
-		console.log( key, altDerecho );
 
 		/************ PANELES ************ 
 		*********************************/
@@ -890,7 +966,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		/************ SELECCION DE MENUS ************ 
 		*********************************/
 		// SELECCIONA EL ELEMENTO ANTERIOR
-		else if ( !altDerecho && key == 39 && $scope.permitirAccion( true ) ) { // {LEFT}
+		else if ( !altDerecho && key == 40 && $scope.permitirAccion( true ) ) { // {DOWN}
 			// si no se ha seleccionado escoge el primero
 			if ( $scope[ $scope.panel.array ].length && $scope[ $scope.panel.index ] == -1 )
 				$scope[ $scope.panel.index ] = 0;
@@ -900,17 +976,15 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				$scope[ $scope.panel.index ]++;
 		}
 		// SELECCIONA EL ELEMENTO SIGUIENTE
-		else if ( !altDerecho && key == 37 && $scope.permitirAccion( true ) ) { // {RIGHT}
+		else if ( !altDerecho && key == 38 && $scope.permitirAccion( true ) ) { // {UP}
 			if ( $scope[ $scope.panel.index ] != -1 && $scope[ $scope.panel.index ] > 0 )
 				$scope[ $scope.panel.index ]--;
 			
 			else if ( $scope[ $scope.panel.index ] == -1 )
 				$scope[ $scope.panel.index ] = $scope[ $scope.panel.array ].length - 1;
 		}
-		// DESELECCIONA ELEMENTO ACTUAL
-		else if ( !altDerecho && key == 8 && $scope.permitirAccion( true ) && $scope[ $scope.panel.index ] != -1 ) { // {BACKSPACE}
-			$scope[ $scope.panel.index ] = -1;
-		}
+
+		/*
 		// PARA SELECCION DE ORDENES
 		else if ( !altDerecho && key == 84 ) // {T}  => SELECCIONAR TODOS
 		{
@@ -948,7 +1022,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 			else
 				$scope.selItemKeyTicket( false );
-		}
+		}*/
 
 		// SELECCIONA EL ELMENTO ENFOCADO
 		else if ( !altDerecho && key == 32 && $scope[ $scope.panel.focus ] >= 0 ) // {TAB}
@@ -965,19 +1039,19 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 
 		// FOCUS ELEMENTO SIGUIENTE
+		/*
 		else if ( !altDerecho && key == 40 && $scope[ $scope.panel.index ] >= 0 ) // {DOWN}
 			$scope.focusElement( true );
 
 		// FOCUS ELEMENTO ANTERIOR
 		else if ( !altDerecho && key == 38 && $scope[ $scope.panel.index ] >= 0 ) // {UP}
 			$scope.focusElement( false );
-
+*/
 
 		/************ CONSULTA POR ESTADO ************ 
 		**********************************************/
 		else if ( key == 117 ) // {CONTINUA CON EL PROCESO}
-			$scope.continuarProcesoMenu();
-		
+			$scope.guardarEstadoDetalleOrden();
 
 		/************ CONSULTA POR ESTADO ************ 
 		**********************************************/

@@ -106,21 +106,27 @@
 
 			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index" ng-class="{'inactivo':ixMenuActual!=$index&&seleccionMenu.si}" id="ixm_{{$index}}">
 				<div class="encabezado">
-					<div class="col-xs-6">
-						<button type="button" class="btn" ng-click="$parent.ixMenuActual=($parent.ixMenuActual==$index?-1:$index)" ng-disabled="seleccionMenu.si || seleccionTicket.si"
+					<div class="col-xs-8">
+						<button type="button" class="btn btn-lg"
+							ng-click="$parent.ixMenuActual=($parent.ixMenuActual==$index?-1:$index)" 
+							ng-disabled="seleccionCocina.si && seleccionCocina.index!=$index"
 							ng-class="{'danger':(difMinutos( menu.primerTiempo )>menu.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}">
 							<span class="glyphicon" ng-class="{'glyphicon-chevron-down':$parent.ixMenuActual==$index, 'glyphicon-chevron-right':$parent.ixMenuActual!=$index}"></span>
 							<span class="badge">{{menu.total}}</span>
 							{{menu.menu}} <b>#{{menu.codigoMenu}}</b>
 						</button>
-						<input type="text" class="form-control" ng-model="menu.seleccionados" style="width:125px;display:inline-block" 
-							placeholder="# Productos" id="input_{{$index}}">
+						<!-- INGRESO DE MENUS A COCINAR -->
+						<input type="number" class="form-control input-lg" ng-model="menu.seleccionados" style="width:145px;display:inline-block" 
+							placeholder="# Productos" id="input_{{$index}}" ng-change="cantidadCocinar( menu, $index )"
+							ng-disabled="seleccionCocina.si && seleccionCocina.index!=$index">
 					</div>
-					<div class="col-xs-6 text-right">
-						<button type="button" class="btn btn-sm btn-default" ng-click="selItemMenu( true )" ng-disabled="ixMenuActual!=$index || seleccionTicket.si" title="TODOS">
+					<div class="col-xs-4 text-right">
+						<button type="button" class="btn btn-sm btn-default" ng-click="menu.seleccionados=menu.total;cantidadCocinar( menu, $index )" 
+							ng-disabled="seleccionCocina.si && seleccionCocina.index!=$index" title="TODOS">
 							<span class="glyphicon glyphicon-check"></span>
 						</button>
-						<button type="button" class="btn btn-sm btn-default" ng-click="selItemMenu( false )" ng-disabled="ixMenuActual!=$index || seleccionTicket.si" title="NINGUNO">
+						<button type="button" class="btn btn-sm btn-default" ng-click="menu.seleccionados='';cantidadCocinar( menu, $index )" 
+							ng-disabled="seleccionCocina.si && seleccionCocina.index!=$index" title="NINGUNO">
 							<span class="glyphicon glyphicon-unchecked"></span>
 						</button>
 					</div>
@@ -140,8 +146,10 @@
 								</thead>
 								<tbody>
 									<tr ng-repeat="item in menu.lstOrden track by $index" style="cursor:pointer;position: relative;" 
-										ng-class="{'success':item.selected, 'tr_alert':!item.selected && (difMinutos( item.fechaRegistro )>menu.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}"
-										ng-click="selItemMenu( !item.selected, $index )"
+										ng-class="{
+											'success':item.seleccionados==item.total,
+											'warning':(item.seleccionados>0) && item.seleccionados!=item.total,
+											'tr_alert':!(item.seleccionados>0) && difMinutos( item.fechaRegistro )>menu.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) }"
 										id="ixm_{{menu.idMenu}}_{{item.idOrdenCliente}}">
 										<td><span class="tdTotal">{{item.total}}</span></td>
 										<td><h4>#{{item.idOrdenCliente}}</h4></td>
@@ -254,9 +262,9 @@
 
 
 <!-- SI TIENE SELECCIONADO ALGUN MENU -->
-<div class="acciones" ng-show="seleccionMenu.si">
+<div class="acciones" ng-show="seleccionCocina.si">
 	<div class="btn-accion">
-		<button type="button" class="btn btn-lg btn-success" ng-click="continuarProcesoMenu()">
+		<button type="button" class="btn btn-lg btn-success" ng-click="guardarEstadoDetalleOrden()">
 			<span ng-show="idEstadoOrden==1">
 				<span class="glyphicon glyphicon-play"></span>
 				Cocinar
@@ -269,23 +277,18 @@
 				<span class="glyphicon glyphicon-flag"></span>
 				Servir
 			</span>
-			<span class="badge" style="font-size:16px">{{seleccionMenu.count.total}}</span>
-			<b><u>{{seleccionMenu.menu}}</u></b>
+			<span class="badge" style="font-size:19px">{{seleccionCocina.seleccionados}}</span>
+			<b><u>{{seleccionCocina.menu}}</u></b>
 		</button>
 		<!-- SELECCION POR TIPO DE SERVICIO -->
 		<div class="tipo-servicio">
-            <span class="estado-menu primary" ng-show="seleccionMenu.count.llevar>0">
-            	L <span class="badge">{{seleccionMenu.count.llevar}}</span>
-            </span>
-			<span class="estado-menu success" ng-show="seleccionMenu.count.restaurante>0">
-				R <span class="badge">{{seleccionMenu.count.restaurante}}</span>
+			<span class="label label-warning" ng-repeat="orden in seleccionCocina.lstOrden" ng-if="orden.observacion.length">
+				<span class="glyphicon glyphicon-star"></span>
+				{{orden.observacion}}
 			</span>
-            <span class="estado-menu warning" ng-show="seleccionMenu.count.domicilio>0">
-            	D <span class="badge">{{seleccionMenu.count.domicilio}}</span>
-            </span>
 		</div>
 	</div>
-	<img ng-src="{{seleccionMenu.imagen}}">
+	<img ng-src="{{seleccionCocina.imagen}}">
 </div>
 
 <!-- SI TIENE SELECCIONADO ALGUN TICKET -->

@@ -1303,6 +1303,137 @@ class Orden
 	 	return $this->getRespuesta();
  	}
 
+ 	// CAMBIA ESTADO DE ORDENES ---> %%%%%%%%%%% COCINA %%%%%%%%%%%
+ 	public function cambioEstadoCocina( $idEstadoOrden, $info )
+ 	{
+ 		$cantidadMenus = (int)$info->seleccionados;
+
+ 		if ( !( $cantidadMenus > 0 ) )
+ 			return array( 
+ 				'respuesta' => 'info',
+	 			'mensaje'   => 'Nada que hacer',
+	 		);
+
+		$idEstadoOrdenActual = ( $idEstadoOrden - 1 );
+		$sinExistencia       = false;
+		$productos           = "";
+
+		// SI ES PARA COCINAR
+		if ( $idEstadoOrden == 2 ):
+	 		$sql = "SELECT
+						disponibilidad,
+					    ( ( r.cantidad * {$cantidadMenus} ) - p.disponibilidad )AS 'faltante',
+						producto
+					FROM receta AS r
+						JOIN producto AS p
+							ON r.idProducto = p.idProducto 
+								AND p.disponibilidad < ( r.cantidad * {$cantidadMenus} )
+					WHERE r.idMenu = {$info->idMenu} ";
+
+	 		$rs = $this->con->query( $sql );
+			while( $rs AND $row = $rs->fetch_object() )
+			{
+				$productos     .= $row->faltante . " " . $row->producto . " faltantes \n";
+				$sinExistencia = true;
+			}
+
+		endif;
+
+		// SI NO EXISTE EXISTENCIA
+		if ( $sinExistencia )
+		{
+			return array(
+ 				'respuesta' => 'danger',
+	 			'mensaje'   => "No existen suficientes productos: \n" . $productos,
+	 		);
+		}
+
+ 		$this->con->query( "START TRANSACTION" );
+
+ 		// SI ES PARA COCINAR
+		if ( $idEstadoOrden == 2 ):
+
+	 		// ACTUALIZA INVENTARIO
+	 		$sql = "UPDATE producto AS p
+					JOIN receta AS r
+						ON p.idProducto = r.idProducto AND r.idMenu = {$info->idMenu}
+					SET p.disponibilidad = ( p.disponibilidad - ( r.cantidad * {$cantidadMenus} ) );";
+
+			// SI LLEGARA A OCURRIR UN ERROR
+			if ( !$this->con->query( $sql ) ) {
+		 		$this->respuesta = 'danger';
+		 		$this->mensaje   = 'Error al actualizar inventario';
+			}
+
+		endif;
+
+
+		// RECORRE ORDENES DE CLIENTES
+		foreach ( $info->lstOrden as $ix => $orden ):
+
+			// OBTENER EL ID DEL DETALLE
+			$sql = "SELECT 
+						idDetalleOrdenMenu
+					FROM detalleOrdenMenu 
+					WHERE idOrdenCliente = {$orden->idOrdenCliente} AND idMenu = {$info->idMenu}
+						AND idEstadoDetalleOrden = {$idEstadoOrdenActual}
+					ORDER BY idDetalleOrdenMenu ASC
+					LIMIT {$orden->seleccionados} ";
+
+			$result = $this->con->query( $sql );
+			while( $result AND $rowD = $result->fetch_object() )
+			{
+
+				// SE ACTUALIZA ESTADO DE DETALLE
+				$sql = "CALL consultaDetalleOrdenMenu( 'estado', {$rowD->idDetalleOrdenMenu}, NULL, NULL, NULL, {$idEstadoOrden}, NULL, NULL, NULL, NULL, NULL );";
+				
+		 		if( $rs = $this->con->query( $sql ) ){
+		 			@$this->con->next_result();
+		 			if( $row = $rs->fetch_object() ) {
+						$this->respuesta = $row->respuesta;
+						$this->mensaje   = $row->mensaje;
+		 			}
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+		 		}
+			}
+	 		
+	 		if ( $this->respuesta == 'danger' )
+	 			break;
+
+		endforeach;
+
+		if ( $this->respuesta == 'success' ) {
+	 		//$this->con->query( "COMMIT" );
+	 		$this->con->query( "ROLLBACK" );
+
+	 		/*
+	 		// SI ES NUEVO
+		 	$infoNode = (object)array(
+				'accion' => 'cambioEstadoDetalleOrden',
+				'data'   => array( 
+					'lstOrdenes'    => $lstOrdenes,
+					'idEstadoOrden' => $idEstadoOrden,
+				),
+			);
+
+		 	// SI LA CLASE NO EXISTE SE LLAMA
+		 	if ( !class_exists( "Redis" ) )
+		 		include 'redis.class.php';
+
+		 	// ENVIA LOS DATOS POR MEDIO DE REDIS
+		 	$red = new Redis();
+			$red->messageRedis( $infoNode );
+			*/
+		}
+	 	else
+	 		$this->con->query( "ROLLBACK" );
+
+	 	return $this->getRespuesta();
+ 	}
+
 
  	public function usuarioResponsable( $responsable, $lstUsuarios )
  	{
