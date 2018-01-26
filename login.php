@@ -76,7 +76,7 @@ if( !isset( $_SESSION[ 'idPerfil' ] ) AND !isset( $_SESSION[ 'username' ] )  ) {
         $conexion->close();
     }
 
-    $disabled = $response == 2 ? 'readonly' : '';
+    $disabled = $response == 2 ? 'readonly' : 'autofocus';
 ?>
 <!DOCTYPE html>
 <html>

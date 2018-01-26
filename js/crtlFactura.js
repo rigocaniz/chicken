@@ -495,16 +495,17 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	$scope.txtCliente  = '';
 	$scope.buscarCliente = function( valor, accion ){
 		if( valor.length == 0 && 'principal'  ) {
-			$scope.accionCliente = 'ninguna';
+			$scope.accionCliente                      = 'ninguna';
 			$scope.facturacion.datosCliente.nombre    = '';
 			$scope.facturacion.datosCliente.direccion = '';
 			$scope.txtCliente                         = '';
 			$scope.lstClientes                        = [];
-			// valor                                     = 'cf';
-			/*$timeout(function(){
+			valor                                     = 'cf';
+			accion                                    = 'cf';
+			$timeout(function(){
 				$('#buscador').focus();
 			});
-	        $scope.dialAccionCliente.show();*/
+	        $scope.dialAccionCliente.show();
 		}
 		
 		if( valor.length >= 1 ){
