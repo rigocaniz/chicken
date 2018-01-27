@@ -49,19 +49,20 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 	$scope.dConsultaPersonal = $modal({scope: $scope,template:'consulta.personal.html', show: false, backdrop:false, keyboard: true });
 	$scope.dAyuda = $modal({scope: $scope,template:'ayuda.html', show: false, backdrop:false, keyboard: true });
+	alertify.set('notifier','position', 'top-right');
 
 
 	// CONSULTA INFORMACION DE PERSONA
 	$http.post('consultas.php', { opcion : 'iniOrdenAdmin' })
 	.success(function (data) { 
-		console.log( data );
 
 		if ( data.usuario != undefined ) {
+			$scope.lstDestinoMenu = data.lstDestinoMenu;
 			$scope.user           = data.usuario;
-			//$scope.lstDestinoMenu = data.usuario.lstDestinos;
+			console.log( $scope.user );
 			$timeout(function () {
-				if ( data.usuario.idDestinoMenu )
-					$scope.idDestinoMenu = data.usuario.idDestinoMenu;
+				if ( data.lstDestinoMenu.length )
+					$scope.idDestinoMenu = ( $scope.user.idDestinoMenu || '1' );
 			});
 		}
 	});
@@ -503,10 +504,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	// CANTIDAD A COCINAR
 	$scope.seleccionCocina = {};
 	$scope.cantidadCocinar = function ( menu, _index ) {
-		$scope.seleccionCocina = {};
-
 		var siParcial = true; // SI APLICA SELECCION PARCIAL
-
 		var todoRecorrido = false,
 			aSeleccionar = angular.copy( menu.seleccionados );
 
@@ -590,13 +588,82 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			.success(function (data) {
 				$scope.$parent.loading = false; // cargando...
 
-				alertify.set('notifier','position', 'top-right');
 				alertify.notify( ( data.mensaje || data ), ( data.respuesta || 'danger' ), 5 );
+			
+				$scope.lastId = "";
 
-				// SI LA RESPUESTA ES SUCCESS
-				//if ( data.respuesta == 'success' ) 
-				//	$scope.reset();
+				if ( data.respuesta == 'success' )
+					$scope.descontarOrden( true, $scope.seleccionCocina.idMenu, $scope.seleccionCocina.lstOrden, data.myId );
 			});
+		}
+	};
+
+	$scope.myId = "";
+	$scope.descontarOrden = function ( _current, _idMenu, _lstOrden, _myId ) {
+		var _ixMenu = -1,
+			ordenEncontrada = false;
+
+		/* 
+			VALIDADOR DE ACTUALIZACION
+			{{{{{ "myId" }}}}} 
+		*/
+		if ( $scope.myId == _myId )
+			return false;
+
+		else
+			$scope.myId = _myId;
+
+		// SI ES EL ACTUAL
+		if ( _current )
+			_ixMenu = $scope.seleccionCocina.index;
+		
+		// SI ES PARA OTROS CLIENTES
+		else
+			_ixMenu = $scope.indexArray( 'lstMenus', 'idMenu', _idMenu );
+
+		// SI NO EXISTE EL MENU
+		if ( _ixMenu == -1 || $scope.lstMenus[ _ixMenu ] == undefined )
+			return false;
+
+		// RECORRE ORDENES SELECCINADAS
+		for (var ixOr = 0; ixOr < _lstOrden.length; ixOr++) {
+			
+			for (var ixO = 0; ixO < $scope.lstMenus[ _ixMenu ].lstOrden.length; ixO++)
+			{
+				var actual = angular.copy( $scope.lstMenus[ _ixMenu ].lstOrden[ ixO ] );
+
+				// SI LA ORDEN ES LA MISMA
+				if ( _lstOrden[ ixOr ].idOrdenCliente == actual.idOrdenCliente && _lstOrden[ ixOr ].seleccionados > 0 )
+				{
+					ordenEncontrada = true; // SI SE ENCONTRO LA ORDEN
+					$scope.lstMenus[ _ixMenu ].lstOrden[ ixO ].seleccionados = 0;
+					$scope.lstMenus[ _ixMenu ].lstOrden[ ixO ].total         -= _lstOrden[ ixOr ].seleccionados;
+					$scope.lstMenus[ _ixMenu ].total                         -= _lstOrden[ ixOr ].seleccionados;
+
+					// SI EL TOTAL DE LA ORDEN ES CERO
+					if ( $scope.lstMenus[ _ixMenu ].lstOrden[ ixO ].total == 0 )
+						$scope.lstMenus[ _ixMenu ].lstOrden.splice( ixO, 1 );
+
+					break;
+				}
+			}
+		}
+
+		// SI SE ENCONTRO UNA ORDEN SE LIMPIA SELECCIONADOS
+		if ( ordenEncontrada )
+		{
+			$scope.seleccionCocina.si = false;
+			$scope.lstMenus[ _ixMenu ].seleccionados = "";
+		}
+
+		// SI EL TOTAL DEL MENU ES CERO
+		if ( $scope.lstMenus[ _ixMenu ].total == 0 )
+		{
+			$scope.lstMenus.splice( _ixMenu, 1 );
+
+			// SI ES EL MISMO MENU
+			if ( $scope.seleccionCocina.idMenu == _idMenu )
+				$scope.seleccionCocina = {};
 		}
 	};
 
@@ -1322,6 +1389,15 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			// SI ES CAMBIO DE ESTADO DE ORDEN
 			case 'cambioEstadoDetalleOrden':
 				var estadoAnterior = datos.data.idEstadoOrden - 1;
+
+				/*
+					######## CONSULTA LAS ORDENES PENDIENTES DEL ESTADO ANTERIOR ########
+				*/
+				if ( $scope.idEstadoOrden == estadoAnterior )
+				{
+					$scope.descontarOrden( false, datos.data.ordenCocina.idMenu, datos.data.ordenCocina.lstOrden, datos.data.myId );
+				}
+
 
 				for (var i = 0; i < datos.data.lstOrdenes.length; i++)
 				{

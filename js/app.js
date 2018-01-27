@@ -191,7 +191,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
                     $window.location.href = "#/reportes";      break;
             }
         }
-        console.log( "K:", key );
+//        console.log( "K:", key );
     };
 
     $scope.imagen = {

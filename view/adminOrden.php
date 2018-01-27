@@ -34,7 +34,7 @@
 			</div>
 			<div class="col-xs-5">
 				<select class="form-control input-sm" ng-model="idDestinoMenu">
-					<option value="{{item.idDestinoMenu}}" ng-repeat="item in user.lstDestinos">{{item.destinoMenu}}</option>
+					<option value="{{dest.idDestinoMenu}}" ng-repeat="dest in lstDestinoMenu">{{dest.destinoMenu}}</option>
 				</select>
 			</div>
 		</div>
@@ -116,7 +116,7 @@
 							{{menu.menu}} <b>#{{menu.codigoMenu}}</b>
 						</button>
 						<!-- INGRESO DE MENUS A COCINAR -->
-						<input type="number" class="form-control input-lg" ng-model="menu.seleccionados" style="width:145px;display:inline-block" 
+						<input type="number" class="form-control input-lg" ng-model="menu.seleccionados" style="width:150px;display:inline-block" 
 							placeholder="# Productos" id="input_{{$index}}" ng-change="cantidadCocinar( menu, $index )"
 							ng-disabled="seleccionCocina.si && seleccionCocina.index!=$index">
 					</div>

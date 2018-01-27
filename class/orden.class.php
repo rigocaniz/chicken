@@ -8,6 +8,7 @@ class Orden
  	private $respuesta = 'info';
  	private $mensaje   = '';
  	private $tiempo    = 6;
+ 	private $myId      = NULL;
  	private $error     = FALSE;
  	private $sess      = NULL;
  	private $con       = NULL;
@@ -1306,7 +1307,8 @@ class Orden
  	// CAMBIA ESTADO DE ORDENES ---> %%%%%%%%%%% COCINA %%%%%%%%%%%
  	public function cambioEstadoCocina( $idEstadoOrden, $info )
  	{
- 		$cantidadMenus = (int)$info->seleccionados;
+		$cantidadMenus = (int)$info->seleccionados;
+		$this->myId    = uniqid();
 
  		if ( !( $cantidadMenus > 0 ) )
  			return array( 
@@ -1406,15 +1408,19 @@ class Orden
 		endforeach;
 
 		if ( $this->respuesta == 'success' ) {
-	 		//$this->con->query( "COMMIT" );
-	 		$this->con->query( "ROLLBACK" );
+	 		$this->con->query( "COMMIT" );
 
-	 		/*
 	 		// SI ES NUEVO
 		 	$infoNode = (object)array(
 				'accion' => 'cambioEstadoDetalleOrden',
 				'data'   => array( 
-					'lstOrdenes'    => $lstOrdenes,
+					'myId' => $this->myId,
+					'ordenCocina' => (object)array(
+						'idMenu'   => $info->idMenu,
+						'lstOrden' => $info->lstOrden,
+					),
+					'lstOrdenes'    => array(),
+					//'lstOrdenes'    => $lstOrdenes,
 					'idEstadoOrden' => $idEstadoOrden,
 				),
 			);
@@ -1426,7 +1432,6 @@ class Orden
 		 	// ENVIA LOS DATOS POR MEDIO DE REDIS
 		 	$red = new Redis();
 			$red->messageRedis( $infoNode );
-			*/
 		}
 	 	else
 	 		$this->con->query( "ROLLBACK" );
@@ -1595,10 +1600,9 @@ class Orden
 
 
  	// LISTA DE ORDENS PARA ### COCINA ###
- 	public function consultaOrdenesCocina( $idEstadoDetalleOrden, $idDestinoMenu )
+ 	public function consultaOrdenesCocina( $idEstadoDetalleOrden )
  	{
  		$idEstadoDetalleOrden = (int)$idEstadoDetalleOrden;
-		$idDestinoMenu        = (int)$idDestinoMenu;
 		$where    = $limit 	  = "";
 
 		$lst = array();
@@ -1616,6 +1620,7 @@ class Orden
 				    idMenu,
 				    menu,
 				    imagen,
+				    idDestinoMenu,
 				    codigoMenu,
 				    tiempoAlerta,
 				    perteneceCombo,
@@ -1624,7 +1629,7 @@ class Orden
 				    GROUP_CONCAT( DISTINCT observacion SEPARATOR ' -.- ' )AS 'observacion',
 				    MIN( fechaRegistro )AS 'fechaRegistro'
 				FROM vOrdenes 
-				WHERE idEstadoOrden = {$idEstadoDetalleOrden}
+				WHERE idEstadoDetalleOrden = {$idEstadoDetalleOrden}
 				GROUP BY idOrdenCliente, idMenu, idCombo
 				ORDER BY idMenu ASC, idOrdenCliente ASC
 				$limit ";
@@ -1650,6 +1655,7 @@ class Orden
 						'idMenu'         => $row->idMenu,
 						'menu'           => $row->menu,
 						'codigoMenu'     => $row->codigoMenu,
+						'idDestinoMenu'  => $row->idDestinoMenu,
 						'total'          => 0,
 						'imagen'         => $row->imagen,
 						'tiempoAlerta'   => $row->tiempoAlerta,
@@ -1713,7 +1719,8 @@ class Orden
  				'respuesta' => $this->respuesta,
  				'mensaje'   => $this->mensaje,
  				'tiempo'    => $this->tiempo,
- 				'data'      => $this->data
+ 				'data'      => $this->data,
+ 				'myId'      => $this->myId
  			);
  	}
 
