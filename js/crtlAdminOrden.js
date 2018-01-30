@@ -7,6 +7,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.ixMenuActual   = -1;
 	$scope.ixTicketActual = -1;
 
+
 	$scope.ixMenuFocus   = -1;
 	$scope.ixTicketFocus = -1;
 
@@ -17,6 +18,15 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.codigoPersonal = '';
 	$scope.clave 		  = '';
 	$scope.keyPanel 	  = '';
+
+	$scope.lstGrupos = [
+		{ 'numeroGrupo' : '1', 'grupo' : 'Grupo #1' },
+		{ 'numeroGrupo' : '2', 'grupo' : 'Grupo #2' },
+		{ 'numeroGrupo' : '3', 'grupo' : 'Grupo #3' },
+		{ 'numeroGrupo' : '4', 'grupo' : 'Grupo #4' },
+		{ 'numeroGrupo' : '5', 'grupo' : 'Grupo #5' },
+	];
+	$scope.numeroGrupo 	  = '1';
 
 	$scope.seleccionMenu  = {
 		si     : false,
@@ -114,12 +124,13 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.consultaOrden = function () {
 		if ( $scope.$parent.loading ) return false;
 
-		if ( $scope.idEstadoOrden > 0 && $scope.idDestinoMenu > 0 ) {
+		if ( $scope.idEstadoOrden > 0 && $scope.idDestinoMenu > 0 && $scope.numeroGrupo > 0 ) {
 
 			var datos = { 
 				opcion               : 'consultaOrdenesCocina',
 				idEstadoDetalleOrden : $scope.idEstadoOrden,
-				idDestinoMenu        : $scope.idDestinoMenu
+				idDestinoMenu        : $scope.idDestinoMenu,
+				numeroGrupo 		 : $scope.numeroGrupo
 			};
 
 			$scope.$parent.loading = true; // cargando...
@@ -269,6 +280,11 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 	// SI CAMBIA EL ESTADO DE ORDEN
 	$scope.$watch('idEstadoOrden', function (_new) {
+		$scope.consultaOrden();
+	});
+
+	// SI CAMBIA EL ESTADO DE ORDEN
+	$scope.$watch('numeroGrupo', function (_new) {
 		$scope.consultaOrden();
 	});
 
@@ -1531,9 +1547,9 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 	// DEFINE EL TAMAÑO DEL CONTENEDOR MENU O TICKET
 	$(function(){
-		$(".contenido-lst-orden").attr( 'style', "height:" + ( $(window).height() - 100 ) + "px" );
+		$(".contenido-lst-orden").attr( 'style', "height:" + ( $(window).height() - 125 ) + "px" );
 		$(window).resize(function (){
-			$(".contenido-lst-orden").attr( 'style', "height:" + ( $(this).height() - 100 ) + "px" );
+			$(".contenido-lst-orden").attr( 'style', "height:" + ( $(this).height() - 125 ) + "px" );
 		}) 
 	});
 });

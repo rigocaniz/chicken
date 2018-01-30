@@ -537,7 +537,7 @@ switch ( $data->opcion )
 	case 'consultaOrdenesCocina':
 		$orden = new Orden();
 		echo json_encode(
-			array( 'lstMenu' => $orden->consultaOrdenesCocina( $data->idEstadoDetalleOrden, $data->idDestinoMenu ) )
+			array( 'lstMenu' => $orden->consultaOrdenesCocina( $data->idEstadoDetalleOrden, $data->idDestinoMenu, $data->numeroGrupo ) )
 		);
 		break;
 
