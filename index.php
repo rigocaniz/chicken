@@ -37,7 +37,7 @@
     <script src="js/libs/fileinput.js"></script>
     <script src="js/libs/moment.min.js"></script>
 </head>
-<body ng-controller="inicioCtrl" ng-keydown="pressKey( $event.keyCode, $event.shiftKey, $event );" style="overflow-x: hidden;">
+<body ng-controller="inicioCtrl" ng-keydown="pressKey( $event.keyCode, $event.ctrlKey, $event );" style="overflow-x: hidden;">
     <div id="divFocus">
         <h2>Haga clic aquí</h2>
     </div>
