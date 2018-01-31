@@ -344,7 +344,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				$scope.facturacion.lstOrdenRestantes = angular.copy( data.lst );
 				$scope.facturacion.lstOrdenesInd     = [];
 				$scope.facturacion.ixSeleccionado    = 'pendientes';
-				$scope.facturacion.tipoGrupo         = 'agrupado';
+				$scope.facturacion.tipoGrupo         = 'general';
 			}
 		});
 	};

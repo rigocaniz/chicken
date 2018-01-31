@@ -146,14 +146,15 @@
                             <legend class="legend info">DETALLE ORDEN</legend>
                             <div class="text-right">
                                 <div class="btn-group" role="group" aria-label="...">
-                                    <button type="button" class="btn btn-sm btn-default" ng-click="facturacion.tipoGrupo='agrupado'">
-                                        <span class="glyphicon" ng-class="{'glyphicon-check': facturacion.tipoGrupo=='agrupado', 'glyphicon-unchecked': facturacion.tipoGrupo!='agrupado'}"></span> <strong>AGRUPADO</strong>
+                                    <button type="button" class="btn btn-sm btn-default" ng-click="facturacion.tipoGrupo='general'">
+                                        <span class="glyphicon" ng-class="{'glyphicon-check': facturacion.tipoGrupo=='general', 'glyphicon-unchecked': facturacion.tipoGrupo!='general'}"></span> <strong>GENERAL</strong>
                                     </button>
                                     <button type="button" class="btn btn-sm btn-default" ng-click="facturacion.tipoGrupo='individual'">
                                         <span class="glyphicon" ng-class="{'glyphicon-check': facturacion.tipoGrupo=='individual', 'glyphicon-unchecked': facturacion.tipoGrupo!='individual'}"></span> <strong>INDIVIDUALES</strong>
                                     </button>
                                 </div>
                             </div>
+                            <br>
                             <!-- ORDENES INDIVIDUALES -->
                             <div ng-show="facturacion.tipoGrupo=='individual'">
                                 <br>
@@ -177,6 +178,15 @@
                                             </button>
                                         </div>
                                         <div class="table-responsive">
+                                            <strong>VER: </strong>
+                                            <div class="btn-group" role="group" aria-label="">
+                                                <button type="button" class="btn btn-default" ng-click="facturacion.agrupado=true">
+                                                    <span class="glyphicon" ng-class="{'glyphicon-check': facturacion.agrupado, 'glyphicon-unchecked': !facturacion.agrupado}"></span> Agrupado
+                                                </button>
+                                                <button type="button" class="btn btn-default" ng-click="facturacion.agrupado=false">
+                                                    <span class="glyphicon" ng-class="{'glyphicon-check': !facturacion.agrupado, 'glyphicon-unchecked': facturacion.agrupado}"></span> Detalle
+                                                </button>
+                                            </div>
                                             <table class="table table-hover table-condensed">
                                                 <?php include 'titulo.html'; ?>
                                                 <tbody>
@@ -195,7 +205,48 @@
                                                 <tbody>
                                                     <tr ng-repeat="item in ordenIndividual.lstOrden" ng-class="{ 
                                                     'border-warning': item.descuento > 0, 'border-danger': item.descuento == item.precioMenu}" ng-dblclick="item.cobrarTodo=!item.cobrarTodo">
-                                                    <?php include 'orden.html'; ?>
+                                                        <td class="text-center" ng-hide="facturacion.tipoGrupo=='general'">
+                                                            <button type="button" class="btn btn-sm btn-default" ng-click="item.cobrarTodo=!item.cobrarTodo">
+                                                                <span class="glyphicon " ng-class="{'glyphicon-check': item.cobrarTodo, 'glyphicon-unchecked': !item.cobrarTodo}"></span>
+                                                            </button>
+                                                        </td>
+                                                        <td>
+                                                            <div class="label-border btn-sm" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}" title="{{ item.tipoServicio }}" data-toggle="tooltip" data-placement="top" tooltip>
+                                                                <span ng-show="item.idTipoServicio==2">R</span>
+                                                                <span ng-show="item.idTipoServicio==3">D</span>
+                                                                <span ng-show="item.idTipoServicio==1">L</span>
+                                                            </div>
+                                                            <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
+                                                            <span data-placement="top" data-title="{{item.estadoDetalleOrden}}" bs-tooltip>{{ item.descripcion }}</span>
+                                                            <br>
+                                                            <textarea class="form-control" rows="2" placeholder="Ingrese  justificación del descuento" ng-model="item.comentario" ng-show="item.descuento > 0 && item.cobrarTodo"></textarea>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div ng-show="!item.precioHabilitado">
+                                                                <input type="number" class="form-control" ng-model="item.cantidad" max="{{ item.maximo }}" min="1" ng-pattern="/^[0-9]+?$/" ng-disabled="!item.cobrarTodo">
+                                                            </div>
+                                                            <div ng-show="item.precioHabilitado">
+                                                                {{ item.cantidad }}
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {{ item.precio | number: 2 }}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <input type="number" class="form-control" ng-model="item.descuento" max="{{ (item.cantidad * item.precio) }}" min="0" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" ng-disabled="!item.cobrarTodo">
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {{ ( item.cantidad * item.precio ) -  item.descuento | number:2 }}
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="success">
+                                                        <td ng-hide="facturacion.tipoGrupo=='agrupado'"></td>
+                                                        <td colspan="4" class="text-right">
+                                                            <strong>TOTAL</strong>
+                                                        </td>
+                                                        <td class="text-right" style="">
+                                                            <strong>Q. {{ retornarTotalOrden() | number: 2 }}</strong>
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -204,15 +255,69 @@
                                 </div>
                             </div>
                             <!-- ORDEN AGRUPADO -->
-                            <div ng-show="facturacion.tipoGrupo=='agrupado'">
+                            <div ng-show="facturacion.tipoGrupo=='general'">
+                                <strong>VER: </strong>
+                                <div class="btn-group" role="group" aria-label="">
+                                    <button type="button" class="btn btn-default" ng-click="facturacion.agrupado=true">
+                                        <span class="glyphicon" ng-class="{'glyphicon-check': facturacion.agrupado, 'glyphicon-unchecked': !facturacion.agrupado}"></span> Agrupado
+                                    </button>
+                                    <button type="button" class="btn btn-default" ng-click="facturacion.agrupado=false">
+                                        <span class="glyphicon" ng-class="{'glyphicon-check': !facturacion.agrupado, 'glyphicon-unchecked': facturacion.agrupado}"></span> Detalle
+                                    </button>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="table table-hover table-condensed">
                                         <?php include 'titulo.html'; ?>
-                                        <tbody class="monto">
-                                            <tr ng-repeat="item in facturacion.lstOrden" ng-class="{ 
-                                            'border-warning': item.descuento > 0, 'border-danger': item.descuento == item.precioMenu}" ng-dblclick="item.cobrarTodo=!item.cobrarTodo">
-                                                <?php include 'orden.html'; ?>
+                                        
+                                        <tbody class="monto" ng-repeat="item in facturacion.lstOrden">
+                                            <tr ng-repeat="orden in item.lstDetalle">
+                                                <td class="text-center" ng-hide="facturacion.tipoGrupo=='general'">
+                                                    <button type="button" class="btn btn-sm btn-default" ng-click="orden.cobrarTodo=!orden.cobrarTodo">
+                                                        <span class="glyphicon " ng-class="{'glyphicon-check': orden.cobrarTodo, 'glyphicon-unchecked': !orden.cobrarTodo}"></span>
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <div class="label-border btn-sm" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}" title="{{ item.tipoServicio }}" data-toggle="tooltip" data-placement="top" tooltip>
+                                                        <span ng-show="item.idTipoServicio==2">R</span>
+                                                        <span ng-show="item.idTipoServicio==3">D</span>
+                                                        <span ng-show="item.idTipoServicio==1">L</span>
+                                                    </div>
+                                                    <span class="glyphicon glyphicon-gift" ng-show="orden.esCombo"></span>
+                                                    <span data-placement="top" data-title="{{orden.estadoDetalleOrden}}" bs-tooltip>{{ item.descripcion }}</span>
+                                                    <br>
+                                                    <textarea class="form-control" rows="2" placeholder="Ingrese  justificación del descuento" ng-model="orden.comentario" ng-show="orden.descuento > 0 && orden.cobrarTodo"></textarea>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div ng-show="!orden.precioHabilitado">
+                                                        <input type="number" class="form-control" ng-model="orden.cantidad" max="{{ orden.maximo }}" min="1" ng-pattern="/^[0-9]+?$/" ng-disabled="!orden.cobrarTodo">
+                                                    </div>
+                                                    <div ng-show="orden.precioHabilitado">
+                                                        {{ orden.cantidad }}
+                                                    </div>
+                                                </td>
+                                                <td class="text-right">
+                                                    {{ orden.precio | number: 2 }}
+                                                </td>
+                                                <td class="text-right">
+                                                    <input type="number" class="form-control" ng-model="orden.descuento" ng-change="(item.subTotal - orden.descuento)" max="{{ (orden.cantidad * orden.precio) }}" min="0" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01">
+                                                </td>
+                                                <td class="text-right">
+                                                    {{ ( orden.cantidad * orden.precio ) -  orden.descuento | number:2 }}
+                                                    <br>
+                                                    {{ item.subTotal }}
+                                                </td>
                                             </tr>
+                                            <!--
+                                            <tr class="success">
+                                                <td ng-hide="facturacion.tipoGrupo=='agrupado'"></td>
+                                                <td colspan="4" class="text-right">
+                                                    <strong>TOTAL</strong>
+                                                </td>
+                                                <td class="text-right" style="">
+                                                    <strong>Q. {{ retornarTotalOrden() | number: 2 }}</strong>
+                                                </td>
+                                            </tr>
+                                        -->
                                         </tbody>
                                     </table>
                                 </div>

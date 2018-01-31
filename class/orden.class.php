@@ -627,6 +627,9 @@ class Orden
 					'idEstadoDetalleOrden'      => $row->idEstadoDetalleOrden,
 					'idEstadoDetalleOrdenCombo' => $row->idEstadoDetalleOrdenCombo,
 					'observacion' 				=> $row->observacion,
+					'cantidad'         => 1,
+					'precio'           => $precioMenu,
+
 				);
 
 				// VERIFICA SI EL MENU EXISTE
