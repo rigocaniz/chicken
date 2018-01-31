@@ -465,14 +465,15 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				accionOrden    : $scope.accionOrden
 			})
 			.success(function (data) {
-				console.log( data );
 
 				$scope.$parent.loading = false; // cargando...
 
 				if ( data.respuesta == 'success' ) {
-					alertify.set('notifier','position', 'top-right');
 					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 					
+					// CONSULTA DETALLE DE ORDEN
+					$scope.consultaDetalleOrden();
+
 					$scope.dialOrdenCliente.hide();
 					$scope.ordenActual.lstAgregar = [];
 
@@ -481,18 +482,14 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 						if ( !( $scope.ordenActual.noTicket > 0 ) )
 							window.location.href = "#/factura/" + $scope.ordenActual.idOrdenCliente;
 					});
-
-					//$scope.lstOrdenCliente.push( data.data.ordenCliente );
 				}
 				else{
-					alertify.set('notifier','position', 'top-right');
 					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 				}
 			});
 		}
 		// SI NO SE A AGREGADO NINGUNA ORDEN
 		else{
-			alertify.set('notifier','position', 'top-right');
 			alertify.notify('No ha agregado ningún menú', 'danger', 4);
 		}
 	};
@@ -601,11 +598,14 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				$scope.$parent.loading = false; // cargando...
 
 				if ( data.mensaje != undefined ) {
-					alertify.set('notifier','position', 'top-right');
 					alertify.notify( data.mensaje, data.respuesta, 3 );
 
-					if ( data.respuesta == 'success' )
+					if ( data.respuesta == 'success' ){
 						$scope.dialCancelarDetalle.hide();
+
+						// CONSULTA NUEVAMENTE EL DETALLE DE LA ORDEN
+						$scope.consultaDetalleOrden();
+					}
 				}
 			});
 		}
@@ -634,19 +634,27 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		if ( $scope.$parent.loading )
 			return false;
 
-		// SI NO ES DE BUSQUEDA
-		if ( deBusqueda == undefined ) {
-			$scope.deBusqueda = false;
-		}
-		// SI ES DE BUSQUEDA
-		else {
-			$scope.idEstadoOrden = 0;
-			$scope.deBusqueda    = true;
+		if ( orden !== undefined )
+		{
+			// SI NO ES DE BUSQUEDA
+			if ( deBusqueda == undefined ) {
+				$scope.deBusqueda = false;
+			}
+			// SI ES DE BUSQUEDA
+			else {
+				$scope.idEstadoOrden = 0;
+				$scope.deBusqueda    = true;
+			}
+
+			$scope.infoOrden = orden;
 		}
 
+		// SI NO ESTA DEFINIDO LA ORDEN
+		if ( !( $scope.infoOrden.idOrdenCliente > 0 ) )
+			return false;
+
 		$scope.$parent.loading = true;
-		$scope.infoOrden = orden;
-		$http.post('consultas.php', { opcion : 'lstDetalleOrdenCliente', idOrdenCliente : orden.idOrdenCliente, todo : $scope.todoDetalle })
+		$http.post('consultas.php', { opcion : 'lstDetalleOrdenCliente', idOrdenCliente : $scope.infoOrden.idOrdenCliente, todo : $scope.todoDetalle })
 		.success(function (data) {
 			$scope.$parent.loading = false;
 			if ( data.lst ) {
@@ -811,7 +819,13 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 					$scope.$parent.loading = false; // cargando...
 
 					alertify.notify( ( data.mensaje || data ), ( data.respuesta || 'danger' ), 5 );
-					$scope.dialEditarDetalle.hide();
+
+					if ( data.respuesta == 'success' )
+					{
+						$scope.dialEditarDetalle.hide();
+						// CONSULTA NUEVAMENTE EL DETALLE DE LA ORDEN
+						$scope.consultaDetalleOrden();
+					}
 				});
 			}
 		}
@@ -855,7 +869,11 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				alertify.notify( ( data.mensaje || data ), ( data.respuesta || 'danger' ), 5 );
 
 				if ( data.respuesta == 'success' )
+				{
 					$scope.dialEditarDetalle.hide();
+					// CONSULTA NUEVAMENTE EL DETALLE DE LA ORDEN
+					$scope.consultaDetalleOrden();
+				}
 			});
 		}
 	};
@@ -954,7 +972,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 	// SI CAMBIA EL Tipo de Servicio
 	$scope.$watch('idTipoServicio', function ( _new, _old ) {
-//		$scope.watchPrecio();
+		// $scope.watchPrecio();
 
 		if ( _new )
 			$scope.filtroServicio = _new;
@@ -1262,7 +1280,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		switch ( datos.accion ) {
 			// SI SE AGREGO UNA ORDEN NUEVA
 			case 'ordenNueva':
-
 				// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
 				if ( datos.data && datos.data.ordenCliente && $scope.idEstadoOrden == 1 ) {
 					$scope.lstOrdenCliente.push( datos.data.ordenCliente );
@@ -1271,47 +1288,23 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 					if ( $scope.lstOrdenCliente.length ==1 )
 						$scope.miIndex = 0;
 				}
+
 			break;
 
-			// SI SE AGREGA OTROS MENUS A ORDEN EXISTENTE
-			/*case 'ordenAgregar':
-
-				// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
-				if ( datos.data && datos.data.ordenCliente && ( $scope.idEstadoOrden == 1 || $scope.idEstadoOrden == 2 ) ) {
-
-					var orden = datos.data.ordenCliente;
-
-					// OBTIENE INDEX DE ORDEN
-					var index = $scope.indexArray( 'lstOrdenCliente', 'idOrdenCliente', orden.idOrdenCliente );
-
-					// SI EXISTE LA ORDEN
-					if ( index >= 0 ) {
-						$scope.lstOrdenCliente[ index ].numeroTicket       = orden.numeroTicket;
-						$scope.lstOrdenCliente[ index ].usuarioResponsable = orden.usuarioResponsable;
-						$scope.lstOrdenCliente[ index ].numMenu            = orden.numMenu;
-
-						// SI ES LA ORDEN ACTUAL
-						if ( index == $scope.miIndex && datos.data.detalleOrdenCliente ) {
-							$scope.infoOrden.numeroTicket       = orden.numeroTicket;
-							$scope.infoOrden.usuarioResponsable = orden.usuarioResponsable;
-							$scope.infoOrden.numMenu            = orden.numMenu;
-							$scope.infoOrden.lstOrden           = datos.data.detalleOrdenCliente.lst;
-							$scope.infoOrden.total              = datos.data.detalleOrdenCliente.total;
-						}
-					}
-				}
+			case 'ordenAgregar':
+				// CONSULTA NUEVAMENTE EL DETALLE DE LA ORDEN, SI ES LA MISMA
+				if ( $scope.infoOrden.idOrdenCliente == datos.data.idOrdenCliente )
+					$scope.consultaDetalleOrden();
+				
 			break;
 
-			// SI SE CAMBIO TIPO DE SERVICIO
+
 			case 'cambioTipoServicio':
-			
-				// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
-				if ( datos.data && datos.data.idOrdenCliente == $scope.infoOrden.idOrdenCliente )
-					$scope.infoOrden.lstOrden = datos.data.detalleOrdenCliente.lst;
-					$scope.infoOrden.total    = datos.data.detalleOrdenCliente.total;
+				// CONSULTA NUEVAMENTE EL DETALLE DE LA ORDEN, SI ES LA MISMA
+				if ( $scope.infoOrden.idOrdenCliente == datos.data.idOrdenCliente )
+					$scope.consultaDetalleOrden();
 
 			break;
-			*/
 
 			// ORDEN PRINCIPAL CANCELADA
 			case 'ordenPrincipalCancelada':
@@ -1344,51 +1337,12 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				}
 			break;
 
-			/*
 			case 'cancelarOrdenParcial':
+				// CONSULTA NUEVAMENTE EL DETALLE DE LA ORDEN, SI ES LA MISMA
+				if ( $scope.infoOrden.idOrdenCliente == datos.data.idOrdenCliente )
+					$scope.consultaDetalleOrden();
 
-				console.log( datos.data.lstDetalle, $scope.infoOrden.lstOrden );
-				if ( datos.data && $scope.infoOrden.idOrdenCliente == datos.data.idOrdenCliente )
-				{
-
-					var lstEliminado = datos.data.lstDetalle;
-					var ixParent = -1, ixChildren = -1;
-
-					for (var ixo = 0; ixo < $scope.infoOrden.lstOrden.length; ixo++) 
-					{
-
-						for (var id = 0; id < $scope.infoOrden.lstOrden[ ixo ].lstDetalle.length; id++) 
-						{
-							var item = $scope.infoOrden.lstOrden[ ixo ].lstDetalle[ id ];
-
-							for (var i = 0; i < lstEliminado.length; i++) 
-							{
-								if ( ( item.idDetalleOrdenCombo > 0 && lstEliminado[ i ].idDetalleOrdenCombo == item.idDetalleOrdenCombo ) 
-									|| ( item.idDetalleOrdenMenu > 0 && lstEliminado[ i ].idDetalleOrdenMenu == item.idDetalleOrdenMenu ) ) 
-								{
-									ixParent   = ixo;
-									ixChildren = id;
-									break;
-								}
-							}
-						
-							if ( ixChildren >= 0 ) break;
-						}
-
-						if ( ixParent >= 0 ) break;
-					}
-					
-					// SI EXISTE EL ELEMENTO
-					if ( ixParent >= 0 ) {
-						var subTotal = $scope.infoOrden.lstOrden[ ixParent ].subTotal;
-						var cantidad = $scope.infoOrden.lstOrden[ ixParent ].cantidad;
-						$scope.infoOrden.lstOrden.splice( ixParent, 1 );
-						$scope.infoOrden.numMenu -= cantidad;
-						$scope.infoOrden.total   -= subTotal;
-					}
-				}
-
-			break;*/
+			break;
 		}
 
 		$scope.$apply();

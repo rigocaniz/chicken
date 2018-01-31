@@ -27,8 +27,6 @@ class Orden
  	{
  		// INICIALIZACIÓN DE VARIABLES
 		$idOrdenCliente     = "NULL";
-		//$usuarioResponsable = "NULL";
-		//$usuarioBarra       = "NULL";
 		$idEstadoOrden      = "NULL";
 
 		// SETEO DE VARIABLES
@@ -37,35 +35,13 @@ class Orden
 
 		// VERIFICA EL ULTIMO USUARIO
 		$usuarioResponsable = $this->sess->getUsuario();
-		//$usuarioBarra       = $this->usuarioResponsable( 'barra', $lstUsuarios );
-
-		$validar = new Validar();
-
-		// SI USUARIO RESPONSABLE ESTA DEFINIDO
-		//if ( isset( $data->usuarioResponsable ) AND strlen( $data->usuarioResponsable ) > 3 )
-		//	$usuarioResponsable = "'" . $this->con->real_escape_string( $validar->validarTexto( $data->usuarioResponsable, NULL, TRUE, 8, 16, "Usuario responsable" ) ) . "'";
-
-		// SI USUARIO RESPONSABLE BARRA
-		//if ( isset( $data->usuarioBarra ) AND strlen( $data->usuarioBarra ) > 3 )
-		//	$usuarioBarra = "'" . $this->con->real_escape_string( $validar->validarTexto( $data->usuarioBarra, NULL, TRUE, 8, 16, "Usuario responsable barra" ) ) . "'";
-		$comentario = ( isset( $data->comentario ) AND strlen( $data->comentario ) > 3 ) ? "'" . $data->comentario . "'" : "NULL";
-
-		// VALIDACIONES
-		/*if( $accion == 'insert' ):
-			// OBLIGATORIOS
-			$numeroTicket = $validar->validarEntero( $data->numeroTicket, NULL, TRUE, 'El No. de Ticket no es válido' );
-
-		else:*/
-
-
-		//endif;
 
 		// SETEO DE VARIABLES
-		$idOrdenCliente = ( isset( $data->idOrdenCliente ) && (int)$data->idOrdenCliente > 0 )? (int)$data->idOrdenCliente : "NULL";
-		$data->idEstadoOrden  = isset( $data->idEstadoOrden )	? (int)$data->idEstadoOrden	 : "NULL";
+		$validar = new Validar();
+		$comentario          = ( isset( $data->comentario ) AND strlen( $data->comentario ) > 3 ) ? "'" . $this->con->real_escape_string( $data->comentario ) . "'" : "NULL";
+		$idOrdenCliente      = ( isset( $data->idOrdenCliente ) && (int)$data->idOrdenCliente > 0 )? (int)$data->idOrdenCliente : "NULL";
+		$data->idEstadoOrden = isset( $data->idEstadoOrden )	? (int)$data->idEstadoOrden	 : "NULL";
 
-		// OBLIGATORIOS
-		//$idOrdenCliente = $validar->validarEntero( $data->idOrdenCliente, "NULL", FALSE, 'El No. de Orden no es válido' );
 
 		if( $accion == 'update' ):
 			$numeroTicket = $validar->validarEntero( $data->numeroTicket, NULL, TRUE, 'El No. de Ticket es válido' );
@@ -85,7 +61,6 @@ class Orden
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 		@$this->con->next_result();
-		 		$this->con->query( "COMMIT" );// CONFIRMA TRANSACCION
 
 	 			$this->respuesta = $row->respuesta;
 	 			$this->mensaje   = $row->mensaje;
@@ -96,10 +71,15 @@ class Orden
 	 				$this->ordenPrincipalCancelada( $idOrdenCliente );
 	 		}
 	 		else{
-		 		$this->con->query( "ROLLBACK" );
 	 			$this->respuesta = 'danger';
 	 			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
 	 		}
+
+	 		if ( $row->respuesta == 'success' )
+		 		$this->con->query( "COMMIT" );
+
+		 	else
+		 		$this->con->query( "ROLLBACK" );
 
  		endif;
 
@@ -316,6 +296,7 @@ class Orden
 				 	$infoNode = (object)array(
 						'accion' => 'ordenNueva',
 						'data'   => array(
+							'idOrdenCliente'  => $idOrdenCliente,
 							'ordenCliente'    => $this->lstOrdenCliente( 1, NULL, $idOrdenCliente ),
 							'lstMenuAgregado' => $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo ),
 					 	),
@@ -326,6 +307,7 @@ class Orden
 			 		$infoNode = (object)array(
 						'accion' => 'ordenAgregar',
 						'data'   => array(
+							'idOrdenCliente'      => $idOrdenCliente,
 							'ordenCliente'        => $this->lstOrdenCliente( 1, NULL, $idOrdenCliente ),
 							'detalleOrdenCliente' => $this->lstDetalleOrdenCliente( $idOrdenCliente ),
 							'lstMenuAgregado'     => $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo ),
@@ -1219,23 +1201,30 @@ class Orden
 			// SI SE GUARDO CORRECTAMENTE
 			if ( $this->respuesta == 'success' OR $this->respuesta == 'warning' ) {
 
+				if ( $this->respuesta == 'warning' )
+				{
+					$this->mensaje   = 'No se cancelaron todas las ordenes';
+					$this->respuesta = 'success';
+				}
+
 		 		$this->con->query( "COMMIT" );
-				$this->respuesta = 'success';
+				$this->myId = uniqid();
 
-				if ( $count == $nCancelados )
-		 			$this->mensaje = 'Cancelado correctamente';
-
-				else
-		 			$this->mensaje = 'Se cancelaron ' . ( $count - $nCancelados ) . " de " . $count; 
+				$this->data = $this->infoNodeOrden( $idOrdenCliente, TRUE, TRUE, TRUE );
 
 			 	$infoNode = (object)array(
 					'accion' => 'cancelarOrdenParcial',
+					'myId'   => $this->myId,
 					'data'   => array(
+						'info'           => $this->data,
 						'idOrdenCliente' => $idOrdenCliente,
 						'lstDetalle'     => $lstDetalle,
 				 	),
 				);
 			 	
+			 	// :::: TEST ::::
+		 		//$this->con->query( "ROLLBACK" );
+
 			 	// SI LA CLASE NO EXISTE SE LLAMA
 			 	if ( !class_exists( "Redis" ) )
 			 		include 'redis.class.php';
@@ -1253,6 +1242,35 @@ class Orden
 
  		return $this->getRespuesta();
  	}
+
+ 	// DETALLE DE TICKET
+ 	// ORDEN PARA COCINA
+ 	// DETALLE 
+
+ 	public function infoNodeOrden( $idOrdenCliente, $paraMesero = FALSE, $paraCocina = FALSE, $paraTicket = FALSE )
+ 	{
+ 		$result = new stdClass();
+
+ 		$result->idOrdenCliente = (int)$idOrdenCliente;
+
+ 		// SI ES PARA COCINA
+ 		if ( $paraCocina ):
+			$result->paraCocina = $this->consultaOrdenesCocina( 0, 0, 0, $idOrdenCliente );
+
+ 		endif;
+
+ 		// SI ES PARA MESERO
+ 		if ( $paraMesero ):
+			//$result->paraMesero = $this->lstDetalleOrdenCliente( $idOrdenCliente );
+
+ 		endif;
+
+ 		return $result;
+ 	}
+
+
+
+
 
  	// CAMBIA ESTADO DE ORDENES ---> DETALLE
  	public function cambioEstadoOrden( $idEstadoOrden, $lstOrdenes )
@@ -1602,7 +1620,7 @@ class Orden
 
 
  	// LISTA DE ORDENS PARA ### COCINA ###
- 	public function consultaOrdenesCocina( $idEstadoDetalleOrden, $idDestinoMenu, $numeroGrupo = 0 )
+ 	public function consultaOrdenesCocina( $idEstadoDetalleOrden, $idDestinoMenu, $numeroGrupo = 0, $idOrdenCliente = NULL )
  	{
  		$idEstadoDetalleOrden = (int)$idEstadoDetalleOrden;
 		$where    = $limit 	  = "";
@@ -1610,13 +1628,25 @@ class Orden
 		$lst = array();
 		$numeroGrupo = (int)$numeroGrupo;
 
-		// SI NUMERO DE GRUPO ESTA ESPECIFICADO, 99 = TODOS
-		if ( $numeroGrupo != 99 )
-			$where = " AND numeroGrupo = {$numeroGrupo} ";
 			
 		// SI EL ESTADO ESTA DEFINIDO
 		if ( ( $idEstadoDetalleOrden != 1 AND $idEstadoDetalleOrden != 2 ) )
 			$limit = " LIMIT 50";
+
+		// SI SE VALIDA ESTADO DE DETALLE
+		if ( $idEstadoDetalleOrden > 0 )
+			$where .= " AND idEstadoDetalleOrden = {$idEstadoDetalleOrden} ";
+
+		// SI SE VALIDA DESTINO DE MENU
+		if ( $idDestinoMenu > 0 )
+			$where .= " AND idDestinoMenu = {$idDestinoMenu}";
+
+		if ( !is_null( $idOrdenCliente ) AND $idOrdenCliente > 0 )
+			$where .= " AND idOrdenCliente = {$idOrdenCliente} ";
+
+		// SI NUMERO DE GRUPO ESTA ESPECIFICADO, 99 = TODOS
+		if ( $numeroGrupo != 99 AND $numeroGrupo > 0 )
+			$where .= " AND numeroGrupo = {$numeroGrupo} ";
 
  		$sql = "SELECT
 					idOrdenCliente, 
@@ -1633,12 +1663,11 @@ class Orden
 				    idCombo,
 				    combo,
 				    GROUP_CONCAT( DISTINCT observacion SEPARATOR ' -.- ' )AS 'observacion',
-				    MIN( fechaRegistro )AS 'fechaRegistro'
+				    MIN( fechaRegistro )AS 'fechaRegistro',
+				    idEstadoDetalleOrden
 				FROM vOrdenes 
-				WHERE idEstadoDetalleOrden = {$idEstadoDetalleOrden}
-					AND idDestinoMenu = {$idDestinoMenu}
-					$where
-				GROUP BY idOrdenCliente, idMenu, idCombo
+				WHERE TRUE $where
+				GROUP BY idOrdenCliente, idMenu, idCombo, idEstadoDetalleOrden
 				ORDER BY idMenu ASC, idOrdenCliente ASC
 				$limit ";
 
@@ -1649,7 +1678,7 @@ class Orden
 
 				$ixM = -1;
 				foreach ($lst as $_ixM => $menu) {
-					if ( $menu->idMenu == $row->idMenu ) {
+					if ( $menu->idMenu == $row->idMenu AND $menu->idEstadoDetalleOrden == $row->idEstadoDetalleOrden ) {
 						$ixM = $_ixM;
 						break;
 					}
@@ -1660,14 +1689,15 @@ class Orden
 					$ixM = count( $lst );
 
 					$lst[] = (object)array(
-						'idMenu'         => $row->idMenu,
-						'menu'           => $row->menu,
-						'codigoMenu'     => $row->codigoMenu,
-						'idDestinoMenu'  => $row->idDestinoMenu,
-						'total'          => 0,
-						'imagen'         => $row->imagen,
-						'tiempoAlerta'   => $row->tiempoAlerta,
-						'lstOrden'       => array(),
+						'idMenu'               => $row->idMenu,
+						'idEstadoDetalleOrden' => $row->idEstadoDetalleOrden,
+						'menu'                 => $row->menu,
+						'codigoMenu'           => $row->codigoMenu,
+						'idDestinoMenu'        => $row->idDestinoMenu,
+						'total'                => 0,
+						'imagen'               => $row->imagen,
+						'tiempoAlerta'         => $row->tiempoAlerta,
+						'lstOrden'             => array(),
 					);
 				}
 
