@@ -1274,7 +1274,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 			break;
 
 			// SI SE AGREGA OTROS MENUS A ORDEN EXISTENTE
-			case 'ordenAgregar':
+			/*case 'ordenAgregar':
 
 				// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
 				if ( datos.data && datos.data.ordenCliente && ( $scope.idEstadoOrden == 1 || $scope.idEstadoOrden == 2 ) ) {
@@ -1311,6 +1311,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 					$scope.infoOrden.total    = datos.data.detalleOrdenCliente.total;
 
 			break;
+			*/
 
 			// ORDEN PRINCIPAL CANCELADA
 			case 'ordenPrincipalCancelada':
@@ -1343,6 +1344,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				}
 			break;
 
+			/*
 			case 'cancelarOrdenParcial':
 
 				console.log( datos.data.lstDetalle, $scope.infoOrden.lstOrden );
@@ -1386,7 +1388,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 					}
 				}
 
-			break;
+			break;*/
 		}
 
 		$scope.$apply();

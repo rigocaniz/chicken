@@ -8,6 +8,7 @@ class Orden
  	private $respuesta = 'info';
  	private $mensaje   = '';
  	private $tiempo    = 6;
+ 	private $myId      = NULL;
  	private $error     = FALSE;
  	private $sess      = NULL;
  	private $con       = NULL;
@@ -26,8 +27,8 @@ class Orden
  	{
  		// INICIALIZACIÓN DE VARIABLES
 		$idOrdenCliente     = "NULL";
-		$usuarioResponsable = "NULL";
-		$usuarioBarra       = "NULL";
+		//$usuarioResponsable = "NULL";
+		//$usuarioBarra       = "NULL";
 		$idEstadoOrden      = "NULL";
 
 		// SETEO DE VARIABLES
@@ -35,8 +36,8 @@ class Orden
 		$lstUsuarios  = isset( $data->lstU ) ? $data->lstU : array();
 
 		// VERIFICA EL ULTIMO USUARIO
-		$usuarioResponsable = $this->usuarioResponsable( 'cocina', $lstUsuarios );
-		$usuarioBarra       = $this->usuarioResponsable( 'barra', $lstUsuarios );
+		$usuarioResponsable = $this->sess->getUsuario();
+		//$usuarioBarra       = $this->usuarioResponsable( 'barra', $lstUsuarios );
 
 		$validar = new Validar();
 
@@ -80,7 +81,7 @@ class Orden
  		else:
 		 	$this->con->query( "START TRANSACTION" );
 
-	 		$sql = "CALL consultaOrdenCliente( '{$accion}', {$idOrdenCliente}, {$numeroTicket}, '{$usuarioResponsable}', {$idEstadoOrden}, '{$usuarioBarra}', $comentario )";
+	 		$sql = "CALL consultaOrdenCliente( '{$accion}', {$idOrdenCliente}, {$numeroTicket}, '{$usuarioResponsable}', {$idEstadoOrden}, $comentario )";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 		@$this->con->next_result();
@@ -809,7 +810,7 @@ class Orden
 		$lst = array();
 
 		if ( IS_NULL( $idOrdenCliente ) )
-			$where = " AND ( responsableOrden = '{$this->sess->getUsuario()}' OR usuarioBarra = '{$this->sess->getUsuario()}' ) ";
+			$where = " AND ( responsableOrden = '{$this->sess->getUsuario()}' ) ";
 
 		else
 			$where = " AND idOrdenCliente = {$idOrdenCliente} ";
@@ -836,7 +837,6 @@ class Orden
 				    idEstadoOrden,
 				    numeroTicket,
 				    responsableOrden,
-				    usuarioBarra,
 				    idDetalleOrdenMenu,
 				    cantidad,
 				    idMenu,
@@ -1309,7 +1309,8 @@ class Orden
  	// CAMBIA ESTADO DE ORDENES ---> %%%%%%%%%%% COCINA %%%%%%%%%%%
  	public function cambioEstadoCocina( $idEstadoOrden, $info )
  	{
- 		$cantidadMenus = (int)$info->seleccionados;
+		$cantidadMenus = (int)$info->seleccionados;
+		$this->myId    = uniqid();
 
  		if ( !( $cantidadMenus > 0 ) )
  			return array( 
@@ -1409,15 +1410,19 @@ class Orden
 		endforeach;
 
 		if ( $this->respuesta == 'success' ) {
-	 		//$this->con->query( "COMMIT" );
-	 		$this->con->query( "ROLLBACK" );
+	 		$this->con->query( "COMMIT" );
 
-	 		/*
 	 		// SI ES NUEVO
 		 	$infoNode = (object)array(
 				'accion' => 'cambioEstadoDetalleOrden',
 				'data'   => array( 
-					'lstOrdenes'    => $lstOrdenes,
+					'myId' => $this->myId,
+					'ordenCocina' => (object)array(
+						'idMenu'   => $info->idMenu,
+						'lstOrden' => $info->lstOrden,
+					),
+					'lstOrdenes'    => array(),
+					//'lstOrdenes'    => $lstOrdenes,
 					'idEstadoOrden' => $idEstadoOrden,
 				),
 			);
@@ -1429,7 +1434,6 @@ class Orden
 		 	// ENVIA LOS DATOS POR MEDIO DE REDIS
 		 	$red = new Redis();
 			$red->messageRedis( $infoNode );
-			*/
 		}
 	 	else
 	 		$this->con->query( "ROLLBACK" );
@@ -1598,27 +1602,31 @@ class Orden
 
 
  	// LISTA DE ORDENS PARA ### COCINA ###
- 	public function consultaOrdenesCocina( $idEstadoDetalleOrden, $idDestinoMenu )
+ 	public function consultaOrdenesCocina( $idEstadoDetalleOrden, $idDestinoMenu, $numeroGrupo = 0 )
  	{
  		$idEstadoDetalleOrden = (int)$idEstadoDetalleOrden;
-		$idDestinoMenu        = (int)$idDestinoMenu;
 		$where    = $limit 	  = "";
 
 		$lst = array();
+		$numeroGrupo = (int)$numeroGrupo;
 
-		// SI ESTA DEFINIDO EL USUARIO RESPONSABLE
-		$where = " AND ( responsableDetalle = '{$this->sess->getUsuario()}' OR usuarioDetalle = '{$this->sess->getUsuario()}' ) ";
-
+		// SI NUMERO DE GRUPO ESTA ESPECIFICADO, 99 = TODOS
+		if ( $numeroGrupo != 99 )
+			$where = " AND numeroGrupo = {$numeroGrupo} ";
+			
+		// SI EL ESTADO ESTA DEFINIDO
 		if ( ( $idEstadoDetalleOrden != 1 AND $idEstadoDetalleOrden != 2 ) )
 			$limit = " LIMIT 50";
 
  		$sql = "SELECT
 					idOrdenCliente, 
+					numeroGrupo,
 					numeroTicket, 
 				    SUM( cantidad )AS 'cantidad',
 				    idMenu,
 				    menu,
 				    imagen,
+				    idDestinoMenu,
 				    codigoMenu,
 				    tiempoAlerta,
 				    perteneceCombo,
@@ -1627,7 +1635,9 @@ class Orden
 				    GROUP_CONCAT( DISTINCT observacion SEPARATOR ' -.- ' )AS 'observacion',
 				    MIN( fechaRegistro )AS 'fechaRegistro'
 				FROM vOrdenes 
-				WHERE idEstadoOrden = {$idEstadoDetalleOrden}
+				WHERE idEstadoDetalleOrden = {$idEstadoDetalleOrden}
+					AND idDestinoMenu = {$idDestinoMenu}
+					$where
 				GROUP BY idOrdenCliente, idMenu, idCombo
 				ORDER BY idMenu ASC, idOrdenCliente ASC
 				$limit ";
@@ -1653,6 +1663,7 @@ class Orden
 						'idMenu'         => $row->idMenu,
 						'menu'           => $row->menu,
 						'codigoMenu'     => $row->codigoMenu,
+						'idDestinoMenu'  => $row->idDestinoMenu,
 						'total'          => 0,
 						'imagen'         => $row->imagen,
 						'tiempoAlerta'   => $row->tiempoAlerta,
@@ -1675,6 +1686,7 @@ class Orden
 
 					$lst[ $ixM ]->lstOrden[] = (object)array(
 						'idOrdenCliente' => $row->idOrdenCliente,
+						'numeroGrupo'    => $row->numeroGrupo,
 						'numeroTicket'   => $row->numeroTicket,
 						'fechaRegistro'  => $row->fechaRegistro,
 						'observacion'    => "",
@@ -1716,7 +1728,8 @@ class Orden
  				'respuesta' => $this->respuesta,
  				'mensaje'   => $this->mensaje,
  				'tiempo'    => $this->tiempo,
- 				'data'      => $this->data
+ 				'data'      => $this->data,
+ 				'myId'      => $this->myId
  			);
  	}
 

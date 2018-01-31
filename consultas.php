@@ -537,7 +537,7 @@ switch ( $data->opcion )
 	case 'consultaOrdenesCocina':
 		$orden = new Orden();
 		echo json_encode(
-			array( 'lstMenu' => $orden->consultaOrdenesCocina( $data->idEstadoDetalleOrden, $data->idDestinoMenu ) )
+			array( 'lstMenu' => $orden->consultaOrdenesCocina( $data->idEstadoDetalleOrden, $data->idDestinoMenu, $data->numeroGrupo ) )
 		);
 		break;
 
@@ -594,7 +594,13 @@ switch ( $data->opcion )
 	// INI - ADMIN. ORDEN
 	case 'iniOrdenAdmin':				// CARGAR CATALOGO DESTINO MENU
 		$usuario = new Usuario();
-		echo json_encode( array( 'usuario' => $usuario->getUsuario( $sesion->getUsuario() ) ) );
+		$consulta = new Consulta();
+		echo json_encode( 
+			array( 
+				'usuario'        => $usuario->getUsuario( $sesion->getUsuario() ),
+				'lstDestinoMenu' => $consulta->catDestinoMenu(),
+			)
+		);
 		break;
 
 	// #############################  EVENTO #############################

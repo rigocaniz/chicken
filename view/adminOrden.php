@@ -26,15 +26,16 @@
 			</div>
 		</div>
 		<div class="col-xs-5">
-			<div class="col-xs-7 text-right">
-				<button type="button" class="btn btn-sm btn-default" title="{ ALT + U }" ng-click="dialogoConsultaPersonal( 'menu' )">
-					<span class="glyphicon glyphicon-cutlery"></span> 
-					<b>{{user.nombres}} {{user.apellidos}}</b>
-				</button>
+			<div class="col-xs-7">
+				<label>Grupo:</label>
+				<select class="form-control input-sm" ng-model="numeroGrupo">
+					<option value="{{grp.numeroGrupo}}" ng-repeat="grp in lstGrupos">{{grp.grupo}}</option>
+				</select>
 			</div>
 			<div class="col-xs-5">
+				<label>Destino:</label>
 				<select class="form-control input-sm" ng-model="idDestinoMenu">
-					<option value="{{item.idDestinoMenu}}" ng-repeat="item in user.lstDestinos">{{item.destinoMenu}}</option>
+					<option value="{{dest.idDestinoMenu}}" ng-repeat="dest in lstDestinoMenu">{{dest.destinoMenu}}</option>
 				</select>
 			</div>
 		</div>
@@ -101,7 +102,7 @@
 
 			<!-- SI NO SE ENCONTRO INFORMACION -->
 			<div class="col-sm-12" ng-hide="lstMenus.length">
-				<h4 class="alert alert-info">No existe información</h4>
+				<h4 class="alert alert-info">Aún No existe ordenes para preparar <span class="glyphicon glyphicon-time"></span></h4>
 			</div>
 
 			<div class="panel-menu" ng-repeat="menu in lstMenus track by $index" ng-class="{'inactivo':ixMenuActual!=$index&&seleccionMenu.si}" id="ixm_{{$index}}">
@@ -116,7 +117,7 @@
 							{{menu.menu}} <b>#{{menu.codigoMenu}}</b>
 						</button>
 						<!-- INGRESO DE MENUS A COCINAR -->
-						<input type="number" class="form-control input-lg" ng-model="menu.seleccionados" style="width:145px;display:inline-block" 
+						<input type="number" class="form-control input-lg" ng-model="menu.seleccionados" style="width:150px;display:inline-block" 
 							placeholder="# Productos" id="input_{{$index}}" ng-change="cantidadCocinar( menu, $index )"
 							ng-disabled="seleccionCocina.si && seleccionCocina.index!=$index">
 					</div>

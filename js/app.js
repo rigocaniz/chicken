@@ -155,11 +155,10 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
 
     // CAPTURA TECLA PARA ATAJOS RAPIDOS
     $scope.pressKey = function ( key, altDerecho, event ) {
-
         if ( $scope.loading )
             return false;
 
-        if ( key == 117 )
+        if ( key == 117 || altDerecho )
             event.preventDefault();
 
         if( altDerecho && ( key == 13 || key == 92 || key == 91 ) ) {
@@ -191,7 +190,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
                     $window.location.href = "#/reportes";      break;
             }
         }
-        console.log( "K:", key );
+//        console.log( "K:", key );
     };
 
     $scope.imagen = {
