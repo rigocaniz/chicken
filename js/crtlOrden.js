@@ -1047,7 +1047,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 		// ORDENES POR ESTADO
 		if ( key == 80 ) $scope.idEstadoOrden = 1; // {P}
-		if ( key == 69 ) $scope.idEstadoOrden = 2; // {E}
 		if ( key == 76 ) $scope.idEstadoOrden = 3; // {F}
 		if ( key == 70 ) $scope.idEstadoOrden = 4; // {F}
 		if ( key == 67 ) $scope.idEstadoOrden = 10; // {C}
@@ -1281,7 +1280,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 			// SI SE AGREGO UNA ORDEN NUEVA
 			case 'ordenNueva':
 				// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
-				if ( datos.data && datos.data.ordenCliente && $scope.idEstadoOrden == 1 ) {
+				if ( datos.data && datos.data.ordenCliente && ( $scope.idEstadoOrden == 1 || $scope.idEstadoOrden == 2 ) ) {
 					$scope.lstOrdenCliente.push( datos.data.ordenCliente );
 
 					// SELECCIONAR LA ORDEN AGREGADA SI ES LA UNICA
@@ -1310,7 +1309,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 			case 'ordenPrincipalCancelada':
 
 				// SI SON ORDENES PENDIENTES
-				if ( $scope.idEstadoOrden == 1 ) {
+				if ( ( $scope.idEstadoOrden == 1 || $scope.idEstadoOrden == 2 ) ) {
 
 					// OBTIENE INDEX DE ORDEN
 					var index    = $scope.indexArray( 'lstOrdenCliente', 'idOrdenCliente', datos.idOrdenCliente );

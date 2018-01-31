@@ -479,14 +479,17 @@ class Orden
 		$idOrdenCliente = (int)$idOrdenCliente;
 
 		// SI EL ESTADO ES DIFERENTE A PENDIENTE Y LIMITE ES MAYOR A CERO
- 		if ( $limite > 0 AND $idEstadoOrden > 1 )
+ 		if ( $limite > 0 AND $idEstadoOrden > 2 )
+ 		{
+			$where = " WHERE idEstadoOrden = " . $idEstadoOrden;
  			$limit = " LIMIT " . $limite;
+ 		}
 
  		if ( $idOrdenCliente > 0 )
 			$where = " WHERE idOrdenCliente = " . $idOrdenCliente;
 
-		else
-			$where = " WHERE idEstadoOrden = " . $idEstadoOrden;
+		else if ( $idEstadoOrden == 1 OR $idEstadoOrden == 2 )
+			$where = " WHERE ( idEstadoOrden = 1 OR idEstadoOrden = 2 ) ";
 
  		$sql = "SELECT 
 					idOrdenCliente, numeroTicket, usuarioResponsable, idEstadoOrden, estadoOrden, fechaRegistro, numMenu

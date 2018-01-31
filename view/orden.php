@@ -32,13 +32,9 @@
 		</div>
 		<div class="col-xs-12" style="margin-top:5px">
 			<div class="btn-orden">
-				<button class="bt-info" ng-class="{'active':idEstadoOrden==1}" ng-click="idEstadoOrden=1">
+				<button class="bt-info" ng-class="{'active':(idEstadoOrden==1 || idEstadoOrden==2)}" ng-click="idEstadoOrden=1">
 					<span class="glyphicon glyphicon-time"></span>
 					<span class="hidden-xs"><u>P</u>endientes</span>
-				</button>
-				<button class="bt-success" ng-class="{'active':idEstadoOrden==2}" ng-click="idEstadoOrden=2">
-					<span class="glyphicon glyphicon-play"></span>
-					<span class="hidden-xs"><u>E</u>n Progreso</span>
 				</button>
 				<button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="idEstadoOrden=3">
 					<span class="glyphicon glyphicon-ok"></span>
@@ -104,7 +100,7 @@
                     </h4>
                 </div>
                 <div class="col-sm-6 col-xs-12 text-right">
-                	<a href="#/factura/{{infoOrden.idOrdenCliente}}" class="btn btn-sm btn-primary">
+                	<a href="#/factura/{{infoOrden.idOrdenCliente}}" class="btn btn-sm btn-primary" ng-hide="idEstadoOrden!=1 && idEstadoOrden!=2">
                         <span class="glyphicon glyphicon-shopping-cart"></span>
                         <b>Facturar</b> (F10)
                     </a>
@@ -160,7 +156,7 @@
                             <tbody>
                                 <tr ng-repeat="item in infoOrden.lstOrden track by $index">
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-default" ng-click="editarDetalle( item )" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
+                                        <button type="button" class="btn btn-sm btn-default" ng-click="editarDetalle( item )" title="Editar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
                                             <span class="glyphicon glyphicon-pencil"></span>
                                         </button>
                                     </td>
@@ -180,7 +176,7 @@
                                     </td>
                                     <td>{{item.subTotal | number:2}}</td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarDetalle( item.lstDetalle )" title="Cancelar" data-toggle="tooltip" data-placement="top" tooltip>
+                                        <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarDetalle( item.lstDetalle )" title="Cancelar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
                                     </td>
