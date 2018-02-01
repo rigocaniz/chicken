@@ -291,14 +291,18 @@ class Orden
 			if ( $this->respuesta == 'success' ) {
 		 		$this->con->query( "COMMIT" );
 
+				$this->myId = uniqid();
+				$this->data = $this->infoNodeOrden( $idOrdenCliente, TRUE, TRUE, TRUE );
+
 		 		// SI ES NUEVO
 			 	if ( $accionOrden == 'nuevo' ) {
 				 	$infoNode = (object)array(
 						'accion' => 'ordenNueva',
 						'data'   => array(
 							'idOrdenCliente'  => $idOrdenCliente,
-							'ordenCliente'    => $this->lstOrdenCliente( 1, NULL, $idOrdenCliente ),
-							'lstMenuAgregado' => $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo ),
+							'myId'            => $this->myId,
+							'info'            => $this->data,
+							#'lstMenuAgregado' => $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo ),
 					 	),
 					);
 			 	}
@@ -308,12 +312,14 @@ class Orden
 						'accion' => 'ordenAgregar',
 						'data'   => array(
 							'idOrdenCliente'      => $idOrdenCliente,
-							'ordenCliente'        => $this->lstOrdenCliente( 1, NULL, $idOrdenCliente ),
+							'myId'                => $this->myId,
+							'info'                => $this->data,
 							'detalleOrdenCliente' => $this->lstDetalleOrdenCliente( $idOrdenCliente ),
-							'lstMenuAgregado'     => $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo ),
+							#'lstMenuAgregado'     => $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo ),
 					 	),
 					);
 			 	}
+		 		//$this->con->query( "ROLLBACK" );
 
 			 	// SI LA CLASE NO EXISTE SE LLAMA
 			 	if ( !class_exists( "Redis" ) )
@@ -1264,7 +1270,7 @@ class Orden
 
  		// SI ES PARA MESERO
  		if ( $paraMesero ):
-			//$result->paraMesero = $this->lstDetalleOrdenCliente( $idOrdenCliente );
+			$result->paraMesero = $this->lstOrdenCliente( 1, NULL, $idOrdenCliente );
 
  		endif;
 
@@ -1671,7 +1677,7 @@ class Orden
 				FROM vOrdenes 
 				WHERE TRUE $where
 				GROUP BY idOrdenCliente, idMenu, idCombo, idEstadoDetalleOrden
-				ORDER BY idMenu ASC, idOrdenCliente ASC
+				ORDER BY idMenu ASC, idOrdenCliente ASC, fechaRegistro ASC
 				$limit ";
 
 		if( $rs = $this->con->query( $sql ) )

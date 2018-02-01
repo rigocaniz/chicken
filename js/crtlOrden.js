@@ -12,6 +12,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	$scope.observacion     = "";
 	$scope.comentario      = "";
 	$scope.filtroServicio  = 1;
+	$scope.miIndex  	   = -1;
+	$scope.myId 		   = "";
 
 	$scope.ordenActual = {
 		idOrdenCliente : 0,
@@ -468,20 +470,36 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 				$scope.$parent.loading = false; // cargando...
 
+				data.respuesta = 'danger';
 				if ( data.respuesta == 'success' ) {
 					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
-					
-					// CONSULTA DETALLE DE ORDEN
-					$scope.consultaDetalleOrden();
-
 					$scope.dialOrdenCliente.hide();
 					$scope.ordenActual.lstAgregar = [];
+					
+					if ( !( $scope.ordenActual.noTicket > 0 ) )
+					{
+						window.location.href = "#/factura/" + $scope.ordenActual.idOrdenCliente;
+					}
+					else
+					{
+						if ( data.myId != $scope.myId )
+						{
+							$scope.myId = data.myId;
+							if ( $scope.accionOrden == 'nuevo' )
+							{
+								$scope.lstOrdenCliente.push( data.data.paraMesero );
 
-					// SI EL PEDIDO ES A DOMICILIO
-					$timeout(function () {
-						if ( !( $scope.ordenActual.noTicket > 0 ) )
-							window.location.href = "#/factura/" + $scope.ordenActual.idOrdenCliente;
-					});
+								// SI EL PEDIDO ES A DOMICILIO
+								$timeout(function () {
+									if ( $scope.lstOrdenCliente.length == 1 )
+										$scope.miIndex = 0;
+								});
+							}
+							else{
+								$scope.consultaDetalleOrden();
+							}
+						}
+					}
 				}
 				else{
 					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
@@ -978,12 +996,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 			$scope.filtroServicio = _new;
 	});
 
-	// SI CAMBIA LA Lista de Precio
-	//$scope.$watch('menuActual.lstPrecio', function ( _new, _old ) {
-	//	$scope.watchPrecio();
-	//});
-
-
 	// SI CAMBIA EL INDEX DE PEDIDO
 	$scope.$watch('miIndex', function ( _new ) {
 		$scope.infoOrden = {};
@@ -1177,10 +1189,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		if ( altDerecho && !$("#observacionMenu").is(":focus") && key == 67 ) // {C}
 			$scope.mostrarMenus( 'combo' );
 
-		// CONFIRMA LA ORDEN DEL CLIENTE
-		if ( key == 117 ) // {F6}
-			$scope.agregarOrdenLista();
-
 		if ( key == 27 ) { // {ESC}
 			$scope.dialCantidad.hide();
 			$scope.dialOrdenCliente.show();
@@ -1279,21 +1287,31 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		switch ( datos.accion ) {
 			// SI SE AGREGO UNA ORDEN NUEVA
 			case 'ordenNueva':
-				// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
-				if ( datos.data && datos.data.ordenCliente && ( $scope.idEstadoOrden == 1 || $scope.idEstadoOrden == 2 ) ) {
-					$scope.lstOrdenCliente.push( datos.data.ordenCliente );
+				if ( datos.data.myId != $scope.myId )
+				{
+					$scope.myId = datos.data.myId;
+					// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
+					if ( datos.data.info && datos.data.info.paraMesero && ( $scope.idEstadoOrden == 1 || $scope.idEstadoOrden == 2 ) ) {
+						$scope.lstOrdenCliente.push( datos.data.info.paraMesero );
 
-					// SELECCIONAR LA ORDEN AGREGADA SI ES LA UNICA
-					if ( $scope.lstOrdenCliente.length ==1 )
-						$scope.miIndex = 0;
+						// SELECCIONAR LA ORDEN AGREGADA SI ES LA UNICA
+						$timeout(function () {
+							if ( $scope.lstOrdenCliente.length == 1 )
+								$scope.miIndex = 0;
+						});
+					}
 				}
 
 			break;
 
 			case 'ordenAgregar':
-				// CONSULTA NUEVAMENTE EL DETALLE DE LA ORDEN, SI ES LA MISMA
-				if ( $scope.infoOrden.idOrdenCliente == datos.data.idOrdenCliente )
-					$scope.consultaDetalleOrden();
+				if ( datos.data.myId != $scope.myId )
+				{
+					$scope.myId = datos.data.myId;
+					// CONSULTA NUEVAMENTE EL DETALLE DE LA ORDEN, SI ES LA MISMA
+					if ( $scope.infoOrden.idOrdenCliente == datos.data.idOrdenCliente )
+						$scope.consultaDetalleOrden();
+				}
 				
 			break;
 

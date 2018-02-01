@@ -20,13 +20,14 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.keyPanel 	  = '';
 
 	$scope.lstGrupos = [
+		{ 'numeroGrupo' : '99','grupo' : 'Todos' },
 		{ 'numeroGrupo' : '1', 'grupo' : 'Grupo #1' },
 		{ 'numeroGrupo' : '2', 'grupo' : 'Grupo #2' },
 		{ 'numeroGrupo' : '3', 'grupo' : 'Grupo #3' },
 		{ 'numeroGrupo' : '4', 'grupo' : 'Grupo #4' },
 		{ 'numeroGrupo' : '5', 'grupo' : 'Grupo #5' },
 	];
-	$scope.numeroGrupo 	  = '1';
+	$scope.numeroGrupo 	  = '99';
 
 	$scope.seleccionMenu  = {
 		si     : false,
@@ -1129,7 +1130,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		// FOCUS ELEMENTO ANTERIOR
 		else if ( !altDerecho && key == 38 && $scope[ $scope.panel.index ] >= 0 ) // {UP}
 			$scope.focusElement( false );
-*/
+		*/
 
 		/************ CONSULTA POR ESTADO ************ 
 		**********************************************/
@@ -1174,10 +1175,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		var index = -1, arreglo = [];
 
 		if ( Array.isArray( arr ) )
-			arreglo = arr;
+			arreglo = angular.copy( arr );
 
 		else
-			arreglo = $scope[ arr ];
+			arreglo = angular.copy( $scope[ arr ] );
 
 		for (var i = 0; i < arreglo.length; i++) {
 			if ( arreglo[ i ][ cmp ] == _value ) {
@@ -1226,13 +1227,61 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	/* ************************** INFORMACION DE NODEJS ********************** */
 	// INFORMACION DE NODEJS
 	$scope.$on('infoNode', function( event, datos ) {
-		console.log( 'DTS::', datos );
-
 		switch( datos.accion )
 		{
 			// NUEVA ORDEN
 			case 'ordenNueva':
 			case 'ordenAgregar':
+
+				var lstMO = angular.copy( datos.data.info.paraCocina );
+				console.log( 'DTS::', lstMO );
+				//$scope.indexArray( arr, cmp, _value );
+				//$scope.lstMenus
+
+				for (var ixM = 0; ixM < lstMO.length; ixM++)
+				{
+					// SI ES EL MISMO DESTINO Y ESTADO DEL MENU
+					if ( $scope.idDestinoMenu == lstMO[ ixM ].idDestinoMenu && $scope.idEstadoOrden == lstMO[ ixM ].idEstadoDetalleOrden )
+					{
+						var ixMenu = $scope.indexArray( 'lstMenus', 'idMenu', lstMO[ ixM ].idMenu ),
+							orden = null;
+
+						// RECORRE LISTA DE ORDENES DE MENU
+						for (var ixO = 0; ixO < lstMO[ ixM ].lstOrden.length; ixO++)
+						{
+							var actual = lstMO[ ixM ].lstOrden[ ixO ];
+
+							if ( actual.numeroGrupo == $scope.numeroGrupo || $scope.numeroGrupo == 99 )
+								orden = angular.copy( actual );
+						}
+
+						// SI MENU NO EXISTE, Y APLICA AGREGAR ORDEN
+						if ( ixMenu == -1 && orden != null )
+							$scope.lstMenus.push( angular.copy( lstMO[ ixM ] ) );
+
+						// SI MENU EXISTE, Y APLICA AGREGAR/MODIFICAR ORDEN
+						if ( ixMenu >= 0 && orden != null )
+						{
+							var ixOrden = $scope.indexArray( $scope.lstMenus[ ixMenu ].lstOrden, 'idOrdenCliente', orden.idOrdenCliente );
+
+							// SI ORDEN NO EXISTE EN MENU
+							if ( ixOrden == -1 )
+								$scope.lstMenus[ ixMenu ].lstOrden.push( angular.copy( orden ) );
+
+							else{
+								var diferencia = ( parseInt( orden.total ) - parseInt( $scope.lstMenus[ ixMenu ].lstOrden[ ixOrden ].total ) );
+								$scope.lstMenus[ ixMenu ].lstOrden[ ixOrden ] = angular.copy( orden );
+								$scope.lstMenus[ ixMenu ].total += diferencia;
+							}
+
+							// ACTUALIZA EL MENU SI ES EL MISMO Y ESTA SELECCIONADO
+							if ( $scope.seleccionCocina.si && $scope.seleccionCocina.idMenu == $scope.lstMenus[ ixMenu ].idMenu )
+								$scope.cantidadCocinar( $scope.lstMenus[ ixMenu ], ixMenu );
+						}
+					}
+				}
+
+				/*
 				var lstDetalle = [], ixTicket = -1;
 				for (var id = 0; id < datos.data.lstMenuAgregado.length; id++) {
 
@@ -1317,6 +1366,8 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 						$scope.lstTickets[ ixTicket ].total.pendientes += lstDetalle.length;
 					}
 				}
+				*/
+
 			break;
 
 			// CANCELACION DE ORDEN PRINCIPAL

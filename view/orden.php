@@ -486,10 +486,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                	<button type="button" class="btn btn-success" ng-click="agregarOrdenLista()">
-                        <span class="glyphicon glyphicon-ok"></span>
-                        <b>Agregar (F6)</b>
-                    </button>
                     <button type="button" class="btn btn-default" ng-click="$hide();dialOrdenCliente.show()">
                         <span class="glyphicon glyphicon-chevron-left"></span>
                         <b>Regresar</b>
