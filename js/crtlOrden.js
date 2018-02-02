@@ -470,7 +470,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 				$scope.$parent.loading = false; // cargando...
 
-				data.respuesta = 'danger';
 				if ( data.respuesta == 'success' ) {
 					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 					$scope.dialOrdenCliente.hide();
@@ -1359,6 +1358,20 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				if ( $scope.infoOrden.idOrdenCliente == datos.data.idOrdenCliente )
 					$scope.consultaDetalleOrden();
 
+			break;
+
+			// SI SE REALIZO CAMBIO DE ESTADO DE DETALLE DE ORDENM
+			case 'cambioEstadoDetalleOrden':
+				// RECORRE LAS ORDENES Y VERIFICA SI ES LA ACTUAL
+				for (var ixO = 0; ixO < datos.data.ordenCocina.lstOrden.length; ixO++)
+				{
+					// SE ES LA MISMA ORDEN, CONSULTA NUEVAMENTE EL DETALLE
+					if ( $scope.infoOrden.idOrdenCliente == datos.data.ordenCocina.lstOrden[ ixO ].idOrdenCliente )
+					{
+						$scope.consultaDetalleOrden();
+						break;
+					}
+				}
 			break;
 		}
 

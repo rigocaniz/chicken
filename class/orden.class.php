@@ -1436,7 +1436,8 @@ class Orden
 
 		endforeach;
 
-		if ( $this->respuesta == 'success' ) {
+		if ( $this->respuesta == 'success' )
+		{
 	 		$this->con->query( "COMMIT" );
 
 	 		// SI ES NUEVO
