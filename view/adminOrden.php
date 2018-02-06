@@ -14,14 +14,12 @@
 				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='menu', 'btn-default':tipoVista!='menu'}" 
 					ng-click="cambiarVista( 'menu' )" title="{ ALT + M }">
 					<span class="glyphicon glyphicon-cutlery"></span>
-				</button>
-				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='dividido', 'btn-default':tipoVista!='dividido'}" 
-					ng-click="cambiarVista( 'dividido' )" title="{ ALT + D }">
-					<b>Dividido</b>
+					Cocina
 				</button>
 				<button type="button" class="btn" ng-class="{'btn-primary':tipoVista=='ticket', 'btn-default':tipoVista!='ticket'}" 
 					ng-click="cambiarVista( 'ticket' )" title="{ ALT + T }">
 					<span class="glyphicon glyphicon-bookmark"></span>
+					Mesero
 				</button>
 			</div>
 		</div>
@@ -50,7 +48,7 @@
 	</div>
 	<div class="row" style="margin-top:3px">
 		<!-- ############ VISTA POR MENU ############ -->
-		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='menu'}" ng-hide="tipoVista=='ticket'">
+		<div class="col-sm-12" ng-hide="tipoVista=='ticket'">
 			<!-- ESTADO DE ORDEN -->
 			<div class="col-xs-12 text-center" style="margin-top:4px">
 				<div class="btn-orden">
@@ -75,7 +73,7 @@
 		</div>
 
 		<!-- ############ VISTA POR TICKET ############ -->
-		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='ticket'}" ng-hide="tipoVista=='menu'">
+		<div class="col-sm-12" ng-hide="tipoVista=='menu'">
 			<!-- ESTADO DE ORDEN -->
 			<div class="col-xs-12 text-center" style="margin-top:4px">
 				<div class="btn-orden">
@@ -96,9 +94,9 @@
 <!-- INFORMACION DE: MENU | TICKET -->
 <div class="col-xs-12 contenido-admin-orden">
 	<div class="row">
+
 		<!-- ############ VISTA POR MENU ############ -->
-		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='menu','active-key':keyPanel=='left','inactive-key':keyPanel!='left'}" 
-			ng-hide="tipoVista=='ticket'" class="contenido-lst-orden">
+		<div class="col-sm-12 contenido-lst-orden" ng-class="{'active-key':keyPanel=='left','inactive-key':keyPanel!='left'}" ng-hide="tipoVista=='ticket'">
 
 			<!-- SI NO SE ENCONTRO INFORMACION -->
 			<div class="col-sm-12" ng-hide="lstMenus.length">
@@ -179,8 +177,7 @@
 		</div><!-- >>> VISTA POR MENU <<< -->
 		
 		<!-- ############ VISTA POR TICKET ############ -->
-		<div ng-class="{'col-sm-6':tipoVista=='dividido','col-sm-12':tipoVista=='ticket','active-key':keyPanel=='right','inactive-key':keyPanel!='right'}" 
-			ng-hide="tipoVista=='menu'" class="contenido-lst-orden">
+		<div class="col-sm-12 contenido-lst-orden" ng-class="{'active-key':keyPanel=='right','inactive-key':keyPanel!='right'}" ng-hide="tipoVista=='menu'">
 			<!-- SI NO SE ENCONTRO INFORMACION -->
 			<div class="col-sm-12" ng-hide="lstTickets.length">
 				<h4 class="alert alert-info" ng-hide="lstTickets.length">No existe información</h4>
@@ -189,72 +186,89 @@
 			<div class="panel-menu" ng-repeat="ticket in lstTickets track by $index"
 				ng-class="{'inactivo':ixTicketActual!=$index&&seleccionTicket.si}" id="ixt_{{$index}}">
 				<div class="encabezado">
-					<div class="col-xs-4">
-						<button type="button" class="btn" ng-click="$parent.ixTicketActual=($parent.ixTicketActual==$index?-1:$index)"
-							ng-class="{'danger':(difMinutos( ticket.primerTiempo )>ticket.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}"
+					<div class="col-xs-5">
+						<button type="button" class="btn btn2 btn-lg" ng-click="$parent.ixTicketActual=($parent.ixTicketActual==$index?-1:$index)"
 							ng-disabled="seleccionMenu.si || seleccionTicket.si">
-							<span class="glyphicon glyphicon-chevron-down"></span>
-							<!--<span class="badge">{{ticket.numMenus}}</span>-->
-							{{ticket.numeroTicket}} 
-	                        <span class="glyphicon glyphicon-bookmark"></span>
+							<span class="glyphicon glyphicon-chevron-right" ng-show="$parent.ixTicketActual!=$index"></span>
+							<span class="glyphicon glyphicon-chevron-down" ng-show="$parent.ixTicketActual==$index"></span>
+							<b>#{{ticket.idOrdenCliente}}</b>
+							<span class="label label-primary" ng-show="ticket.numeroTicket>0">
+								{{ticket.numeroTicket}} 
+		                        <span class="glyphicon glyphicon-bookmark"></span>
+							</span>
 						</button>
+						<strong>{{tiempoTranscurrido( ticket.primerTiempo )}}</strong>
 					</div>
-					<div class="col-xs-8 text-right">
-						<span class="estado-menu default">P <span class="badge">{{ticket.total.pendientes}}</span></span>
-						<span class="estado-menu info">C <span class="badge">{{ticket.total.cocinando}}</span></span>
-						<span class="estado-menu primary">L <span class="badge">{{ticket.total.listos}}</span></span>
-						<span class="estado-menu success">S <span class="badge">{{ticket.total.servidos}}</span></span>
-
-						<button type="button" class="btn btn-sm btn-default" ng-click="selItemTicket( true )" ng-disabled="ixTicketActual!=$index || seleccionMenu.si" title="TODOS">
-							<span class="glyphicon glyphicon-check"></span>
-						</button>
-						<button type="button" class="btn btn-sm btn-default" ng-click="selItemTicket( false )" ng-disabled="ixTicketActual!=$index || seleccionMenu.si" title="NINGUNO">
-							<span class="glyphicon glyphicon-unchecked"></span>
+					<div class="col-xs-7 text-right">
+						<kbd style="font-size:15px;font-weight:bold">TOTAL = {{ticket.total}}</kbd>
+						<span class="estado-menu default">P <span class="badge">{{ticket.pendientes}}</span></span>
+						<span class="estado-menu info">C <span class="badge">{{ticket.cocinando}}</span></span>
+						<span class="estado-menu primary">L <span class="badge">{{ticket.listos}}</span></span>
+						<span class="estado-menu success">S <span class="badge">{{ticket.servidos}}</span></span>
+						<button class="btn btn-primary" type="button" ng-show="ixTicketActual==$index">
+							<b>Servir TODO</b>
+							<span class="glyphicon glyphicon-flag"></span>
 						</button>
 					</div>
 				</div>
-				<div class="body body_lst_ticket" ng-show="ixTicketActual==$index">
-					<div class="col-sm-12">
-						<div class="table-responsive">
-							<table class="table table-hover">
-								<thead>
-									<tr>
-										<th></th>
-										<th>Orden</th>
-										<th>Lapso</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="item in ticket.detalle track by $index" style="cursor:pointer" 
-										ng-class="{'success':item.selected,'tr_focus':$parent.ixTicketFocus==$index,
-											'tr_alert':(difMinutos( item.fechaRegistro )>ticket.tiempoAlerta && ( idEstadoOrden==1 || idEstadoOrden==2 ) )}"
-										ng-click="selItemTicket( !item.selected, $index )"
-										id="ixt_item_{{item.idDetalleOrdenMenu}}">
-										<td>
-											<span class="estado-menu default" ng-show="item.idEstadoDetalleOrden==1">P</span>
-											<span class="estado-menu info" ng-show="item.idEstadoDetalleOrden==2">C</span>
-											<span class="estado-menu primary" ng-show="item.idEstadoDetalleOrden==3">L</span>
-											<span class="estado-menu success" ng-show="item.idEstadoDetalleOrden==4">S</span>
-										</td>
-										<td>
-											<span class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}">
-	                                            <span ng-show="item.idTipoServicio==2">R</span>
-	                                            <span ng-show="item.idTipoServicio==3">D</span>
-	                                            <span ng-show="item.idTipoServicio==1">L</span>
+				<div class="body body_lst_ticket" ng-if="ixTicketActual==$index">
+					<!-- DETALLE TICKET -->
+					<div class="col-xs-12">
+	                    <div class="table-responsive">
+	                        <table class="table table-hover">
+	                            <thead>
+	                                <tr>
+	                                    <th></th>
+	                                    <th>Cantidad</th>
+	                                    <th>Orden</th>
+	                                    <th style="width:165px">Acción</th>
+	                                </tr>
+	                            </thead>
+	                            <tbody>
+	                                <tr ng-repeat="orden in ticketActual.lstOrden track by $index">
+	                                    <td>
+	                                        <img ng-src="{{orden.imagen}}" style="height:40px">
+	                                    </td>
+	                                    <td>
+	                                    	<h4><b>{{orden.cantidad}}</b></h4>
+	                                    </td>
+	                                    <td>
+	                                        <button type="button" class="label-border" ng-class="{'btn-success':orden.idTipoServicio==2, 'btn-warning':orden.idTipoServicio==3, 'btn-primary':orden.idTipoServicio==1}">
+	                                            <span ng-show="orden.idTipoServicio==2" title="Restaurante" data-toggle="tooltip" data-placement="top" tooltip>R</span>
+	                                            <span ng-show="orden.idTipoServicio==3" title="A Domicilio" data-toggle="tooltip" data-placement="top" tooltip>D</span>
+	                                            <span ng-show="orden.idTipoServicio==1" title="Para Llevar" data-toggle="tooltip" data-placement="top" tooltip>L</span>
+	                                        </button>
+	                                        <span style="font-size:16px">
+		                                        <span class="glyphicon glyphicon-gift" ng-show="orden.esCombo"></span>
+		                                        <span>{{orden.descripcion}}</span>
 	                                        </span>
-											{{item.descripcion}}
-											<span class="label label-warning" ng-show="item.perteneceCombo">
-												<span class="glyphicon glyphicon-gift"></span>
-											</span>
-										</td>
-										<td>
-											<span>{{tiempoTranscurrido( item.fechaRegistro )}}</span>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
+	                                        <span class="estado-menu {{est.css}}" ng-repeat="est in orden.estados" title="{{est.title}}" data-toggle="tooltip" data-placement="top" tooltip>{{est.abr}} <span class="badge">{{est.total}}</span></span>
+	                                        <h4 ng-show="orden.observacion.length">
+												<span class="label label-warning">
+													<span class="glyphicon glyphicon-star"></span>
+													{{orden.observacion}}
+												</span>
+											</h4>
+	                                    </td>
+	                                    <td>
+											<div class="input-group">
+												<span class="input-group-btn">
+													<button class="btn btn-success" type="button" ng-click="servirMenu( $index )">
+														<b>Servir</b>
+														<span class="glyphicon glyphicon-flag"></span>
+													</button>
+												</span>
+												<input type="number" class="form-control" ng-keyup="$event.keyCode==32 && servirMenu( $index )" 
+													ng-model="orden.seleccionados" style="font-weight:bold;font-size:19px;padding:0 7px" 
+													ng-max="orden.limite" ng-min="0" focus-enter id="detalle_orden_{{$index}}">
+											</div>
+	                                    </td>
+	                                </tr>
+	                            </tbody>
+	                        </table>
+	                    </div>
+	                </div>
+					<!-- DETALLE TICKET -->
 				</div>
 			</div>
 		</div><!-- >>> VISTA POR TICKET <<< -->
@@ -418,8 +432,6 @@
 								<li class="list-group-item"><kbd>ALT + M</kbd> Muestra Ordenes Por Menú</li>
 								<li class="list-group-item"><kbd>ALT + D</kbd> Muestra Ordenes Por Menú/Ticket</li>
 								<li class="list-group-item"><kbd>ALT + T</kbd> Muestra Ordenes Por Ticket</li>
-								<li class="list-group-item"><kbd>ALT + →</kbd> Enfoca Ordenes Por Ticket (Modo Dividido)</li>
-								<li class="list-group-item"><kbd>ALT + ←</kbd> Enfoca Ordenes Por Menú (Modo Dividido)</li>
 							</ul>
 							<legend>Ordenes Por Estado</legend>
 	                    	<ul class="list-group">

@@ -67,17 +67,19 @@ class Orden
 	 			if( $accion == 'insert' AND $row->respuesta == 'success' )
 	 				$this->data = (int)$row->id;
 
-	 			if ( $accion == 'cancel' AND $row->respuesta == 'success' )
-	 				$this->ordenPrincipalCancelada( $idOrdenCliente );
 	 		}
 	 		else{
 	 			$this->respuesta = 'danger';
 	 			$this->mensaje   = 'Error al ejecutar la operacion (SP)';
 	 		}
 
-	 		if ( $row->respuesta == 'success' )
+	 		if ( $this->respuesta == 'success' )
+	 		{
 		 		$this->con->query( "COMMIT" );
 
+	 			if ( $accion == 'cancel' AND $this->respuesta == 'success' )
+	 				$this->ordenPrincipalCancelada( $idOrdenCliente );
+	 		}
 		 	else
 		 		$this->con->query( "ROLLBACK" );
 
@@ -543,7 +545,7 @@ class Orden
 				    idEstadoDetalleOrdenCombo,
 				    idCombo,
 				    tiempoAlerta,
-					observacion
+					GROUP_CONCAT( DISTINCT observacion SEPARATOR ' -.- ' ) AS 'observacion'
 				FROM
 				    vOrdenes
 				WHERE
@@ -597,6 +599,7 @@ class Orden
 						'agrupado'         => TRUE,
 						'maximo'           => 0,
 						
+						'observacion'      => $row->observacion,
 						'idCombo'          => $row->idCombo,
 						'idMenu'           => $row->idMenu,
 						'esCombo'          => $row->perteneceCombo,
@@ -657,6 +660,7 @@ class Orden
 			{
 				$arrCombo = array();
 				$count    = 0;
+				$limite   = 0;
 				// RECORRE DETALLE PARA CONTAR NUMERO REAL DE MENUS Y COMBOS
 				foreach ( $menu->lstDetalle as $ixd => $detalle )
 				{
@@ -672,14 +676,25 @@ class Orden
 
 						// SI NO ESTA EL ID DETALLE ORDEN COMBO
 						if ( $ixC == -1 )
+						{
 							$arrCombo[] = $detalle->idDetalleOrdenCombo;
+
+							if ( $detalle->idEstadoDetalleOrdenCombo < 4 )
+								$limite++;
+						}
 					}
-					else
+					else{
 						$count++;
+						
+						if ( $detalle->idEstadoDetalleOrden < 4 )
+							$limite++;
+					}
 				}
 
-				$lst[ $ix ]->cantidadRestante = $menu->esCombo ? count( $arrCombo ) : $count;
 				$lst[ $ix ]->cantidad         = $menu->esCombo ? count( $arrCombo ) : $count;
+				$lst[ $ix ]->limite           = $limite;
+				$lst[ $ix ]->seleccionados 	  = $limite;
+				$lst[ $ix ]->cantidadRestante = $menu->esCombo ? count( $arrCombo ) : $count;
 				$lst[ $ix ]->maximo           = $menu->esCombo ? count( $arrCombo ) : $count;
 				$lst[ $ix ]->subTotal         = ( $lst[ $ix ]->cantidad * $menu->precio );
 				
@@ -794,126 +809,85 @@ class Orden
  	}
 
  	// LISTA LAS ORDENES DEL CLIENTE POR TICKET
- 	public function lstOrdenPorTicket( $idEstadoOrden, $idEstadoDetalleOrden, $idOrdenCliente = NULL )
+ 	public function lstOrdenPorTicket( $idEstadoOrden, $numeroGrupo, $idOrdenCliente = NULL )
  	{
 		$where = $limit = "";
 
 		$lst = array();
 
-		if ( IS_NULL( $idOrdenCliente ) )
-			$where = " AND ( responsableOrden = '{$this->sess->getUsuario()}' ) ";
-
-		else
-			$where = " AND idOrdenCliente = {$idOrdenCliente} ";
-
-
-		//// VALIDA EL ESTADO DE ORDEN ////
+		//// SOLO ESTADOS VALIDOS ////
 		if ( $idEstadoOrden == 'valid' )
-			$where .= " AND ( idEstadoOrden = 1 OR idEstadoOrden = 2 OR idEstadoOrden = 3 ) ";
+			$where = " AND ( o.idEstadoOrden BETWEEN 1 AND 3 ) ";
 
-		else if ( $idEstadoOrden != 'all' )
-			$where .= " AND ( idEstadoOrden = {$idEstadoOrden} ) ";
+		//// SI ESTADO ESTA DEFINIDO ////
+		else if ( $idEstadoOrden >= 1 )
+		{
+			$where = " AND idEstadoOrden = {$idEstadoOrden} ";
+			$limit = "LIMIT 20";
+		}
 
 
-		//// SI EL DESTINO ESTA DEFINIDO ////
-		if ( $idEstadoDetalleOrden == 'valid' )
-			$where .= " AND ( idEstadoDetalleOrden BETWEEN 1 AND 4 ) ";
+		// SI ES POR GRUPO
+		if ( $numeroGrupo > 0 AND $numeroGrupo != 99 )
+			$where .= " AND numeroGrupo = {$numeroGrupo} ";
 
-		else if ( $idEstadoDetalleOrden != 'all' )
-			$where .= " AND idEstadoDetalleOrden = {$idEstadoDetalleOrden} ";
+
+		// SI ES DE UNA ORDEN ESPECIFICA
+		if ( IS_NULL( $idOrdenCliente ) AND $idOrdenCliente > 0 )
+			$where .= " AND idOrdenCliente = {$idOrdenCliente} ";
 
 
 		$sql = "SELECT
 					idOrdenCliente,
-				    idEstadoOrden,
 				    numeroTicket,
-				    responsableOrden,
-				    idDetalleOrdenMenu,
-				    cantidad,
-				    idMenu,
-				    menu,
-				    idEstadoDetalleOrden,
-				    estadoDetalleOrden,
-				    tiempoAlerta,
-				    perteneceCombo,
-				    imagen,
-				    idDetalleOrdenCombo,
-				    idEstadoDetalleOrdenCombo,
-				    idCombo,
-				    combo,
-				    imagenCombo,
-				    idTipoServicio,
-				    tipoServicio,
-				    responsableDetalle,
-				    usuarioDetalle,
-				    fechaRegistro
-				FROM vOrdenes 
-				WHERE TRUE $where
-				ORDER BY idDetalleOrdenMenu ASC " . $limit;
+				    numeroGrupo,
+				    SUM( cantidad )AS 'total',
+				    SUM( IF( idEstadoDetalleOrden = 1, cantidad, 0 ) ) AS 'pendientes',
+				    SUM( IF( idEstadoDetalleOrden = 2, cantidad, 0 ) ) AS 'cocinando',
+				    SUM( IF( idEstadoDetalleOrden = 3, cantidad, 0 ) ) AS 'listos',
+				    SUM( IF( idEstadoDetalleOrden = 4, cantidad, 0 ) ) AS 'servidos',
+					MIN( IF( idEstadoDetalleOrden BETWEEN 1 AND 3, fechaRegistro, NULL) ) AS 'primerTiempo'
+				FROM((SELECT
+						o.idOrdenCliente,
+						numeroGrupo,
+						numeroTicket, 
+						SUM( dom.cantidad )AS 'cantidad',
+						dom.idEstadoDetalleOrden,
+						MIN( fechaRegistro ) AS 'fechaRegistro'
+					FROM ordenCliente as o
+						JOIN detalleOrdenMenu As dom
+							ON o.idOrdenCliente = dom.idOrdenCliente
+								AND !dom.perteneceCombo
+								AND ( idEstadoDetalleOrden BETWEEN 1 AND 4 )
+					WHERE TRUE $where
+					GROUP BY o.idOrdenCliente, dom.idEstadoDetalleOrden
+					ORDER BY fechaRegistro ASC)
+						UNION ALL
+					(SELECT
+						o.idOrdenCliente, 
+						numeroGrupo,
+						numeroTicket, 
+						SUM( doc.cantidad )AS 'cantidad',
+						doc.idEstadoDetalleOrden,
+						MIN( fechaRegistro ) AS 'fechaRegistro'
+					FROM ordenCliente as o
+						JOIN detalleOrdenCombo As doc
+							ON o.idOrdenCliente = doc.idOrdenCliente
+								AND ( idEstadoDetalleOrden BETWEEN 1 AND 4 )
+					WHERE TRUE $where
+					GROUP BY o.idOrdenCliente, doc.idEstadoDetalleOrden
+					ORDER BY fechaRegistro ASC))ord
+				GROUP BY idOrdenCliente
+				ORDER BY idOrdenCliente ASC" . $limit;
 
 		if( $rs = $this->con->query( $sql ) ) {
 			while ( $row = $rs->fetch_object() ):
-				$row->perteneceCombo = (bool)$row->perteneceCombo;
-				$img = ( $row->perteneceCombo ? $row->imagenCombo : $row->imagen );
-
-				// AGRUPA POR TICKET //////////////////
-				$ixTicket = -1;
-
-				foreach ( $lst as $ix => $item ) {
-					if ( $item->idOrdenCliente == $row->idOrdenCliente ) {
-						$ixTicket = $ix;
-						break;
-					}
-				}
-			
-				// SI NO EXISTE SE CREA DATOS TICKET
-				if ( $ixTicket == -1 ) {
-					$ixTicket = count( $lst );
-
-					$lst[] = (object)array(
-						'idOrdenCliente'   => $row->idOrdenCliente,
-						'numeroTicket'     => $row->numeroTicket,
-						'responsableOrden' => $row->responsableOrden,
-						'total' 		   => (object)array(
-							'total'      => 0,
-							'pendientes' => 0,
-							'cocinando'  => 0,
-							'listos'     => 0,
-							'servidos'   => 0,
-						),
-						'detalle' => array(),
-					);
-				}
-
-				
-				$lst[ $ixTicket ]->detalle[] = (object)array(
-					'idDetalleOrdenMenu'        => $row->idDetalleOrdenMenu,
-					'idDetalleOrdenCombo'       => $row->idDetalleOrdenCombo,
-					'idEstadoDetalleOrden'      => $row->idEstadoDetalleOrden,
-					'idEstadoDetalleOrdenCombo' => $row->idEstadoDetalleOrdenCombo,
-					'idCombo'                   => $row->idCombo,
-					'idMenu'                    => $row->idMenu,
-					'esCombo'                   => $row->perteneceCombo,
-					'descripcion'               => ( $row->perteneceCombo ? $row->menu . " (" . $row->combo . ")" : $row->menu ),
-					'imagen'                    => ( strlen( (string)$img ) ? $img : 'img-menu/notFound.png' ),
-					'idTipoServicio'            => $row->idTipoServicio,
-					'tipoServicio'              => $row->tipoServicio,
-					'fechaRegistro'             => $row->fechaRegistro,
-				);
-
-				$lst[ $ixTicket ]->total->total++;
-
-				if ( $row->idEstadoDetalleOrden == 1 )
-					$lst[ $ixTicket ]->total->pendientes++;
-
-				else if ( $row->idEstadoDetalleOrden == 2 )
-					$lst[ $ixTicket ]->total->cocinando++;
-
-				else if ( $row->idEstadoDetalleOrden == 3 )
-					$lst[ $ixTicket ]->total->listos++;
-
-				else if ( $row->idEstadoDetalleOrden == 4 )
-					$lst[ $ixTicket ]->total->servidos++;
+				$row->total      = (int)$row->total;
+				$row->pendientes = (int)$row->pendientes;
+				$row->cocinando  = (int)$row->cocinando;
+				$row->listos     = (int)$row->listos;
+				$row->servidos   = (int)$row->servidos;
+				$lst[]           = $row;
 			endwhile;
 		}
 
@@ -1155,7 +1129,7 @@ class Orden
 			(object)array(
 				'accion'         => 'ordenPrincipalCancelada',
 				'idOrdenCliente' => $idOrdenCliente,
-				'lstDetalle'     => $this->lstMenuAgregado( "", "", $idOrdenCliente ),
+				//'lstDetalle'     => $this->lstMenuAgregado( "", "", $idOrdenCliente ),
 			) 
 		);
  	}
@@ -1180,11 +1154,11 @@ class Orden
 				$item->idDetalleOrdenCombo = (int)$item->idDetalleOrdenCombo;
 				$item->idDetalleOrdenMenu  = (int)$item->idDetalleOrdenMenu;
 
-				if ( $item->idDetalleOrdenMenu > 0 )
-					$sql = "CALL consultaDetalleOrdenMenu( 'cancel', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, {$comentario} );";
-				
-				else if ( $item->idDetalleOrdenCombo > 0 )
+				if ( $item->idDetalleOrdenCombo > 0 )
 					$sql = "CALL consultaDetalleOrdenCombo( 'cancel', {$item->idDetalleOrdenCombo}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, {$comentario} );";
+
+				else if ( $item->idDetalleOrdenMenu > 0 )
+					$sql = "CALL consultaDetalleOrdenMenu( 'cancel', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, {$comentario} );";
 
 		 		if( $rs = $this->con->query( $sql ) ) {
 		 			@$this->con->next_result();
@@ -1264,13 +1238,19 @@ class Orden
 
  		// SI ES PARA COCINA
  		if ( $paraCocina ):
-			$result->paraCocina = $this->consultaOrdenesCocina( 0, 0, 0, $idOrdenCliente );
+			$result->paraCocina = $this->consultaOrdenesCocina( 1, 0, 0, $idOrdenCliente );
 
  		endif;
 
  		// SI ES PARA MESERO
  		if ( $paraMesero ):
 			$result->paraMesero = $this->lstOrdenCliente( 1, NULL, $idOrdenCliente );
+
+ 		endif;
+
+ 		// SI ES PARA VISTA TICKET
+ 		if ( $paraTicket ):
+			$result->paraTicket = $this->lstOrdenPorTicket( 'valid', 0, $idOrdenCliente );
 
  		endif;
 
@@ -1643,7 +1623,6 @@ class Orden
 		if ( ( $idEstadoDetalleOrden != 1 AND $idEstadoDetalleOrden != 2 ) )
 			$limit = " LIMIT 50";
 
-		// SI SE VALIDA ESTADO DE DETALLE
 		if ( $idEstadoDetalleOrden > 0 )
 			$where .= " AND idEstadoDetalleOrden = {$idEstadoDetalleOrden} ";
 

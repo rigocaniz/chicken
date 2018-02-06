@@ -545,7 +545,7 @@ switch ( $data->opcion )
 	case 'lstOrdenPorTicket':
 		$orden = new Orden();
 		echo json_encode(
-			array( 'lstTicket' => $orden->lstOrdenPorTicket( $data->idEstadoOrden, $data->idEstadoDetalleOrden ) )
+			array( 'lstTicket' => $orden->lstOrdenPorTicket( $data->idEstadoOrden, $data->numeroGrupo ) )
 		);
 		break;
 
