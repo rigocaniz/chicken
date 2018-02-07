@@ -254,8 +254,36 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 
 	$scope.servirMenu = function ( index ) {
-		console.log( $scope.ticketActual );
-		console.log( $scope.ticketActual.lstOrden[ index ] );
+		var orden = angular.copy( $scope.ticketActual.lstOrden[ index ] );
+
+		if ( $scope.$parent.loading )
+			return false;
+
+		var datos = {
+			opcion  	   : 'servirMenuCliente',
+			idOrdenCliente : $scope.ticketActual.idOrdenCliente,
+			seleccionados  : orden.seleccionados,
+			idCombo        : ( orden.esCombo ? orden.idCombo : null ),
+			idMenu         : ( !orden.esCombo ? orden.idMenu : null ),
+			idTipoServicio : orden.idTipoServicio,
+		};
+		console.log( datos );
+
+		// SI NO ESTA DEFINIDO LA ORDEN
+		if ( !( $scope.ticketActual.idOrdenCliente > 0 ) )
+			return false;
+
+		return false;
+
+		$scope.ticketActual.lstOrden = [];
+
+		$scope.$parent.loading = true;
+		$http.post('consultas.php', { opcion : 'lstDetalleOrdenCliente', idOrdenCliente : $scope.ticketActual.idOrdenCliente, todo : false })
+		.success(function (data) {
+			console.log( data );
+			$scope.$parent.loading = false;
+			if ( data.lst ) {}
+		});
 	};
 
 
@@ -1380,7 +1408,8 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 					if ( ixOrden >= 0 )
 					{
-						var actual = angular.copy( $scope.lstMenus[ ixMenu ].lstOrden[ ixOrden ] );
+						var actual 	  = angular.copy( $scope.lstMenus[ ixMenu ].lstOrden[ ixOrden ] ),
+							eliminado = false;
 
 						$scope.lstMenus[ ixMenu ].total -= actual.total;
 						$scope.lstMenus[ ixMenu ].lstOrden.splice( ixOrden, 1 );
@@ -1389,11 +1418,16 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 						{
 							$scope.lstMenus.splice( ixMenu, 1 );
 							$scope.seleccionCocina = {};
+							eliminado = true;
 						}
 
 						// ACTUALIZA EL MENU SI ES EL MISMO Y ESTA SELECCIONADO
 						if ( $scope.seleccionCocina.si && $scope.seleccionCocina.idMenu == $scope.lstMenus[ ixMenu ].idMenu )
 							$scope.cantidadCocinar( $scope.lstMenus[ ixMenu ], ixMenu );
+
+						// ELIMINADO
+						if ( eliminado )
+							ixMenu--;
 					}
 				}
 			break;
@@ -1464,7 +1498,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				{
 					if ( datos.data.info.paraTicket.length == 0 )
 						$scope.lstTickets.splice( ixTicket, 1 );
-					
+
 					// SI ES LA ORDEN ACTUAL
 					else if ( $scope.ticketActual.idOrdenCliente == datos.data.idOrdenCliente )
 					{
@@ -1559,49 +1593,15 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 			// CAMBIO DE TIPO DE SERVICIO A LA ORDEN
 			case 'cambioTipoServicio':
-				var ixTicket = $scope.indexArray( 'lstTickets', 'idOrdenCliente', datos.data.idOrdenCliente );
 				
-				// SI ENCONTRO LA ORDEN
-				if ( ixTicket >= 0 )
-				{
-					var lstDet = datos.data.detalleOrdenCliente.lst;
+				console.log( datos.data );
+				/* >>>>>>TICKET<<<<<<< */
+				var ixTicket = $scope.indexArray( 'lstTickets', 'idOrdenCliente', datos.data.idOrdenCliente );
 
-					for (var ip = 0; ip < lstDet.length; ip++) 
-					{
-						for (var ic = 0; ic < lstDet[ ip ].lstDetalle.length; ic++) 
-						{
-							var lst = $scope.lstTickets[ ixTicket ].detalle;
-							for (var ix = 0; ix < lst.length; ix++) 
-							{
-								if( lst[ ix ].idDetalleOrdenMenu == lstDet[ ip ].lstDetalle[ ic ].idDetalleOrdenMenu ) 
-								{
-									$scope.lstTickets[ ixTicket ].detalle[ ix ].idTipoServicio = lstDet[ ip ].idTipoServicio;
-									break;
-								}
-							}
-						}
-					}
-				}
+				// SI SE ENCONTRO EL TICKET Y ES LA ORDEN ACTUAL
+				if ( ixTicket >= 0 && $scope.ticketActual.idOrdenCliente == datos.data.idOrdenCliente )
+					$scope.consultaDetalleOrden();
 
-				var lstDet = datos.data.detalleOrdenCliente.lst;
-				for (var ip = 0; ip < lstDet.length; ip++)
-				{
-					for (var ixd = 0; ixd < lstDet[ ip ].lstDetalle.length; ixd++) {
-
-						for (var im = 0; im < $scope.lstMenus.length; im++) 
-						{
-							for (var imd = 0; imd < $scope.lstMenus[ im ].detalle.length; imd++) 
-							{
-								if ( $scope.lstMenus[ im ].detalle[ imd ].idDetalleOrdenMenu == lstDet[ ip ].lstDetalle[ ixd ].idDetalleOrdenMenu )
-								{
-									$scope.lstMenus[ im ].detalle[ imd ].idTipoServicio = lstDet[ ip ].idTipoServicio;
-									break;
-								}
-							}
-						}
-
-					}
-				}
 			break;
 		}
 
