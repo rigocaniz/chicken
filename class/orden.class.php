@@ -1710,7 +1710,7 @@ class Orden
 						'fechaRegistro'  => $row->fechaRegistro,
 						'observacion'    => "",
 						'total'          => 0,
-						'lstDetalle'     => array(),
+						//'lstDetalle'     => array(),
 					);
 				}
 
@@ -1727,12 +1727,12 @@ class Orden
 				}
 
 				// DETALLE DE ORDEN CLIENTE
-				$lst[ $ixM ]->lstOrden[ $ixO ]->lstDetalle[] = (object)array(
+				/*$lst[ $ixM ]->lstOrden[ $ixO ]->lstDetalle[] = (object)array(
 					'cantidad'       => $row->cantidad,
 					'perteneceCombo' => $row->perteneceCombo,
 					'idCombo'        => $row->idCombo,
 					'combo'          => $row->combo,
-				);
+				);*/
 
 			endwhile;
 		}
