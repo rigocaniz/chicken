@@ -1380,7 +1380,8 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 					if ( ixOrden >= 0 )
 					{
-						var actual = angular.copy( $scope.lstMenus[ ixMenu ].lstOrden[ ixOrden ] );
+						var actual 	  = angular.copy( $scope.lstMenus[ ixMenu ].lstOrden[ ixOrden ] ),
+							eliminado = false;
 
 						$scope.lstMenus[ ixMenu ].total -= actual.total;
 						$scope.lstMenus[ ixMenu ].lstOrden.splice( ixOrden, 1 );
@@ -1389,11 +1390,16 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 						{
 							$scope.lstMenus.splice( ixMenu, 1 );
 							$scope.seleccionCocina = {};
+							eliminado = true;
 						}
 
 						// ACTUALIZA EL MENU SI ES EL MISMO Y ESTA SELECCIONADO
 						if ( $scope.seleccionCocina.si && $scope.seleccionCocina.idMenu == $scope.lstMenus[ ixMenu ].idMenu )
 							$scope.cantidadCocinar( $scope.lstMenus[ ixMenu ], ixMenu );
+
+						// ELIMINADO
+						if ( eliminado )
+							ixMenu--;
 					}
 				}
 			break;
@@ -1464,7 +1470,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				{
 					if ( datos.data.info.paraTicket.length == 0 )
 						$scope.lstTickets.splice( ixTicket, 1 );
-					
+
 					// SI ES LA ORDEN ACTUAL
 					else if ( $scope.ticketActual.idOrdenCliente == datos.data.idOrdenCliente )
 					{
