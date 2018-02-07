@@ -15,6 +15,7 @@ include 'class/menu.class.php';
 include 'class/modulo.class.php';
 include 'class/orden.class.php';
 include 'class/producto.class.php';
+include 'class/reporte.class.php';
 include 'class/sesion.class.php';
 include 'class/usuario.class.php';
 include 'class/validar.class.php';
@@ -45,6 +46,16 @@ switch ( $data->opcion )
 
 		$usuario = new Usuario();
 		echo json_encode( $usuario->login( $data->usuario, $data->clave, $data->codigoPersonal ) );
+		break;
+
+
+	/////////////////////////
+	//***** REPORTES
+	////////////////////////
+	case 'getVentasFecha':			// REPORTE DE VENTAS
+		$reporte = new Reporte();
+
+		echo json_encode( $reporte->getVentasFecha() );
 		break;
 
 	/////////////////////////

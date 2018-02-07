@@ -143,15 +143,12 @@ class Factura
 		$guardados = 0;
 
 		foreach ( $lstOrden AS $ixOrden => $orden ) {
-
 			$idFactura           = (int)$idFactura;
 			$idDetalleOrdenMenu  = "NULL";
 			$idDetalleOrdenCombo = "NULL";
 			$comentario          = "NULL";
-			$precioMenu          = (double)$orden->precioMenu;
-
-			$descuento  = (double)$orden->descuento;
-			$comentario = "'" . $orden->comentario . "'";
+			$precioMenu          = (double)$orden->precio;
+			$descuento           = (double)$orden->descuento;
 
 			if( (int)$orden->cobrarTodo ):
 
@@ -166,7 +163,9 @@ class Factura
 						else
 							$idDetalleOrdenMenu = (int)$detalle->idDetalleOrdenMenu;
 						
-						$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precioMenu}, {$descuento}, {$comentario} );";
+						$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precioMenu}, {$descuento}, '{$comentario}' );";
+
+//						echo $sql;
 
 						if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 
@@ -192,9 +191,9 @@ class Factura
 						if( $this->respuesta == 'danger' OR $cantidad == 0 )
 							break;
 					}
-				
 				}
 				else {
+
 					
 					if( (int)$orden->esCombo )
 						$idDetalleOrdenCombo = (int)$orden->idDetalleOrdenCombo;
@@ -202,6 +201,8 @@ class Factura
 						$idDetalleOrdenMenu = (int)$orden->idDetalleOrdenMenu;
 
 					$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precioMenu}, {$descuento}, {$comentario} );";
+
+					echo $sql . "\n";
 
 					if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 						$this->siguienteResultado();

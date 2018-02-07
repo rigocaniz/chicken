@@ -599,6 +599,10 @@ class Orden
 						'agrupado'         => TRUE,
 						'maximo'           => 0,
 						
+						'idDetalleOrdenMenu'        => $row->idDetalleOrdenMenu,
+						'idDetalleOrdenCombo'       => $row->idDetalleOrdenCombo,
+						'comentario' => '',
+
 						'observacion'      => $row->observacion,
 						'idCombo'          => $row->idCombo,
 						'idMenu'           => $row->idMenu,
