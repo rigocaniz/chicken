@@ -32,7 +32,7 @@ app.config(function($routeProvider) {
         templateUrl:'view/adminOrden.php',
         controller:'crtlAdminOrden'
     })
-    .when('/reportes',{
+    .when('/reporte',{
         templateUrl:'view/reporte.php',
         controller:'reporteCtrl'
     })

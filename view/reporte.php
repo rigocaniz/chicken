@@ -51,18 +51,59 @@
 						<div class="form-group">
 						    <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
 						    	<label><i class="fa fa-calendar"></i> DE FECHA:</label>
-						      	<input class="form-control" ng-model="fromDate" data-max-date="{{ untilDate }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
+						      	<input class="form-control" ng-model="fechaInicio" data-max-date="{{ fechaFinal }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
 						    </div>
 						    <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
 						    	<label><i class="fa fa-calendar"></i> A FECHA:</label>
-						      	<input class="form-control" ng-model="untilDate" data-min-date="{{ fromDate }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
+						      	<input class="form-control" ng-model="fechaFinal" data-min-date="{{ fechaInicio }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
 						    </div>
 						    <div>
 						    	<br>
-						    	<button type="button" class="btn btn-sm btn-danger">
+						    	<button type="button" class="btn btn-sm btn-danger" ng-click="consultarVentas()">
 						    		GENERAR REPORTE <span class="glyphicon glyphicon-download-alt"></span>
 						    	</button>
 						    </div>
+						</div>
+						<hr>
+						<div class="form-group" ng-show="ventas.encontrado">
+							<div class="text-right">
+								<span class="label label-danger titulo-nombre" style="font-size: 20px">
+									TOTAL: Q. {{ ventas.total | number: 2 }}
+								</span>
+							</div>
+							<br>
+							<table class="table table-hover table-striped">
+								<thead>
+									<tr>
+										<th class="text-center">No.</th>
+										<th class="text-center col-sm-3">Descripción</th>
+										<th class="text-center col-sm-2">Precio Real</th>
+										<th class="text-center col-sm-2">Precio Menu</th>
+										<th class="text-center col-sm-2">Tipo de <br>Servicio</th>
+										<th class="text-center">Comentario</th>
+										<th class="text-center col-sm-3">Subtotal</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="venta in ventas.detalleVentas">
+										<td>{{ $index + 1 }}</td>
+										<td>{{ venta.descripcion }}</td>
+										<td class="text-right">{{ venta.precioReal | number: 2 }}</td>
+										<td class="text-right">{{ venta.precioMenu | number: 2 }}</td>
+										<td class="text-center">{{ venta.tipoServicio }}</td>
+										<td>{{ venta.comentario }}</td>
+										<td class="text-right">{{ venta.subTotal | number: 2 }}</td>
+									</tr>
+									<tr>
+										<th colspan="6" class="text-right">
+											<h4><b>TOTAL</b></h4>
+										</th>
+										<th class="text-right">
+											<h4><b>{{ ventas.total | number: 2 }}</b></h4>
+										</th>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</form>
 				</div>
