@@ -256,16 +256,18 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.servirMenu = function ( index ) {
 		var orden = angular.copy( $scope.ticketActual.lstOrden[ index ] );
 
-		if ( $scope.$parent.loading )
+		if ( $scope.$parent.loading || !( orden.seleccionados > 0 ) )
 			return false;
 
 		var datos = {
-			opcion  	   : 'servirMenuCliente',
-			idOrdenCliente : $scope.ticketActual.idOrdenCliente,
-			seleccionados  : orden.seleccionados,
-			idCombo        : ( orden.esCombo ? orden.idCombo : null ),
-			idMenu         : ( !orden.esCombo ? orden.idMenu : null ),
-			idTipoServicio : orden.idTipoServicio,
+			opcion : 'servirMenuCliente',
+			datos  : {
+				idOrdenCliente : $scope.ticketActual.idOrdenCliente,
+				seleccionados  : orden.seleccionados,
+				idCombo        : ( orden.esCombo ? orden.idCombo : null ),
+				idMenu         : ( !orden.esCombo ? orden.idMenu : null ),
+				idTipoServicio : orden.idTipoServicio,
+			}
 		};
 		console.log( datos );
 
@@ -273,16 +275,14 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		if ( !( $scope.ticketActual.idOrdenCliente > 0 ) )
 			return false;
 
-		return false;
-
-		$scope.ticketActual.lstOrden = [];
+		//$scope.ticketActual.lstOrden = [];
 
 		$scope.$parent.loading = true;
-		$http.post('consultas.php', { opcion : 'lstDetalleOrdenCliente', idOrdenCliente : $scope.ticketActual.idOrdenCliente, todo : false })
+		$http.post('consultas.php', datos )
 		.success(function (data) {
-			console.log( data );
 			$scope.$parent.loading = false;
-			if ( data.lst ) {}
+			console.log( data );
+			alertify.notify( ( data.mensaje || data ), ( data.respuesta || 'danger' ), 5 );
 		});
 	};
 
@@ -1593,8 +1593,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 
 			// CAMBIO DE TIPO DE SERVICIO A LA ORDEN
 			case 'cambioTipoServicio':
-				
-				console.log( datos.data );
 				/* >>>>>>TICKET<<<<<<< */
 				var ixTicket = $scope.indexArray( 'lstTickets', 'idOrdenCliente', datos.data.idOrdenCliente );
 

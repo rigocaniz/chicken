@@ -1740,6 +1740,130 @@ class Orden
 		return $lst;
  	}
 
+ 	// SERVIR ORDENES DE CLIENTE
+ 	public function servirMenuCliente( $datos )
+ 	{
+ 		// SETEO DE VARIABLES
+		$validar = new Validar();
+
+		$idOrdenCliente = $validar->validarEntero( $datos->idOrdenCliente, NULL, TRUE, 'Orden de Cliente no Definida' );
+		$idTipoServicio = $validar->validarEntero( $datos->idTipoServicio, NULL, TRUE, 'Tipo de Servicio no Definido' );
+		$idCombo        = $validar->validarEntero( $datos->idCombo, 0, FALSE, 'No. de Combo inválido' );
+		$idMenu         = $validar->validarEntero( $datos->idMenu, 0, FALSE, 'No. de Menu inválido' );
+		$seleccionados  = $validar->validarEntero( $datos->seleccionados, 0, FALSE, 'Menus Seleccionados' );
+
+
+		// OBTENER RESULTADO DE VALIDACIONES
+ 		if( $validar->getIsError() )
+ 		{
+	 		$this->respuesta = 'danger';
+	 		$this->mensaje   = $validar->getMsj();
+	 		$this->tiempo    = $validar->getTiempo();
+	 	}
+	 	# SI NO EXISTIO NINGUN ERROR
+	 	else if ( $seleccionados )
+	 	{
+	 		$lst = array();
+ 			// OBTENER EL ID DEL DETALLE
+	 		if ( $idCombo )
+				$sql = "SELECT 
+							idDetalleOrdenCombo
+						FROM detalleOrdenCombo
+						WHERE idOrdenCliente = {$idOrdenCliente}
+							AND idCombo = {$idCombo}
+							AND idTipoServicio = {$idTipoServicio}
+						    AND idEstadoDetalleOrden < 4
+						ORDER BY idEstadoDetalleOrden ASC, idDetalleOrdenCombo ASC
+						LIMIT {$seleccionados}; ";
+			else
+				$sql = "SELECT
+							idDetalleOrdenMenu
+						FROM detalleOrdenMenu 
+						WHERE idOrdenCliente = {$idOrdenCliente}
+							AND idMenu = {$idMenu}
+							AND idTipoServicio = {$idTipoServicio}
+						    AND idEstadoDetalleOrden < 4
+						    AND !perteneceCombo
+						ORDER BY idEstadoDetalleOrden ASC, idDetalleOrdenMenu ASC
+						LIMIT {$seleccionados}; ";
+
+			$result = $this->con->query( $sql );
+			while( $result AND $row = $result->fetch_object() )
+		 		$lst[] = $row;
+
+		 	// SI LOS SELECCIONADOS ES IGUAL AL NUMERO DE DETALLE
+		 	if ( count( $lst ) == $seleccionados )
+		 	{
+				$this->con->query( "START TRANSACTION" );
+
+		 		foreach ( $lst as $item ):
+		 			
+		 			if ( isset( $item->idDetalleOrdenMenu ) )
+						$sql = "CALL consultaDetalleOrdenMenu( 'estado', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, 4, NULL, NULL, NULL, NULL, NULL );";
+
+					else
+						$sql = "CALL consultaDetalleOrdenCombo( 'estado', {$item->idDetalleOrdenCombo}, NULL, NULL, NULL, 4, NULL, NULL, NULL, NULL, NULL );";
+					
+			 		if( $rs = $this->con->query( $sql ) ){
+			 			@$this->con->next_result();
+			 			if( $row = $rs->fetch_object() ) {
+							$this->respuesta = $row->respuesta;
+							$this->mensaje   = $row->mensaje;
+			 			}
+			 		}
+			 		else{
+			 			$this->respuesta = 'danger';
+			 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+			 			break;
+			 		}
+			 		
+			 		if ( $this->respuesta == 'danger' )
+			 			break;
+
+				endforeach;
+
+
+				if ( $this->respuesta == 'success' )
+				{
+			 		$this->con->query( "COMMIT" );
+
+			 		$this->myId = uniqid();
+
+					$this->data = $this->infoNodeOrden( $idOrdenCliente, TRUE, TRUE, TRUE );
+
+				 	$infoNode = (object)array(
+						'accion' => 'cancelarOrdenParcial',
+						'myId'   => $this->myId,
+						'data'   => array(
+							'info'           => $this->data,
+							'idOrdenCliente' => $idOrdenCliente,
+							'lstDetalle'     => array(),
+							//'lstDetalle'     => $lstDetalle,
+					 	),
+					);
+
+				 	// SI LA CLASE NO EXISTE SE LLAMA
+				 	if ( !class_exists( "Redis" ) )
+				 		include 'redis.class.php';
+
+				 	// ENVIA LOS DATOS POR MEDIO DE REDIS
+				 	$red = new Redis();
+					$red->messageRedis( $infoNode );
+				}
+			 	else
+			 		$this->con->query( "ROLLBACK" );
+		 	}
+		 	else
+		 	{
+		 		$this->respuesta = 'danger';
+	 			$this->mensaje   = "No existen suficientes ordenes";
+		 	}
+	 	}
+
+
+	 	return $this->getRespuesta();
+ 	}
+
 
  	function getRespuesta()
  	{

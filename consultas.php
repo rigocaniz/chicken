@@ -603,6 +603,12 @@ switch ( $data->opcion )
 		);
 		break;
 
+	// SIRVE EL MENU AL >>>>>>> CLIENTE <<<<<<<
+	case 'servirMenuCliente':
+		$orden = new Orden();
+		echo json_encode( $orden->servirMenuCliente( $data->datos ) );
+		break;
+
 	// #############################  EVENTO #############################
 	// GUARDAR EVENTO
 	case 'guardarEvento':
