@@ -1,6 +1,5 @@
 app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.lstMenu        = [];
-	$scope.minutosAlerta  = 20;
 	$scope.idEstadoOrden  = 1;
 	$scope.idEstadoOrdenTk = 1;
 	$scope.tipoVista      = 'ticket';
@@ -14,7 +13,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.lstDestinoMenu = [];
 	$scope.lstMenus       = [];
 	$scope.lstTickets     = [];
-	$scope.lstMenusMaster = [];
 	$scope.codigoPersonal = '';
 	$scope.clave 		  = '';
 	$scope.keyPanel 	  = '';
@@ -79,7 +77,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		if ( data.usuario != undefined ) {
 			$scope.lstDestinoMenu = data.lstDestinoMenu;
 			$scope.user           = data.usuario;
-			console.log( $scope.user );
 			$timeout(function () {
 				if ( data.lstDestinoMenu.length )
 					$scope.idDestinoMenu = ( $scope.user.idDestinoMenu || '1' );
@@ -106,7 +103,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			clave          : $scope.clave
 		})
 		.success(function (data) { 
-			console.log( data );
 
 			alertify.set('notifier','position', 'top-right');
 			alertify.notify( data.mensaje, data.respuesta, 4 );
@@ -146,7 +142,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			$scope.$parent.loading = true; // cargando...
 			$http.post('consultas.php', datos)
 			.success(function (data) {
-				console.log( data );
 				$scope.$parent.loading = false; // cargando...
 
 				if ( Array.isArray( data.lstMenu ) ) 
@@ -176,11 +171,9 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			.success(function (data) {
 				$scope.$parent.loading = false; // cargando...
 
-				console.log( "#id", data.lstTicket );
 
 				if ( Array.isArray( data.lstTicket ) ) 
 				{
-					//$scope.ixTicketActual = -1;
 					$scope.lstTickets = data.lstTicket;
 				}
 			});
@@ -201,7 +194,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		$scope.$parent.loading = true;
 		$http.post('consultas.php', { opcion : 'lstDetalleOrdenCliente', idOrdenCliente : $scope.ticketActual.idOrdenCliente, todo : false })
 		.success(function (data) {
-			console.log( data );
 			$scope.$parent.loading = false;
 			if ( data.lst ) {
 				
@@ -236,17 +228,23 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 					}
 
 					data.lst[ ix ].estados = lstEstados;
-					//data.lst[ ix ].seleccionados = angular.copy( data.lst[ ix ].cantidad );
 				}
 
-				console.log( data.lst, data.total );
 				$scope.ticketActual.lstOrden = data.lst;
 
 				$timeout(function () {
-					if ( data.lst.length )
-					{
-						document.getElementById( "detalle_orden_0" ) && document.getElementById( "detalle_orden_0" ).focus();
-					}
+					var index = -1;
+
+					for (var ix = 0; ix < data.lst.length; ix++)
+						if ( data.lst[ ix ].limite )
+						{
+							index = ix;
+							break;
+						}
+					
+					// SI EXISTE ALGUN MENU QUE SERVIR
+					if ( index >= 0 )
+						document.getElementById( "detalle_orden_" + index ) && document.getElementById( "detalle_orden_" + index ).focus();
 				});
 			}
 		});
@@ -269,91 +267,19 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				idTipoServicio : orden.idTipoServicio,
 			}
 		};
-		console.log( datos );
 
 		// SI NO ESTA DEFINIDO LA ORDEN
 		if ( !( $scope.ticketActual.idOrdenCliente > 0 ) )
 			return false;
 
-		//$scope.ticketActual.lstOrden = [];
-
 		$scope.$parent.loading = true;
 		$http.post('consultas.php', datos )
 		.success(function (data) {
 			$scope.$parent.loading = false;
-			console.log( data );
 			alertify.notify( ( data.mensaje || data ), ( data.respuesta || 'danger' ), 5 );
 		});
 	};
 
-
-
-
-
-
-	// CAMBIA ESTADO ACTUAL A PROCESO SIGUIENTE, SELECCION
-	$scope.continuarProcesoMenu = function () {
-		/*
-		var lst = [], idEstadoDestino = 0, msjError = '';
-
-		if ( $scope.seleccionMenu.si )
-		{
-			if ( $scope.idEstadoOrden >= 1 && $scope.idEstadoOrden <= 3 ) 
-				idEstadoDestino = $scope.idEstadoOrden + 1;
-
-			for (var i = 0; i < $scope.lstMenus[ $scope.ixMenuActual ].detalle.length; i++) {
-				var item = $scope.lstMenus[ $scope.ixMenuActual ].detalle[ i ];
-
-				// SI ESTA SELECCIONADO
-				if ( item.selected )
-					lst.push({
-						numeroTicket        : item.numeroTicket,
-						idMenu              : item.idMenu,
-						cantidad            : item.cantidad,
-						idDetalleOrdenMenu  : item.idDetalleOrdenMenu,
-						idDetalleOrdenCombo : item.idDetalleOrdenCombo
-					});
-			}
-		}
-		else if ( $scope.seleccionTicket.si )
-		{
-			for (var it = 0; it < $scope.lstTickets.length; it++)
-			{
-				var detalle = $scope.lstTickets[ it ].detalle;
-				for (var id = 0; id < detalle.length; id++) {
-					//var detalle = $scope.lstTickets[ it ].detalle[ id ];
-					if ( detalle[ id ].selected )
-					{
-						// SI ES EL PRIMERO SELECCIONADO FORZARA LOS DEMAS ESTADOS
-						if ( idEstadoDestino === 0 )
-							idEstadoDestino = ( parseInt( detalle[ id ].idEstadoDetalleOrden ) + 1 );
-
-						else if ( idEstadoDestino != ( parseInt( detalle[ id ].idEstadoDetalleOrden ) + 1 ) )
-							msjError = "Todos los elementos seleccionados deben tener el mismo estado";
-						
-						lst.push({
-							numeroTicket        : $scope.lstTickets[ it ].numeroTicket,
-							idMenu              : detalle[ id ].idMenu,
-							cantidad            : 1,
-							idDetalleOrdenMenu  : detalle[ id ].idDetalleOrdenMenu,
-							idDetalleOrdenCombo : detalle[ id ].idDetalleOrdenCombo
-						});
-					}
-				}// end-for
-			}
-		}
-
-		// SI OCURRIO ALGUN ERROR
-		if ( msjError.length > 2 )
-			alertify.notify( msjError, "danger", 6 );
-
-		else if ( idEstadoDestino == 5 )
-			alertify.notify( "Nada que hacer", "info", 3 );
-
-		else
-			$scope.guardarEstadoDetalleOrden( lst, idEstadoDestino );
-	*/
-	};
 
 	$scope.reset = function () {
 		$scope.seleccionMenu  = {
@@ -450,7 +376,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		if ( _new >= 0 )
 		{
 			$scope.ticketActual = $scope.lstTickets[ _new ];
-			console.log("curr", $scope.ticketActual );
 			$scope.consultaDetalleOrden();
 		}
 	});
@@ -468,10 +393,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		$scope.scroll( 'ixt_item_', _new );
 	});
 
-	/*
-	$scope.$watch('ixMenuFocus', function (_new) {
-		$scope.scroll( 'ixm_item_', _new );
-	});*/
 
 	// AUTO-SCROLL
 	$scope.scroll = function ( pref, index ) {
@@ -498,105 +419,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 					$(".contenido-lst-orden").animate( { scrollTop : position }, 100 );
 			});
 		}
-	};
-
-
-
-	// CLASIFICA ORDEN EN MENUS DE <==== lstMenusMaster
-	$scope.lstPorMenu = function () {
-		$scope.lstMenus = [];
-		for (var ip = 0; ip < $scope.lstMenusMaster.length; ip++) {
-			var ixMenu = -1;
-
-			for (var im = 0; im < $scope.lstMenus.length; im++) {
-				if ( $scope.lstMenus[ im ].idMenu == $scope.lstMenusMaster[ ip ].idMenu ) {
-					ixMenu = im;
-					break;
-				}
-			}
-
-			// SI NO EXISTE SE CREA DATOS DE MENU
-			if ( ixMenu == -1 ) {
-				ixMenu = $scope.lstMenus.length;
-				$scope.lstMenus.push({
-					idMenu       : $scope.lstMenusMaster[ ip ].idMenu,
-					codigoMenu   : $scope.lstMenusMaster[ ip ].codigoMenu,
-					menu         : $scope.lstMenusMaster[ ip ].menu,
-					imagen       : $scope.lstMenusMaster[ ip ].imagen,
-					tiempoAlerta : $scope.lstMenusMaster[ ip ].tiempoAlerta,
-					numMenus     : 0,
-					primerTiempo : $scope.lstMenusMaster[ ip ].fechaRegistro,
-					detalle      : []
-				});
-			}
-			
-			// AGREGA DETALL AL MENU
-			$scope.lstMenus[ ixMenu ].detalle.push({
-				perteneceCombo      : $scope.lstMenusMaster[ ip ].perteneceCombo,
-				idMenu              : $scope.lstMenusMaster[ ip ].idMenu,
-				idDetalleOrdenMenu  : $scope.lstMenusMaster[ ip ].idDetalleOrdenMenu,
-				cantidad            : $scope.lstMenusMaster[ ip ].cantidad,
-				fechaRegistro       : $scope.lstMenusMaster[ ip ].fechaRegistro,
-				tipoServicio        : $scope.lstMenusMaster[ ip ].tipoServicio,
-				idTipoServicio      : $scope.lstMenusMaster[ ip ].idTipoServicio,
-				idCombo             : $scope.lstMenusMaster[ ip ].idCombo,
-				idDetalleOrdenCombo : $scope.lstMenusMaster[ ip ].idDetalleOrdenCombo,
-				imagenCombo         : $scope.lstMenusMaster[ ip ].imagenCombo
-			});
-
-			$scope.lstMenus[ ixMenu ].numMenus += parseInt( $scope.lstMenusMaster[ ip ].cantidad );
-		}
-	};
-
-	// CLASIFICA ORDEN EN TICKETS DE <==== lstMenusMaster
-	$scope.lstPorTicket = function () {
-		console.log( $scope.lstMenusMaster );
-
-		return false;
-
-		$scope.lstTickets = [];
-		for (var ip = 0; ip < $scope.lstMenusMaster.length; ip++) {
-			var ixMenu = -1;
-
-			for (var im = 0; im < $scope.lstTickets.length; im++) {
-				if ( $scope.lstTickets[ im ].idMenu == $scope.lstMenusMaster[ ip ].idMenu ) {
-					ixMenu = im;
-					break;
-				}
-			}
-
-			// SI NO EXISTE SE CREA DATOS DE MENU
-			if ( ixMenu == -1 ) {
-				ixMenu = $scope.lstTickets.length;
-				$scope.lstTickets.push({
-					idMenu       : $scope.lstMenusMaster[ ip ].idMenu,
-					codigoMenu   : $scope.lstMenusMaster[ ip ].codigoMenu,
-					menu         : $scope.lstMenusMaster[ ip ].menu,
-					imagen       : $scope.lstMenusMaster[ ip ].imagen,
-					numMenus     : 0,
-					primerTiempo : $scope.lstMenusMaster[ ip ].fechaRegistro,
-					detalle      : []
-				});
-			}
-			
-			// AGREGA DETALL AL MENU
-			$scope.lstTickets[ ixMenu ].detalle.push({
-				perteneceCombo      : $scope.lstMenusMaster[ ip ].perteneceCombo,
-				idMenu              : $scope.lstMenusMaster[ ip ].idMenu,
-				idDetalleOrdenMenu  : $scope.lstMenusMaster[ ip ].idDetalleOrdenMenu,
-				cantidad            : $scope.lstMenusMaster[ ip ].cantidad,
-				fechaRegistro       : $scope.lstMenusMaster[ ip ].fechaRegistro,
-				tipoServicio        : $scope.lstMenusMaster[ ip ].tipoServicio,
-				idTipoServicio      : $scope.lstMenusMaster[ ip ].idTipoServicio,
-				idCombo             : $scope.lstMenusMaster[ ip ].idCombo,
-				idDetalleOrdenCombo : $scope.lstMenusMaster[ ip ].idDetalleOrdenCombo,
-				imagenCombo         : $scope.lstMenusMaster[ ip ].imagenCombo
-			});
-
-			$scope.lstTickets[ ixMenu ].numMenus += parseInt( $scope.lstMenusMaster[ ip ].cantidad );
-		}
-
-		console.log( $scope.lstTickets );
 	};
 
 
@@ -822,327 +644,9 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		return index;
 	};
 
-	// SELECCIONA O DESELECCIONA TODOS
-/*
-	$scope.selItemMenu = function ( seleccionado, ixDetalle ) {
-		if ( !( $scope.ixMenuActual >= 0 ) )
-			return false;
-
-		$scope.seleccionMenu.menu   = $scope.lstMenus[ $scope.ixMenuActual ].menu;
-		$scope.seleccionMenu.imagen = $scope.lstMenus[ $scope.ixMenuActual ].imagen;
-		$scope.seleccionMenu.si     = false;
-
-		// SI ES INDIVIDUAL
-		if ( ixDetalle != undefined ) {
-			var valor          = -1;
-			var idTipoServicio = $scope.lstMenus[ $scope.ixMenuActual ].detalle[ ixDetalle ].idTipoServicio;
-
-			// REALIZA FOCUS AL ELEMENTO SELECCIONADO
-			$scope[ $scope.panel.focus ] = ixDetalle;
-
-			if ( seleccionado )
-				valor = 1;
-
-			if ( idTipoServicio == 1 )
-				$scope.seleccionMenu.count.llevar += valor;
-
-			else if ( idTipoServicio == 2 )
-				$scope.seleccionMenu.count.restaurante += valor;
-
-			else if ( idTipoServicio == 3 )
-				$scope.seleccionMenu.count.domicilio += valor;
-				
-			$scope.seleccionMenu.count.total += valor;
-
-			// SELECCION O DESELECCION
-			$scope.lstMenus[ $scope.ixMenuActual ].detalle[ ixDetalle ].selected = seleccionado;
-
-			// SI EL TOTAL ES MAYOR A CERO
-			if ( $scope.seleccionMenu.count.total )
-				$scope.seleccionMenu.si = true;
-		}
-		// SI ES PARA TODOS
-		else if ( $scope.lstMenus[ $scope.ixMenuActual ] ) {
-			$scope.seleccionMenu.count.llevar      = 0;
-			$scope.seleccionMenu.count.restaurante = 0;
-			$scope.seleccionMenu.count.domicilio   = 0;
-			$scope.seleccionMenu.count.total  	   = 0;
-
-			for (var i = 0; i < $scope.lstMenus[ $scope.ixMenuActual ].detalle.length; i++) {
-				if ( seleccionado ) {
-					var idTipoServicio = $scope.lstMenus[ $scope.ixMenuActual ].detalle[ i ].idTipoServicio;
-
-					if ( idTipoServicio == 1 )
-						$scope.seleccionMenu.count.llevar++;
-
-					else if ( idTipoServicio == 2 )
-						$scope.seleccionMenu.count.restaurante++;
-
-					else if ( idTipoServicio == 3 )
-						$scope.seleccionMenu.count.domicilio++;
-
-					$scope.seleccionMenu.count.total++;
-				}
-
-				$scope.lstMenus[ $scope.ixMenuActual ].detalle[ i ].selected = seleccionado;
-			}
-
-			if ( seleccionado )
-				$scope.seleccionMenu.si = true;
-
-		}
-	};
-*/
-	// SELECCIONA O DESELECCIONA TECLA -+
-	$scope.selItemKey = function ( seleccionar ) {
-		if ( !( $scope.ixMenuActual >= 0 ) )
-			return false;
-
-		// INFORMACION DE MENU
-		$scope.seleccionMenu.menu   = $scope.lstMenus[ $scope.ixMenuActual ].menu;
-		$scope.seleccionMenu.imagen = $scope.lstMenus[ $scope.ixMenuActual ].imagen;
-
-		// SI EXISTE AL MENOS UN ELEMENTO
-		if ( $scope.lstMenus[ $scope.ixMenuActual ].detalle.length ) {
-			var index = -1;
-
-			// BUSCAR EL PROXIMO PRIMER ELEMENTO SIN SELECCIONAR
-			if ( seleccionar ) {
-				for (var ix = 0; ix < $scope.lstMenus[ $scope.ixMenuActual ].detalle.length; ix++)
-				{
-					var itemSel = $scope.lstMenus[ $scope.ixMenuActual ].detalle[ ix ].selected;
-
-					if ( !itemSel ) {
-						index = ix;
-						break;
-					}
-				}
-
-			}
-			// BUSCAR EL ULTIMO PRIMER ELEMENTO SELECCIONADO
-			else {
-				for (var ix = ( $scope.lstMenus[ $scope.ixMenuActual ].detalle.length - 1 ); ix >= 0; ix--)
-				{
-					var itemSel = $scope.lstMenus[ $scope.ixMenuActual ].detalle[ ix ].selected;
-
-					if ( itemSel ) {
-						index = ix;
-						break;
-					}
-				}
-			}
-
-			// SI SE ENCONTRO ELEMENTO
-			if ( index >= 0 ) {
-
-				// ENFOCA EL ELEMENTO ACTUAL
-				$scope[ $scope.panel.focus ] = index;
-
-				// CAMBIA VALOR DE SELECTED
-				$scope.lstMenus[ $scope.ixMenuActual ].detalle[ index ].selected = seleccionar;
-
-				// CONSULTA EL TIPO DE SERVICIO
-				var idTipoServicio = $scope.lstMenus[ $scope.ixMenuActual ].detalle[ index ].idTipoServicio;
-				var valor = seleccionar ? 1 : -1;
-
-				// SUMA O RESTA A TOTAL
-				$scope.seleccionMenu.count.total += valor;
-
-				// SUMA O RESTA POR TIPO DE SERVICIO
-				if ( idTipoServicio == 1 )
-					$scope.seleccionMenu.count.llevar += valor;
-
-				else if ( idTipoServicio == 2 )
-					$scope.seleccionMenu.count.restaurante += valor;
-
-				else if ( idTipoServicio == 3 )
-					$scope.seleccionMenu.count.domicilio += valor;
-
-				// SI EXISTE MENU SELECCIONADO
-				if ( $scope.seleccionMenu.count.total > 0 )
-					$scope.seleccionMenu.si = true;
-
-				else
-					$scope.seleccionMenu.si = false;
-
-			}
-		}
-	};
-
 
 	/* ************************** SELECCION DE TICKETS ********************** */
 	$scope.idEstadoOrdenTkt = 0;
-	// SELECCIONA O DESELECCIONA TODOS
-	$scope.selItemTicket = function ( seleccionado, ixDetalle ) {
-		if ( !( $scope.ixTicketActual >= 0 ) )
-			return false;
-
-		var estadoActual = 0;
-		$scope.seleccionTicket.menu         = $scope.lstTickets[ $scope.ixTicketActual ].menu;
-		$scope.seleccionTicket.imagen       = $scope.lstTickets[ $scope.ixTicketActual ].imagen;
-		$scope.seleccionTicket.numeroTicket = $scope.lstTickets[ $scope.ixTicketActual ].numeroTicket;
-		$scope.seleccionTicket.si           = false;
-
-		// SI ES INDIVIDUAL
-		if ( ixDetalle != undefined ) {
-
-			// SOLO SI LA ORDEN ESTA LISTA => PASA A SERVIR
-			var valor          = -1;
-			var idTipoServicio = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ ixDetalle ].idTipoServicio;
-
-			// REALIZA FOCUS AL ELEMENTO SELECCIONADO
-			$scope[ $scope.panel.focus ] = ixDetalle;
-
-			if ( seleccionado )
-				valor = 1;
-
-			if ( idTipoServicio == 1 )
-				$scope.seleccionTicket.count.llevar += valor;
-
-			else if ( idTipoServicio == 2 )
-				$scope.seleccionTicket.count.restaurante += valor;
-
-			else if ( idTipoServicio == 3 )
-				$scope.seleccionTicket.count.domicilio += valor;
-				
-			$scope.seleccionTicket.count.total += valor;
-
-			// SELECCION O DESELECCION
-			$scope.lstTickets[ $scope.ixTicketActual ].detalle[ ixDetalle ].selected = seleccionado;
-		}
-		// SI ES PARA TODOS
-		else if ( $scope.lstTickets[ $scope.ixTicketActual ] ) {
-			$scope.seleccionTicket.count.llevar      = 0;
-			$scope.seleccionTicket.count.restaurante = 0;
-			$scope.seleccionTicket.count.domicilio   = 0;
-			$scope.seleccionTicket.count.total  	 = 0;
-
-			for (var i = 0; i < $scope.lstTickets[ $scope.ixTicketActual ].detalle.length; i++)
-			{
-				if ( seleccionado ) {
-					var idTipoServicio = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ i ].idTipoServicio;
-
-					if ( idTipoServicio == 1 )
-						$scope.seleccionTicket.count.llevar++;
-
-					else if ( idTipoServicio == 2 )
-						$scope.seleccionTicket.count.restaurante++;
-
-					else if ( idTipoServicio == 3 )
-						$scope.seleccionTicket.count.domicilio++;
-
-					$scope.seleccionTicket.count.total++;
-				}
-
-				$scope.lstTickets[ $scope.ixTicketActual ].detalle[ i ].selected = seleccionado;
-			}
-
-		}
-
-		// SI EXISTE AL MENOS UN ELEMENTO SELECCIONADO
-		if ( $scope.seleccionTicket.count.total > 0 )
-		{
-			$scope.seleccionTicket.si = true;
-
-			// OBTIENE EL ESTADO ACTUAL DEL PRIMER ELEMENTO SELECCIONADO
-			for (var ix = 0; ix < $scope.lstTickets[ $scope.ixTicketActual ].detalle.length; ix++)
-			{
-				if ( $scope.lstTickets[ $scope.ixTicketActual ].detalle[ ix ].selected ) {
-					$scope.idEstadoOrdenTkt = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ ix ].idEstadoDetalleOrden;
-					break;
-				}
-			}
-		}
-	};
-
-	// SELECCIONA O DESELECCIONA TECLA -+
-	$scope.selItemKeyTicket = function ( seleccionar ) {
-		if ( !( $scope.ixTicketActual >= 0 ) )
-			return false;
-
-		// INFORMACION DE MENU
-		$scope.seleccionTicket.menu         = $scope.lstTickets[ $scope.ixTicketActual ].menu;
-		$scope.seleccionTicket.imagen       = $scope.lstTickets[ $scope.ixTicketActual ].imagen;
-		$scope.seleccionTicket.numeroTicket = $scope.lstTickets[ $scope.ixTicketActual ].numeroTicket;
-
-		// SI EXISTE AL MENOS UN ELEMENTO
-		if ( $scope.lstTickets[ $scope.ixTicketActual ].detalle.length ) {
-			var index = -1;
-
-			// BUSCAR EL PROXIMO PRIMER ELEMENTO SIN SELECCIONAR
-			if ( seleccionar ) {
-				for (var ix = 0; ix < $scope.lstTickets[ $scope.ixTicketActual ].detalle.length; ix++)
-				{
-					var itemSel = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ ix ];
-
-					if ( !itemSel.selected ) {
-						index = ix;
-						break;
-					}
-				}
-
-			}
-			// BUSCAR EL ULTIMO PRIMER ELEMENTO SELECCIONADO
-			else {
-				for (var ix = ( $scope.lstTickets[ $scope.ixTicketActual ].detalle.length - 1 ); ix >= 0; ix--)
-				{
-					var itemSel = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ ix ].selected;
-
-					if ( itemSel ) {
-						index = ix;
-						break;
-					}
-				}
-			}
-
-			// SI SE ENCONTRO ELEMENTO Y ESTA EN ESTADO LISTA => PARA SERVIR
-			if ( index >= 0 ) 
-			{
-
-				// ENFOCA EL ELEMENTO ACTUAL
-				$scope[ $scope.panel.focus ] = index;
-
-				// CAMBIA VALOR DE SELECTED
-				$scope.lstTickets[ $scope.ixTicketActual ].detalle[ index ].selected = seleccionar;
-
-				// CONSULTA EL TIPO DE SERVICIO
-				var idTipoServicio = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ index ].idTipoServicio;
-				var valor = seleccionar ? 1 : -1;
-
-				// SUMA O RESTA A TOTAL
-				$scope.seleccionTicket.count.total += valor;
-
-				// SUMA O RESTA POR TIPO DE SERVICIO
-				if ( idTipoServicio == 1 )
-					$scope.seleccionTicket.count.llevar += valor;
-
-				else if ( idTipoServicio == 2 )
-					$scope.seleccionTicket.count.restaurante += valor;
-
-				else if ( idTipoServicio == 3 )
-					$scope.seleccionTicket.count.domicilio += valor;
-
-				// SI EXISTE MENU SELECCIONADO
-				if ( $scope.seleccionTicket.count.total > 0 )
-					$scope.seleccionTicket.si = true;
-
-				else
-					$scope.seleccionTicket.si = false;
-
-			}
-		}
-
-		// OBTIENE EL ESTADO ACTUAL DEL PRIMER ELEMENTO SELECCIONADO
-		for (var ix = 0; ix < $scope.lstTickets[ $scope.ixTicketActual ].detalle.length; ix++)
-		{
-			if ( $scope.lstTickets[ $scope.ixTicketActual ].detalle[ ix ].selected ) {
-				$scope.idEstadoOrdenTkt = $scope.lstTickets[ $scope.ixTicketActual ].detalle[ ix ].idEstadoDetalleOrden;
-				break;
-			}
-		}
-	};
-
-
 
 	$scope.focusElement = function ( next ) {
 		if ( $scope[ $scope.panel.array ][ $scope[ $scope.panel.index ] ] && $scope[ $scope.panel.array ][ $scope[ $scope.panel.index ] ].detalle.length ) 

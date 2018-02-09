@@ -41,9 +41,6 @@
 			<button type="button" class="btn btn-xs btn-info" ng-click="dAyuda.show()">
 				<span class="glyphicon glyphicon-question-sign"></span>
 			</button>
-			<!--
-            <input type="number" class="form-control" ng-model="buscarTicket" id="buscarTicket" ng-class="{'input-focus':buscarTicket>0}"
-                placeholder="# Ticket" style="font-size:19px;padding: 1px 14px;font-weight:normal">-->
 		</div>
 	</div>
 	<div class="row" style="margin-top:3px">
@@ -117,9 +114,9 @@
 						<!-- INGRESO DE MENUS A COCINAR -->
 						<input type="number" class="form-control input-lg" ng-model="menu.seleccionados" style="width:150px;display:inline-block" 
 							placeholder="# Productos" id="input_{{$index}}" ng-change="cantidadCocinar( menu, $index )"
-							ng-disabled="seleccionCocina.si && seleccionCocina.index!=$index">
+							ng-disabled="seleccionCocina.si && seleccionCocina.index!=$index" ng-show="idEstadoOrden<4">
 					</div>
-					<div class="col-xs-4 text-right">
+					<div class="col-xs-4 text-right" ng-show="idEstadoOrden<4">
 						<button type="button" class="btn btn-sm btn-default" ng-click="menu.seleccionados=menu.total;cantidadCocinar( menu, $index )" 
 							ng-disabled="seleccionCocina.si && seleccionCocina.index!=$index" title="TODOS">
 							<span class="glyphicon glyphicon-check"></span>
@@ -205,10 +202,10 @@
 						<span class="estado-menu info">C <span class="badge">{{ticket.cocinando}}</span></span>
 						<span class="estado-menu primary">L <span class="badge">{{ticket.listos}}</span></span>
 						<span class="estado-menu success">S <span class="badge">{{ticket.servidos}}</span></span>
-						<button class="btn btn-primary" type="button" ng-show="ixTicketActual==$index">
+						<!-- <button class="btn btn-primary" type="button" ng-show="ixTicketActual==$index">
 							<b>Servir TODO</b>
 							<span class="glyphicon glyphicon-flag"></span>
-						</button>
+						</button> -->
 					</div>
 				</div>
 				<div class="body body_lst_ticket" ng-if="ixTicketActual==$index">
@@ -251,7 +248,10 @@
 											</h4>
 	                                    </td>
 	                                    <td>
-											<div class="input-group">
+											<h4>
+												<span class="estado-menu success" ng-hide="orden.limite"><b>Completo</b></span>
+											</h4>
+											<div class="input-group" ng-show="orden.limite">
 												<span class="input-group-btn">
 													<button class="btn btn-success" type="button" ng-click="servirMenu( $index )">
 														<b>Servir</b>
@@ -304,43 +304,6 @@
 		</div>
 	</div>
 	<img ng-src="{{seleccionCocina.imagen}}">
-</div>
-
-<!-- SI TIENE SELECCIONADO ALGUN TICKET -->
-<div class="acciones" ng-show="seleccionTicket.si">
-	<div class="btn-accion">
-		<button type="button" class="btn btn-lg btn-success" ng-click="continuarProcesoMenu()">
-			<span ng-show="idEstadoOrdenTkt==1">
-				<span class="glyphicon glyphicon-play"></span>
-				Cocinar
-			</span>
-			<span ng-show="idEstadoOrdenTkt==2">
-				<span class="glyphicon glyphicon-ok"></span>
-				Listo
-			</span>
-			<span ng-show="idEstadoOrdenTkt==3">
-				<span class="glyphicon glyphicon-flag"></span>
-				Servir
-			</span>
-			<span class="badge" style="font-size:16px">{{seleccionTicket.count.total}}</span>
-		</button>
-		<!-- SELECCION POR TIPO DE SERVICIO -->
-		<div class="tipo-servicio">
-            <span class="estado-menu primary" ng-show="seleccionTicket.count.llevar>0">
-            	L <span class="badge">{{seleccionTicket.count.llevar}}</span>
-            </span>
-			<span class="estado-menu success" ng-show="seleccionTicket.count.restaurante>0">
-				R <span class="badge">{{seleccionTicket.count.restaurante}}</span>
-			</span>
-            <span class="estado-menu warning" ng-show="seleccionTicket.count.domicilio>0">
-            	D <span class="badge">{{seleccionTicket.count.domicilio}}</span>
-            </span>
-		</div>
-	</div>
-	<div class="ticket">
-		<span class="glyphicon glyphicon-bookmark"></span>
-		<span>{{seleccionTicket.numeroTicket}}</span>
-	</div>
 </div>
 
 

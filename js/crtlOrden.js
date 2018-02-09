@@ -118,7 +118,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 					}
 				}
 				else{
-					alertify.set('notifier','position', 'top-right');
 					alertify.notify( "No se encontro información", 'info', 2 );
 				}
 			});
@@ -140,7 +139,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				$scope.consultaDetalleOrden( orden, true );
 			});
 		}
-		console.log( $scope.itemDetalle.destinoOrden );
 	};
 
 	// CONSULTA ORDENES
@@ -368,7 +366,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		$http.post('consultas.php', datos )
 		.success(function (data) {
 			$scope.$parent.loading = false; // cargando...
-			console.log( data );
 
 			if ( data.precio && data.precio > 0 ) {
 				$scope.menuActual.precio 	= data.precio;
@@ -389,15 +386,12 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 	$scope.agregarOrdenLista = function () {
 		if ( !( $scope.menuActual.precio > 0 ) ) {
-			alertify.set('notifier','position', 'top-right');
 			alertify.notify('Menú no disponible para este Tipo de Servicio', 'danger', 3);
 		}
 		else if ( !( $scope.cantidadInicial > 0 ) ) {
-			alertify.set('notifier','position', 'top-right');
 			alertify.notify('La cantidad debe ser mayor a cero', 'danger', 2);
 		}
 		else if ( !( $scope.idTipoServicio > 0 ) ) {
-			alertify.set('notifier','position', 'top-right');
 			alertify.notify('Debe seleccionar un Tipo de Servicio', 'danger', 2);
 		}
 		else{
@@ -528,7 +522,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				idTipoServicio : $scope.idTipoServicio
 			})
 			.success(function (data) {
-				console.log( data );
 
 				$scope.$parent.loading = false; // cargando...
 				$scope.codigoRapido    = "";
@@ -546,7 +539,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				}
 				
 				else{
-					alertify.set('notifier','position', 'top-right');
 					alertify.notify('Código no válido', 'danger', 2);
 				}
 			});
@@ -578,7 +570,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 			.success(function (data) {
 				$scope.$parent.loading = false; // cargando...
 
-				alertify.set('notifier','position', 'top-right');
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 
 				if ( data.respuesta == 'success' )
@@ -610,7 +601,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				comentario     : $scope.comentario
 			})
 			.success(function (data) {
-				console.log( data );
 
 				$scope.$parent.loading = false; // cargando...
 
@@ -697,10 +687,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 						if ( ixT == -1 )
 						{
-
 							var estado = $scope.lstEstados[ idEstadoActual - 1 ] || {};
-
-							// $scope.lstEstados = [ { abr : 'P', title : 'Pendiente', css : 'default' },
 
 							ixT = lstEstados.length;
 							lstEstados.push({
@@ -718,7 +705,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 					data.lst[ ix ].estados = lstEstados;
 				}
 
-				console.log( data.lst, data.total );
 				$scope.infoOrden.lstOrden = data.lst;
 				$scope.infoOrden.total    = data.total;
 			}
@@ -759,7 +745,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				$scope.itemDetalle.lstTipoServicio[ ixT ].cantidad = item.cantidad;
 		}
 		
-		console.log( $scope.itemDetalle );
 
 		$scope.dialEditarDetalle.show();
 
@@ -928,21 +913,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		$scope.ordenActual.totalAgregar -= ( cantidad * precio );
 		$scope.ordenActual.lstAgregar.splice( index, 1 );
 	};
-
-		// SI CAMBIA EL TIPO DE SERVICIO
-	
-	/*
-	$scope.watchPrecio = function () {
-		$scope.menuActual.precio = 0;
-
-		if ( $scope.menuActual.lstPrecio && $scope.menuActual.lstPrecio.length && $scope.idTipoServicio > 0 ) {
-			for ( var i = 0; i < $scope.menuActual.lstPrecio.length; i++ )
-				if ( $scope.menuActual.lstPrecio[ i ].idTipoServicio == $scope.idTipoServicio ) {
-					$scope.menuActual.precio = $scope.menuActual.lstPrecio[ i ].precio;
-					break;
-				}
-		}
-	};*/
 
 	$scope.cancelarMenu = function () {
 		if ( $scope.menuActual && $scope.menuActual.idMenu > 0 ) 
@@ -1150,13 +1120,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		if ( key == 46 )
 			$scope.cancelarMenu();
 
-		// TECLA PARA CODIGO RAPIDO
-		/*if ( key >= 48 && key <= 57 ) // {0-9}
-			$scope.auxKeyTicket( 'number', ( key - 48 ), 'codigoRapido' );
-
-		if ( key >= 96 && key <= 105 ) // {0-9}
-			$scope.auxKeyTicket( 'number', ( key - 96 ), 'codigoRapido' );*/
-		
 		if ( $("#codigoRapido").is( ":focus" ) && key == 8 ) // {BACK}
 			$scope.auxKeyTicket( 'supr', 0, 'codigoRapido' );
 
@@ -1281,7 +1244,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% INFORMACION DE NODEJS %%%%%%%%%%%%%%%%%%%%%%%%%%%%  */
 	$scope.$on('infoNode', function( event, datos ) {
-		console.log( datos );
 
 		switch ( datos.accion ) {
 			// SI SE AGREGO UNA ORDEN NUEVA

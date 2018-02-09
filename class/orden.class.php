@@ -304,7 +304,6 @@ class Orden
 							'idOrdenCliente'  => $idOrdenCliente,
 							'myId'            => $this->myId,
 							'info'            => $this->data,
-							#'lstMenuAgregado' => $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo ),
 					 	),
 					);
 			 	}
@@ -314,14 +313,12 @@ class Orden
 						'accion' => 'ordenAgregar',
 						'data'   => array(
 							'idOrdenCliente'      => $idOrdenCliente,
-							'myId'                => $this->myId,
 							'info'                => $this->data,
+							'myId'                => $this->myId,
 							'detalleOrdenCliente' => $this->lstDetalleOrdenCliente( $idOrdenCliente ),
-							#'lstMenuAgregado'     => $this->lstMenuAgregado( $idOrdenesMenu, $idOrdenesCombo ),
 					 	),
 					);
 			 	}
-		 		//$this->con->query( "ROLLBACK" );
 
 			 	// SI LA CLASE NO EXISTE SE LLAMA
 			 	if ( !class_exists( "Redis" ) )
@@ -360,16 +357,6 @@ class Orden
 	 			if( $row = $rs->fetch_object() ) {
 					$this->respuesta = $row->respuesta;
 					$this->mensaje   = $row->mensaje;
-
-					// SI SE GUARDO VA CONCATENANDO LOS IDS GENERADOS
-					/*
-					if ( $this->respuesta == 'success' ) {
-						if ( $item->tipoMenu == 'menu' )
-							$idOrdenesMenu .= $row->ids;
-
-						else if ( $item->tipoMenu == 'combo' )
-							$idOrdenesCombo .= $row->ids;
-					}*/
 	 			}
 	 		}
 	 		else{
@@ -837,8 +824,8 @@ class Orden
 
 
 		// SI ES DE UNA ORDEN ESPECIFICA
-		if ( IS_NULL( $idOrdenCliente ) AND $idOrdenCliente > 0 )
-			$where .= " AND idOrdenCliente = {$idOrdenCliente} ";
+		if ( !IS_NULL( $idOrdenCliente ) AND $idOrdenCliente > 0 )
+			$where .= " AND o.idOrdenCliente = {$idOrdenCliente} ";
 
 
 		$sql = "SELECT
@@ -1209,9 +1196,6 @@ class Orden
 				 	),
 				);
 			 	
-			 	// :::: TEST ::::
-		 		//$this->con->query( "ROLLBACK" );
-
 			 	// SI LA CLASE NO EXISTE SE LLAMA
 			 	if ( !class_exists( "Redis" ) )
 			 		include 'redis.class.php';
@@ -1260,9 +1244,6 @@ class Orden
 
  		return $result;
  	}
-
-
-
 
 
  	// CAMBIA ESTADO DE ORDENES ---> DETALLE
@@ -1729,14 +1710,6 @@ class Orden
 					$lst[ $ixM ]->lstOrden[ $ixO ]->observacion .= $row->observacion . " -.- ";
 					$lst[ $ixM ]->lstOrden[ $ixO ]->observacion = rtrim( $lst[ $ixM ]->lstOrden[ $ixO ]->observacion, " -.- " );
 				}
-
-				// DETALLE DE ORDEN CLIENTE
-				/*$lst[ $ixM ]->lstOrden[ $ixO ]->lstDetalle[] = (object)array(
-					'cantidad'       => $row->cantidad,
-					'perteneceCombo' => $row->perteneceCombo,
-					'idCombo'        => $row->idCombo,
-					'combo'          => $row->combo,
-				);*/
 
 			endwhile;
 		}
