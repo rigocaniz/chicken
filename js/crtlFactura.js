@@ -31,7 +31,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		$http.post('consultas.php',{
 		    opcion : "catFormasPago"
 		}).success(function(data){
-			console.log( data );
 		    $scope.lstFormasPago = data;
 		    $scope.facturacion.lstFormasPago = data;
 		})
@@ -334,18 +333,19 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 
 		$scope.$parent.loading = true;
 		$scope.infoOrden = orden;
-		$http.post('consultas.php', { opcion : 'lstDetalleOrdenCliente', idOrdenCliente : orden.idOrdenCliente, todo: $scope.todoDetalle })
+		$http.post('consultas.php', { opcion : 'detalleOrdenFactura', idOrdenCliente : orden.idOrdenCliente })
 		.success(function (data) {
-			console.log( data );
 			$scope.$parent.loading = false;
-			if ( data.lst ) {
+
+			console.log( data );
+			/*if ( data.lst ) {
 				$scope.infoOrden.lstOrden            = data.lst;
 				$scope.facturacion.lstOrden          = data.lst;
 				$scope.facturacion.lstOrdenRestantes = angular.copy( data.lst );
 				$scope.facturacion.lstOrdenesInd     = [];
 				$scope.facturacion.ixSeleccionado    = 'pendientes';
 				$scope.facturacion.tipoGrupo         = 'general';
-			}
+			}*/
 		});
 	};
 
@@ -368,7 +368,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				idOrdenCliente : idOrdenCliente
 			})
 			.success(function (data) {
-				console.log( "TICKET:::", data );
 				$scope.$parent.loading = false;
 
 				if ( Array.isArray( data ) && data.length ) {

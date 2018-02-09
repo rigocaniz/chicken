@@ -672,6 +672,12 @@ switch ( $data->opcion )
 			)
 		);
 		break;
+
+	// REASIGNAR DETALLE DE ORDEN
+	case 'detalleOrdenFactura':
+		$orden = new Orden();
+		echo json_encode( $orden->detalleOrdenFactura( $data->idOrdenCliente ) );
+		break;
 }
 
 $conexion->close();

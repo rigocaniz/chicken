@@ -1842,6 +1842,74 @@ class Orden
  	}
 
 
+ 	// LISTA DE ORDENES PARA FACTURAR
+ 	public function detalleOrdenFactura( $idOrdenCliente )
+ 	{
+		$lst = array();
+
+		$sql = "SELECT * FROM
+				((SELECT
+					c.idCombo,
+				    NULL AS 'idMenu',
+				    c.codigo,
+				    c.combo AS 'descripcion',
+				    c.imagen,
+				    SUM( doc.cantidad )AS 'cantidad',
+				    cp.precio,
+				    doc.idTipoServicio,
+				    SUM( IF( !ISNULL( dof.idFactura ), 1, 0 ) )AS 'facturado'
+				FROM detalleOrdenCombo AS doc
+					JOIN combo AS c
+						ON c.idCombo = doc.idCombo
+					JOIN comboPrecio AS cp
+						ON cp.idCombo = c.idCombo 
+							AND doc.idTipoServicio = cp.idTipoServicio
+					LEFT JOIN detalleOrdenFactura AS dof
+						ON dof.idDetalleOrdenCombo = doc.idDetalleOrdenCombo
+				WHERE doc.idOrdenCliente = {$idOrdenCliente} 
+				    AND idEstadoDetalleOrden != 10
+				GROUP BY doc.idCombo, doc.idTipoServicio
+				ORDER BY doc.idCombo ASC)
+					UNION ALL
+				(SELECT
+					NULL AS 'idCombo',
+					m.idMenu,
+				    m.codigo,
+				    m.menu AS 'descripcion',
+				    m.imagen,
+				    SUM( dom.cantidad )AS 'cantidad',
+				    mp.precio,
+				    dom.idTipoServicio,
+				    SUM( IF( !ISNULL( dof.idFactura ), 1, 0 ) )AS 'facturado'
+				FROM detalleOrdenMenu AS dom
+					JOIN menu AS m 
+						ON m.idMenu = dom.idMenu
+					JOIN menuPrecio AS mp
+						ON mp.idMenu = m.idMenu
+							AND dom.idTipoServicio = mp.idTipoServicio
+					LEFT JOIN detalleOrdenFactura AS dof
+						ON dof.idDetalleOrdenMenu = dom.idDetalleOrdenMenu
+				WHERE dom.idOrdenCliente = {$idOrdenCliente} 
+					AND !dom.perteneceCombo
+				    AND idEstadoDetalleOrden != 10
+				GROUP BY dom.idMenu, dom.idTipoServicio
+				ORDER BY dom.idMenu ASC))dt;";
+
+		if( $rs = $this->con->query( $sql ) ) {
+			while ( $row = $rs->fetch_object() ):
+				$row->cantidad  = (int)$row->cantidad;
+				$row->facturado = (int)$row->facturado;
+				$row->pendiente = ( $row->cantidad - $row->facturado );
+				$row->precio    = (double)$row->precio;
+				$row->imagen    = file_exists( $row->imagen ) ? $row->imagen : 'img-menu/notFound.png';
+				$lst[] = $row;
+			endwhile;
+		}
+
+		return $lst;
+ 	}
+
+
  	function getRespuesta()
  	{
  		return $respuesta = array( 
