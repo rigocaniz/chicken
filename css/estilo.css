@@ -1132,6 +1132,29 @@ div.inactive-key{
     color: #fff6f3;
 }
 
+.remove-tab{
+    display: none;
+    position: absolute;
+    border: solid 1px #e4acac;
+    background: #fbeded;
+    color: #a13333;
+    top: 9px;
+    right: 4px;
+    font-size: 13px;
+    height: 24px;
+    padding: 3px 4px;
+    z-index: 50;
+    border-radius: 20px;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+}
+
+ul.nav-tabs li a:hover .remove-tab{
+    display: block;
+}
+
+
+
 
 
 

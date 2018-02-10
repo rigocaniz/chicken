@@ -36,6 +36,10 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		})
 	})();
 
+	$scope.test = function () {
+		console.log("TEST");
+	};
+
 	$scope.lstFacturasDia = [];
 	$scope.cargarlstFacturasDia = function(){
 		$http.post('consultas.php',{
@@ -338,6 +342,10 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			$scope.$parent.loading = false;
 
 			console.log( data );
+			
+			if ( Array.isArray( data ) )
+				$scope.lstDetalleOrden = data;
+
 			/*if ( data.lst ) {
 				$scope.infoOrden.lstOrden            = data.lst;
 				$scope.facturacion.lstOrden          = data.lst;
