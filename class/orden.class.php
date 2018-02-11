@@ -1856,7 +1856,8 @@ class Orden
 				    c.imagen,
 				    SUM( doc.cantidad )AS 'cantidad',
 				    cp.precio,
-				    doc.idTipoServicio,
+				    ts.idTipoServicio,
+				    ts.tipoServicio,
 				    SUM( IF( !ISNULL( dof.idFactura ), 1, 0 ) )AS 'facturado'
 				FROM detalleOrdenCombo AS doc
 					JOIN combo AS c
@@ -1864,6 +1865,8 @@ class Orden
 					JOIN comboPrecio AS cp
 						ON cp.idCombo = c.idCombo 
 							AND doc.idTipoServicio = cp.idTipoServicio
+					JOIN tipoServicio AS ts
+						ON doc.idTipoServicio = ts.idTipoServicio
 					LEFT JOIN detalleOrdenFactura AS dof
 						ON dof.idDetalleOrdenCombo = doc.idDetalleOrdenCombo
 				WHERE doc.idOrdenCliente = {$idOrdenCliente} 
@@ -1879,7 +1882,8 @@ class Orden
 				    m.imagen,
 				    SUM( dom.cantidad )AS 'cantidad',
 				    mp.precio,
-				    dom.idTipoServicio,
+				    ts.idTipoServicio,
+				    ts.tipoServicio,
 				    SUM( IF( !ISNULL( dof.idFactura ), 1, 0 ) )AS 'facturado'
 				FROM detalleOrdenMenu AS dom
 					JOIN menu AS m 
@@ -1887,6 +1891,8 @@ class Orden
 					JOIN menuPrecio AS mp
 						ON mp.idMenu = m.idMenu
 							AND dom.idTipoServicio = mp.idTipoServicio
+					JOIN tipoServicio AS ts
+						ON dom.idTipoServicio = ts.idTipoServicio
 					LEFT JOIN detalleOrdenFactura AS dof
 						ON dof.idDetalleOrdenMenu = dom.idDetalleOrdenMenu
 				WHERE dom.idOrdenCliente = {$idOrdenCliente} 
@@ -1901,6 +1907,7 @@ class Orden
 				$row->facturado = (int)$row->facturado;
 				$row->pendiente = ( $row->cantidad - $row->facturado );
 				$row->precio    = (double)$row->precio;
+				$row->descuento = 0;
 				$row->imagen    = file_exists( $row->imagen ) ? $row->imagen : 'img-menu/notFound.png';
 				$lst[] = $row;
 			endwhile;

@@ -59,30 +59,18 @@
 
                 <!-- TABS -->
                 <div class="col-sm-12">
-                    <ul class="nav nav-tabs tabs-title" role="tablist" ng-init="$parent.idTab=1">
-                        <li role="presentation" ng-class="{'active' : $parent.idTab==1}" ng-click="$parent.idTab=1">
-                            <a href="" role="tab" data-toggle="tab">
-                                <span class="glyphicon glyphicon-shopping-cart"></span> Orden Principal
+                    <ul class="nav nav-tabs tabs-title" role="tablist">
+                        <li role="presentation" ng-class="{'active' : $parent.idTab==factura.idTab}" 
+                            ng-repeat="factura in lstFacturas">
+                            <a href="" role="tab" ng-click="$parent.idTab=factura.idTab" style="padding-right:32px">
+                                <span class="glyphicon glyphicon-shopping-cart"></span> {{factura.tab}} <span class="label label-primary">{{factura.lstDetalle.length}}</span>
                             </a>
-                        </li>
-                        <li role="presentation" ng-class="{'active' : $parent.idTab==2}">
-                            <a href="" role="tab" data-toggle="tab" style="padding-right:32px" ng-click="$parent.idTab=2">
-                                <span class="glyphicon glyphicon-shopping-cart"></span> Orden #2
-                                <button type="button" class="remove-tab" ng-dblclick="test()">
-                                    <span class="glyphicon glyphicon-remove"></span>
-                                </button>
-                            </a>
-                        </li>
-                        <li role="presentation" ng-class="{'active' : $parent.idTab==3}">
-                            <a href="" role="tab" data-toggle="tab" style="padding-right:32px" ng-click="$parent.idTab=3">
-                                <span class="glyphicon glyphicon-shopping-cart"></span> Orden #3
-                                <button type="button" class="remove-tab" ng-dblclick="test()">
-                                    <span class="glyphicon glyphicon-remove"></span>
-                                </button>
-                            </a>
+                            <button type="button" class="remove-tab" ng-dblclick="quitarFactura()" ng-hide="factura.principal || factura.facturado">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
                         </li>
                         <li role="presentation" style="padding-top:5px">
-                            <button type="button" class="btn btn-default" ng-click="$parent.idTab=99">
+                            <button type="button" class="btn btn-default" ng-click="agregarFactura({})">
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
                         </li>
@@ -91,14 +79,14 @@
 
                 <!-- CONTENT-TABS -->
                 <div class="col-sm-12">
-                    <div class="tab-content">
+                    <div class="tab-content" ng-repeat="factura in lstFacturas" ng-show="$parent.idTab==factura.idTab">
                         <!-- BUSQUEDA Y NIT -->
                         <div class="form-group">
                             <div class="col-sm-6">
                                 <label class="col-sm-3 control-label">BUSCAR</label>
                                 <div class="col-sm-9">
                                     <div class="input-group">
-                                        <input type="text" id="searchPrincipal" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )">
+                                        <input type="text" id="searchPrincipal_{{factura.idTab}}" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )">
                                         <span class="input-group-btn">
                                             <button type="button" class="btn btn-warning" ng-click="buscarCliente( txtCliente, 'principal' );" readonly>
                                                 <span class="glyphicon glyphicon-search"></span>
@@ -109,10 +97,10 @@
                             </div>
         					<label class="col-sm-1 control-label">NIT</label>
         					<div class="col-sm-3">
-        						<input type="text" class="form-control" ng-model="facturacion.datosCliente.nit" ng-disabled="facturacion.datosCliente.idCliente!=1" id="cliente_nit" focus-enter>
+        						<input type="text" class="form-control" ng-model="factura.cliente.nit" ng-disabled="factura.cliente.idCliente!=1" id="cliente_nit" focus-enter>
         					</div>
         					<div class="col-sm-2 col-md-1">
-        						<button type="button" class="btn btn-info" ng-click="editarCliente( facturacion.datosCliente, 'mostrar' );" ng-show="facturacion.datosCliente.idCliente && facturacion.datosCliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
+        						<button type="button" class="btn btn-info" ng-click="editarCliente( factura.cliente, 'mostrar' );" ng-show="factura.cliente.idCliente && factura.cliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
         							<span class="glyphicon glyphicon-pencil"></span> <u>E</u>ditar
         						</button>
         					</div>
@@ -121,16 +109,17 @@
         				<div class="form-group">
         					<label class="col-sm-1 control-label">NOMBRE</label>
         					<div class="col-sm-4">
-        						<input type="text" class="form-control" ng-model="facturacion.datosCliente.nombre" ng-disabled="facturacion.datosCliente.idCliente!=1" focus-enter>
+        						<input type="text" class="form-control" ng-model="factura.cliente.nombre" ng-disabled="factura.cliente.idCliente!=1" focus-enter>
         					</div>
         					<label class="col-sm-2 col-lg-1 control-label">DIRECCION</label>
         					<div class="col-sm-5 col-lg-6">
-        						<input type="text" class="form-control" ng-model="facturacion.datosCliente.direccion" ng-disabled="facturacion.datosCliente.idCliente!=1" focus-enter>
+        						<input type="text" class="form-control" ng-model="factura.cliente.direccion" ng-disabled="factura.cliente.idCliente!=1" focus-enter>
         					</div>
         				</div>
 
                         <!-- DATOS DE PAGO Y DETALLE DE ORDEN -->
                         <div class="row">
+
                             <!-- DETALLE ORDEN -->
                             <div class="col-xs-8 col-sm-7">
                                 <fieldset class="fieldset">
@@ -138,16 +127,45 @@
                                     <table class="table table-hover table-condensed table-responsive">
                                         <thead>
                                             <tr>
-                                                <th>Cant.</th>
+                                                <th style="width:100px">Cantidad</th>
                                                 <th>Orden</th>
                                                 <th>Precio</th>
                                                 <th>Subtotal</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr ng-repeat="orden in lstDetalleOrden">
-                                                <td class="text-center">
-                                                    <input type="number" class="form-control" ng-model="orden.cantidad" max="{{ orden.pendiente }}" min="0" ng-pattern="/^[0-9]+?$/">
+                                            <tr ng-repeat="orden in factura.lstDetalle">
+                                                <td>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" focus-enter
+                                                            ng-model="orden.cantidad"
+                                                            ng-keydown="$event.keyCode!=13&&$event.keyCode!=9&&$event.keyCode!=116&&$event.preventDefault()"
+                                                            ng-focus="focusDetalle( $index )">
+
+                                                        <!-- REASIGNAR -->
+                                                        <div class="reasignar" ng-show="factura.ixDetalle==$index">
+                                                            <button type="button" ng-click="factura.ixDetalle=-1" class="cerrar">
+                                                                <span class="glyphicon glyphicon-remove"></span>
+                                                            </button>
+                                                            <div>
+                                                                <strong>Cantidad</strong>
+                                                                <input type="number" class="form-control" id="fact_orden_{{$index}}" ng-model="orden.cantidadTrasladar" ng-min="1" ng-max="orden.pendiente" focus-enter>
+                                                            </div>
+                                                            <div>
+                                                                <strong>Orden</strong>
+                                                                <select ng-model="factura.idTabDestino" class="form-control" focus-enter>
+                                                                    <option value="">Nueva Orden</option>
+                                                                    <option value="{{tab.idTab}}" ng-hide="tab.idTab==$parent.idTab" ng-repeat="tab in lstFacturas">{{tab.tab}}</option>
+                                                                </select>
+                                                            </div>
+                                                            <div style="float:left;margin-top:5px;width:100%">
+                                                                <button type="button" class="btn btn-block btn-warning" ng-click="factura.ixDetalle=-1" ng-disabled="!orden.cantidadTrasladar" focus-enter>
+                                                                    <span class="glyphicon glyphicon-ok"></span>
+                                                                    <b>Asignar</b>
+                                                                </button>
+                                                            </div>
+                                                        </div><!-- REASIGNAR -->
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <div class="label-border btn-sm" ng-class="{'btn-success':orden.idTipoServicio==2, 'btn-warning':orden.idTipoServicio==3, 'btn-primary':orden.idTipoServicio==1}" title="{{ orden.tipoServicio }}" data-toggle="tooltip" data-placement="top" tooltip>
@@ -166,7 +184,7 @@
                                                     <h4><strong>TOTAL</strong></h4>
                                                 </td>
                                                 <td class="text-right">
-                                                    <h4><strong>Q. {{ 1234 | number: 2 }}</strong></h4>
+                                                    <h4><strong>Q. {{ factura.detallePago.total | number: 2 }}</strong></h4>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -176,19 +194,19 @@
 
                             <!-- DETALLE PAGO -->
                             <div class="col-xs-4 col-sm-5">
-                                <fieldset class="fieldset" style="padding:25px">
+                                <fieldset class="fieldset" style="padding: 5px 25px;">
                                     <legend class="legend info">DETALLE PAGO</legend>
                                     <div class="form-group">
                                         <div class="input-group input-group-lg">
                                             <span class="input-group-addon">
                                                 <b>Total</b>
                                             </span>
-                                            <input type="text" class="form-control" placeholder="Q." disabled>
+                                            <input type="text" class="form-control" value="{{factura.detallePago.total | number:2}}" placeholder="Q." disabled style="background:#fff">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group input-group-lg">
-                                            <input type="text" class="form-control" placeholder="Efectivo">
+                                            <input type="text" class="form-control" ng-model="factura.detallePago.efectivo" placeholder="Efectivo" focus-enter>
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default" type="button">
                                                     <b>Q.</b>
@@ -198,7 +216,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group input-group-lg">
-                                            <input type="text" class="form-control" placeholder="Tarjeta Débito / Crédito">
+                                            <input type="text" class="form-control" ng-model="factura.detallePago.tarjeta" placeholder="Tarjeta Débito / Crédito" focus-enter>
                                             <span class="input-group-btn">
                                                 <button class="btn btn-primary" type="button">
                                                     <span class="glyphicon glyphicon-credit-card"></span>
@@ -209,27 +227,30 @@
                                     <div class="form-group">
                                         <div class="input-group">
                                             <span class="input-group-addon">
-                                                <b>Cambio</b>
+                                                <b>CAMBIO</b>
                                             </span>
-                                            <input type="text" class="form-control" placeholder="Cambio">
+                                            <input type="text" class="form-control" ng-model="factura.detallePago.cambio" placeholder="Q." disabled style="background:#fff">
                                         </div>
                                     </div>
                                     <div class="clearfix"></div>
-                                    <div class="text-right">
-                                        <b>IMPRIMIR</b>
-                                        <div class="btn-group btn-group-sm" role="group" aria-label="">
-                                            <button type="button" class="btn btn-default" ng-click="impresionFactura.type='d'">
-                                                <span class="glyphicon" ng-class="{'glyphicon-check': impresionFactura.type=='d', 'glyphicon-unchecked': impresionFactura.type!='d'}"></span> Detalle
+                                    <div class="form-group">
+                                        <b>Descripción Factura</b>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-default" ng-click="factura.detallePago.tipo='d'">
+                                                <span class="glyphicon" ng-class="{'glyphicon-check': factura.detallePago.tipo=='d', 'glyphicon-unchecked': factura.detallePago.tipo!='d'}"></span> Detalle
                                             </button>
-                                            <button type="button" class="btn btn-default" ng-click="impresionFactura.type='g'">
-                                                <span class="glyphicon" ng-class="{'glyphicon-check': impresionFactura.type=='g', 'glyphicon-unchecked': impresionFactura.type!='g'}"></span> General
+                                            <button type="button" class="btn btn-default" ng-click="factura.detallePago.tipo='p'">
+                                                <span class="glyphicon" ng-class="{'glyphicon-check': factura.detallePago.tipo=='p', 'glyphicon-unchecked': factura.detallePago.tipo!='p'}"></span> Personalizado
                                             </button>
+                                        </div>
+                                        <div class="col-sm-12" ng-show="factura.detallePago.tipo=='p'" style="margin-top:5px">
+                                            <textarea ng-model="factura.detallePago.descripcion" placeholder="Ingrese Descripción de la Factura" rows="3" class="form-control"></textarea>
                                         </div>
                                     </div>
                                     <br>
                                     <div class="form-group">
                                         <div class="text-center">
-                                            <button type="button" class="btn btn-info" ng-click="consultaFacturaCliente()">
+                                            <button type="button" class="btn btn-success" ng-click="facturarOrden( factura )">
                                                 <span class="glyphicon glyphicon-saved"></span> <b>FACTURAR (F6)</b>
                                             </button>
                                         </div>
@@ -544,7 +565,7 @@
                     <button type="button" class="close" ng-click="$hide();">&times;</button>
                     <span class="glyphicon glyphicon-inbox"></span> APERTURA / CIERRE DE CAJA
                 </div>
-                <div class="modal-body" ng-controller="ctrlCaja">
+                <div class="modal-body">
                     <div class="text-right">
                         <p>
                             <button type="button" class="btn btn-warning" ng-click="accionCaja='cierreCaja'" ng-show="caja.idCaja">

@@ -30,7 +30,6 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key, altDerecho )
 	{
-		console.log( event, key, altDerecho );
 		// SI SE ESTA MOSTRANDO LA VENTANA DE CARGANDO
 		if ( $scope.$parent.loading )
 			return false;

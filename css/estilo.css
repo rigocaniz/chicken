@@ -1133,7 +1133,6 @@ div.inactive-key{
 }
 
 .remove-tab{
-    display: none;
     position: absolute;
     border: solid 1px #e4acac;
     background: #fbeded;
@@ -1149,8 +1148,55 @@ div.inactive-key{
     -webkit-border-radius: 20px;
 }
 
-ul.nav-tabs li a:hover .remove-tab{
-    display: block;
+.reasignar{
+    width: 200px;
+    position: absolute;
+    z-index: 500;
+    background: #fff;
+    border: solid 2px #f96400;
+    bottom: 46px;
+    left: -42px;
+    padding: 6px 19px 12px 19px;
+    box-shadow: 0 2px 16px #656565;
+    border-radius: 9px;
+}
+
+.reasignar .cerrar{
+    position: absolute;
+    border: solid 1px #353535;
+    background: #565656;
+    border-radius: 19px;
+    color: #fff;
+    top: -4px;
+    right: -9px;
+    z-index: 2;
+    width: 26px;
+    height: 26px;
+    padding: 4px;
+}
+
+.reasignar:after{
+    bottom: -13px;
+    left: 76px;
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-right: solid 13px transparent;
+    border-left: solid 13px transparent;
+    border-top: solid 12px #f96400;
+}
+
+.reasignar:before{
+    bottom: -14px;
+    left: 74px;
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-right: solid 13px transparent;
+    border-left: solid 13px transparent;
+    border-top: solid 12px rgba(0, 0, 0, 0.16);
 }
 
 

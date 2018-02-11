@@ -43,7 +43,7 @@ app.directive('focusEnter', function () {
                 var code = e.keyCode || e.which;
                 if (code === 13) {
                     e.preventDefault();
-                    var pageElems = document.querySelectorAll('input, select, textarea'),
+                    var pageElems = document.querySelectorAll('input, select, textarea, button'),
                         elem = e.srcElement || e.target,
                         focusNext = false,
                         len = pageElems.length;
