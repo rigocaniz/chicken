@@ -65,7 +65,7 @@
                             <a href="" role="tab" ng-click="$parent.idTab=factura.idTab" style="padding-right:32px">
                                 <span class="glyphicon glyphicon-shopping-cart"></span> {{factura.tab}} <span class="label label-primary">{{factura.lstDetalle.length}}</span>
                             </a>
-                            <button type="button" class="remove-tab" ng-dblclick="quitarFactura()" ng-hide="factura.principal || factura.facturado">
+                            <button type="button" class="remove-tab" ng-dblclick="quitarFactura( factura.idTab )" ng-hide="factura.principal || factura.facturado">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>
                         </li>
@@ -97,7 +97,7 @@
                             </div>
         					<label class="col-sm-1 control-label">NIT</label>
         					<div class="col-sm-3">
-        						<input type="text" class="form-control" ng-model="factura.cliente.nit" ng-disabled="factura.cliente.idCliente!=1" id="cliente_nit" focus-enter>
+        						<input type="text" class="form-control" ng-model="factura.cliente.nit" ng-disabled="factura.cliente.idCliente>0" id="cliente_nit" focus-enter style="font-weight:bold">
         					</div>
         					<div class="col-sm-2 col-md-1">
         						<button type="button" class="btn btn-info" ng-click="editarCliente( factura.cliente, 'mostrar' );" ng-show="factura.cliente.idCliente && factura.cliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
@@ -109,7 +109,7 @@
         				<div class="form-group">
         					<label class="col-sm-1 control-label">NOMBRE</label>
         					<div class="col-sm-4">
-        						<input type="text" class="form-control" ng-model="factura.cliente.nombre" ng-disabled="factura.cliente.idCliente!=1" focus-enter>
+        						<input type="text" class="form-control" ng-model="factura.cliente.nombre" ng-disabled="factura.cliente.idCliente!=1" focus-enter style="font-weight:bold">
         					</div>
         					<label class="col-sm-2 col-lg-1 control-label">DIRECCION</label>
         					<div class="col-sm-5 col-lg-6">
@@ -154,12 +154,12 @@
                                                             <div>
                                                                 <strong>Orden</strong>
                                                                 <select ng-model="factura.idTabDestino" class="form-control" focus-enter>
-                                                                    <option value="">Nueva Orden</option>
+                                                                    <option value="" style="font-weight:bold">Nueva Orden</option>
                                                                     <option value="{{tab.idTab}}" ng-hide="tab.idTab==$parent.idTab" ng-repeat="tab in lstFacturas">{{tab.tab}}</option>
                                                                 </select>
                                                             </div>
                                                             <div style="float:left;margin-top:5px;width:100%">
-                                                                <button type="button" class="btn btn-block btn-warning" ng-click="factura.ixDetalle=-1" ng-disabled="!orden.cantidadTrasladar" focus-enter>
+                                                                <button type="button" class="btn btn-block btn-warning" ng-click="asignarDetalle( factura.idTab, factura.idTabDestino, orden, $index )" ng-disabled="!orden.cantidadTrasladar">
                                                                     <span class="glyphicon glyphicon-ok"></span>
                                                                     <b>Asignar</b>
                                                                 </button>
@@ -463,7 +463,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">NIT</label>
                                     <div class="col-sm-3">
-                                        <input type="text" ng-model="$parent.cliente.nit" class="form-control" id="nit" ng-pattern="/^[0-9-\s]+?$/" maxlength="12" autofocus>
+                                        <input type="text" ng-model="$parent.cliente.nit" class="form-control" id="nit" ng-pattern="/^[0-9-\s]+?$/" maxlength="12" focus-enter>
                                     </div>
                                 </div>
 								<div class="form-group">
@@ -475,7 +475,7 @@
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Dirección</label>
 									<div class="col-sm-9 col-md-8">
-										<input type="text" class="form-control" maxlength="95" ng-model="$parent.cliente.direccion">
+										<input type="text" class="form-control" maxlength="95" ng-model="$parent.cliente.direccion" focus-enter>
 									</div>
 								</div>
                                 <div class="form-group">

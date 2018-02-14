@@ -370,22 +370,27 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 
 		if ( $scope.lstFacturas.length )
 		{
-			factura.idTab     = ( $scope.lstFacturas.length + 1 );
+			$scope.lstFacturas[ 0 ].numeroOrden++;
+			factura.idTab     = $scope.lstFacturas[ 0 ].numeroOrden;
 			factura.tab       = "Orden #" + factura.idTab;
 			factura.principal = false;
 		}
+		else
+			factura.numeroOrden = 1;
 
 		$scope.lstFacturas.push({
+			numeroOrden : factura.numeroOrden,
 			idTab 		: factura.idTab,
 			facturado   : false,
 			tab         : factura.tab,
 			principal   : factura.principal,
 			lstDetalle  : ( factura.lstDetalle || [] ),
 			cliente 	: {
-				idCliente : ( factura.idCliente || '' ),
-				nit       : ( factura.nit || '' ),
-				nombre    : ( factura.nombre || '' ),
-				direccion : ( factura.direccion || '' ),
+				idCliente     : ( factura.idCliente || '' ),
+				nit           : ( factura.nit || '' ),
+				nombre        : ( factura.nombre || '' ),
+				direccion     : ( factura.direccion || '' ),
+				idTipoCliente : ( factura.idTipoCliente || '' )
 			},
 			detallePago : {
 				totalDescuento : '',
@@ -397,11 +402,12 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				descripcion    : ''
 			}
 		});
+
+		return factura.idTab;
 	};
 
 	// SI CAMBIA EL ID
 	$scope.$watch('idTab', function (_new) {
-		console.log( _new );
 		if ( _new > 0 )
 		{
 			$timeout(function () {
@@ -433,9 +439,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		}
 	};
 
-
-
-
 	// REALIZA CALCULO DE FACTURA
 	$scope.calculoFactura = function ( tipoCalculo ) {
 		var indexFactura = $scope.indexArray( 'lstFacturas', 'idTab', $scope.idTab );
@@ -463,8 +466,116 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				$scope.lstFacturas[ indexFactura ].detallePago.totalDescuento = angular.copy( totalDescuento );
 			break;
 		}
-
 	};
+
+	$scope.quitarFactura = function ( idTab )
+	{
+		var ixFactura  = $scope.indexArray( 'lstFacturas', 'idTab', idTab );
+		for (var ix = 0; ix < $scope.lstFacturas[ ixFactura ].lstDetalle.length; ix++)
+		{
+			var cantidad = angular.copy( $scope.lstFacturas[ ixFactura ].lstDetalle[ ix ].cantidad );
+			$scope.lstFacturas[ ixFactura ].lstDetalle[ ix ].cantidadTrasladar = cantidad;
+
+			$scope.asignarDetalle( idTab, 1, $scope.lstFacturas[ ixFactura ].lstDetalle[ ix ], ix );
+
+			// SI EXISTEN ELEMENTOS
+			if ( $scope.lstFacturas[ ixFactura ].lstDetalle.length )
+				ix--;
+		}
+
+		// SI ESTABA SELECCIONADO ELIMINA DE LAS OTRAS ORDENES
+		for (var ix = 0; ix < $scope.lstFacturas.length; ix++)
+			if (  $scope.lstFacturas[ ix ].idTabDestino == idTab )
+				$scope.lstFacturas[ ix ].idTabDestino = '';
+
+		$scope.lstFacturas.splice( ixFactura, 1 );
+		$scope.idTab = '1';
+
+		// ACTUALIZA TOTAL DE FACTURA
+		$scope.calculoFactura( 'totalFactura' );
+	};
+
+	$scope.asignarDetalle = function ( idTabActual, idTabDestino, orden, ixDetalle ) {
+		// SI LA FACTURA NO ESTA DEFINIDA LA CREA
+		if ( !( idTabDestino > 0 ) )
+			idTabDestino = $scope.agregarFactura({});
+
+		orden = angular.copy( orden );
+		
+		var ixFacturaActual  = $scope.indexArray( 'lstFacturas', 'idTab', idTabActual );
+		var ixFacturaDestino = $scope.indexArray( 'lstFacturas', 'idTab', idTabDestino );
+
+		$scope.lstFacturas[ ixFacturaActual ].idTabDestino = idTabDestino.toString();
+
+		if ( orden.cantidadTrasladar > 0 && ixFacturaDestino >= 0 )
+		{
+			var ixDetalleDestino  = -1,
+				cantidadTrasladar = 0;
+
+			// OBTIENE EL INDEX DEL ( MENU-TIPO_SERVICIO )
+			for (var ixD = 0; ixD < $scope.lstFacturas[ ixFacturaDestino ].lstDetalle.length; ixD++) {
+				var actual = $scope.lstFacturas[ ixFacturaDestino ].lstDetalle[ ixD ];
+				if ( actual.idTipoServicio == orden.idTipoServicio && actual.idMenu == orden.idMenu && actual.idCombo == orden.idCombo )
+				{
+					ixDetalleDestino = ixD;
+					break;
+				}
+			}
+
+			cantidadTrasladar = angular.copy( orden.cantidadTrasladar );
+			$scope.lstFacturas[ ixFacturaActual ].ixDetalle = -1;
+
+			// SI SE TRASLADA TODO
+			if ( cantidadTrasladar == orden.pendiente )
+			{
+				orden.cantidadTrasladar = "";
+
+				// SI NO EXISTE DETALLE EN ORDEN DESTINO
+				if ( ixDetalleDestino == -1 )
+					$scope.lstFacturas[ ixFacturaDestino ].lstDetalle.push( orden );
+
+				$scope.lstFacturas[ ixFacturaActual ].lstDetalle.splice( ixDetalle, 1 );
+			}
+			// SI ES MENOR A ORDENES PENDIENTES
+			else
+			{
+				// SI NO EXISTE DETALLE EN ORDEN DESTINO
+				if ( ixDetalleDestino == -1 )
+				{
+					orden.cantidad          = cantidadTrasladar;
+					orden.pendiente         = cantidadTrasladar;
+					orden.cantidadTrasladar = "";
+					$scope.lstFacturas[ ixFacturaDestino ].lstDetalle.push( orden );
+				}
+				
+				// ACTUALIZA DETALLE ACTUAL
+				$scope.lstFacturas[ ixFacturaActual ].lstDetalle[ ixDetalle ].cantidadTrasladar = ''
+				$scope.lstFacturas[ ixFacturaActual ].lstDetalle[ ixDetalle ].cantidad          -= cantidadTrasladar;
+				$scope.lstFacturas[ ixFacturaActual ].lstDetalle[ ixDetalle ].pendiente         -= cantidadTrasladar;
+			}
+
+			// SI EL INDEX DE DETALLE DESTINO EXISTE, ACTUALIZA
+			if ( ixDetalleDestino >= 0 )
+			{
+				$scope.lstFacturas[ ixFacturaDestino ].lstDetalle[ ixDetalleDestino ].cantidadTrasladar = '';
+				$scope.lstFacturas[ ixFacturaDestino ].lstDetalle[ ixDetalleDestino ].cantidad          += cantidadTrasladar;
+				$scope.lstFacturas[ ixFacturaDestino ].lstDetalle[ ixDetalleDestino ].pendiente         += cantidadTrasladar;
+			}
+		}
+
+		// ACTUALIZA TOTAL DE FACTURA
+		$scope.calculoFactura( 'totalFactura' );
+	};
+
+	$scope.facturarOrden = function ( factura ) {
+		console.log( factura );
+	};
+
+
+
+
+
+
 
 
 
@@ -571,9 +682,20 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
                 alertify.notify( data.mensaje,data.respuesta, data.tiempo );
                 if ( data.respuesta == "success" )
                 {
-                	$scope.facturacion.datosCliente = angular.copy( $scope.cliente );
+                	//$scope.facturacion.datosCliente = angular.copy( $scope.cliente );
                 	if( $scope.accion == 'insert' )
-                		$scope.facturacion.datosCliente.idCliente = data.data;
+                		$scope.cliente.idCliente = data.data;
+
+                	var cliente = angular.copy( $scope.cliente );
+
+                	//ASIGNA INFORMACION DE CLIENTE
+	        		var ixFacturaActual  = $scope.indexArray( 'lstFacturas', 'idTab', $scope.idTab );
+					$scope.lstFacturas[ ixFacturaActual ].cliente.idCliente     = cliente.idCliente;
+					$scope.lstFacturas[ ixFacturaActual ].cliente.nit           = cliente.nit;
+					$scope.lstFacturas[ ixFacturaActual ].cliente.nombre        = cliente.nombre;
+					$scope.lstFacturas[ ixFacturaActual ].cliente.direccion     = cliente.direccion;
+					$scope.lstFacturas[ ixFacturaActual ].cliente.idTipoCliente = cliente.idTipoCliente;
+	        		//ASIGNA INFORMACION DE CLIENTE
 
                     $scope.resetValores( 'cliente' );
                     $scope.dialAccionCliente.hide();
@@ -602,6 +724,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
     	$scope.accionCliente = 'actualizar';
     	$scope.accion        = 'update';
     	$scope.cliente = angular.copy( cliente );
+    	console.log( cliente );
     	if( accion == 'mostrar' )
     		$scope.dialAccionCliente.show();
     }
@@ -636,8 +759,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	        	console.log( data );
 	            if( accion == 'principal' && data.lstResultados.length == 0 ) {
 	            	$scope.accionCliente = 'ninguna';
-	            	$scope.facturacion.datosCliente.nombre    = '';
-					$scope.facturacion.datosCliente.direccion = '';
+	            	//$scope.facturacion.datosCliente.nombre    = '';
+					//$scope.facturacion.datosCliente.direccion = '';
 	            	$scope.txtCliente = '';
 	            	$scope.dialAccionCliente.show();
 
@@ -651,7 +774,17 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	            	$scope.lstClientes = [];
 	            }
 	        	else if( ( accion == 'principal' || accion == 'cf' ) && data.lstResultados.length == 1 && data.encontrado ){
-	        		$scope.facturacion.datosCliente = data.lstResultados[ 0 ];
+	        		//$scope.facturacion.datosCliente = data.lstResultados[ 0 ];
+	        		
+	        		//ASIGNA INFORMACION DE CLIENTE
+	        		var ixFacturaActual  = $scope.indexArray( 'lstFacturas', 'idTab', $scope.idTab );
+					$scope.lstFacturas[ ixFacturaActual ].cliente.idCliente     = data.lstResultados[ 0 ].idCliente;
+					$scope.lstFacturas[ ixFacturaActual ].cliente.nit           = data.lstResultados[ 0 ].nit;
+					$scope.lstFacturas[ ixFacturaActual ].cliente.nombre        = data.lstResultados[ 0 ].nombre;
+					$scope.lstFacturas[ ixFacturaActual ].cliente.direccion     = data.lstResultados[ 0 ].direccion;
+					$scope.lstFacturas[ ixFacturaActual ].cliente.idTipoCliente = data.lstResultados[ 0 ].idTipoCliente;
+	        		//ASIGNA INFORMACION DE CLIENTE
+
 	        		$scope.txtCliente = '';
                     
                     if( accion == 'cf' )
