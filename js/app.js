@@ -158,7 +158,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
         if ( $scope.loading )
             return false;
 
-        if ( key == 117 || altDerecho )
+        if ( ( key == 117 || altDerecho ) && !( event.ctrlKey && event.shiftKey ) )
             event.preventDefault();
 
         if( altDerecho && ( key == 13 || key == 92 || key == 91 ) ) {

@@ -65,12 +65,13 @@
                             <a href="" role="tab" ng-click="$parent.idTab=factura.idTab" style="padding-right:32px">
                                 <span class="glyphicon glyphicon-shopping-cart"></span> {{factura.tab}} <span class="label label-primary">{{factura.lstDetalle.length}}</span>
                             </a>
-                            <button type="button" class="remove-tab" ng-dblclick="quitarFactura( factura.idTab )" ng-hide="factura.principal || factura.facturado">
+                            <button type="button" class="remove-tab" ng-dblclick="quitarFactura( factura.idTab )" 
+                                ng-hide="factura.principal" data-title="Doble clic para eliminar" data-placement="left" bs-tooltip>
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>
                         </li>
                         <li role="presentation" style="padding-top:5px">
-                            <button type="button" class="btn btn-default" ng-click="agregarFactura({})">
+                            <button type="button" class="btn btn-default" ng-click="agregarFactura({})" data-title="Ctrl+ESPACIO" data-placement="top" bs-tooltip>
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
                         </li>
@@ -83,7 +84,10 @@
                         <!-- BUSQUEDA Y NIT -->
                         <div class="form-group">
                             <div class="col-sm-6">
-                                <label class="col-sm-3 control-label">BUSCAR</label>
+                                <label class="col-sm-3 control-label">
+                                    BUSCAR
+                                    <p class="small text-info">Ctrl+C</p>
+                                </label>
                                 <div class="col-sm-9">
                                     <div class="input-group">
                                         <input type="text" id="searchPrincipal_{{factura.idTab}}" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )">
@@ -97,7 +101,7 @@
                             </div>
         					<label class="col-sm-1 control-label">NIT</label>
         					<div class="col-sm-3">
-        						<input type="text" class="form-control" ng-model="factura.cliente.nit" ng-disabled="factura.cliente.idCliente>0" id="cliente_nit" focus-enter style="font-weight:bold">
+        						<input type="text" class="form-control" ng-model="factura.cliente.nit" ng-disabled="factura.cliente.idCliente>0" id="cliente_nit" style="font-weight:bold">
         					</div>
         					<div class="col-sm-2 col-md-1">
         						<button type="button" class="btn btn-info" ng-click="editarCliente( factura.cliente, 'mostrar' );" ng-show="factura.cliente.idCliente && factura.cliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
@@ -109,7 +113,7 @@
         				<div class="form-group">
         					<label class="col-sm-1 control-label">NOMBRE</label>
         					<div class="col-sm-4">
-        						<input type="text" class="form-control" ng-model="factura.cliente.nombre" ng-disabled="factura.cliente.idCliente!=1" focus-enter style="font-weight:bold">
+        						<input type="text" class="form-control" ng-model="factura.cliente.nombre" id="nombreCliente_{{factura.idTab}}"  style="font-weight:bold">
         					</div>
         					<label class="col-sm-2 col-lg-1 control-label">DIRECCION</label>
         					<div class="col-sm-5 col-lg-6">
@@ -127,14 +131,17 @@
                                     <table class="table table-hover table-condensed table-responsive">
                                         <thead>
                                             <tr>
+                                                <th>#</th>
                                                 <th style="width:100px">Cantidad</th>
                                                 <th>Orden</th>
                                                 <th>Precio</th>
+                                                <th style="width:148px">Descuento</th>
                                                 <th>Subtotal</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr ng-repeat="orden in factura.lstDetalle">
+                                                <td>{{$index+1}}</td>
                                                 <td>
                                                     <div class="input-group">
                                                         <input type="text" class="form-control" focus-enter
@@ -148,7 +155,7 @@
                                                                 <span class="glyphicon glyphicon-remove"></span>
                                                             </button>
                                                             <div>
-                                                                <strong>Cantidad</strong>
+                                                                <strong>Cantidad <kbd>{{orden.pendiente}}</kbd></strong>
                                                                 <input type="number" class="form-control" id="fact_orden_{{$index}}" ng-model="orden.cantidadTrasladar" ng-min="1" ng-max="orden.pendiente" focus-enter>
                                                             </div>
                                                             <div>
@@ -177,13 +184,47 @@
                                                     <span>{{ orden.descripcion }}</span>
                                                 </td>
                                                 <td>{{ orden.precio | number: 2 }}</td>
-                                                <td>{{ orden.precio*orden.cantidad | number: 2 }}</td>
+                                                <td ng-class="{'danger':orden.conDescuento&&orden.justificacion.length<6}">
+                                                    <div style="position:relative;">
+                                                        <!-- REASIGNAR -->
+                                                        <div class="reasignar" ng-show="factura.ixDesc==$index">
+                                                            <button type="button" ng-click="factura.ixDesc=-1" class="cerrar">
+                                                                <span class="glyphicon glyphicon-remove"></span>
+                                                            </button>
+                                                            <div>
+                                                                <strong>Justificación</strong>
+                                                                <textarea ng-model="orden.justificacion" rows="4" class="form-control"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <!-- REASIGNAR -->
+                                                        <button ng-dblclick="orden.conDescuento=true" class="btn btn-sm btn-info" ng-show="!orden.conDescuento">
+                                                            <b>SI</b>
+                                                        </button>
+                                                        <div class="input-group input-sm" ng-show="orden.conDescuento">
+                                                            <input type="number" class="form-control" ng-model="orden.descuento" 
+                                                                ng-change="calculoFactura( 'totalFactura' )"
+                                                                placeholder="Q." ng-focus="factura.ixDesc=$index" 
+                                                                ng-min="1" ng-max="{{orden.precio*orden.cantidad}}" required>
+                                                            <span class="input-group-btn">
+                                                                <button type="button" class="btn btn-default" 
+                                                                    ng-click="orden.justificacion='';orden.descuento='';orden.conDescuento=0;factura.ixDesc=-1;calculoFactura( 'totalFactura' )">
+                                                                    <span class="glyphicon glyphicon-remove"></span>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <strong data-title="{{ orden.precio*orden.cantidad | number: 2 }}" data-placement="top" tooltip>
+                                                        Q. {{ (orden.precio*orden.cantidad)-orden.descuento | number: 2 }}
+                                                    </strong>
+                                                </td>
                                             </tr>
                                             <tr class="success">
-                                                <td colspan="3" class="text-right">
+                                                <td colspan="4" class="text-right">
                                                     <h4><strong>TOTAL</strong></h4>
                                                 </td>
-                                                <td class="text-right">
+                                                <td>
                                                     <h4><strong>Q. {{ factura.detallePago.total | number: 2 }}</strong></h4>
                                                 </td>
                                             </tr>
@@ -195,7 +236,7 @@
                             <!-- DETALLE PAGO -->
                             <div class="col-xs-4 col-sm-5">
                                 <fieldset class="fieldset" style="padding: 5px 25px;">
-                                    <legend class="legend info">DETALLE PAGO</legend>
+                                    <legend class="legend info">DETALLE PAGO (Ctrl+P)</legend>
                                     <div class="form-group">
                                         <div class="input-group input-group-lg">
                                             <span class="input-group-addon">
@@ -206,7 +247,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group input-group-lg">
-                                            <input type="text" class="form-control" ng-model="factura.detallePago.efectivo" placeholder="Efectivo" focus-enter>
+                                            <input type="number" class="form-control" id="efectivo_{{factura.idTab}}" ng-model="factura.detallePago.efectivo" placeholder="Efectivo" focus-enter ng-change="calculoFactura( 'totalPago' )">
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default" type="button">
                                                     <b>Q.</b>
@@ -216,7 +257,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group input-group-lg">
-                                            <input type="text" class="form-control" ng-model="factura.detallePago.tarjeta" placeholder="Tarjeta Débito / Crédito" focus-enter>
+                                            <input type="number" class="form-control" ng-model="factura.detallePago.tarjeta" placeholder="Tarjeta Débito / Crédito" focus-enter ng-change="calculoFactura( 'totalPago' )">
                                             <span class="input-group-btn">
                                                 <button class="btn btn-primary" type="button">
                                                     <span class="glyphicon glyphicon-credit-card"></span>
@@ -250,7 +291,7 @@
                                     <br>
                                     <div class="form-group">
                                         <div class="text-center">
-                                            <button type="button" class="btn btn-success" ng-click="facturarOrden( factura )">
+                                            <button type="button" class="btn btn-success" ng-click="facturarOrden()">
                                                 <span class="glyphicon glyphicon-saved"></span> <b>FACTURAR (F6)</b>
                                             </button>
                                         </div>
