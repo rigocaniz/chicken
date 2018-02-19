@@ -37,15 +37,12 @@ class Factura
 
 		$detalleCaja = $caja->consultarEstadoCaja();
 
+		//print_r( $data );
 		if( $detalleCaja->idEstadoCaja != 1 ):
 			$this->respuesta = 'danger';
 	 		$this->mensaje   = 'Su <b>CAJA</b> se encuentra <b>' . strtoupper( $caja->consultarEstadoCaja()->estadoCaja ) . "</b> debe aperturarla para poder facturar";
-		
-		elseif( !count( $data->lstFormasPago ) ):
-			$this->respuesta = 'danger';
-	 		$this->mensaje   = 'No se recibió las formas de pago';
 
-		elseif( !count( $data->lstOrden ) ):
+		elseif( !count( $data->lstDetalle ) ):
 			$this->respuesta = 'danger';
 	 		$this->mensaje   = 'No se recibió el detalle de la orden';
 
@@ -63,15 +60,14 @@ class Factura
 			$direccion       = 'NULL';
 
 			// SETEO VARIABLES
-	 		$data->idEstadoFactura           = isset( $data->idEstadoFactura ) 	? (int)$data->idEstadoFactura 	: NULL;
-	 		$data->idEstadoFactura           = (int)$data->idEstadoFactura > 0 	? (int)$data->idEstadoFactura 	: NULL;
-
-	 		$data->datosCliente->idCliente 	 = isset( $data->datosCliente->idCliente ) 	? (int)$data->datosCliente->idCliente 	: NULL;
-	 		$data->datosCliente->idCliente   = (int)$data->datosCliente->idCliente > 0 	? (int)$data->datosCliente->idCliente 	: NULL;
-	 		$data->datosCliente->nombre      = isset( $data->datosCliente->nombre ) 		? (string)$data->datosCliente->nombre 	: NULL;
-	 		$data->nombre                    = strlen( $data->datosCliente->nombre ) > 1	? (string)$data->datosCliente->nombre 	: NULL;
-	 		$data->datosCliente->direccion   = isset( $data->datosCliente->direccion ) 	? (string)$data->datosCliente->direccion 	: NULL;
-	 		$data->direccion   = strlen( $data->datosCliente->direccion ) > 3	? (string)$data->datosCliente->direccion 	: NULL;
+	 		$data->idEstadoFactura      = isset( $data->idEstadoFactura ) 		? (int)$data->idEstadoFactura 			: NULL;
+	 		$data->idEstadoFactura      = (int)$data->idEstadoFactura > 0 		? (int)$data->idEstadoFactura 			: NULL;
+	 		$data->cliente->idCliente 	= isset( $data->cliente->idCliente ) 	? (int)$data->cliente->idCliente 		: NULL;
+	 		$data->cliente->idCliente   = (int)$data->cliente->idCliente > 0 	? (int)$data->cliente->idCliente 		: NULL;
+	 		$data->cliente->nombre      = isset( $data->cliente->nombre ) 		? (string)$data->cliente->nombre 		: NULL;
+	 		$data->nombre               = strlen( $data->cliente->nombre ) > 1	? (string)$data->cliente->nombre 		: NULL;
+	 		$data->cliente->direccion   = isset( $data->cliente->direccion ) 	? (string)$data->cliente->direccion 	: NULL;
+	 		$data->direccion            = strlen( $data->cliente->direccion ) > 3 ? (string)$data->cliente->direccion : NULL;
 
 	 		if( $accion == 'update' ):
 		 		$data->idFactura = isset( $data->idFactura ) 	? (int)$data->idFactura 	: NULL;
@@ -80,13 +76,16 @@ class Factura
 	 			$idFactura = $validar->validarEntero( $data->idFactura, NULL, TRUE, 'El ID de la FACTURA no es válida' );
 	 		endif;
 
-			$idEstadoFactura = $validar->validarEntero( $data->idEstadoFactura, NULL, TRUE, 'El estado de la factura no es válido' );
-			$idCliente       = $validar->validarEntero( $data->datosCliente->idCliente, NULL, TRUE, 'El Código del Cliente no es válido' );
+			if( $accion <> 'insert' )
+				$idEstadoFactura = $validar->validarEntero( $data->idEstadoFactura, NULL, TRUE, 'El estado de la factura no es válido' );
+
+			$idCliente       = $validar->validarEntero( $data->cliente->idCliente, NULL, TRUE, 'El Código del Cliente no es válido' );
 			$nombre          = $this->con->real_escape_string( $validar->validarTexto( $data->nombre, NULL, TRUE, 3, 60, 'el nombre del combo' ) );
 			$direccion       = $this->con->real_escape_string( $validar->validarTexto( $data->direccion, NULL, TRUE, 3, 75, ' dirección del cliente' ) );
 
-			$total  = (double)$data->total;
-			$idCaja = (int)$detalleCaja->idCaja;
+			$total           = (double)$data->detallePago->total;
+			$idCaja          = (int)$detalleCaja->idCaja;
+
 
 	 		// OBTENER RESULTADO DE VALIDACIONES
 	 		if( $validar->getIsError() ):
@@ -115,9 +114,9 @@ class Factura
  					else
  					{
 	 					if( $this->respuesta == 'success'  )
-	 						$this->consultaFormaPago( $accion, $idFactura, $total, $data->lstFormasPago );
+	 						$this->consultaFormaPago( $accion, $idFactura, $data->detallePago );
 						if( $this->respuesta == 'success'  )
-	 						$this->consultaDetalleFactura( $accion, $idFactura, $data->agrupado, $data->lstOrden );
+	 						$this->consultaDetalleFactura( $accion, $idFactura, $data->lstDetalle );
  					}
 		 		}
 		 		else{
@@ -135,101 +134,59 @@ class Factura
  		return $this->getRespuesta();
 	}
 
-
-	private function consultaDetalleFactura( $accion, $idFactura, $agrupado, $lstOrden )
+	// DETALLE DE FACTURA // INSERT
+	private function consultaDetalleFactura( $accion, $idFactura, $lstDetalle )
 	{
-		$agrupado  = (int)$agrupado;
 		$validar   = new Validar();
 		$guardados = 0;
+		$idFactura = (int)$idFactura;
 
-		foreach ( $lstOrden AS $ixOrden => $orden ) {
-			$idFactura           = (int)$idFactura;
+		foreach ( $lstDetalle AS $ixOrden => $orden )
+		{
 			$idDetalleOrdenMenu  = "NULL";
 			$idDetalleOrdenCombo = "NULL";
-			$comentario          = "NULL";
+			$justificacion       = "NULL";
 			$precioMenu          = (double)$orden->precio;
-			$descuento           = (double)$orden->descuento;
+			$descuento           = 0;
 
-			if( (int)$orden->cobrarTodo ):
+			if( (int)$orden->idCombo )
+				$idDetalleOrdenCombo = (int)$orden->idDetalleOrdenCombo;
+			else
+				$idDetalleOrdenMenu = (int)$orden->idDetalleOrdenCombo;
+			
+			if( isset( $orden->conDescuento ) AND (int)$orden->conDescuento )
+			{
+				$justificacion = "'" . $this->con->real_escape_string( $orden->justificacion ) . "'";
+				$descuento     = (double)$orden->descuento;
+			}
 
-				if( $agrupado ) {
+			$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precioMenu}, {$descuento}, {$justificacion} );";
 
-					$cantidad = (int)$orden->cantidad;
+			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
+			{
+				$this->siguienteResultado();
 
-					foreach ( $orden->lstDetalle as $ixDetalle => $detalle ) {
-
-						if( (int)$orden->esCombo )
-							$idDetalleOrdenCombo = (int)$detalle->idDetalleOrdenCombo;
-						else
-							$idDetalleOrdenMenu = (int)$detalle->idDetalleOrdenMenu;
-						
-						$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precioMenu}, {$descuento}, '{$comentario}' );";
-
-//						echo $sql;
-
-						if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-
-							$this->siguienteResultado();
-
-							$this->respuesta = $row->respuesta;
-							$this->mensaje   = $row->mensaje;
-							
-							if( $this->respuesta == 'success' ){
-								$this->tiempo = 2;
-								$guardados++;
-							}
-							elseif( $this->respuesta == 'danger' )
-								$this->mensaje .= ' (Detalle Factura)';
-
-							$cantidad--;
-						}
-						else{
-							$this->respuesta = 'danger';
-							$this->mensaje   = 'Error al ejecutar la operacion (Detalle Factura)';
-						}
-
-						if( $this->respuesta == 'danger' OR $cantidad == 0 )
-							break;
-					}
+				$this->respuesta = $row->respuesta;
+				$this->mensaje   = $row->mensaje;
+				
+				if( $this->respuesta == 'success' ){
+					$this->tiempo = 2;
+					$guardados++;
 				}
-				else {
-
-					
-					if( (int)$orden->esCombo )
-						$idDetalleOrdenCombo = (int)$orden->idDetalleOrdenCombo;
-					else
-						$idDetalleOrdenMenu = (int)$orden->idDetalleOrdenMenu;
-
-					$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precioMenu}, {$descuento}, {$comentario} );";
-
-					echo $sql . "\n";
-
-					if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-						$this->siguienteResultado();
-
-						$this->respuesta = $row->respuesta;
-						$this->mensaje   = $row->mensaje;
-						
-						if( $this->respuesta == 'success' ){
-							$this->tiempo = 2;
-							$guardados++;
-						}
-						elseif( $this->respuesta == 'danger' )
-							$this->mensaje .= ' (Detalle Factura)';
-					}
-					else{
-						$this->respuesta = 'danger';
-						$this->mensaje   = 'Error al ejecutar la operacion (Detalle Factura)';
-					}
-
-					if( $this->respuesta == 'danger' )
-						break;
-				}
-
-			endif;
+				elseif( $this->respuesta == 'danger' )
+					$this->mensaje .= ' (Detalle Factura)';
+			}
+			else{
+				$this->respuesta = 'danger';
+				$this->mensaje   = 'Error al ejecutar la operacion (Detalle Factura)';
+			}
+			
+			if( $this->respuesta == 'danger' )
+				break;
 		}
 
-		if( !$guardados ){
+		if( !$guardados )
+		{
 			$this->respuesta = 'danger';
 			$this->mensaje   = strlen( $this->mensaje ) ? $this->mensaje : 'No se realizó ningun cobro de la orden';
 			$this->tiempo    = 6;
@@ -237,54 +194,84 @@ class Factura
 	}
 
 
-	public function consultaFormaPago( $accion, $idFactura, $total, $lstFormasPago )
-	{
+	public function consultaFormaPago( $accion, $idFactura, $detallePago )
+	{		
 		$guardados = 0;
-		$total     = (double)$total;
+		$total     = (double)$detallePago->total;
+		$idFactura = (int)$idFactura;
+		
+		// EFECTIVO
+		if( $detallePago->efectivo && (double)$detallePago->efectivo > 0  )
+		{
+			$idFormaPago = 1;
 
-		foreach ( $lstFormasPago AS $ixFormaPago => $formaPago ) {
+			if( $detallePago->efectivo > $total )
+				$monto = $detallePago->efectivo -= ( $detallePago->efectivo - $total );
+			else
+				$monto = $detallePago->efectivo;
 
-			if( isset( $formaPago->monto ) && $formaPago->monto > 0  ){
+			$sql = "CALL consultaFormaPago( '{$accion}', {$idFactura}, {$idFormaPago}, {$monto} );";
 
-				$idFormaPago = (int)$formaPago->idFormaPago;
-				$idFactura   = (int)$idFactura;
-				$monto       = (double)$formaPago->monto;
-
-				if( $monto > $total )
-					$monto = $monto - ( $monto - $total );
-
-				$sql = "CALL consultaFormaPago( '{$accion}', {$idFactura}, {$idFormaPago}, {$monto} );";
-
-				if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-					$this->siguienteResultado();
-					$this->respuesta = $row->respuesta;
-					$this->mensaje   = $row->mensaje;
-					
-					if( $this->respuesta == 'success' ) {
-						$this->tiempo = 2;
-						$guardados++;
-						$total -= $monto;
-					}
-					elseif( $this->respuesta == 'danger' )
-						$this->mensaje .= ' (Forma de Pago)';
+			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
+			{
+				$this->siguienteResultado();
+				$this->respuesta = $row->respuesta;
+				$this->mensaje   = $row->mensaje;
+				
+				if( $this->respuesta == 'success' ) {
+					$this->tiempo = 2;
+					$guardados++;
+					$total -= $detallePago->efectivo;
 				}
-				else{
-					$this->respuesta = 'danger';
-					$this->mensaje   = 'Error al ejecutar la operacion (Forma de Pago)';
-				}
-
-				if( $this->respuesta == 'danger' )
-					break;
+				elseif( $this->respuesta == 'danger' )
+					$this->mensaje .= ' (Forma de Pago)';
 			}
-			
+			else{
+				$this->respuesta = 'danger';
+				$this->mensaje   = 'Error al ejecutar la operacion (Forma de Pago)';
+			}
+		}
+		// TARJETA
+		if( $detallePago->tarjeta && (double)$detallePago->tarjeta > 0  )
+		{
+			$idFormaPago = 2;
+
+			if( $detallePago->tarjeta > $total )
+				$monto = $detallePago->tarjeta -= ( $detallePago->tarjeta - $total );
+			else
+				$monto = $detallePago->tarjeta;
+
+			$sql = "CALL consultaFormaPago( '{$accion}', {$idFactura}, {$idFormaPago}, {$monto} );";
+
+			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
+			{
+				$this->siguienteResultado();
+				$this->respuesta = $row->respuesta;
+				$this->mensaje   = $row->mensaje;
+				
+				if( $this->respuesta == 'success' ) {
+					$this->tiempo = 2;
+					$guardados++;
+					$total -= $detallePago->efectivo;
+				}
+				elseif( $this->respuesta == 'danger' )
+					$this->mensaje .= ' (Forma de Pago)';
+			}
+			else{
+				$this->respuesta = 'danger';
+				$this->mensaje   = 'Error al ejecutar la operacion (Forma de Pago)';
+			}
 		}
 
-		if( !$guardados ){
+		// VALIDACIONES
+		if( !$guardados )
+		{
 			$this->respuesta = 'danger';
 			$this->mensaje   = 'No se registró ningun monto en la forma de pago';
 			$this->tiempo    = 7;
 		}
-		elseif( $total > 0  ){
+		elseif( $total > 0  )
+		{
 			$this->respuesta = 'danger';
 			$this->mensaje   = 'El Total del monto ingresados no cubre el <b>TOTAL DE LA ORDEN</b>';
 			$this->tiempo    = 8;

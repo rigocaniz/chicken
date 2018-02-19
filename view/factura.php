@@ -18,8 +18,7 @@
             <a href="#/">
                 <span class="glyphicon glyphicon-home" style="font-size: 20px; padding: 10px"></span>
             </a>
-            <br><br>
-            <div class="text-right">
+            <div class="text-right" style="margin-top: -25px; margin-right: 90px">
                 <button type="button" class="btn btn-sm btn-primary" ng-click="dialCaja.show()">
                     <span class="glyphicon glyphicon-inbox"></span> ACCIONES DE CAJA
                 </button>
@@ -58,7 +57,7 @@
                 </div>
 
                 <!-- TABS -->
-                <div class="col-sm-12">
+                <div class="col-sm-12" style="margin-top: -15px">
                     <ul class="nav nav-tabs tabs-title" role="tablist">
                         <li role="presentation" ng-class="{'active' : $parent.idTab==factura.idTab}" 
                             ng-repeat="factura in lstFacturas">
@@ -183,7 +182,7 @@
                                                     <span class="glyphicon glyphicon-gift" ng-show="orden.idCombo>0"></span>
                                                     <span>{{ orden.descripcion }}</span>
                                                 </td>
-                                                <td>{{ orden.precio | number: 2 }}</td>
+                                                <td class="text-right">{{ orden.precio | number: 2 }}</td>
                                                 <td ng-class="{'danger':orden.conDescuento&&orden.justificacion.length<6}">
                                                     <div style="position:relative;">
                                                         <!-- REASIGNAR -->
@@ -214,17 +213,17 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td class="text-right">
                                                     <strong data-title="{{ orden.precio*orden.cantidad | number: 2 }}" data-placement="top" tooltip>
                                                         Q. {{ (orden.precio*orden.cantidad)-orden.descuento | number: 2 }}
                                                     </strong>
                                                 </td>
                                             </tr>
                                             <tr class="success">
-                                                <td colspan="4" class="text-right">
+                                                <td colspan="5" class="text-right">
                                                     <h4><strong>TOTAL</strong></h4>
                                                 </td>
-                                                <td>
+                                                <td class="text-right">
                                                     <h4><strong>Q. {{ factura.detallePago.total | number: 2 }}</strong></h4>
                                                 </td>
                                             </tr>
@@ -606,7 +605,7 @@
                     <button type="button" class="close" ng-click="$hide();">&times;</button>
                     <span class="glyphicon glyphicon-inbox"></span> APERTURA / CIERRE DE CAJA
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" ng-controller="ctrlCaja">
                     <div class="text-right">
                         <p>
                             <button type="button" class="btn btn-warning" ng-click="accionCaja='cierreCaja'" ng-show="caja.idCaja">

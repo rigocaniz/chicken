@@ -640,19 +640,18 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		if ( ixFactura == -1 )
 			return false;
 
-		var msgError = null;
+		var msgError = '';
 
 		var factura = angular.copy( $scope.lstFacturas[ ixFactura ] );
 
 		console.log( factura );
-
 
 		// VALIDA CLIENTE
 		if ( factura.facturado )
 			msgError = "Orden ya facturada";
 
 		// VALIDA CLIENTE
-		else if ( !( factura.cliente.idCliente > 0 ) )
+		else if ( !( factura.cliente.idCliente && factura.cliente.idCliente > 0 ) )
 			msgError = "Cliente no definido para esta factura";
 
 		// VALIDA FORMA DE PAGO
@@ -667,7 +666,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		else if ( !( factura.detallePago.total > 0 ) )
 			msgError = "El monto total de la orden debe ser mayor a cero";
 
-		if ( msgError === null ) {
+		if ( msgError === '' ) {
 
 			for (var ix = 0; ix < factura.lstDetalle.length; ix++) {
 				factura.lstDetalle[ ix ].descuento = $scope.convert( factura.lstDetalle[ ix ].descuento, 'float', 0 );
@@ -678,20 +677,19 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				else if ( factura.lstDetalle[ ix ].conDescuento && !( factura.lstDetalle[ ix ].justificacion.length > 5 ) )
 					msgError = "Revise JUSTIFICACION de Descuento de Detalle Orden: <b>#" + ( ix + 1 ) + "</b>";
 				
-				if ( msgError !== null )
+				if ( msgError !== '' )
 					break;
 			}
 		}
 
-
-
+		console.log( msgError, ' ::: ' ,msgError.length  );
 		// SI OCURRIO ALGUN ERROR
-		if ( msgError != null && msgError.length )
+		if ( msgError != null && ( msgError.length ) )
 		{
 			alertify.notify( msgError, 'danger', 5);
+			return false;
 		}
-
-		return false;
+		console.log( factura );
 
 
 		$scope.facturacion.total = $scope.retornarTotalOrden();
@@ -701,6 +699,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 
 		var vuelto = ( ( efectivo + tarjeta ) - $scope.facturacion.total );
 		
+		/*
 		if( !($scope.facturacion.datosCliente.idCliente && $scope.facturacion.datosCliente.idCliente > 0) )
 			alertify.notify('Seleccione un cliente', 'warning', 4);
 		
@@ -717,11 +716,12 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			alertify.notify('Verifique que la forma de pago este correcta', 'warning', 4);
 
 		else {
+			*/
 
-			var factura = angular.copy( $scope.facturacion );
+			//var factura = angular.copy( $scope.facturacion );
 
 			// MONTO REAL EN EFECTIVO
-			factura.lstFormasPago[ 0 ].monto -= vuelto;
+			//factura.lstFormasPago[ 0 ].monto -= vuelto;
 
 			$scope.$parent.showLoading( 'Guardando...' );
 			
@@ -745,7 +745,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				$scope.$parent.hideLoading();
 			});
 			
-		}
+		//}
 	};
 
 	// SI CAMBIA EL ID

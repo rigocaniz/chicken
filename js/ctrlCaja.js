@@ -60,7 +60,7 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 			opcion : 'inicioCaja'
 		})
 		.success(function(data){
-			console.log(data);
+			console.log( "iniciocaja::: ", data );
 			$scope.caja = data;
 			/*
 			$scope.caja.cajero            = data.cajero;
