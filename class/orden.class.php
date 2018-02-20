@@ -1849,7 +1849,6 @@ class Orden
 
 		$sql = "SELECT * FROM
 				((SELECT
-					doc.idDetalleOrdenCombo,
 					c.idCombo,
 				    NULL AS 'idMenu',
 				    c.codigo,
@@ -1876,7 +1875,6 @@ class Orden
 				ORDER BY doc.idCombo ASC)
 					UNION ALL
 				(SELECT
-					dom.idDetalleOrdenMenu,
 					NULL AS 'idCombo',
 					m.idMenu,
 				    m.codigo,
@@ -1905,16 +1903,16 @@ class Orden
 
 		if( $rs = $this->con->query( $sql ) ) {
 			while ( $row = $rs->fetch_object() ):
-				$row->idDetalleOrdenCM = (int)$row->idDetalleOrdenCombo; 	// COMBO / MENU
-				$row->cantidad         = (int)$row->cantidad;
-				$row->facturado        = (int)$row->facturado;
-				$row->pendiente        = ( $row->cantidad - $row->facturado );
-				$row->precio           = (double)$row->precio;
-				$row->conDescuento     = 0;
-				$row->descuento        = '';
-				$row->justificacion    = '';
-				$row->imagen           = file_exists( $row->imagen ) ? $row->imagen : 'img-menu/notFound.png';
-				$lst[]                 = $row;
+				$row->idOrdenCliente = (int)$idOrdenCliente;
+				$row->cantidad       = (int)$row->cantidad;
+				$row->facturado      = (int)$row->facturado;
+				$row->pendiente      = ( $row->cantidad - $row->facturado );
+				$row->precio         = (double)$row->precio;
+				$row->conDescuento   = 0;
+				$row->descuento      = '';
+				$row->justificacion  = '';
+				$row->imagen         = file_exists( $row->imagen ) ? $row->imagen : 'img-menu/notFound.png';
+				$lst[]               = $row;
 			endwhile;
 		}
 

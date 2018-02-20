@@ -140,47 +140,113 @@ class Factura
 		$validar   = new Validar();
 		$guardados = 0;
 		$idFactura = (int)$idFactura;
-
+		//print_r( $lstDetalle );
 		foreach ( $lstDetalle AS $ixOrden => $orden )
 		{
+			$lst                 = array();
 			$idDetalleOrdenMenu  = "NULL";
 			$idDetalleOrdenCombo = "NULL";
 			$justificacion       = "NULL";
-			$precioMenu          = (double)$orden->precio;
-			$descuento           = 0;
+			$precioO             = (double)$orden->precio;
+			$descuentoT          = 0;
+			$idOrdenCliente      = $validar->validarEntero( $orden->idOrdenCliente, NULL, TRUE, 'Orden de Cliente no Definida' );
+			$idTipoServicio      = $validar->validarEntero( $orden->idTipoServicio, NULL, TRUE, 'Tipo de Servicio no Definido' );
+			$idCombo             = $validar->validarEntero( $orden->idCombo, 0, FALSE, 'No. de Combo inválido' );
+			$idMenu              = $validar->validarEntero( $orden->idMenu, 0, FALSE, 'No. de Menu inválido' );
+			$cantidad            = $validar->validarEntero( $orden->cantidad, 0, FALSE, 'Menus Seleccionados' );
 
-			if( (int)$orden->idCombo )
-				$idDetalleOrdenCombo = (int)$orden->idDetalleOrdenCombo;
+			if ( $idCombo )
+				$sql = "SELECT 
+							idDetalleOrdenCombo
+						FROM detalleOrdenCombo
+						WHERE idOrdenCliente = {$idOrdenCliente}
+							AND idCombo = {$idCombo}
+							AND idTipoServicio = {$idTipoServicio}
+						    AND idEstadoDetalleOrden <> 6
+                            AND idEstadoDetalleOrden <> 10
+						ORDER BY idEstadoDetalleOrden ASC, idDetalleOrdenCombo ASC
+						LIMIT {$cantidad}; ";
 			else
-				$idDetalleOrdenMenu = (int)$orden->idDetalleOrdenCombo;
+				$sql = "SELECT
+							idDetalleOrdenMenu
+						FROM detalleOrdenMenu 
+						WHERE idOrdenCliente = {$idOrdenCliente}
+							AND idMenu = {$idMenu}
+							AND idTipoServicio = {$idTipoServicio}
+						    AND idEstadoDetalleOrden <> 6
+                            AND idEstadoDetalleOrden <> 10
+						    AND !perteneceCombo
+						ORDER BY idEstadoDetalleOrden ASC, idDetalleOrdenMenu ASC
+						LIMIT {$cantidad}; ";
 			
-			if( isset( $orden->conDescuento ) AND (int)$orden->conDescuento )
-			{
-				$justificacion = "'" . $this->con->real_escape_string( $orden->justificacion ) . "'";
-				$descuento     = (double)$orden->descuento;
+			$result = $this->con->query( $sql );
+			while( $result AND $row = $result->fetch_object() )
+		 		$lst[] = $row;
+
+ 			if( isset( $orden->conDescuento ) AND (int)$orden->conDescuento )
+ 			{
+				$descuentoT = (double)$orden->descuento;
 			}
 
-			$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precioMenu}, {$descuento}, {$justificacion} );";
+		 	// SI LOS SELECCIONADOS ES IGUAL AL NUMERO DE DETALLE
+		 	if ( count( $lst ) == $cantidad )
+		 	{
+		 		foreach ( $lst as $item ):
+			 		
+			 		$justificacion = "NULL";
+			 		$precio        = $precioO;
+			 		$descuento     = 0;
 
-			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
-			{
-				$this->siguienteResultado();
+			 		if( $descuentoT )
+			 			$justificacion = "'" . $this->con->real_escape_string( $orden->justificacion ) . "'";
 
-				$this->respuesta = $row->respuesta;
-				$this->mensaje   = $row->mensaje;
-				
-				if( $this->respuesta == 'success' ){
-					$this->tiempo = 2;
-					$guardados++;
-				}
-				elseif( $this->respuesta == 'danger' )
-					$this->mensaje .= ' (Detalle Factura)';
+			 		if( $descuentoT >= $precioO ) {
+			 			$descuento = $precioO;
+			 			$precio    = 0;
+			 		}
+			 		elseif( $descuentoT ){
+			 			$descuento = $descuentoT;
+			 			$precio    = ( $precioO - $descuentoT );
+			 		}
+
+			 		if ( isset( $item->idDetalleOrdenMenu ) ) {
+			 			$idDetalleOrdenMenu = $item->idDetalleOrdenMenu;
+			 		}
+			 		else
+			 			$idDetalleOrdenCombo = $item->idDetalleOrdenCombo;
+
+					$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precio}, {$descuento}, {$justificacion} );";
+
+					if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
+					{
+						$this->siguienteResultado();
+
+						$this->respuesta = $row->respuesta;
+						$this->mensaje   = $row->mensaje;
+						
+						if( $this->respuesta == 'success' )
+						{
+							$this->tiempo = 2;
+							$guardados++;
+							if( $descuentoT >= $precioO )
+								$descuentoT -= $precioO;
+							elseif( $descuentoT )
+					 			$descuentoT = 0;
+						}
+						elseif( $this->respuesta == 'danger' )
+							$this->mensaje .= ' (Detalle Factura)';
+					}
+					else{
+						$this->respuesta = 'danger';
+						$this->mensaje   = 'Error al ejecutar la operacion (Detalle Factura)';
+					}
+					
+					if( $this->respuesta == 'danger' )
+						break;
+
+		 		endforeach;
 			}
-			else{
-				$this->respuesta = 'danger';
-				$this->mensaje   = 'Error al ejecutar la operacion (Detalle Factura)';
-			}
-			
+
 			if( $this->respuesta == 'danger' )
 				break;
 		}
