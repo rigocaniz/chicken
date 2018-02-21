@@ -980,7 +980,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 
 	            	console.log(data.lstResultados[ 0 ].nit);
 	            	if ( data.lstResultados[ 0 ].nit == 'CF' )
-	            		$scope.focusHtml( 'nombreCliente_' + $scope.idTab );
+	            		$scope.focusHtml( 'nombreCliente_' + $scope.idTab, true );
 	            	
 	            	else
 	            		$scope.focusHtml( 'efectivo_' + $scope.idTab );
@@ -1046,10 +1046,13 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		return index;
 	};
 
-	$scope.focusHtml = function (element) {
-		console.log( element );
+	$scope.focusHtml = function (element, select) {
 		$timeout(function() {
 			document.getElementById( element ) && document.getElementById( element ).focus();
+
+			// SI DEBE SELECCIONAR EL TEXTO
+			if ( select )
+				document.getElementById( element ) && document.getElementById( element ).select();
 		});
 	};
 
