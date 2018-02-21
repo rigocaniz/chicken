@@ -89,7 +89,7 @@
                                 </label>
                                 <div class="col-sm-9">
                                     <div class="input-group">
-                                        <input type="text" id="searchPrincipal_{{factura.idTab}}" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )">
+                                        <input type="text" id="searchPrincipal_{{factura.idTab}}" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode==13&&$event.preventDefault();$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )">
                                         <span class="input-group-btn">
                                             <button type="button" class="btn btn-warning" ng-click="buscarCliente( txtCliente, 'principal' );" readonly>
                                                 <span class="glyphicon glyphicon-search"></span>
@@ -196,7 +196,7 @@
                                                             </div>
                                                         </div>
                                                         <!-- REASIGNAR -->
-                                                        <button ng-dblclick="orden.conDescuento=true" class="btn btn-sm btn-info" ng-show="!orden.conDescuento">
+                                                        <button ng-click="orden.conDescuento=true" class="btn btn-sm btn-info" ng-show="!orden.conDescuento">
                                                             <b>SI</b>
                                                         </button>
                                                         <div class="input-group input-sm" ng-show="orden.conDescuento">
