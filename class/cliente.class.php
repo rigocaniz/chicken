@@ -91,7 +91,6 @@ class Cliente
 
  	function consultarCliente( $valor )
  	{
- 		//$lstClientes = [];
  		$where       = "";
  		$tipo        = "";
  		
@@ -123,7 +122,7 @@ class Cliente
  		}
 
 	 	$sql = "SELECT * FROM vstCliente where $where ;";
-	 	
+
 	 	if( $rs = $this->con->query( $sql ) AND $rs->num_rows > 0 ){
 	 		$resultado->encontrado = TRUE;
 	 		while( $row = $rs->fetch_object() )
@@ -143,11 +142,6 @@ class Cliente
 	 	}
 
 	 	return $resultado;
- 	}
-
- 	function consultarClientes()
- 	{
-
  	}
 
 

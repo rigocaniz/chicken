@@ -1870,7 +1870,8 @@ class Orden
 					LEFT JOIN detalleOrdenFactura AS dof
 						ON dof.idDetalleOrdenCombo = doc.idDetalleOrdenCombo
 				WHERE doc.idOrdenCliente = {$idOrdenCliente} 
-				    AND idEstadoDetalleOrden != 10
+				    AND idEstadoDetalleOrden <> 6
+					AND idEstadoDetalleOrden <> 10
 				GROUP BY doc.idCombo, doc.idTipoServicio
 				ORDER BY doc.idCombo ASC)
 					UNION ALL
@@ -1897,7 +1898,8 @@ class Orden
 						ON dof.idDetalleOrdenMenu = dom.idDetalleOrdenMenu
 				WHERE dom.idOrdenCliente = {$idOrdenCliente} 
 					AND !dom.perteneceCombo
-				    AND idEstadoDetalleOrden != 10
+				    AND idEstadoDetalleOrden <> 6
+					AND idEstadoDetalleOrden <> 10
 				GROUP BY dom.idMenu, dom.idTipoServicio
 				ORDER BY dom.idMenu ASC))dt;";
 

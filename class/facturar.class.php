@@ -115,6 +115,7 @@ class Factura
  					{
 	 					if( $this->respuesta == 'success'  )
 	 						$this->consultaFormaPago( $accion, $idFactura, $data->detallePago );
+						
 						if( $this->respuesta == 'success'  )
 	 						$this->consultaDetalleFactura( $accion, $idFactura, $data->lstDetalle );
  					}
@@ -184,9 +185,7 @@ class Factura
 		 		$lst[] = $row;
 
  			if( isset( $orden->conDescuento ) AND (int)$orden->conDescuento )
- 			{
 				$descuentoT = (double)$orden->descuento;
-			}
 
 		 	// SI LOS SELECCIONADOS ES IGUAL AL NUMERO DE DETALLE
 		 	if ( count( $lst ) == $cantidad )

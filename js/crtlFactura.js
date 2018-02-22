@@ -64,6 +64,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	
 
 	$scope.seleccionarDeBusqueda = function ( orden ) {
+		console.log( orden );
 		$scope.miIndex = -1;
 		$scope.dialOrdenBusqueda.hide();
 		$scope.facturacion.numeroTicket   = angular.copy( parseInt( orden.numeroTicket ) );
@@ -156,6 +157,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			$scope.idEstadoOrden = 0;
 			$scope.deBusqueda    = true;
 		}
+
+		console.log( 'orden>>> ', orden.idOrdenCliente );
 
 		$scope.$parent.loading = true;
 		$scope.infoOrden = orden;
@@ -397,7 +400,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		$http.post('consultas.php', { opcion : 'detalleOrdenFactura', idOrdenCliente : orden.idOrdenCliente })
 		.success(function (data) {
 			$scope.$parent.loading = false;
-
 			console.log( data );
 
 			if ( Array.isArray( data ) )
@@ -693,61 +695,36 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		}
 		console.log( factura );
 
-
 		$scope.facturacion.total = $scope.retornarTotalOrden();
 		
-		var efectivo = ( $scope.facturacion.lstFormasPago[ 0 ].monto || 0 ),
-			tarjeta  = ( $scope.facturacion.lstFormasPago[ 1 ].monto || 0 );
+		//var efectivo = ( $scope.facturacion.lstFormasPago[ 0 ].monto || 0 ),
+		//	tarjeta  = ( $scope.facturacion.lstFormasPago[ 1 ].monto || 0 );
 
-		var vuelto = ( ( efectivo + tarjeta ) - $scope.facturacion.total );
+		//var vuelto = ( ( efectivo + tarjeta ) - $scope.facturacion.total );
 		
-		/*
-		if( !($scope.facturacion.datosCliente.idCliente && $scope.facturacion.datosCliente.idCliente > 0) )
-			alertify.notify('Seleccione un cliente', 'warning', 4);
+		// MONTO REAL EN EFECTIVO
+		//factura.lstFormasPago[ 0 ].monto -= vuelto;
+		$scope.$parent.showLoading( 'Guardando...' );
 		
-		else if( !($scope.facturacion.idOrdenCliente && $scope.facturacion.idOrdenCliente > 0) )
-			alertify.notify('Número de orden de Cliente no válido', 'warning', 4);
-		
-		else if( !($scope.facturacion.lstOrden && $scope.facturacion.lstOrden.length > 0) )
-			alertify.notify('La lista de ordenes está vacia', 'warning', 4);
-		
-		else if( !($scope.facturacion.total && $scope.facturacion.total > 0) )
-			alertify.notify('El total del cobro debe ser mayor a 0', 'warning', 4);
-
-		else if( !( vuelto >= 0 ) )
-			alertify.notify('Verifique que la forma de pago este correcta', 'warning', 4);
-
-		else {
-			*/
-
-			//var factura = angular.copy( $scope.facturacion );
-
-			// MONTO REAL EN EFECTIVO
-			//factura.lstFormasPago[ 0 ].monto -= vuelto;
-
-			$scope.$parent.showLoading( 'Guardando...' );
-			
-			$http.post('consultas.php',{
-			    opcion : "consultaFacturaCliente",
-			    accion : $scope.accion,
-			    data   : factura
-			}).success(function(data){
-			    console.log(data);		    
-				alertify.set('notifier','position', 'top-right');
-				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
-				if( data.respuesta == 'success' ) {
-					$scope.resetValores( 'facturacion' );
-					$scope.impresionFactura.idFactura = data.data;
-					$scope.dialPrintFactura.show();
-					
-					$timeout(function () {
-						$("#btn_print_factura").focus();
-					});
-				}
-				$scope.$parent.hideLoading();
-			});
-			
-		//}
+		$http.post('consultas.php',{
+		    opcion : "consultaFacturaCliente",
+		    accion : $scope.accion,
+		    data   : factura
+		}).success(function(data){
+		    console.log(data);		    
+			alertify.set('notifier','position', 'top-right');
+			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+			if( data.respuesta == 'success' ) {
+				$scope.resetValores( 'facturacion' );
+				$scope.impresionFactura.idFactura = data.data;
+				$scope.dialPrintFactura.show();
+				
+				$timeout(function () {
+					$("#btn_print_factura").focus();
+				});
+			}
+			$scope.$parent.hideLoading();
+		});
 	};
 
 	// SI CAMBIA EL ID
@@ -762,13 +739,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	});
 
 
-
 	// efectivo
-
-
-
-
-
    	$scope.lstTicketBusqueda = [];
 	$scope.buscarOrdenTicket = function ( idOrdenCliente ) {
 
@@ -794,8 +765,10 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 						$scope.seleccionarDeBusqueda( $scope.lstTicketBusqueda[ 0 ] );
 						$scope.consultaDetalleOrden(  $scope.lstTicketBusqueda[ 0 ] );
 					}
-					else
+					else if( data.length > 1 ){
+						$scope.lstTicketBusqueda = data;
 						$scope.dialOrdenBusqueda.show();
+					}
 				}
 				else{
 					alertify.set('notifier','position', 'top-right');

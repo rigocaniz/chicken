@@ -55,7 +55,6 @@
                         </h4>
                     </div>
                 </div>
-
                 <!-- TABS -->
                 <div class="col-sm-12" style="margin-top: -15px">
                     <ul class="nav nav-tabs tabs-title" role="tablist">
@@ -248,7 +247,7 @@
                                         <div class="input-group input-group-lg">
                                             <input type="number" class="form-control" id="efectivo_{{factura.idTab}}" ng-model="factura.detallePago.efectivo" placeholder="Efectivo" focus-enter ng-change="calculoFactura( 'totalPago' )">
                                             <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button">
+                                                <button class="btn btn-success" type="button">
                                                     <b>Q.</b>
                                                 </button>
                                             </span>
