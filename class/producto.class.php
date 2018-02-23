@@ -503,10 +503,9 @@ class Producto
  		$data->comentario      = strlen( $data->comentario )	  	? (string)$data->comentario 	: NULL;
  		
 		$validar = new Validar();
-
  		// VALIDACIONES
 		$idEstadoFactura = $validar->validarEntero( $data->idEstadoFactura, NULL, TRUE, 'El ID del estado de factura no es válido' );
-		$noFactura       = $this->con->real_escape_string( $validar->validarTexto( $data->noFactura, NULL, TRUE, 'El No. de factura no es válido' ) );
+		$noFactura       = $this->con->real_escape_string( $validar->validarTexto( $data->noFactura, NULL, TRUE, 1, 350, 'El No. de factura no es válido' ) );
  		$proveedor       = isset( $data->proveedor ) ? $this->con->real_escape_string( (string)$data->proveedor ) : NULL;
 
  		if( $accion == 'update' ) {
@@ -598,7 +597,7 @@ class Producto
 			$idIngreso = $validar->validarEntero( $data->idIngreso, NULL, TRUE, 'El ID de Ingreso no es válido.' );
 		
 		else:
-			$cantidad   = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 500000, 'la cantidad' );
+			$cantidad   = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 5000000, 'la cantidad' );
 			$idProducto = $validar->validarEntero( $data->idProducto, NULL, TRUE, "El ID del producto ({$data->producto}) no es válido." );
 			$costo      = (double)$data->costo;
 

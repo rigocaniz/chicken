@@ -57,9 +57,9 @@
 			<div class="tab-content">
 				<!--  MENUS -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuTab=='menu'}" ng-show="menuTab=='menu'">
-					<div class="panel panel-primary">
+					<div class="panel panel-danger">
 						<div class="panel-heading">
-							<h3 class="panel-title">LISTADO DE MENUS</h3>
+							<strong><span class="glyphicon glyphicon-list-alt"></span> LISTADO DE MENUS</strong>
 						</div>
 						<div class="panel-body">
 							<div class="text-right">
@@ -124,9 +124,9 @@
 				</div>
 				<!-- COMBOS -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuTab=='combo'}" ng-show="menuTab=='combo'">
-					<div class="panel panel-primary">
+					<div class="panel panel-danger">
 						<div class="panel-heading">
-							<h3 class="panel-title">LISTADO DE COMBOS</h3>
+							<strong><span class="glyphicon glyphicon-list-alt"></span> LISTADO DE COMBOS</strong>
 						</div>
 						<div class="panel-body">
 							<div class="text-right">
