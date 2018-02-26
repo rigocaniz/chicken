@@ -175,6 +175,143 @@ class Evento
 		);
  	}
 
+ 	// FACTURAR EVENTO
+ 	function facturarEvento( $evento )
+ 	{
+		$respuesta     = "";
+		$mensaje       = "";
+		$idEvento      = (int)$evento->idEvento;
+		$totalEvento   = (double)$evento->totalEvento;
+		$totalAnticipo = (double)$evento->totalAnticipo;
+		$montoEfectivo = (double)$evento->montoEfectivo;
+		$montoTarjeta  = (double)$evento->montoTarjeta;
+		$cambio        = (double)$evento->cambio;
+		$idCliente     = (int)$evento->idCliente;
+		$siDetalle     = (int)$evento->siDetalle;
+		$descripcion   = strlen( $evento->descripcion ) ? "'" . $evento->descripcion . "'" : 'NULL';
+		$nombre        = $evento->nombre;
+		$direccion     = $evento->direccion;
+		$idFactura 	   = null;
+
+		// OBTENER DATOS DE CAJA
+		$caja        = new Caja();
+		$detalleCaja = $caja->consultarEstadoCaja();
+
+		// OBTIENE FORMAS DE PAGO
+		$lstPago = array();
+		if ( $montoEfectivo > 0 )
+			$lstPago[] = (object)array( 'idFormaPago' => 1, 'monto' => ( $montoEfectivo - $cambio ) );
+
+		if ( $montoTarjeta > 0 )
+			$lstPago[] = (object)array( 'idFormaPago' => 2, 'monto' => $montoTarjeta );
+
+
+		if ( !( $idEvento > 0 ) )
+			$msgError = "Id Evento no válido";
+
+		else if ( ( $totalEvento - $totalAnticipo ) > ( $montoEfectivo + $montoTarjeta ) )
+			$msgError = "Monto no puede cubrir evento";
+
+		else if( $detalleCaja->idEstadoCaja != 1 )
+			$msgError = 'Su <b>CAJA</b> se encuentra <b>' . strtoupper( $caja->consultarEstadoCaja()->estadoCaja ) . "</b> debe aperturarla para poder facturar";
+
+		 elseif( $detalleCaja->cajaAtrasada )
+			$msgError = ' NO HA REALIZADO EL CIERRE DE SU CAJA DE FECHA/HORA: <b>' . $detalleCaja->fechaHoraApertura . "</b>";
+
+		else
+		{
+			$this->con->query( "START TRANSACTION" );
+
+			// GUARDA INFORMACION DE FACTURA
+			$sql = "CALL consultaFacturaCliente( 'insert', NULL, NULL, $idCliente, $detalleCaja->idCaja, '$nombre', '$direccion', $totalEvento, $descripcion )";
+
+			$rs = $this->con->query( $sql );
+ 			@$this->con->next_result();
+ 			if ( $rs AND $row = $rs->fetch_object() ) {
+				$respuesta = $row->respuesta;
+				$mensaje   = $row->mensaje;
+ 				if ( $row->respuesta == 'success' )
+					$idFactura = $row->id;
+ 			}
+ 			else {
+ 				$respuesta = "danger";
+				$mensaje   = "Error al ejecutar la consulta";
+ 			}
+
+			// GUARDA INFORMACION DE PAGO
+ 			if ( $respuesta == 'success' ) {
+				foreach ($lstPago as $pago):
+					$sql = "CALL consultaFormaPago( 'insert', $idFactura, $pago->idFormaPago, $pago->monto )";
+
+					$rs = $this->con->query( $sql );
+		 			@$this->con->next_result();
+		 			if ( $rs AND $row = $rs->fetch_object() ) {
+						$respuesta = $row->respuesta;
+						$mensaje   = $row->mensaje;
+		 			}
+		 			else {
+		 				$respuesta = "danger";
+						$mensaje   = "Error al ejecutar la consulta";
+		 			}
+
+		 			if ( $respuesta != 'success' )
+		 				break;
+
+				endforeach;
+ 			}
+
+			
+			// GUARDA DETALLE DE FACTURA
+ 			if ( $respuesta == 'success' ) {
+				$sql = "CALL detalleFacturaEvento( $idFactura, $idEvento )";
+
+				$rs = $this->con->query( $sql );
+	 			@$this->con->next_result();
+	 			if ( $rs AND $row = $rs->fetch_object() ) {
+					$respuesta = $row->respuesta;
+					$mensaje   = $row->mensaje;
+	 			}
+	 			else {
+	 				$respuesta = "danger";
+					$mensaje   = "Error al ejecutar la consulta";
+	 			}
+	 		}
+
+
+			// ACTUALIZA FACTURA DE EVENTO
+ 			if ( $respuesta == 'success' ) {
+				$sql = "UPDATE evento SET
+							idFactura = $idFactura
+						WHERE idEvento = $idEvento ";
+
+	 			if ( !$this->con->query( $sql ) ) {
+	 				$respuesta = "danger";
+					$mensaje   = "Error al guardar factura en evento";
+	 			}
+	 		}
+	 		
+ 			if ( $respuesta == 'success' ) {
+				$mensaje = "Guardado correctamente";
+				$this->con->query( "COMMIT" );
+ 			}
+
+			else
+				$this->con->query( "ROLLBACK" );
+		}
+
+		if ( isset( $msgError ) )
+		{
+			$respuesta = "danger";
+			$mensaje   = $msgError;
+		}
+
+		return array(
+			'respuesta' => $respuesta,
+			'mensaje'   => $mensaje,
+			'idFactura' => $idFactura,
+		);
+ 	}
+
  	// GUARDA MOVIMIENTO EVENTO
  	function guardarMovimiento( $movimiento )
  	{
@@ -296,8 +433,10 @@ class Evento
 
 		$rs = $this->con->query( $sql );
 		@$this->con->next_result();
-		while ( $rs AND $row = $rs->fetch_object() )
+		while ( $rs AND $row = $rs->fetch_object() ){
+			$row->cantidad = (double)$row->cantidad;
 			$lst[] = $row;
+		}
 
 		return $lst;
  	}
@@ -345,7 +484,8 @@ class Evento
 				    idTipoCliente,
 				    tipoCliente,
 				    idSalon,
-				    salon
+				    salon,
+				    idFactura
 				FROM vEvento WHERE " . $where . $limit;
 		$rs = $this->con->query( $sql );
 

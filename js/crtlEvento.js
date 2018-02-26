@@ -60,6 +60,7 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 
 	// DIALOGOS
 	$scope.dialEvento = $modal({scope: $scope,template:'dl.evento.html', show: false, backdrop:false, keyboard: false });
+	$scope.dialFactEvento = $modal({scope: $scope,template:'facturar.evento.html', show: false, backdrop:false, keyboard: false });
 
 	// MUESTRA DIALOGO DE EVENTO
 	$scope.showDialOrden = function ( _accion, evento, _status ) {
@@ -87,8 +88,8 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 				idCliente             : evento.idCliente,
 				nombreCliente         : $sce.trustAsHtml( '<b>' + evento.nombre + '</b> (' + evento.nit + ') - ' + evento.direccion ),
 				fechaEvento           : moment( evento.fechaEvento ),
-				horaInicio            : $scope.$parent.formatoFecha( evento.horaInicio, 'HH:mm' ),
-				horaFinal             : $scope.$parent.formatoFecha( evento.horaFinal, 'HH:mm' ),
+				horaInicio            : ( evento.horaInicio.length==5 ? evento.horaInicio : $scope.$parent.formatoFecha( evento.horaInicio, 'HH:mm' ) ),
+				horaFinal             : ( evento.horaFinal.length==5 ? evento.horaFinal : $scope.$parent.formatoFecha( evento.horaFinal, 'HH:mm' ) ),
 				anticipo              : evento.anticipo,
 				numeroPersonas        : evento.numeroPersonas,
 				observacion           : evento.observacion,
@@ -106,14 +107,56 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 			$scope.totalEvento(); // CALCULA TOTAL EVENTO
 		}
 
-		console.log( $scope.accionEvento, $scope.lstMenuEvento, $scope.evento );
-
 		$scope.dialEvento.show();
 
 		$timeout(function () {
 			if ( _status == 10 )
 				document.getElementById('comentario') && document.getElementById('comentario').focus();
 		});
+	};
+
+	// MUESTRA DIALOGO FACTURA EVENTO
+	$scope.showDialFactura = function ( evento, _status ) {
+		$scope.accionEvento = 'update';
+		var totalAnticipo = 0;
+
+		for (var ix = 0; ix < evento.lstMovimiento.length; ix++)
+			totalAnticipo += parseFloat( evento.lstMovimiento[ ix ].monto );
+
+		$scope.evento = {
+			idEvento          : evento.idEvento,
+			idFactura         : evento.idFactura,
+			evento            : evento.evento,
+			idCliente         : evento.idCliente,
+			nombreCliente     : $sce.trustAsHtml( '<b>' + evento.nombre + '</b> (' + evento.nit + ') - ' + evento.direccion ),
+			nombre            : evento.nombre,
+			nit               : evento.nit,
+			direccion         : evento.direccion,
+			fechaEvento       : moment( evento.fechaEvento ),
+			horaInicio        : $scope.$parent.formatoFecha( evento.horaInicio, 'HH:mm' ),
+			horaFinal         : $scope.$parent.formatoFecha( evento.horaFinal, 'HH:mm' ),
+			anticipo          : evento.anticipo,
+			numeroPersonas    : evento.numeroPersonas,
+			observacion       : evento.observacion,
+			idEstadoEvento    : evento.idEstadoEvento,
+			idSalon        	  : evento.idSalon,
+			newIdEstadoEvento : _status,
+			estadoEvento      : evento.estadoEvento,
+			lstMovimiento     : evento.lstMovimiento,
+			totalAnticipo 	  : totalAnticipo,
+			lstMenuEvento 	  : evento.lstMenu,
+			totalEvento 	  : 0,
+			montoEfectivo     : '',
+			montoTarjeta      : '',
+			cambio            : '',
+			siDetalle 		  : true,
+			descripcion 	  : ''
+		};
+
+		$scope.evento.totalEvento = $scope.totalEvento( evento.lstMenu );
+
+		// SI NO ES CAMBIO DE ESTADO
+		$scope.dialFactEvento.show();
 	};
 
 	// CONSULTAR CLIENTES
@@ -344,13 +387,95 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 		}
 	};
 
-	$scope.montoTotalEvento = 0;
-	$scope.totalEvento = function () {
-		$scope.montoTotalEvento = 0;
-		for (var i = 0; i < $scope.lstMenuEvento.length; i++) {
-			var menu = $scope.lstMenuEvento[ i ];
-			$scope.montoTotalEvento += ( parseInt( menu.cantidad ) * parseFloat( menu.precioUnitario ) );
+	// FACTURAR EVENTO
+	$scope.facturarEvento = function () {
+		var totalMonto  = ( $scope.evento.montoEfectivo + $scope.evento.montoTarjeta ),
+			montoEvento = ( $scope.evento.totalEvento - $scope.evento.totalAnticipo );
+
+		if ( !( $scope.evento.idCliente > 0 ) )
+			alertify.notify( "Cliente no esta definido", "danger", 2 );
+
+		else if ( !( $scope.evento.idEvento > 0 ) )
+			alertify.notify( "El id del evento no esta definido", "danger", 3 );
+
+		else if ( montoEvento > totalMonto )
+			alertify.notify( "El monto ingresado no puede cubrir el total del evento", "danger", 4 );
+
+		else
+		{
+			var winFactEvent = window.open( '', '_blank' );
+			winFactEvent.document.body.innerHTML = "<h4>Espere, guardando...</h4>";
+			window.focus();
+
+			var datos = {
+				opcion : 'facturarEvento',
+				evento : {
+					idEvento      : $scope.evento.idEvento,
+					totalEvento   : $scope.evento.totalEvento,
+					totalAnticipo : $scope.evento.totalAnticipo,
+					montoEfectivo : $scope.evento.montoEfectivo,
+					montoTarjeta  : $scope.evento.montoTarjeta,
+					cambio  	  : $scope.evento.cambio,
+					idCliente     : $scope.evento.idCliente,
+					siDetalle     : $scope.evento.siDetalle,
+					descripcion   : $scope.evento.descripcion,
+					nombre        : $scope.evento.nombre,
+					nit           : $scope.evento.nit,
+					direccion     : $scope.evento.direccion,
+				}
+			};
+
+			$http.post('consultas.php', datos)
+			.success(function (data) {
+				
+				console.log( data );
+				alertify.notify( ( data.mensaje || data ), ( data.respuesta || 'danger' ), 5 );
+
+				if ( data.respuesta == 'success' )
+				{
+					winFactEvent.location = "print.php?id=" + data.idFactura + "&isEvent=1";
+		  			winFactEvent.focus();
+					$scope.consultaEvento();
+					$scope.dialFactEvento.hide();
+				}
+				else
+					winFactEvent.close();
+			});
 		}
+	};
+
+	$scope.montoTotalEvento = 0;
+	$scope.totalEvento = function ( lstMenus ) {
+		var total = 0;
+		if ( Array.isArray( lstMenus ) )
+		{
+			for (var i = 0; i < lstMenus.length; i++) {
+				var menu = lstMenus[ i ];
+				total += ( parseInt( menu.cantidad ) * parseFloat( menu.precioUnitario ) );
+			}
+		}
+		else if ( $scope.lstMenuEvento )
+		{
+			$scope.montoTotalEvento = 0;
+			for (var i = 0; i < $scope.lstMenuEvento.length; i++) {
+				var menu = $scope.lstMenuEvento[ i ];
+				$scope.montoTotalEvento += ( parseInt( menu.cantidad ) * parseFloat( menu.precioUnitario ) );
+			}
+		}
+
+
+		return total;
+	};
+
+	$scope.montoCambioEvento = function () {
+		var cambio 	    = 0,
+			totalMonto  = ( $scope.evento.montoEfectivo + $scope.evento.montoTarjeta ),
+			montoEvento = ( $scope.evento.totalEvento - $scope.evento.totalAnticipo );
+
+		if ( totalMonto > montoEvento )
+			cambio = ( totalMonto - montoEvento );
+
+		$scope.evento.cambio = cambio;
 	};
 
 	// GUARDA MOVIMIENTO

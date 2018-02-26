@@ -22,15 +22,22 @@ include 'class/documento.class.php';
 $factura   = new Factura();
 $idFactura = (int)$_GET[ 'id' ];
 $type      = isset( $_GET[ 'type' ] ) ? $_GET[ 'type' ] : 'g';
+$isEvent   = isset( $_GET[ 'isEvent' ] ) ? (bool)$_GET[ 'isEvent' ] : false;
 
 // OBTIENE INFORMACION DE FACTURA
 $datos = (array)$factura->lstFacturas( $idFactura )[ 0 ];
 
-// OBTIENE DETALLE DE FACTURA
-$datos[ 'lstDetalle' ] = $factura->detalleOrdenFactura( $idFactura );
+// SI ES FACTURA DE EVENTO
+if ( $isEvent ):
+	$datos[ 'lstDetalle' ] = $factura->detalleFacturaEvento( $idFactura );
+	$documento = new Documento( 2 );
 
-// RENDERIZA EL DOCUMENTO
-$documento = new Documento( 1 );
+// SI ES FACTURA DE ORDEN
+else:
+	$datos[ 'lstDetalle' ] = $factura->detalleOrdenFactura( $idFactura );
+	$documento = new Documento( 1 );
+
+endif;
 
 // CIERRA LA CONEXION
 $conexion->close();

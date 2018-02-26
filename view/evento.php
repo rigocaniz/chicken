@@ -52,7 +52,7 @@
             </div>
         </div>
 	</div>
-	<div class="row contenedor-tickets">
+	<div class="row contenedor-tickets" style="padding-left:19px">
         <div class="col-xs-12" ng-hide="lstEvento.length">
             <div class="alert alert-info" role="alert">No existen ordenes</div>
         </div>
@@ -61,23 +61,26 @@
         <div class="col-xs-12 info-orden-ticket" ng-repeat="evento in lstEvento" style="margin-bottom:9px;padding-bottom:7px">
             <!-- *********** INFORMACION DE ORDEN ********* -->
             <div class="row">
+                <div class="col-sm-12">
+                    <button type="button" class="btn btn-sm btn-primary" ng-click="showDialOrden( 'update', evento )">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                        <b>Ver / Modificar</b>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger" ng-click="showDialOrden( 'update', evento, 10 )" ng-disabled="evento.idEstadoEvento!=1">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        <b>Cancelar</b>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-success" ng-click="showDialFactura( evento, 5 )" ng-disabled="evento.idEstadoEvento!=1 && evento.idEstadoEvento!=5">
+                        <span class="glyphicon glyphicon-flag"></span>
+                        <b>Finalizar</b>
+                    </button>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-sm-6 col-xs-12">
                     <h4>
                         <b>Evento # </b> {{evento.idEvento}} » 
                         <span>{{evento.evento}}</span>
-                        <button type="button" class="btn btn-xs btn-danger" ng-click="showDialOrden( 'update', evento, 10 )" ng-disabled="evento.idEstadoEvento!=1" title="Cancelar" data-toggle="tooltip" data-placement="top" tooltip>
-                            <span class="glyphicon glyphicon-remove"></span>
-                        </button>
-                        <button type="button" class="btn btn-xs btn-success" ng-click="showDialOrden( 'update', evento, 5 )" ng-disabled="evento.idEstadoEvento!=1" title="Finalizar" data-toggle="tooltip" data-placement="top" tooltip>
-                            <span class="glyphicon glyphicon-flag"></span>
-                        </button>
-                        <button type="button" class="btn btn-xs btn-info" ng-click="showDialOrden( 'update', evento )" title="Modificar" data-toggle="tooltip" data-placement="top" tooltip>
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </button>
-                        <button type="button" class="btn btn-xs btn-primary" ng-show="evento.idEstadoEvento==5">
-                            <span class="glyphicon glyphicon-shopping-cart"></span>
-                            <b>Facturar</b> (F10)
-                        </button>
                     </h4>
                 </div>
                 <div class="col-sm-6 col-xs-12">
@@ -137,52 +140,11 @@
                 <div class="modal-header panel-heading">
                 	<button type="button" class="close" ng-click="$hide()">&times;</button>
                 	<span class="glyphicon glyphicon-calendar"></span>
+                    <span ng-show="evento.newIdEstadoEvento==5 && accionEvento=='update'">Finalizar Evento » # {{evento.idEvento}}</span>
                     <span ng-show="evento.newIdEstadoEvento!=5 && accionEvento=='update'">Modificar Evento » # {{evento.idEvento}}</span>
                     <span ng-show="evento.newIdEstadoEvento!=5 && accionEvento=='insert'">Nuevo Evento</span>
-                    <span ng-show="evento.newIdEstadoEvento==5">FINALIZAR Y FACTURAR EVENTO » # {{evento.idEvento}}</span>
                 </div>
                 <div class="modal-body">
-                    <!-- FINALIZAR EVENTO -->
-                    <div class="row" ng-show="evento.newIdEstadoEvento==5">
-                        <div class="col-xs-12 text-center">
-                            <h3 class="text-primary">{{evento.evento}} » {{formatoFecha( evento.fechaEvento, 'ddd D [de ] MMM [de] YYYY' )}}</h3>
-                            <h4>Cliente: <span ng-bind-html="evento.nombreCliente"></span></h4>
-                            <hr>
-                        </div>
-                        <div class="col-xs-7">
-                            <b>Menú(s) / Servicio(s)</b>
-                            <ul class="list-group">
-                                <li class="list-group-item" ng-repeat="item in lstMenuEvento">
-                                    <span>{{item.cantidad}} => {{item.menu}} ({{item.tipo}}) - <kbd>{{item.subTotal}}</kbd></span>
-                                </li>
-                                <li class="list-group-item text-right text-success">
-                                    <h4>Total Evento: <b>Q. {{montoTotalEvento | number:2}}</b></h4>
-                                </li>
-                            </ul>
-                            <b>Anticipo</b>
-                            <ul class="list-group">
-                                <li class="list-group-item" ng-repeat="item in evento.lstMovimiento">
-                                    <kbd>Q. {{item.monto}} ({{item.formaPago}})</kbd>
-                                    <p>{{item.motivo}}</p>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col-xs-5">
-                            <b>Monto Pendiente</b>
-                            <h3><b class="label label-primary">Q. {{ montoTotalEvento - evento.totalAnticipo | number:2 }}</b></h3>
-                            <hr>
-                            <b>Efectivo</b>
-                            <input type="number" class="form-control" ng-model="evento.montoEfectivo">
-                            <b>Tarjeta Crédito / Débito</b>
-                            <input type="number" class="form-control" ng-model="evento.montoTarjeta">
-                            <hr>
-                            <button type="button" class="btn btn-success" ng-click="guardarEvento()">
-                                <span class="glyphicon glyphicon-shopping-cart"></span>
-                                Finalizar y Facturar Evento
-                            </button>
-                        </div>
-                    </div>
-
                     <!-- CANCELAR EVENTO -->
                     <div class="row" ng-show="evento.newIdEstadoEvento==10">
                         <div class="col-xs-12 text-center">
@@ -195,6 +157,24 @@
                             <button type="button" class="btn btn-danger" ng-click="guardarEvento()">
                                 <span class="glyphicon glyphicon-remove"></span>
                                 Cancelar Evento
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CANCELAR EVENTO -->
+                    <div class="row" ng-show="evento.newIdEstadoEvento==5">
+                        <div class="col-xs-12 text-center">
+                            <h4>¿Esta seguro de FINALIZAR el Evento?</h4>
+                        </div>
+                        <div class="col-xs-12">
+                            <h3 class="text-primary">{{evento.evento}} » {{formatoFecha( evento.fechaEvento, 'ddd D [de ] MMM [de] YYYY' )}}</h3>
+                            <h4><span ng-bind-html="evento.nombreCliente"></span></h4>
+                            <hr>
+                        </div>
+                        <div class="col-xs-12 text-center">
+                            <button type="button" class="btn btn-success" ng-click="guardarEvento()">
+                                <span class="glyphicon glyphicon-flag"></span>
+                                Finalizar Evento
                             </button>
                         </div>
                     </div>
@@ -576,3 +556,158 @@
         </div>
     </div>
 </script> 
+
+
+<!-- MODAL FACTURAR / FINALIZAR EVENTO -->
+<script type="text/ng-template" id="facturar.evento.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dl_evento">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-primary">
+                <div class="modal-header panel-heading">
+                    <button type="button" class="close" ng-click="$hide()">&times;</button>
+                    <span class="glyphicon glyphicon-calendar"></span>
+                    <span>FINALIZAR Y FACTURAR EVENTO » # {{evento.idEvento}}</span>
+                </div>
+                <div class="modal-body">
+                    <!-- FINALIZAR EVENTO -->
+                    <div class="row">
+                        <div class="col-xs-12 text-center">
+                            <h3 class="text-primary">{{evento.evento}} » {{formatoFecha( evento.fechaEvento, 'ddd D [de ] MMM [de] YYYY' )}}</h3>
+                            <h4>Cliente: <span ng-bind-html="evento.nombreCliente"></span></h4>
+                            <hr>
+                        </div>
+                        <!-- DETALLE DE ORDENES :::EVENTO::: -->
+                        <div class="col-xs-7">
+                            <fieldset class="fieldset">
+                                <legend class="legend warning">DETALLE</legend>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Cantidad</th>
+                                            <th>Menú / Servicio</th>
+                                            <th>Sub Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in evento.lstMenuEvento">
+                                            <td>{{item.cantidad}}</td>
+                                            <td>{{item.menu}} ({{item.tipo}})</td>
+                                            <td>
+                                                <b data-title="{{item.precioUnitario}} c/u" data-placement="top" bs-tooltip>Q. {{item.subTotal}}</b>
+                                            </td>
+                                        </tr>
+                                        <tr class="text-success">
+                                            <td colspan="2">
+                                                <h4 class="text-right"><b>Total Evento</b></h4>
+                                            </td>
+                                            <td>
+                                                <h4><b>Q. {{evento.totalEvento | number:2}}</b></h4>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </fieldset>
+
+                            <!-- DETALLE DE ORDENES :::EVENTO::: -->
+                            <fieldset class="fieldset">
+                                <legend class="legend default">ANTICIPO</legend>
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Monto</th>
+                                            <th>Descripción</th>
+                                            <th>Fecha</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in evento.lstMovimiento">
+                                            <td>{{item.monto | number:2}} ({{item.formaPago}})</td>
+                                            <td>{{item.motivo}}</td>
+                                            <td>{{item.fechaRegistro}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </fieldset>
+                        </div>
+                        <!-- PAGO :::EVENTO::: -->
+                        <div class="col-xs-5">
+                            <fieldset class="fieldset">
+                                <legend class="legend success">PAGO DE EVENTO</legend>
+                                <h3 style="margin-top:0" class="text-right">
+                                    <b class="label label-info">Q. {{ evento.totalEvento - evento.totalAnticipo | number:2 }}</b>
+                                </h3>
+                                <!-- DETALLE DE PAGO -->
+                                <div class="row" ng-hide="evento.idFactura>0">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-lg">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button">
+                                                    <b>Q.</b>
+                                                </button>
+                                            </span>
+                                            <input type="number" class="form-control" ng-model="evento.montoEfectivo" ng-change="montoCambioEvento()" placeholder="Efectivo" focus-enter>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group input-group-lg">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-primary" type="button">
+                                                    <span class="glyphicon glyphicon-credit-card"></span>
+                                                </button>
+                                            </span>
+                                            <input type="number" class="form-control" ng-model="evento.montoTarjeta" ng-change="montoCambioEvento()" placeholder="Monto Tarjeta" focus-enter>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <b>CAMBIO</b>
+                                            </span>
+                                            <input type="text" class="form-control" ng-model="evento.cambio" placeholder="Q." disabled style="background:#fff">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <b>Descripción Factura</b>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-default" ng-click="evento.siDetalle=true">
+                                                <span class="glyphicon" ng-class="{'glyphicon-check': evento.siDetalle, 'glyphicon-unchecked': !evento.siDetalle}"></span> Detalle
+                                            </button>
+                                            <button type="button" class="btn btn-default" ng-click="evento.siDetalle=false">
+                                                <span class="glyphicon" ng-class="{'glyphicon-check': !evento.siDetalle, 'glyphicon-unchecked': evento.siDetalle}"></span> Personalizado
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-12" ng-show="!evento.siDetalle" style="margin-top:5px">
+                                            <textarea ng-model="evento.descripcion" placeholder="Ingrese Descripción de la Factura" rows="3" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <a href="print.php?id={{evento.idFactura}}&isEvent=1" target="_blank" class="btn btn-primary" ng-show="evento.idFactura>0">
+                                    <span class="glyphicon glyphicon-print"></span>
+                                    Reimprimir Facturar Evento
+                                </a>
+                                <button type="button" class="btn btn-success" ng-click="facturarEvento()" ng-hide="evento.idFactura>0">
+                                    <span class="glyphicon glyphicon-shopping-cart"></span>
+                                    Facturar Evento
+                                </button>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" ng-click="$hide();showDialOrden( 'update', evento, 5 )" ng-show="evento.idFactura>0 && evento.idEstadoEvento==1">
+                        <span class="glyphicon glyphicon-flag"></span>
+                        Finalizar Evento
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="$hide()">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        <b>Salir</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+

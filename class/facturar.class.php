@@ -492,7 +492,9 @@ class Factura
 				    usuario,
 				    idEstadoFactura,
 				    estadoFactura,
-				    DATE_FORMAT( fechaRegistro, '%d/%m/%Y %h:%s %p' ) AS fechaRegistro
+				    DATE_FORMAT( fechaRegistro, '%d/%m/%Y %h:%s %p' ) AS fechaRegistro,
+				    siDetalle,
+				    descripcion
 				FROM
 				    vstFactura $where
 				ORDER BY fechaRegistro DESC;";
@@ -500,6 +502,7 @@ class Factura
 			//	echo $sql;
  		if( $rs = $this->con->query( $sql ) ){
  			while( $row = $rs->fetch_object() ){
+ 				$row->siDetalle = (bool)$row->siDetalle;
  				$lstFacturas[] = $row;
  			}
  		}
@@ -599,6 +602,28 @@ class Factura
 				$lstDetalleFactura[ $index ]->subTotal = ( $lstDetalleFactura[ $index ]->cantidad * $row->precioReal );
  			}
  		}
+
+ 		return $lstDetalleFactura;
+ 	}
+
+ 	function detalleFacturaEvento( $idFactura )
+ 	{
+
+ 		$lstDetalleFactura = array();
+
+		$sql = "SELECT
+					idEventoFactura,
+					cantidad,
+				    descripcion,
+				    subTotal
+				FROM eventoFactura WHERE idFactura = {$idFactura} ";
+ 		
+ 		$rs = $this->con->query( $sql );
+		while( $rs AND $row = $rs->fetch_object() ) {
+			$row->cantidad = (int)$row->cantidad;
+			$row->subTotal = (double)$row->subTotal;
+			$lstDetalleFactura[] = $row;
+		}
 
  		return $lstDetalleFactura;
  	}

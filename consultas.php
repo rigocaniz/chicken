@@ -662,6 +662,13 @@ switch ( $data->opcion )
 		echo json_encode( $evento->guardarMovimiento( $data->movimiento ) );
 		break;
 
+	// FACTURAR EVENTO
+	case 'facturarEvento':
+		$evento = new Evento();
+		echo json_encode( $evento->facturarEvento( $data->evento ) );
+		break;
+
+
 	case 'iniEvento':
 		$consulta = new Consulta();
 		echo json_encode(
