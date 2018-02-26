@@ -724,6 +724,10 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				});
 			}
 			$scope.$parent.hideLoading();
+			/*
+			if( ixFactura )
+				$scope.lstFacturas.splice( ixFactura, 1 );
+			*/
 		});
 	};
 

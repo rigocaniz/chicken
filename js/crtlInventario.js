@@ -599,6 +599,7 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		var error     = false;
 		$scope.accion = accion;
 
+
 		if( !($scope.compras.lstProductos.length) && $scope.accion == 'insert' ){
 			error = true;
 			alertify.notify( 'No ha ingresado ningun producto, verifique', 'info', 4 );
@@ -667,9 +668,12 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		if ( $scope.$parent.loading )
 			return false;
 
-		$scope.facturaCompra = angular.copy( facturaCompra );
+		console.log( facturaCompra );
+		$scope.facturaCompra              = angular.copy( facturaCompra );
 		$scope.facturaCompra.fechaFactura = moment( facturaCompra.fechaFactura );
+
 		$scope.dialLstFacturaCompra.hide();
+		
 		if( accion == 'editar' )
 			$scope.dialEditarFacturaCompra.show();
 
@@ -881,8 +885,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 
 	// OBTENER VALORES REAJUSTE
+	$scope.resetValores( 2 );
 	$scope.ingresarReajuste = function( idProducto, nombreProducto, disponibilidad ){
-		$scope.itemProducto.idProducto     = idProducto;
+		$scope.itemProducto.idProducto     = parseInt( idProducto );
 		$scope.itemProducto.nombreProducto = nombreProducto;
 		$scope.itemProducto.disponibilidad = disponibilidad;
 		$scope.dialIngreso.show();

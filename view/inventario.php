@@ -69,9 +69,6 @@
 				<!--  PRODUCTOS DEL INVENTARIO -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu=='inventario'}" ng-show="inventarioMenu=='inventario'">
 					<div class="panel panel-primary">
-						<div class="panel-heading">
-							<h3 class="panel-title">INVENTARIO DE PRODUCTOS</h3>
-						</div>
 						<div class="panel-body">
 							<div class="pull-right">
 								<div class="btn-group btn-group-sm" role="group">
@@ -86,6 +83,7 @@
 								  	</button>
 								</div>
 							</div>
+														
 							<div class="text-left">
 								<button type="button" class="btn btn-default" ng-click="modalAccionCuadreProducto()" ng-disabled="realizarReajuste">
 									<span class="glyphicon glyphicon-list-alt"></span> <strong><u>C</u></strong>UADRE DE PRODUCTOS
@@ -104,14 +102,14 @@
 										<div class="pull-right">
 											<span class="badge"> TOTAL {{ inventario.totalProductos }} </span>	
 										</div>
-										<h4 class="panel-title">
+										<strong>
 											<button type="button" class="btn btn-default btn-sm" ng-click="inventario.mostrar=!inventario.mostrar">
 												<span class="glyphicon" ng-class="{'glyphicon-chevron-down': !inventario.mostrar, 'glyphicon-chevron-right' : inventario.mostrar}"></span>
 											</button>
 											<span ng-show="groupBy=='sinFiltro'">{{ inventario.listado }}</span>
 											<span ng-show="groupBy=='tipoProducto'">{{ inventario.tipoProducto }}</span>
 											<span ng-show="groupBy=='medida'">{{ inventario.medida }}</span>
-										</h4>
+										</strong>
 									</div>
 									<div class="panel-body" ng-show="inventario.mostrar">
 										<div class="text-right">
@@ -166,7 +164,7 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr ng-repeat="inv in inventario.lstProductos | filter: filtroProducto" ng-class="{'danger border-danger': inv.alertaStock == 1 && !realizarReajuste, 'warning border-warning':  inv.alertaStock == 2 && !realizarReajuste, 'border-success':  inv.alertaStock == 3 && !realizarReajuste}" ng-dblclick="editarAccion( 'update', inv )">
+												<tr ng-repeat="inv in inventario.lstProductos | filter: filtroProducto" ng-class="{'danger border-danger': inv.alertaStock == 1 && !realizarReajuste, 'warning border-warning':  inv.alertaStock == 2 && !realizarReajuste, 'border-success':  inv.alertaStock == 3 && !realizarReajuste}">
 													<td class="text-right">
 														{{ $index + 1 }}
 													</td>
@@ -383,10 +381,9 @@
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu=='compras'}" ng-show="inventarioMenu=='compras'">
 					<div class="panel panel-danger">
 						<div class="panel-heading">
-							<h4 class="panel-title">
-								<span class="glyphicon glyphicon-shopping-cart"></span>
-								INGRESAR PRODUCTOS
-							</h4>
+							<strong>
+								<span class="glyphicon glyphicon-shopping-cart"></span> INGRESAR PRODUCTOS
+							</strong>
 						</div>
 						<div class="panel-body">
 							<div class="text-right">
@@ -612,7 +609,7 @@
 						<span class="glyphicon glyphicon-saved"></span> Guardar (F6)
 					</button>
 
-					<button type="button" class="btn btn-default" ng-click="facturaCompra={};$hide()">
+					<button type="button" class="btn btn-default" ng-click="$hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
 						<b>Salir</b>
 					</button>
@@ -723,7 +720,7 @@
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" ng-click="facturaCompra={};$hide()">
+					<button type="button" class="btn btn-default" ng-click="$hide()">
 						<span class="glyphicon glyphicon-log-out"></span>
 						<b>Salir</b>
 					</button>
@@ -1122,15 +1119,13 @@
 					INGRESAR REAJUSTE DEL PRODUCTO
 				</div>
 				<div class="modal-body">
+					<div class="text-right">
+						<label class="label label-warning" style="font-size: 16px">
+							{{ itemProducto.nombreProducto | uppercase }}
+						</label>
+					</div>
 					<div class="row">
 						<div class="col-sm-10 col-sm-offset-1">
-							<div class="pull-right">
-								<b>PRODUCTO: </b>
-								<label class="label label-warning">
-									{{ itemProducto.nombreProducto | uppercase }}
-								</label>
-							</div>
-							<hr>
 							<form class="form-horizontal" role="form" name="$parent.formReajuste">
 								<div class="form-group">
 									<div class="col-sm-4">
@@ -1223,18 +1218,14 @@
 								  	</button>
 								</div>
 							</div>
-							<div class="form-group" ng-show="accion!='insert'">
-								<div class="col-sm-7">
-								</div>
-								<div class="col-sm-3">
-									<label class="control-label">No. Producto</label>
-									<input type="text" class="form-control" ng-model="producto.idProducto" disabled>
-								</div>
-							</div>
 							<div class="form-group">
-								<div class="col-sm-7">
+								<div class="col-sm-8">
 									<label class="control-label">Nombre Producto</label>
 									<input type="text" id="nombreProducto" class="form-control" ng-model="producto.producto" maxlength="45" required>
+								</div>
+								<div class="col-sm-3" ng-show="accion!='insert'">
+									<label class="control-label">No. Producto</label>
+									<input type="text" class="form-control" ng-model="producto.idProducto" disabled>
 								</div>
 							</div>
 							<div class="form-group">

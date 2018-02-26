@@ -148,7 +148,7 @@ class Factura
 			$idDetalleOrdenMenu  = "NULL";
 			$idDetalleOrdenCombo = "NULL";
 			$justificacion       = "NULL";
-			$precioO             = (double)$orden->precio;
+			$precio              = (double)$orden->precio;
 			$descuentoT          = 0;
 			$idOrdenCliente      = $validar->validarEntero( $orden->idOrdenCliente, NULL, TRUE, 'Orden de Cliente no Definida' );
 			$idTipoServicio      = $validar->validarEntero( $orden->idTipoServicio, NULL, TRUE, 'Tipo de Servicio no Definido' );
@@ -190,23 +190,19 @@ class Factura
 		 	// SI LOS SELECCIONADOS ES IGUAL AL NUMERO DE DETALLE
 		 	if ( count( $lst ) == $cantidad )
 		 	{
-		 		foreach ( $lst as $item ):
+		 		foreach ( $lst AS $item ):
 			 		
 			 		$justificacion = "NULL";
-			 		$precio        = $precioO;
 			 		$descuento     = 0;
 
 			 		if( $descuentoT )
 			 			$justificacion = "'" . $this->con->real_escape_string( $orden->justificacion ) . "'";
 
-			 		if( $descuentoT >= $precioO ) {
-			 			$descuento = $precioO;
-			 			$precio    = 0;
-			 		}
-			 		elseif( $descuentoT ){
+			 		if( $descuentoT >= $precio )
+			 			$descuento = $precio;
+
+			 		elseif( $descuentoT )
 			 			$descuento = $descuentoT;
-			 			$precio    = ( $precioO - $descuentoT );
-			 		}
 
 			 		if ( isset( $item->idDetalleOrdenMenu ) ) {
 			 			$idDetalleOrdenMenu = $item->idDetalleOrdenMenu;
@@ -227,8 +223,8 @@ class Factura
 						{
 							$this->tiempo = 2;
 							$guardados++;
-							if( $descuentoT >= $precioO )
-								$descuentoT -= $precioO;
+							if( $descuentoT >= $precio )
+								$descuentoT -= $precio;
 							elseif( $descuentoT )
 					 			$descuentoT = 0;
 						}
