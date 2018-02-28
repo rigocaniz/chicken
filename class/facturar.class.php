@@ -58,7 +58,7 @@ class Factura
 			$idCliente       = 'NULL';
 			$nombre          = 'NULL';
 			$direccion       = 'NULL';
-
+			//print_r( $data );
 			// SETEO VARIABLES
 	 		$data->idEstadoFactura      = isset( $data->idEstadoFactura ) 		? (int)$data->idEstadoFactura 			: NULL;
 	 		$data->idEstadoFactura      = (int)$data->idEstadoFactura > 0 		? (int)$data->idEstadoFactura 			: NULL;
@@ -96,8 +96,8 @@ class Factura
 
 	 			$this->con->query( "START TRANSACTION" );
 
-				$sql = "CALL consultaFacturaCliente( '{$accion}', {$idFactura}, {$idEstadoFactura}, {$idCliente}, {$idCaja}, '{$nombre}', '{$direccion}', {$total} );";
-
+				$sql = "CALL consultaFacturaCliente( '{$accion}', {$idFactura}, {$idEstadoFactura}, {$idCliente}, {$idCaja}, '{$nombre}', '{$direccion}', {$total}, '' );";
+				
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 			$this->siguienteResultado();
 
@@ -122,7 +122,7 @@ class Factura
 		 		}
 		 		else{
 		 			$this->respuesta = 'danger';
-		 			$this->mensaje   = 'Error al ejecutar la instrucción (Facturar Cliente).';
+		 			$this->mensaje   = 'Error en la instrucción (Facturar Cliente).';
 		 		}
 
 		 		if( $this->respuesta == 'success' )

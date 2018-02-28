@@ -118,10 +118,8 @@
         						<input type="text" class="form-control" ng-model="factura.cliente.direccion" ng-disabled="factura.cliente.idCliente!=1" focus-enter>
         					</div>
         				</div>
-
                         <!-- DATOS DE PAGO Y DETALLE DE ORDEN -->
                         <div class="row">
-
                             <!-- DETALLE ORDEN -->
                             <div class="col-xs-8 col-sm-7">
                                 <fieldset class="fieldset">
@@ -154,7 +152,7 @@
                                                             </button>
                                                             <div>
                                                                 <strong>Cantidad <kbd>{{orden.pendiente}}</kbd></strong>
-                                                                <input type="number" class="form-control" id="fact_orden_{{$index}}" ng-model="orden.cantidadTrasladar" ng-min="1" ng-max="orden.pendiente" focus-enter>
+                                                                <input type="number" class="form-control" id="fact_orden_{{$index}}" ng-model="orden.cantidadTrasladar" ng-min="1" min="1" ng-max="orden.pendiente" max="{{orden.pendiente}}" focus-enter>
                                                             </div>
                                                             <div>
                                                                 <strong>Orden</strong>
@@ -205,7 +203,7 @@
                                                             <input type="number" class="form-control" ng-model="orden.descuento" 
                                                                 ng-change="calculoFactura( 'totalFactura' )"
                                                                 placeholder="Q." ng-focus="factura.ixDesc=$index" 
-                                                                ng-min="1" ng-max="{{orden.precio*orden.cantidad}}" required>
+                                                                ng-min="1" min="1" max="{{ orden.precio*orden.cantidad }}" ng-max="{{orden.precio*orden.cantidad}}" required>
                                                             <span class="input-group-btn">
                                                                 <button type="button" class="btn btn-default" 
                                                                     ng-click="orden.justificacion='';orden.descuento='';orden.conDescuento=0;factura.ixDesc=-1;calculoFactura( 'totalFactura' )">
