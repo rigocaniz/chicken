@@ -23,9 +23,11 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		lstPedidos     : []
 	};
 
-	$scope.menuActual     = {
+	$scope.menuActual = {
 		lstPrecio : []
 	};
+
+	$scope.menuPer = {};
 
 	alertify.set('notifier','position', 'top-right');
 
@@ -37,9 +39,10 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	$scope.dialMenuCantidad     = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenBusqueda    = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialOrdenCancelar    = $modal({scope: $scope,template:'dial.orden.cancelar.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialCancelarDetalle  = $modal({scope: $scope,template:'dial.orden.cancelar-parcial.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialEditarDetalle    = $modal({scope: $scope,template:'dial.orden.editar.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialUltimasOrdenes   = $modal({scope: $scope,template:'dial.ultimas.ordenes.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialCancelarDetalle  = $modal({scope: $scope,template:'dial.orden.cancelar-parcial.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialCancelarOtro  = $modal({scope: $scope,template:'dial.orden.cancelar-otro.html', show: false, backdrop:false, keyboard: true });
 
 	($scope.init = function () {
 		// CONSULTA TIPO DE SERVICIOS
@@ -445,6 +448,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				lstAgregar.push({
 					idMenu         : $scope.ordenActual.lstAgregar[ i ].idMenu,
 					cantidad       : $scope.ordenActual.lstAgregar[ i ].cantidad,
+					precio         : $scope.ordenActual.lstAgregar[ i ].precio,
+					menu           : $scope.ordenActual.lstAgregar[ i ].menu,
 					idTipoServicio : $scope.ordenActual.lstAgregar[ i ].idTipoServicio,
 					tipoMenu       : $scope.ordenActual.lstAgregar[ i ].tipoMenu,
 					observacion    : $scope.ordenActual.lstAgregar[ i ].observacion
@@ -585,12 +590,10 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		if ( $scope.$parent.loading )
 			return false;
 
-
-		if ( !( $scope.comentario.length > 3 ) )
+		if ( !( $scope.comentario.length > 3 ) && Array.isArray( lstDetalle ) )
 			alertify.notify('Comentario demasiado corto', 'danger', 5);
 
 		else{
-
 			$scope.$parent.loading = true; // cargando...
 
 			// CONSULTA PRECIOS DEL MENU
@@ -609,6 +612,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 					if ( data.respuesta == 'success' ){
 						$scope.dialCancelarDetalle.hide();
+						$scope.dialCancelarOtro.hide();
 
 						// CONSULTA NUEVAMENTE EL DETALLE DE LA ORDEN
 						$scope.consultaDetalleOrden();
@@ -666,7 +670,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 			$scope.$parent.loading = false;
 			if ( data.lst ) {
 				
-
 				for (var ix = 0; ix < data.lst.length; ix++)
 				{
 					var lstEstados = [];
@@ -706,6 +709,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				}
 
 				$scope.infoOrden.lstOrden = data.lst;
+				$scope.infoOrden.lstOtros = data.lstOtros;
 				$scope.infoOrden.total    = data.total;
 			}
 		});
@@ -718,6 +722,12 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		$scope.itemDetalle = itemDetalle;
 		$scope.comentario  = "";
 		$scope.dialCancelarDetalle.show();
+	};
+
+	// CANCELAR OTRO MENU
+	$scope.cancelarOtroMenu = function ( otroMenu ) {
+		$scope.itemDetalle = otroMenu;
+		$scope.dialCancelarOtro.show();
 	};
 
 	// EDITAR ORDEN
@@ -879,6 +889,41 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 			});
 		}
 	};
+
+
+
+	/*
+		================ OTRO MENU 
+	*/
+	$scope.agregarOtroMenu = function () {
+
+		if ( !( $scope.menuPer.cantidad > 0 ) )
+			alertify.notify( 'Revise Cantidad', 'danger', 5);
+
+		else if ( !( $scope.menuPer.precioUnidad > 0 ) )
+			alertify.notify( 'Revise Precio por Unidad', 'danger', 5);
+
+		else if ( !( $scope.menuPer.descripcion && $scope.menuPer.descripcion.length > 0 ) )
+			alertify.notify( 'Revise Descripción', 'danger', 5);
+
+		else{
+			console.log( $scope.menuPer );
+			$scope.ordenActual.lstAgregar.unshift({
+				idMenu         : null,
+				menu           : $scope.menuPer.descripcion,
+				cantidad       : $scope.menuPer.cantidad,
+				precio         : $scope.menuPer.precioUnidad,
+				tipoServicio   : '',
+				idTipoServicio : '',
+				tipoMenu       : 'personalizado',
+				observacion    : null
+			});
+
+			$scope.filtroServicio = '';
+			$scope.menuPer        = {};
+		}
+	};
+
 
 
 	/* ++++++++++++++++++ AUXILIAR ++++++++++++++++ */

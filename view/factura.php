@@ -177,6 +177,9 @@
                                                         <span ng-show="orden.idTipoServicio==2">R</span>
                                                         <span ng-show="orden.idTipoServicio==3">D</span>
                                                         <span ng-show="orden.idTipoServicio==1">L</span>
+                                                        <span ng-show="orden.idTipoServicio==''" class="text-primary">
+                                                            <span class="glyphicon glyphicon-star"></span>
+                                                        </span>
                                                     </div>
                                                     <span class="glyphicon glyphicon-gift" ng-show="orden.idCombo>0"></span>
                                                     <span>{{ orden.descripcion }}</span>

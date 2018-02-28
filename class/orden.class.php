@@ -247,7 +247,8 @@ class Orden
  		// SI EL ARREGLO ES MAYOR A CERO
  		if( is_array( $lstDetalleOrden ) AND count( $lstDetalleOrden ) ):
 
- 			$validar = new Validar();
+			$validar   = new Validar();
+			$notificar = false;
 
  			$idOrdenesMenu = $idOrdenesCombo = "";
 		 	
@@ -256,6 +257,7 @@ class Orden
 			foreach ( $lstDetalleOrden as $ix => $item ):
 				$item->idMenu         = (int)$item->idMenu > 0			? (int)$item->idMenu			: 0;
 				$item->cantidad       = (int)$item->cantidad > 0		? (int)$item->cantidad			: 0;
+				$item->precio         = (double)$item->precio;
 				$item->idTipoServicio = (int)$item->idTipoServicio > 0	? (int)$item->idTipoServicio	: 0;
 				$observacion          = ( isset( $item->observacion ) AND strlen( $item->observacion ) > 3 ) ? "'" . $item->observacion . "'" : 'NULL';
 
@@ -265,33 +267,55 @@ class Orden
 				else if ( $item->tipoMenu == 'combo' )
 					$sql = "CALL consultaDetalleOrdenCombo( 'insert', NULL, {$idOrdenCliente}, {$item->idMenu}, {$item->cantidad}, NULL, {$item->idTipoServicio}, NULL, NULL, {$observacion}, NULL );";
 
-		 		if( $rs = $this->con->query( $sql ) ){
-		 			@$this->con->next_result();
-		 			if( $row = $rs->fetch_object() ) {
-						$this->respuesta = $row->respuesta;
-						$this->mensaje   = $row->mensaje;
+				// SI NO ES MENU PERSONALIZADO
+				if ( $item->tipoMenu != 'personalizado' ):
+					$notificar = true; // SI SE VA A NOTIFICAR
 
-						// SI SE GUARDO VA CONCATENANDO LOS IDS GENERADOS
-						if ( $this->respuesta == 'success' ) {
-							if ( $item->tipoMenu == 'menu' )
-								$idOrdenesMenu .= $row->ids;
+			 		if( $rs = $this->con->query( $sql ) ){
+			 			@$this->con->next_result();
+			 			if( $row = $rs->fetch_object() ) {
+							$this->respuesta = $row->respuesta;
+							$this->mensaje   = $row->mensaje;
 
-							else if ( $item->tipoMenu == 'combo' )
-								$idOrdenesCombo .= $row->ids;
-						}
-		 			}
-		 		}
-		 		else{
-		 			$this->respuesta = 'danger';
-		 			$this->mensaje   = 'Error al ejecutar la instrucción: ' . $this->con->error;
-		 			break;
-		 		}
+							// SI SE GUARDO VA CONCATENANDO LOS IDS GENERADOS
+							if ( $this->respuesta == 'success' ) {
+								if ( $item->tipoMenu == 'menu' )
+									$idOrdenesMenu .= $row->ids;
+
+								else if ( $item->tipoMenu == 'combo' )
+									$idOrdenesCombo .= $row->ids;
+							}
+			 			}
+			 		}
+			 		else{
+			 			$this->respuesta = 'danger';
+			 			$this->mensaje   = 'Error al ejecutar la instrucción: ' . $this->con->error;
+			 			break;
+			 		}
+				endif;
+
+				// SI ES UN MENU PERSONALIZADO
+				if ( $item->tipoMenu == 'personalizado' ):
+					$sql = "INSERT INTO menuPersonalizado ( idOrdenCliente, cantidad, descripcion, precioUnidad, observacion )
+							VALUES ( {$idOrdenCliente}, {$item->cantidad}, '{$item->menu}', {$item->precio}, {$observacion} )";
+
+					if ( $this->con->query( $sql ) )
+						$this->respuesta = 'success';
+
+					else{
+						$this->respuesta = 'danger';
+						$this->mensaje   = 'Error al guardar menú personalizado';
+					}
+
+				endif;
+
 		 		
 		 		if ( $this->respuesta == 'danger' ) break;
 			endforeach;
 
 			if ( $this->respuesta == 'success' ) {
 		 		$this->con->query( "COMMIT" );
+				$this->mensaje = 'Guardado correctamente';
 
 				$this->myId = uniqid();
 				$this->data = $this->infoNodeOrden( $idOrdenCliente, TRUE, TRUE, TRUE );
@@ -320,13 +344,18 @@ class Orden
 					);
 			 	}
 
-			 	// SI LA CLASE NO EXISTE SE LLAMA
-			 	if ( !class_exists( "Redis" ) )
-			 		include 'redis.class.php';
+			 	// SI SE NOTIFICA POR NODEJS
+			 	if ( $notificar ):
 
-			 	// ENVIA LOS DATOS POR MEDIO DE REDIS
-			 	$red = new Redis();
-				$red->messageRedis( $infoNode );
+				 	// SI LA CLASE NO EXISTE SE LLAMA
+				 	if ( !class_exists( "Redis" ) )
+				 		include 'redis.class.php';
+
+				 	// ENVIA LOS DATOS POR MEDIO DE REDIS
+				 	$red = new Redis();
+					$red->messageRedis( $infoNode );
+
+			 	endif;
 			}
 		 	else
 		 		$this->con->query( "ROLLBACK" );
@@ -506,9 +535,10 @@ class Orden
 
  	public function lstDetalleOrdenCliente( $idOrdenCliente, $todo = false )
  	{
-		$lst   = array();
-		$total = 0;
-		$where = "";
+		$lst      = array();
+		$lstOtros = array();
+		$total    = 0;
+		$where    = "";
 
 		if ( !$todo )
 			$where = " AND idEstadoDetalleOrden != 10 ";
@@ -693,11 +723,30 @@ class Orden
 				$total += (double)$lst[ $ix ]->subTotal;
 			}
 
+			$sql = "SELECT
+						idMenuPersonalizado,
+						idOrdenCliente,
+						cantidad,
+						descripcion,
+						precioUnidad,
+						observacion 
+					FROM menuPersonalizado 
+					WHERE idOrdenCliente = {$idOrdenCliente}";
+			$rs = $this->con->query( $sql );
+
+			while ( $rs AND $row = $rs->fetch_object() )
+			{
+				$row->cantidad     = (int)$row->cantidad;
+				$row->precioUnidad = (double)$row->precioUnidad;
+				$lstOtros[] = $row;
+				$total += ( $row->cantidad * $row->precioUnidad );
+			}
  		}
 
  		return array(
-			'lst'   => $lst,
-			'total' => $total
+			'lst'      => $lst,
+			'lstOtros' => $lstOtros,
+			'total'    => $total
  		);
  	}
 
@@ -1128,11 +1177,25 @@ class Orden
  	// CANCELAR ORDEN DE MANERA PARCIAL
  	public function cancelarOrdenParcial( $idOrdenCliente, $lstDetalle, $comentario = "" )
  	{
-
-		$count       = count( $lstDetalle );
 		$nCancelados = 0;
 
- 		if ( $count AND $idOrdenCliente > 0 ):
+		// SI ES MENU PERSONALIZADO
+		if ( !is_array( $lstDetalle ) ):
+
+			$sql = "DELETE FROM menuPersonalizado WHERE idMenuPersonalizado = {$lstDetalle->idMenuPersonalizado}";
+
+		 	if ( $this->con->query( $sql ) ) {
+		 		$this->respuesta = 'success';
+				$this->mensaje   = 'Cancelado correctamente';
+		 	}
+		 	else
+			{
+				$this->respuesta = 'danger';
+				$this->mensaje   = 'No se pudo cancelar el menú';
+			}
+
+		// SI ES ARREGLO
+ 		elseif ( count( $lstDetalle ) AND $idOrdenCliente > 0 ):
  			$validar = new Validar();
 
 			$comentario = $this->con->real_escape_string( $comentario );
@@ -1872,6 +1935,7 @@ class Orden
 				WHERE doc.idOrdenCliente = {$idOrdenCliente} 
 				    AND idEstadoDetalleOrden <> 6
 					AND idEstadoDetalleOrden <> 10
+					AND ISNULL( dof.idFactura )
 				GROUP BY doc.idCombo, doc.idTipoServicio
 				ORDER BY doc.idCombo ASC)
 					UNION ALL
@@ -1900,6 +1964,7 @@ class Orden
 					AND !dom.perteneceCombo
 				    AND idEstadoDetalleOrden <> 6
 					AND idEstadoDetalleOrden <> 10
+					AND ISNULL( dof.idFactura )
 				GROUP BY dom.idMenu, dom.idTipoServicio
 				ORDER BY dom.idMenu ASC))dt;";
 
@@ -1915,6 +1980,36 @@ class Orden
 				$row->justificacion  = '';
 				$row->imagen         = file_exists( $row->imagen ) ? $row->imagen : 'img-menu/notFound.png';
 				$lst[]               = $row;
+			endwhile;
+		}
+
+		$sql = "SELECT
+					mp.idOrdenCliente,
+					mp.idMenuPersonalizado,
+				    mp.cantidad,
+				    mp.descripcion,
+				    mp.precioUnidad,
+				    mp.observacion
+				FROM menuPersonalizado AS mp
+					LEFT JOIN detalleOrdenFactura AS dof
+						ON dof.idMenuPersonalizado = mp.idMenuPersonalizado
+				WHERE mp.idOrdenCliente = {$idOrdenCliente} AND ISNULL( dof.idFactura );";
+
+		if( $rs = $this->con->query( $sql ) ) {
+			while ( $row = $rs->fetch_object() ):
+				$row->idMenu          = (int)$row->idMenuPersonalizado;
+				$row->esPersonalizado = true;
+				$row->idOrdenCliente  = (int)$row->idOrdenCliente;
+				$row->cantidad        = (int)$row->cantidad;
+				$row->facturado       = 0;
+				$row->pendiente       = $row->cantidad;
+				$row->precio          = (double)$row->precioUnidad;
+				$row->conDescuento    = 0;
+				$row->descuento       = '';
+				$row->justificacion   = '';
+				$row->idTipoServicio  = '';
+				$row->imagen          = 'img/otroMenu.png';
+				$lst[]                = $row;
 			endwhile;
 		}
 

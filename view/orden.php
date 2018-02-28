@@ -173,6 +173,10 @@
                                         <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
                                         <span>{{item.descripcion}}</span>
                                         <span class="estado-menu {{est.css}}" ng-repeat="est in item.estados" title="{{est.title}}" data-toggle="tooltip" data-placement="top" tooltip>{{est.abr}} <span class="badge">{{est.total}}</span></span>
+                                        <p ng-show="item.observacion.length" class="label label-primary">
+                                            <span class="glyphicon glyphicon-star"></span>
+                                            {{item.observacion}}
+                                        </p>
                                     </td>
                                     <td>{{item.subTotal | number:2}}</td>
                                     <td>
@@ -181,8 +185,28 @@
                                         </button>
                                     </td>
                                 </tr>
+                                <tr ng-repeat="otro in infoOrden.lstOtros track by $index">
+                                    <td></td>
+                                    <td>
+                                        <img ng-src="img/otroMenu.png" style="height:40px" class="img-thumbnail">
+                                    </td>
+                                    <td>{{otro.cantidad}}</td>
+                                    <td>
+                                        <b>{{otro.descripcion}}</b>
+                                        <p ng-show="otro.observacion.length" class="label label-primary">
+                                            <span class="glyphicon glyphicon-star"></span>
+                                            {{otro.observacion}}
+                                        </p>
+                                    </td>
+                                    <td>{{(otro.cantidad*otro.precioUnidad) | number:2}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarOtroMenu( otro )" title="Eliminar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    </td>
+                                </tr>
                                 <tr>
-                                    <td></td><td></td><td>TOTAL</td>
+                                    <td colspan="4" class="text-right"><b>TOTAL</b></td>
                                     <td><b>Q. {{infoOrden.total | number:2}}</b></td>
                                     <td></td>
                                 </tr>
@@ -297,12 +321,60 @@
                     </h4>
                 </div>
                 <div class="modal-body">
-                	<div class="row">
-                		<div class="col-xs-12" style="margin-bottom:5px">
-                			<button type="button" class="btn btn-primary" ng-click="openCantidad()">
-                				<span class="glyphicon glyphicon-plus"></span>
-                				<b><u>A</u>gregar Menú</b>
-                			</button>
+                    <!-- MENU PERSONALIZADO -->
+                    <div class="row" ng-show="menuPer.si">
+                        <div class="col-sm-12">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="width:125px">Cantidad</th>
+                                        <th>Descripción</th>
+                                        <th style="width:130px">Precio/Unidad</th>
+                                        <th style="width:75px">Total</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="number" class="form-control" ng-model="$parent.menuPer.cantidad">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" ng-model="$parent.menuPer.descripcion">
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control" ng-model="$parent.menuPer.precioUnidad">
+                                        </td>
+                                        <td><b>{{$parent.menuPer.cantidad*$parent.menuPer.precioUnidad | number:2}}</b></td>
+                                        <td>
+                                            <button type="button" class="btn btn-primary" ng-click="agregarOtroMenu()">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                <b>Agregar</b>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button type="button" class="btn btn-default" ng-click="$parent.menuPer={}">
+                                <span class="glyphicon glyphicon-remove"></span>
+                                Cancelar Menú Personalizado
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- MENU DEFINIDO -->
+                	<div class="row" ng-hide="menuPer.si">
+                        <div class="col-xs-6" style="margin-bottom:5px">
+                            <button type="button" class="btn btn-primary" ng-click="openCantidad()">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                <b><u>A</u>gregar Menú</b>
+                            </button>
+                        </div>
+                		<div class="col-xs-6 text-right" style="margin-bottom:5px">
+                            <button type="button" class="btn btn-info" ng-click="menuPer.si=true">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                <b>Menú Personalizado</b>
+                            </button>
                 		</div>
                 		<div class="col-xs-12">
 							<ul class="nav nav-tabs">
@@ -714,6 +786,35 @@
                             <textarea ng-model="$parent.comentario" rows="3" class="form-control"></textarea>
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" ng-click="cancelarOrdenParcial( infoOrden.idOrdenCliente, itemDetalle )">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        <b>CANCELAR DETALLE ORDEN</b>
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="$hide()">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        <b>Salir sin Cancelar</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script> 
+
+
+<!-- CANCELAR OTRO MENU -->
+<script type="text/ng-template" id="dial.orden.cancelar-otro.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-danger">
+                <div class="modal-header panel-heading">
+                    <button type="button" class="close" ng-click="$hide()">&times;</button>
+                    <span class="glyphicon glyphicon-remove"></span>
+                    CANCELAR MENU PERSONALIZADO
+                </div>
+                <div class="modal-body">
+                    <h3>¿Está seguro de cancelar el menú, Ticket # <kbd>{{infoOrden.numeroTicket}}</kbd>?</h3>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" ng-click="cancelarOrdenParcial( infoOrden.idOrdenCliente, itemDetalle )">
