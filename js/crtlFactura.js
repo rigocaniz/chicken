@@ -517,7 +517,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				detallePago.efectivo = $scope.convert( detallePago.efectivo, 'float', 0 );
 				detallePago.total    = $scope.convert( detallePago.total, 'float', 0 );
 
-				var totalPago = detallePago.tarjeta + detallePago.efectivo;
+				//var totalPago = detallePago.tarjeta + detallePago.efectivo;
+				var totalPago = detallePago.efectivo;
 				var cambio = 0;
 				
 				if ( totalPago > detallePago.total )
@@ -647,7 +648,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		var msgError = '';
 
 		var factura = angular.copy( $scope.lstFacturas[ ixFactura ] );
-
 		console.log( factura );
 
 		// VALIDA CLIENTE
@@ -695,11 +695,9 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		}
 		console.log( factura );
 
-		$scope.facturacion.total = $scope.retornarTotalOrden();
-		
+		$scope.facturacion.total = $scope.retornarTotalOrden();		
 		//var efectivo = ( $scope.facturacion.lstFormasPago[ 0 ].monto || 0 ),
 		//	tarjeta  = ( $scope.facturacion.lstFormasPago[ 1 ].monto || 0 );
-
 		//var vuelto = ( ( efectivo + tarjeta ) - $scope.facturacion.total );
 		
 		// MONTO REAL EN EFECTIVO
@@ -722,6 +720,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				$timeout(function () {
 					$("#btn_print_factura").focus();
 				});
+
+				$scope.lstFacturas[ ixFactura ].facturado = true;
 			}
 			$scope.$parent.hideLoading();
 			/*
@@ -810,24 +810,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		return total;
 	};
 
-	$scope.totalVuelto = function(){
-		var vuelto = 0, total = 0;
-		if( $scope.retornarTotalOrden() > 0 ){
-			for (var i = 0; i < $scope.facturacion.lstFormasPago.length; i++) {
-				var pago = $scope.facturacion.lstFormasPago[ i ];
-				var montoTotal = parseFloat( pago.monto ) + ( $scope.facturacion.lstFormasPago[ 1 ].monto || 0 );
-
-				if( ( montoTotal && montoTotal > $scope.retornarTotalOrden() ) && pago.idFormaPago == 1 )
-					total = montoTotal;
-			}
-		}
-
-		if( total > 0 )
-			vuelto = total - ( $scope.retornarTotalOrden() > 0 ? $scope.retornarTotalOrden() : 0 );
-
-		return vuelto;
-	};
-	
 
 	$scope.consultaCliente = function(){
         var cliente = $scope.cliente;
