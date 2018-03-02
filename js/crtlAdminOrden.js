@@ -1000,8 +1000,14 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				// SI SE ENCONTRO EL TICKET SE ACTUALIZA
 				if ( ixTicket >= 0 )
 				{
-					if ( datos.data.info.paraTicket.length == 0 )
+					if ( datos.data.info.paraTicket.length == 0 ){
+						$scope.ixTicketActual = -1;
 						$scope.lstTickets.splice( ixTicket, 1 );
+						$timeout(function () {
+							if ( $scope.lstTickets.length )
+								$scope.ixTicketActual = 0;
+						});
+					}
 
 					// SI ES LA ORDEN ACTUAL
 					else if ( $scope.ticketActual.idOrdenCliente == datos.data.idOrdenCliente )
@@ -1053,7 +1059,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 						}
 					} // FIN CAMBIO EN ESTADO ORDEN
 
-
+					console.log( $scope.lstTickets );
 					var it = $scope.indexArray( 'lstTickets', 'numeroTicket', item.numeroTicket );
 					// SI EXISTE EL NUMERO DE TICKET
 					if ( it >= 0 )

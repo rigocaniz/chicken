@@ -1865,6 +1865,7 @@ class Orden
 
 				if ( $this->respuesta == 'success' )
 				{
+			 		//$this->con->query( "ROLLBACK" );
 			 		$this->con->query( "COMMIT" );
 
 			 		$this->myId = uniqid();

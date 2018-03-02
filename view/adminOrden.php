@@ -258,7 +258,7 @@
 														<span class="glyphicon glyphicon-flag"></span>
 													</button>
 												</span>
-												<input type="number" class="form-control" ng-keyup="$event.keyCode==32 && servirMenu( $index )" 
+												<input type="number" class="form-control" ng-keyup="$event.keyCode==117 && servirMenu( $index )" 
 													ng-model="orden.seleccionados" style="font-weight:bold;font-size:19px;padding:0 7px" 
 													ng-max="orden.limite" ng-min="0" focus-enter id="detalle_orden_{{$index}}">
 											</div>
