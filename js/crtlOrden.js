@@ -641,8 +641,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		{ abr : 'L', title : 'Listo', css : 'primary' },
 		{ abr : 'S', title : 'Servido', css : 'success' }
 	];
-	$scope.consultaDetalleOrden = function ( orden, deBusqueda ) {
-		if ( $scope.$parent.loading )
+	$scope.consultaDetalleOrden = function ( orden, deBusqueda, force ) {
+		if ( $scope.$parent.loading && force === undefined )
 			return false;
 
 		if ( orden !== undefined )
@@ -1293,7 +1293,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		switch ( datos.accion ) {
 			// SI SE AGREGO UNA ORDEN NUEVA
 			case 'ordenNueva':
-				if ( datos.data.myId != $scope.myId )
+				if ( datos.data.myId != $scope.myId && !$scope.$parent.loading )
 				{
 					$scope.myId = datos.data.myId;
 					// SI ESTA EN ESTADO PENDIENTE SE AGREGA A LA LISTA DE PENDIENTES
@@ -1311,12 +1311,12 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 			break;
 
 			case 'ordenAgregar':
-				if ( datos.data.myId != $scope.myId )
+				if ( datos.data.myId != $scope.myId && !$scope.$parent.loading )
 				{
 					$scope.myId = datos.data.myId;
 					// CONSULTA NUEVAMENTE EL DETALLE DE LA ORDEN, SI ES LA MISMA
 					if ( $scope.infoOrden.idOrdenCliente == datos.data.idOrdenCliente )
-						$scope.consultaDetalleOrden();
+						$scope.consultaDetalleOrden( undefined, undefined, true );
 				}
 				
 			break;
