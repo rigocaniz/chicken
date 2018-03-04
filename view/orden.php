@@ -100,7 +100,7 @@
                     </h4>
                 </div>
                 <div class="col-sm-6 col-xs-12 text-right">
-                	<a href="#/factura/{{infoOrden.idOrdenCliente}}" class="btn btn-sm btn-primary" ng-hide="idEstadoOrden!=1 && idEstadoOrden!=2">
+                	<a href="#/factura/{{infoOrden.idOrdenCliente}}" class="btn btn-sm btn-primary" ng-show="infoOrden.idEstadoOrden>=1 && infoOrden.idEstadoOrden<=4">
                         <span class="glyphicon glyphicon-shopping-cart"></span>
                         <b>Facturar</b> (F10)
                     </a>

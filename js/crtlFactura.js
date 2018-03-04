@@ -196,12 +196,9 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				$scope.consultaCliente();
 		}
 
-		else if ( !$scope.modalOpen( 'dial_printFactura' ) && key == 117 )
-			$scope.consultaFacturaCliente();
-
 		// SI ES PANTALLA PRINCIPAL Y PRESIONAR LA TECLA {F6}
 		else if ( !$scope.modalOpen() && key == 117 )
-			$scope.consultaFacturaCliente();
+			$scope.facturarOrden();
 
 		// CTRL + ESPACION (NUEVA ORDEN)
 		if ( altDerecho && key == 32 && $scope.lstFacturas.length )
