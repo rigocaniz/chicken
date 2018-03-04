@@ -58,6 +58,8 @@ class Factura
 			$idCliente       = 'NULL';
 			$nombre          = 'NULL';
 			$direccion       = 'NULL';
+			$descripcion     = 'NULL';
+
 			//print_r( $data );
 			// SETEO VARIABLES
 	 		$data->idEstadoFactura      = isset( $data->idEstadoFactura ) 		? (int)$data->idEstadoFactura 			: NULL;
@@ -85,7 +87,11 @@ class Factura
 
 			$total           = (double)$data->detallePago->total;
 			$idCaja          = (int)$detalleCaja->idCaja;
-
+			if( $data->detallePago->tipo == 'p' )
+			{
+				$descripcion = isset( $data->detallePago->descripcion ) ? $data->detallePago->descripcion : '';
+				$descripcion = "'" . $this->con->real_escape_string( $validar->validarTexto( $descripcion, NULL, TRUE, 15, 75, ' la descripción de la Factura' ) ) . "'";
+			}
 
 	 		// OBTENER RESULTADO DE VALIDACIONES
 	 		if( $validar->getIsError() ):
@@ -93,11 +99,12 @@ class Factura
 		 		$this->mensaje   = $validar->getMsj();
 
 	 		else:
-
+	 		
 	 			$this->con->query( "START TRANSACTION" );
 
-				$sql = "CALL consultaFacturaCliente( '{$accion}', {$idFactura}, {$idEstadoFactura}, {$idCliente}, {$idCaja}, '{$nombre}', '{$direccion}', {$total}, '' );";
-				
+				$sql = "CALL consultaFacturaCliente( '{$accion}', {$idFactura}, {$idEstadoFactura}, {$idCliente}, {$idCaja}, '{$nombre}', '{$direccion}', {$total}, {$descripcion} );";
+
+				//echo $sql;	
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 			$this->siguienteResultado();
 

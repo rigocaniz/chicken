@@ -514,8 +514,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				detallePago.efectivo = $scope.convert( detallePago.efectivo, 'float', 0 );
 				detallePago.total    = $scope.convert( detallePago.total, 'float', 0 );
 
-				//var totalPago = detallePago.tarjeta + detallePago.efectivo;
-				var totalPago = detallePago.efectivo;
+				var totalPago = detallePago.tarjeta + detallePago.efectivo;
 				var cambio = 0;
 				
 				if ( totalPago > detallePago.total )
@@ -695,7 +694,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		$scope.facturacion.total = $scope.retornarTotalOrden();		
 		//var efectivo = ( $scope.facturacion.lstFormasPago[ 0 ].monto || 0 ),
 		//	tarjeta  = ( $scope.facturacion.lstFormasPago[ 1 ].monto || 0 );
-		//var vuelto = ( ( efectivo + tarjeta ) - $scope.facturacion.total );
+		var vuelto = ( ( efectivo + tarjeta ) - $scope.facturacion.total );
 		
 		// MONTO REAL EN EFECTIVO
 		//factura.lstFormasPago[ 0 ].monto -= vuelto;
