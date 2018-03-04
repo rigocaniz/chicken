@@ -554,12 +554,12 @@ class Factura
 				if ( $row->perteneceCombo ) {
 					$row->idMenu             = 0;
 					$row->idDetalleOrdenMenu = 0;
-					$precioMenu              = $row->precioMenu;
+					$precioMenu              = (double)$row->precioMenu;
 				}
 				else{
 					$row->idCombo             = 0;
 					$row->idDetalleOrdenCombo = 0;
-					$precioMenu               = $row->precioMenu;
+					$precioMenu               = (double)$row->precioMenu;
 				}
 
  				$index = -1;

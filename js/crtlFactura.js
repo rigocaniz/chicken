@@ -70,6 +70,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		$scope.facturacion.numeroTicket   = angular.copy( parseInt( orden.numeroTicket ) );
 		$scope.facturacion.idOrdenCliente = angular.copy( parseInt( orden.idOrdenCliente ) );
 
+		$scope.consultaDetalleOrden( orden );
+
 		$timeout(function () {
 			//document.getElementById('searchPrincipal').focus();
 			$scope.modalInfo( orden, true );
