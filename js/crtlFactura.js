@@ -686,7 +686,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		// SI OCURRIO ALGUN ERROR
 		if ( msgError != null && ( msgError.length ) )
 		{
-			alertify.notify( msgError, 'danger', 5);
+			alertify.notify( msgError, 'warning', 5);
 			return false;
 		}
 		console.log( factura );
@@ -694,7 +694,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		$scope.facturacion.total = $scope.retornarTotalOrden();		
 		//var efectivo = ( $scope.facturacion.lstFormasPago[ 0 ].monto || 0 ),
 		//	tarjeta  = ( $scope.facturacion.lstFormasPago[ 1 ].monto || 0 );
-		var vuelto = ( ( efectivo + tarjeta ) - $scope.facturacion.total );
 		
 		// MONTO REAL EN EFECTIVO
 		//factura.lstFormasPago[ 0 ].monto -= vuelto;
