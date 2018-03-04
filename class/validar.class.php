@@ -343,11 +343,11 @@ class Validar
 
 		elseif( strlen( $valor ) < $minimo ):
 			$warning = TRUE;
-			$msj     = "El contenido ingresado en {$mensaje} no puede ser menor a {$minimo} caracteres, verifique.";
+			$msj     = "El contenido ingresado en {$mensaje} no puede ser menor a {$minimo} caracteres.";
 
 		elseif( strlen( $valor ) > $maximo ):
 			$warning = TRUE;
-			$msj     = "El contenido ingresado en {$mensaje} no puede ser mayor a {$maximo} caracteres, verifique.";
+			$msj     = "El contenido ingresado en {$mensaje} no puede ser mayor a {$maximo} caracteres.";
 			
 		endif;
 

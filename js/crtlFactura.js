@@ -70,6 +70,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		$scope.facturacion.numeroTicket   = angular.copy( parseInt( orden.numeroTicket ) );
 		$scope.facturacion.idOrdenCliente = angular.copy( parseInt( orden.idOrdenCliente ) );
 
+		$scope.consultaDetalleOrden( orden );
+
 		$timeout(function () {
 			//document.getElementById('searchPrincipal').focus();
 			$scope.modalInfo( orden, true );
@@ -514,8 +516,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				detallePago.efectivo = $scope.convert( detallePago.efectivo, 'float', 0 );
 				detallePago.total    = $scope.convert( detallePago.total, 'float', 0 );
 
-				//var totalPago = detallePago.tarjeta + detallePago.efectivo;
-				var totalPago = detallePago.efectivo;
+				var totalPago = detallePago.tarjeta + detallePago.efectivo;
 				var cambio = 0;
 				
 				if ( totalPago > detallePago.total )
@@ -687,7 +688,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		// SI OCURRIO ALGUN ERROR
 		if ( msgError != null && ( msgError.length ) )
 		{
-			alertify.notify( msgError, 'danger', 5);
+			alertify.notify( msgError, 'warning', 5);
 			return false;
 		}
 		console.log( factura );
@@ -695,7 +696,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		$scope.facturacion.total = $scope.retornarTotalOrden();		
 		//var efectivo = ( $scope.facturacion.lstFormasPago[ 0 ].monto || 0 ),
 		//	tarjeta  = ( $scope.facturacion.lstFormasPago[ 1 ].monto || 0 );
-		//var vuelto = ( ( efectivo + tarjeta ) - $scope.facturacion.total );
 		
 		// MONTO REAL EN EFECTIVO
 		//factura.lstFormasPago[ 0 ].monto -= vuelto;

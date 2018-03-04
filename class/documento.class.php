@@ -109,6 +109,11 @@ class Documento
 
 				// IMPRIME FILAS
 				foreach ( $item as $valor ) {
+					$valor->precioReal = number_format( $valor->precioReal, 2 );
+					$valor->precioMenu = number_format( $valor->precioMenu, 2 );
+					$valor->subTotal   = number_format( $valor->subTotal, 2 );
+					$valor->descuento  = number_format( $valor->descuento, 2 );
+					
 					$valor = (array)$valor;
 					$body .= "<tr>";
 					foreach ($campo->encabezado as $ix => $enc):
