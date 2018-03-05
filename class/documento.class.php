@@ -117,7 +117,6 @@ class Documento
 					$valor = (array)$valor;
 					$body .= "<tr>";
 					foreach ($campo->encabezado as $ix => $enc):
-						
 						if ( $enc->_index == '$index' )
 							$body .= "<td>" . ( $ix + 1 ) . "</td>";
 

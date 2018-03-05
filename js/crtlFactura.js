@@ -433,10 +433,11 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			numeroOrden : factura.numeroOrden,
 			idTab 		: factura.idTab,
 			facturado   : false,
+			idFactura   : null,
 			tab         : factura.tab,
 			principal   : factura.principal,
 			lstDetalle  : ( factura.lstDetalle || [] ),
-			cliente 	: {
+			cliente 	   : {
 				idCliente     : ( factura.idCliente || '' ),
 				nit           : ( factura.nit || '' ),
 				nombre        : ( factura.nombre || '' ),
@@ -562,7 +563,28 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	};
 
 	$scope.asignarDetalle = function ( idTabActual, idTabDestino, orden, ixDetalle ) {
-		// SI LA FACTURA NO ESTA DEFINIDA LA CREA
+		console.log( idTabActual, idTabDestino, orden, ixDetalle );
+		// SI LA FACTURA NO ESTA DEFINIDA LA CREA ORDEN ACTUAL
+
+		var ixFacturaA = $scope.indexArray( 'lstFacturas', 'idTab', idTabActual );
+		var factActual = angular.copy( $scope.lstFacturas[ ixFacturaA ] );
+
+		if( factActual.facturado ){
+			console.log( factActual );
+			alertify.notify( 'El detalle de la orden ya está facturado en la <b>ORDEN ACTUAL</b>', 'warning', 6);
+			return;
+		}
+		// ORDEN DESTINO
+		else if( !(idTabDestino == undefined) && ( idTabDestino > 0 ) ){
+			var ixFacturaD = $scope.indexArray( 'lstFacturas', 'idTab', idTabDestino );
+			var factDestino = angular.copy( $scope.lstFacturas[ ixFacturaD ] );
+
+			if( factDestino.facturado ){
+				alertify.notify( 'El # de ORDEN ya se encuentra facturado, no es posible asignar el detalle de la orden', 'warning', 8);
+				return;
+			}
+		}
+
 		if ( !( idTabDestino > 0 ) )
 			idTabDestino = $scope.agregarFactura({});
 
@@ -643,10 +665,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		if ( ixFactura == -1 )
 			return false;
 
-		var msgError = '';
-
-		var factura = angular.copy( $scope.lstFacturas[ ixFactura ] );
-		console.log( factura );
+		var msgError = '',
+			factura = angular.copy( $scope.lstFacturas[ ixFactura ] );
 
 		// VALIDA CLIENTE
 		if ( factura.facturado )
@@ -684,21 +704,17 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			}
 		}
 
-		console.log( msgError, ' ::: ' ,msgError.length  );
+		
 		// SI OCURRIO ALGUN ERROR
 		if ( msgError != null && ( msgError.length ) )
 		{
 			alertify.notify( msgError, 'warning', 5);
 			return false;
 		}
-		console.log( factura );
 
 		$scope.facturacion.total = $scope.retornarTotalOrden();		
-		//var efectivo = ( $scope.facturacion.lstFormasPago[ 0 ].monto || 0 ),
-		//	tarjeta  = ( $scope.facturacion.lstFormasPago[ 1 ].monto || 0 );
 		
 		// MONTO REAL EN EFECTIVO
-		//factura.lstFormasPago[ 0 ].monto -= vuelto;
 		$scope.$parent.showLoading( 'Guardando...' );
 		
 		$http.post('consultas.php',{
@@ -709,11 +725,12 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		    console.log(data);		    
 			alertify.set('notifier','position', 'top-right');
 			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
-			if( data.respuesta == 'success' ) {
+			if( data.respuesta == 'success' )
+			{
 				$scope.resetValores( 'facturacion' );
+				$scope.lstFacturas[ ixFactura ].idFactura = data.data;
 				$scope.impresionFactura.idFactura = data.data;
-				$scope.dialPrintFactura.show();
-				
+				//$scope.dialPrintFactura.show();
 				$timeout(function () {
 					$("#btn_print_factura").focus();
 				});
@@ -721,10 +738,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				$scope.lstFacturas[ ixFactura ].facturado = true;
 			}
 			$scope.$parent.hideLoading();
-			/*
-			if( ixFactura )
-				$scope.lstFacturas.splice( ixFactura, 1 );
-			*/
 		});
 	};
 

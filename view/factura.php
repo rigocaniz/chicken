@@ -88,7 +88,7 @@
                                 </label>
                                 <div class="col-sm-9">
                                     <div class="input-group">
-                                        <input type="text" id="searchPrincipal_{{factura.idTab}}" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode==13&&$event.preventDefault();$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )">
+                                        <input type="text" id="searchPrincipal_{{factura.idTab}}" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode==13&&$event.preventDefault();$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )" ng-disabled="factura.facturado">
                                         <span class="input-group-btn">
                                             <button type="button" class="btn btn-warning" ng-click="buscarCliente( txtCliente, 'principal' );" readonly>
                                                 <span class="glyphicon glyphicon-search"></span>
@@ -99,7 +99,7 @@
                             </div>
         					<label class="col-sm-1 control-label">NIT</label>
         					<div class="col-sm-3">
-        						<input type="text" class="form-control" ng-model="factura.cliente.nit" ng-disabled="factura.cliente.idCliente>0" id="cliente_nit" style="font-weight:bold">
+        						<input type="text" class="form-control" ng-model="factura.cliente.nit" ng-disabled="factura.cliente.idCliente>0 || factura.facturado" id="cliente_nit" style="font-weight:bold">
         					</div>
         					<div class="col-sm-2 col-md-1">
         						<button type="button" class="btn btn-info" ng-click="editarCliente( factura.cliente, 'mostrar' );" ng-show="factura.cliente.idCliente && factura.cliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
@@ -111,13 +111,14 @@
         				<div class="form-group">
         					<label class="col-sm-1 control-label">NOMBRE</label>
         					<div class="col-sm-4">
-        						<input type="text" class="form-control" ng-model="factura.cliente.nombre" id="nombreCliente_{{factura.idTab}}"  style="font-weight:bold">
+        						<input type="text" class="form-control" ng-model="factura.cliente.nombre" id="nombreCliente_{{factura.idTab}}" ng-disabled="factura.facturado" style="font-weight:bold">
         					</div>
         					<label class="col-sm-2 col-lg-1 control-label">DIRECCION</label>
         					<div class="col-sm-5 col-lg-6">
-        						<input type="text" class="form-control" ng-model="factura.cliente.direccion" ng-disabled="factura.cliente.idCliente!=1" focus-enter>
+        						<input type="text" class="form-control" ng-model="factura.cliente.direccion" ng-disabled="factura.cliente.idCliente!=1 || factura.facturado" focus-enter>
         					</div>
         				</div>
+
                         <!-- DATOS DE PAGO Y DETALLE DE ORDEN -->
                         <div class="row">
                             <!-- DETALLE ORDEN -->
@@ -143,7 +144,7 @@
                                                         <input type="text" class="form-control" focus-enter
                                                             ng-model="orden.cantidad"
                                                             ng-keydown="$event.keyCode!=13&&$event.keyCode!=9&&$event.keyCode!=116&&$event.preventDefault()"
-                                                            ng-focus="focusDetalle( $index )">
+                                                            ng-focus="focusDetalle( $index )" ng-disabled="factura.facturado">
 
                                                         <!-- REASIGNAR -->
                                                         <div class="reasignar" ng-show="factura.ixDetalle==$index">
@@ -152,17 +153,17 @@
                                                             </button>
                                                             <div>
                                                                 <strong>Cantidad <kbd>{{orden.pendiente}}</kbd></strong>
-                                                                <input type="number" class="form-control" id="fact_orden_{{$index}}" ng-model="orden.cantidadTrasladar" ng-min="1" min="1" ng-max="orden.pendiente" max="{{orden.pendiente}}" focus-enter>
+                                                                <input type="number" class="form-control" id="fact_orden_{{$index}}" ng-model="orden.cantidadTrasladar" ng-min="1" min="1" ng-max="orden.pendiente" max="{{orden.pendiente}}" focus-enter ng-disabled="factura.facturado">
                                                             </div>
                                                             <div>
                                                                 <strong>Orden</strong>
-                                                                <select ng-model="factura.idTabDestino" class="form-control" focus-enter>
+                                                                <select ng-model="factura.idTabDestino" class="form-control" focus-enter ng-disabled="factura.facturado">
                                                                     <option value="" style="font-weight:bold">Nueva Orden</option>
                                                                     <option value="{{tab.idTab}}" ng-hide="tab.idTab==$parent.idTab" ng-repeat="tab in lstFacturas">{{tab.tab}}</option>
                                                                 </select>
-                                                            </div>
+                                                            </div> 
                                                             <div style="float:left;margin-top:5px;width:100%">
-                                                                <button type="button" class="btn btn-block btn-warning" ng-click="asignarDetalle( factura.idTab, factura.idTabDestino, orden, $index )" ng-disabled="!orden.cantidadTrasladar">
+                                                                <button type="button" class="btn btn-block btn-warning" ng-click="asignarDetalle( factura.idTab, factura.idTabDestino, orden, $index )" ng-disabled="!orden.cantidadTrasladar || factura.facturado">
                                                                     <span class="glyphicon glyphicon-ok"></span>
                                                                     <b>Asignar</b>
                                                                 </button>
@@ -196,7 +197,7 @@
                                                             </div>
                                                         </div>
                                                         <!-- REASIGNAR -->
-                                                        <button ng-click="orden.conDescuento=true" class="btn btn-sm btn-info" ng-show="!orden.conDescuento">
+                                                        <button ng-click="orden.conDescuento=true" class="btn btn-sm btn-info" ng-show="!orden.conDescuento" ng-disabled="factura.facturado">
                                                             <b>SI</b>
                                                         </button>
                                                         <div class="input-group input-sm" ng-show="orden.conDescuento">
@@ -246,7 +247,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group input-group-lg">
-                                            <input type="number" class="form-control" id="efectivo_{{factura.idTab}}" ng-model="factura.detallePago.efectivo" placeholder="Efectivo" focus-enter ng-change="calculoFactura( 'totalPago' )">
+                                            <input type="number" class="form-control" id="efectivo_{{factura.idTab}}" ng-model="factura.detallePago.efectivo" placeholder="Efectivo" focus-enter ng-change="calculoFactura( 'totalPago' )" ng-disabled="factura.facturado">
                                             <span class="input-group-btn">
                                                 <button class="btn btn-success" type="button">
                                                     <b>Q.</b>
@@ -256,7 +257,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group input-group-lg">
-                                            <input type="number" class="form-control" ng-model="factura.detallePago.tarjeta" placeholder="Tarjeta Débito / Crédito" focus-enter ng-change="calculoFactura( 'totalPago' )">
+                                            <input type="number" class="form-control" ng-model="factura.detallePago.tarjeta" placeholder="Tarjeta Débito / Crédito" focus-enter ng-change="calculoFactura( 'totalPago' )" ng-disabled="factura.facturado">
                                             <span class="input-group-btn">
                                                 <button class="btn btn-primary" type="button">
                                                     <span class="glyphicon glyphicon-credit-card"></span>
@@ -276,10 +277,10 @@
                                     <div class="form-group">
                                         <b>Descripción Factura</b>
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <button type="button" class="btn btn-default" ng-click="factura.detallePago.tipo='d'">
+                                            <button type="button" class="btn btn-default" ng-click="factura.detallePago.tipo='d'" ng-disabled="factura.facturado">
                                                 <span class="glyphicon" ng-class="{'glyphicon-check': factura.detallePago.tipo=='d', 'glyphicon-unchecked': factura.detallePago.tipo!='d'}"></span> Detalle
                                             </button>
-                                            <button type="button" class="btn btn-default" ng-click="factura.detallePago.tipo='p'">
+                                            <button type="button" class="btn btn-default" ng-click="factura.detallePago.tipo='p'" ng-disabled="factura.facturado">
                                                 <span class="glyphicon" ng-class="{'glyphicon-check': factura.detallePago.tipo=='p', 'glyphicon-unchecked': factura.detallePago.tipo!='p'}"></span> Personalizado
                                             </button>
                                         </div>
@@ -287,10 +288,14 @@
                                             <textarea ng-model="factura.detallePago.descripcion" placeholder="Ingrese Descripción de la Factura" rows="3" class="form-control"></textarea>
                                         </div>
                                     </div>
-                                    <br>
-                                    <div class="form-group">
+                                    <div class="form-group text-center" ng-show="factura.facturado">
+                                        <a class="btn btn-info btn-lg" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ factura.idFactura }}&type={{ factura.tipo }}" title="IMPRIMIR FACTURA">
+                                            <span class="glyphicon glyphicon-print"></span> IMPRIMIR
+                                        </a>
+                                    </div>
+                                    <div class="form-group" ng-hide="factura.facturado">
                                         <div class="text-center">
-                                            <button type="button" class="btn btn-success" ng-click="facturarOrden()">
+                                            <button type="button" class="btn btn-success" ng-click="facturarOrden()" ng-disabled="factura.facturado">
                                                 <span class="glyphicon glyphicon-saved"></span> <b>FACTURAR (F6)</b>
                                             </button>
                                         </div>
