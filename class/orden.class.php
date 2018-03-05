@@ -1994,7 +1994,7 @@ class Orden
 				FROM menuPersonalizado AS mp
 					LEFT JOIN detalleOrdenFactura AS dof
 						ON dof.idMenuPersonalizado = mp.idMenuPersonalizado
-				WHERE mp.idOrdenCliente = {$idOrdenCliente} AND ISNULL( dof.idFactura );";
+				WHERE mp.idOrdenCliente = {$idOrdenCliente} AND ISNULL( dof.idFactura ) AND mp.idEstadoDetalleOrden = 1 ";
 
 		if( $rs = $this->con->query( $sql ) ) {
 			while ( $row = $rs->fetch_object() ):

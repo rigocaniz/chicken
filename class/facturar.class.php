@@ -159,95 +159,131 @@ class Factura
 			$descuentoT          = 0;
 			$idOrdenCliente      = $validar->validarEntero( $orden->idOrdenCliente, NULL, TRUE, 'Orden de Cliente no Definida' );
 			$idTipoServicio      = $validar->validarEntero( $orden->idTipoServicio, NULL, TRUE, 'Tipo de Servicio no Definido' );
-			$idCombo             = $validar->validarEntero( $orden->idCombo, 0, FALSE, 'No. de Combo inválido' );
+			@$idCombo            = $validar->validarEntero( $orden->idCombo, 0, FALSE, 'No. de Combo inválido' );
 			$idMenu              = $validar->validarEntero( $orden->idMenu, 0, FALSE, 'No. de Menu inválido' );
 			$cantidad            = $validar->validarEntero( $orden->cantidad, 0, FALSE, 'Menus Seleccionados' );
 
-			if ( $idCombo )
-				$sql = "SELECT 
-							idDetalleOrdenCombo
-						FROM detalleOrdenCombo
-						WHERE idOrdenCliente = {$idOrdenCliente}
-							AND idCombo = {$idCombo}
-							AND idTipoServicio = {$idTipoServicio}
-						    AND idEstadoDetalleOrden <> 6
-                            AND idEstadoDetalleOrden <> 10
-						ORDER BY idEstadoDetalleOrden ASC, idDetalleOrdenCombo ASC
-						LIMIT {$cantidad}; ";
-			else
-				$sql = "SELECT
-							idDetalleOrdenMenu
-						FROM detalleOrdenMenu 
-						WHERE idOrdenCliente = {$idOrdenCliente}
-							AND idMenu = {$idMenu}
-							AND idTipoServicio = {$idTipoServicio}
-						    AND idEstadoDetalleOrden <> 6
-                            AND idEstadoDetalleOrden <> 10
-						    AND !perteneceCombo
-						ORDER BY idEstadoDetalleOrden ASC, idDetalleOrdenMenu ASC
-						LIMIT {$cantidad}; ";
-			
-			$result = $this->con->query( $sql );
-			while( $result AND $row = $result->fetch_object() )
-		 		$lst[] = $row;
+			// SI ES MENU PERSONALIZADO
+			if ( isset( $orden->esPersonalizado ) AND (bool)$orden->esPersonalizado )
+			{
+				$sql = "SELECT idMenuPersonalizado FROM menuPersonalizado
+						WHERE idMenuPersonalizado = {$orden->idMenuPersonalizado} AND idEstadoDetalleOrden = 1 ";
+				$rs = $this->con->query( $sql );
+				if ( $rs AND $row = $rs->fetch_object() ) {
+					$orden->descuento = (double)$orden->descuento;
 
- 			if( isset( $orden->conDescuento ) AND (int)$orden->conDescuento )
-				$descuentoT = (double)$orden->descuento;
+					$sql = "UPDATE menuPersonalizado SET idEstadoDetalleOrden = 6
+							WHERE idMenuPersonalizado = {$row->idMenuPersonalizado} ";
 
-		 	// SI LOS SELECCIONADOS ES IGUAL AL NUMERO DE DETALLE
-		 	if ( count( $lst ) == $cantidad )
-		 	{
-		 		foreach ( $lst AS $item ):
-			 		
-			 		$justificacion = "NULL";
-			 		$descuento     = 0;
+					$sqlFac = "INSERT INTO detalleOrdenFactura ( idFactura, idMenuPersonalizado, precioMenu, descuento, usuario, fechaRegistro )
+							VALUES( $idFactura, {$row->idMenuPersonalizado}, {$precio}, {$orden->descuento}, '{$this->sess->getUsuario()}', NOW() ) ";
 
-			 		if( $descuentoT )
-			 			$justificacion = "'" . $this->con->real_escape_string( $orden->justificacion ) . "'";
-
-			 		if( $descuentoT >= $precio )
-			 			$descuento = $precio;
-
-			 		elseif( $descuentoT )
-			 			$descuento = $descuentoT;
-
-			 		if ( isset( $item->idDetalleOrdenMenu ) ) {
-			 			$idDetalleOrdenMenu = $item->idDetalleOrdenMenu;
-			 		}
-			 		else
-			 			$idDetalleOrdenCombo = $item->idDetalleOrdenCombo;
-
-					$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precio}, {$descuento}, {$justificacion} );";
-
-					if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
+					if( $this->con->query( $sql ) AND $this->con->query( $sqlFac ) )
 					{
-						$this->siguienteResultado();
-
-						$this->respuesta = $row->respuesta;
-						$this->mensaje   = $row->mensaje;
-						
-						if( $this->respuesta == 'success' )
-						{
-							$this->tiempo = 2;
-							$guardados++;
-							if( $descuentoT >= $precio )
-								$descuentoT -= $precio;
-							elseif( $descuentoT )
-					 			$descuentoT = 0;
-						}
-						elseif( $this->respuesta == 'danger' )
-							$this->mensaje .= ' (Detalle Factura)';
+						$guardados++;
+						$this->respuesta = 'success';
+						$this->mensaje   = 'Guardado correctamente';
 					}
 					else{
 						$this->respuesta = 'danger';
-						$this->mensaje   = 'Error al ejecutar la operacion (Detalle Factura)';
+						$this->mensaje   = 'Error al guardar estado Menú Personalizado';
 					}
-					
-					if( $this->respuesta == 'danger' )
-						break;
-
-		 		endforeach;
+				}
+				else{
+					$this->respuesta = 'danger';
+					$this->mensaje   = 'Menú Personalizado ya facturado';
+				}
 			}
+
+			// SI ES MENU O COMBO
+			else
+			{
+				if ( $idCombo )
+					$sql = "SELECT 
+								idDetalleOrdenCombo
+							FROM detalleOrdenCombo
+							WHERE idOrdenCliente = {$idOrdenCliente}
+								AND idCombo = {$idCombo}
+								AND idTipoServicio = {$idTipoServicio}
+							    AND idEstadoDetalleOrden <> 6
+	                            AND idEstadoDetalleOrden <> 10
+							ORDER BY idEstadoDetalleOrden ASC, idDetalleOrdenCombo ASC
+							LIMIT {$cantidad}; ";
+				else
+					$sql = "SELECT
+								idDetalleOrdenMenu
+							FROM detalleOrdenMenu 
+							WHERE idOrdenCliente = {$idOrdenCliente}
+								AND idMenu = {$idMenu}
+								AND idTipoServicio = {$idTipoServicio}
+							    AND idEstadoDetalleOrden <> 6
+	                            AND idEstadoDetalleOrden <> 10
+							    AND !perteneceCombo
+							ORDER BY idEstadoDetalleOrden ASC, idDetalleOrdenMenu ASC
+							LIMIT {$cantidad}; ";
+				
+				$result = $this->con->query( $sql );
+				while( $result AND $row = $result->fetch_object() )
+			 		$lst[] = $row;
+
+	 			if( isset( $orden->conDescuento ) AND (int)$orden->conDescuento )
+					$descuentoT = (double)$orden->descuento;
+
+			 	// SI LOS SELECCIONADOS ES IGUAL AL NUMERO DE DETALLE
+			 	if ( count( $lst ) == $cantidad )
+			 	{
+			 		foreach ( $lst AS $item ):
+				 		
+				 		$justificacion = "NULL";
+				 		$descuento     = 0;
+
+				 		if( $descuentoT )
+				 			$justificacion = "'" . $this->con->real_escape_string( $orden->justificacion ) . "'";
+
+				 		if( $descuentoT >= $precio )
+				 			$descuento = $precio;
+
+				 		elseif( $descuentoT )
+				 			$descuento = $descuentoT;
+
+				 		if ( isset( $item->idDetalleOrdenMenu ) ) {
+				 			$idDetalleOrdenMenu = $item->idDetalleOrdenMenu;
+				 		}
+				 		else
+				 			$idDetalleOrdenCombo = $item->idDetalleOrdenCombo;
+
+						$sql = "CALL consultaDetalleFactura( '{$accion}', {$idFactura}, {$idDetalleOrdenMenu}, {$idDetalleOrdenCombo}, {$precio}, {$descuento}, {$justificacion} );";
+
+						if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
+						{
+							$this->siguienteResultado();
+
+							$this->respuesta = $row->respuesta;
+							$this->mensaje   = $row->mensaje;
+							
+							if( $this->respuesta == 'success' )
+							{
+								$this->tiempo = 2;
+								$guardados++;
+								if( $descuentoT >= $precio )
+									$descuentoT -= $precio;
+								elseif( $descuentoT )
+						 			$descuentoT = 0;
+							}
+							elseif( $this->respuesta == 'danger' )
+								$this->mensaje .= ' (Detalle Factura)';
+						}
+						else{
+							$this->respuesta = 'danger';
+							$this->mensaje   = 'Error al ejecutar la operacion (Detalle Factura)';
+						}
+						
+						if( $this->respuesta == 'danger' )
+							break;
+			 		endforeach;
+				}
+			}
+
 
 			if( $this->respuesta == 'danger' )
 				break;
@@ -602,9 +638,40 @@ class Factura
 				}
 
 				$lstDetalleFactura[ $index ]->cantidad += 1;
-				$lstDetalleFactura[ $index ]->subTotal = ( $lstDetalleFactura[ $index ]->cantidad * $row->precioReal );
+				$lstDetalleFactura[ $index ]->subTotal = number_format( $lstDetalleFactura[ $index ]->cantidad * $row->precioReal, 2 );
  			}
  		}
+
+ 		$sql = "SELECT mp.cantidad,
+					( ( mp.precioUnidad * mp.cantidad ) - dof.descuento )AS 'subTotal',
+				    mp.precioUnidad AS 'precio',
+				    dof.descuento,
+				    mp.descripcion,
+				    dof.comentario
+				FROM menuPersonalizado AS mp
+					JOIN detalleOrdenFactura AS dof
+						ON mp.idMenuPersonalizado = dof.idMenuPersonalizado
+				WHERE dof.idFactura = {$idFactura} ";
+
+		$rs = $this->con->query( $sql );
+		while( $rs AND $row = $rs->fetch_object() ){
+			$lstDetalleFactura[] = (object)array(
+				'idCombo'             => 0,
+				'idMenu'              => 0,
+				'esCombo'             => 0,
+				'cantidad'            => $row->cantidad,
+				'subTotal' 			  => number_format( $row->subTotal, 2 ),
+				'descuento'           => (double)$row->descuento,
+				'precioMenu'          => (double)$row->precio,
+				'precioReal'          => $row->precio,
+				'descripcion'         => $row->descripcion,
+				'idTipoServicio'      => '',
+				'tipoServicio'        => 'NA',
+				'comentario'          => $row->comentario,
+				'idDetalleOrdenMenu'  => null,
+				'idDetalleOrdenCombo' => null
+			);
+		}
 
  		return $lstDetalleFactura;
  	}

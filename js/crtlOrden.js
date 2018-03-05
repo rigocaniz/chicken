@@ -3,7 +3,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	$scope.lstTipoMenu     = [];
 	$scope.lstMenu         = [];
 	$scope.noTicket        = 0;
-	$scope.buscarTicket    = 0;
+	$scope.buscarTicket    = '';
 	$scope.idTipoServicio  = '';
 	$scope.idTipoMenu      = '';
 	$scope.accionOrden     = 'nuevo';
