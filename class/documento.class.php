@@ -98,21 +98,46 @@ class Documento
 			if ( $campo->idTipoItem == 1 )
 				echo "<div class='campos' style='left:{$campo->x}px;top:{$campo->y}px;font-size:{$campo->fontSize}px;'>{$label} {$item}</div>";
 
-			else
+			else if ( $campo->idTipoItem == 2 )
 			{
-				$body = "";
-				$cols = "";
+
+				$body      = "";
+				$cols      = "";
+				$resumen   = "";
 
 				// IMPRIME ENCABEZADO DE TABLA
 				foreach ($campo->encabezado as $enc)
+				{
 					$cols .= "<th width='" . $enc->width . "px'>" . $enc->campo . "</th>";
+
+					if ( $enc->_index == 'descripcion' )
+						$resumen .= "<td>" . $valores[ 'descripcion' ] . "</td>";
+					
+					else if ( $enc->_index == 'subTotal' )
+						$resumen .= "<td>" . $valores[ 'total' ] . "</td>";
+
+					else
+						$resumen .= "<td>--</td>";
+				}
+
+				if ( !$valores[ 'siDetalle' ] )
+					$body .= "<tr>$resumen</tr>";
 
 				// IMPRIME FILAS
 				foreach ( $item as $valor ) {
-					$valor->precioReal = number_format( $valor->precioReal, 2 );
-					$valor->precioMenu = number_format( $valor->precioMenu, 2 );
+					// SI NO ES DETALLE ABORTA RECORRIDO DE FILAS
+					if ( !$valores[ 'siDetalle' ] ) break;
+
+					if ( isset( $valor->precioReal ) )
+						$valor->precioReal = number_format( $valor->precioReal, 2 );
+
+					if ( isset( $valor->precioMenu ) )
+						$valor->precioMenu = number_format( $valor->precioMenu, 2 );
+
+					if ( isset( $valor->descuento ) )
+						$valor->descuento  = number_format( $valor->descuento, 2 );
+
 					$valor->subTotal   = number_format( $valor->subTotal, 2 );
-					$valor->descuento  = number_format( $valor->descuento, 2 );
 					
 					$valor = (array)$valor;
 					$body .= "<tr>";
