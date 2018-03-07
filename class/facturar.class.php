@@ -531,7 +531,7 @@ class Factura
 				    usuario,
 				    idEstadoFactura,
 				    estadoFactura,
-				    DATE_FORMAT( fechaRegistro, '%d/%m/%Y %h:%s %p' ) AS fechaRegistro,
+				    DATE_FORMAT( fechaRegistro, '%d/%m/%Y %h:%m %p' ) AS fechaRegistro,
 				    siDetalle,
 				    descripcion
 				FROM
