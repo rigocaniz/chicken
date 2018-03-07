@@ -73,7 +73,7 @@ class Documento
 		$lst = array();
 		$sql = "SELECT idColumnaLista, campo, _index, width
 				FROM columnaLista WHERE idDocumentoDetalle = {$idDocumentoDetalle} 
-				ORDER BY idColumnaLista ASC";
+				ORDER BY orden ASC";
 		$rs = $this->con->query( $sql );
 
  		while( $rs AND $row = $rs->fetch_object() ):
