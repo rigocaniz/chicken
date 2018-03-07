@@ -6,7 +6,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 	$scope.dialAdminUsuario         = $modal({scope: $scope,template:'dial.adminUsuario.html', show: false, backdrop: 'static', keyboard: false});
 	$scope.dialCambiarEstadoUsuario = $modal({scope: $scope,template:'dial.cambiarEstado.html', show: false, backdrop: 'static', keyboard: false});
-	$scope.dialModulosPerfil = $modal({scope: $scope,template:'dial.modulosPerfil.html', show: false, backdrop: 'static', keyboard: false})
+	$scope.dialModulosPerfil        = $modal({scope: $scope,template:'dial.modulosPerfil.html', show: false, backdrop: 'static', keyboard: false})
 	
 	
 	$scope.$watch( 'filtroUsuario', function( _old, _new ){
@@ -22,8 +22,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			$scope.lstEstadoUsuario = data;
 		});
 	};
-
-
 
 	$scope.dataPerfil = {};
 	$scope.datosPerfil = function( perfil ){
@@ -96,7 +94,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 		$http.post('consultas.php',{
 			opcion : 'lstPerfiles'
 		}).success(function(data){
-			console.log( data );
 			$scope.lstPerfiles = data;
 		});
 	};
@@ -118,6 +115,45 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	})();
 
 
+	$scope.accion = 'insert';
+	$scope.editarPerfil = function( perfil ){
+		$scope.accion = 'update';
+		$scope.perfil = angular.copy( perfil );
+	};
+
+
+	$scope.consultaPerfil = function(){
+		if ( $scope.$parent.loading )
+			return false;
+
+		var perfil = $scope.perfil;
+
+		if( $scope.accion == 'update' && !(perfil.idPerfil && perfil.idPerfil > 0 ) )
+			alertify.notify( 'No. de perfil no es válido', 'warning', 3 );
+
+		else if( !(perfil.perfil && perfil.perfil.length > 3 ) )
+			alertify.notify( 'La descripcion del perfil debe ser mayor a 3 caracteres', 'warning', 5 );
+
+		else {
+			$scope.$parent.showLoading( 'Guardando...' );
+
+			$http.post('consultas.php',{
+				opcion : "consultaPerfil",
+				accion : $scope.accion,
+				datos  : $scope.perfil
+			}).success(function(data){
+				alertify.set('notifier','position', 'top-right');
+ 				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
+				$scope.$parent.hideLoading();
+				if ( data.respuesta == 'success' ) {
+					$scope.cargarLstPerfiles();
+					$scope.resetValores( 'perfil' );
+				}
+			})
+		}
+	};
+
+
 	$scope.agregarUsuario = function()
 	{
 		$scope.accion = 'insert';
@@ -135,7 +171,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	};
 
 	$scope.editarUsuario = function( usuario ){
-		console.log( usuario );
 		$scope.accion  = 'update';
 		$scope.usuario = angular.copy( usuario );
 		$scope.usuario.codigo = parseInt( $scope.usuario.codigo );
@@ -144,11 +179,9 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 
 	// CONSULTA USUARIO => INSERT // UPDATE
-	$scope.consultaUsuario = function(){
-
+	$scope.consultaUsuario = function()
+	{
 		var usuario = $scope.usuario;
-
-		console.log( usuario );
 
 		if( !(usuario.idPerfil && usuario.idPerfil > 0 ) )
 			alertify.notify( 'Seleccione el perfil del Usuario', 'warning', 4 );
@@ -223,6 +256,12 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 				nombres         : '',
 				apellidos       : ''
 			};
+		}
+		else if( accion == 'perfil' )
+		{
+			$scope.perfil = {
+				perfil: ''
+			}
 		}
 	};
 

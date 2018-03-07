@@ -786,7 +786,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				}
 				else{
 					alertify.set('notifier','position', 'top-right');
-					alertify.notify( "No se encontro información del TICKET", 'info', 3 );
+					alertify.notify( "No se encontró Ordenes con este <b>No. de TICKET</b>", 'info' );
 				}
 			});
 		}

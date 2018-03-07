@@ -142,11 +142,16 @@ class Documento
 					$valor = (array)$valor;
 					$body .= "<tr>";
 					foreach ($campo->encabezado as $ix => $enc):
+						
+						$alineado = "";
+						if( $enc->_index == 'precioReal' OR $enc->_index == 'subTotal' )
+							$alineado = "style='text-align: right;'";
+
 						if ( $enc->_index == '$index' )
 							$body .= "<td>" . ( $ix + 1 ) . "</td>";
 
 						else
-							$body .= "<td>" . $valor[ $enc->_index ] . "</td>";
+							$body .= "<td {$alineado}>" . $valor[ $enc->_index ] . "</td>";
 
 					endforeach;
 

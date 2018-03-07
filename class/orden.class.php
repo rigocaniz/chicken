@@ -1076,7 +1076,7 @@ class Orden
 				    numMenu
 				FROM vOrdenCliente 
 				/*WHERE DATE( fechaRegistro ) >= DATE_SUB( CURDATE(), INTERVAL 1 DAY ) $where */
-				WHERE ( idEstadoOrden <> 5 AND idEstadoOrden <> 10 )  $where
+				WHERE ( idEstadoOrden <> 5 AND idEstadoOrden <> 6 AND idEstadoOrden <> 10 )  $where
 				ORDER BY idOrdenCliente DESC LIMIT 5";
 
 		if ( $rs = $this->con->query( $sql ) ) {

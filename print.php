@@ -21,7 +21,7 @@ include 'class/documento.class.php';
 
 $factura   = new Factura();
 $idFactura = (int)$_GET[ 'id' ];
-$type      = isset( $_GET[ 'type' ] ) ? $_GET[ 'type' ] : 'g';
+//$type      = isset( $_GET[ 'type' ] ) ? $_GET[ 'type' ] : 'g';
 $isEvent   = isset( $_GET[ 'isEvent' ] ) ? (bool)$_GET[ 'isEvent' ] : false;
 
 // OBTIENE INFORMACION DE FACTURA
