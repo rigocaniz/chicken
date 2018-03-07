@@ -88,7 +88,7 @@
                                 </label>
                                 <div class="col-sm-9">
                                     <div class="input-group">
-                                        <input type="text" id="searchPrincipal_{{factura.idTab}}" class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode==13&&$event.preventDefault();$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )" ng-disabled="factura.facturado">
+                                        <input type="text" id="searchPrincipal_{{factura.idTab}}" autofocus class="form-control" ng-model="txtCliente"  placeholder="NIT / DPI / NOMBRE" ng-keypress="$event.keyCode==13&&$event.preventDefault();$event.keyCode == 13 && buscarCliente( txtCliente, 'principal' )" ng-disabled="factura.facturado">
                                         <span class="input-group-btn">
                                             <button type="button" class="btn btn-warning" ng-click="buscarCliente( txtCliente, 'principal' );" readonly>
                                                 <span class="glyphicon glyphicon-search"></span>

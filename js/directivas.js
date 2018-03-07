@@ -35,6 +35,16 @@ app.directive('numbersOnly', function () {
     };
 });
 
+app.directive('autofocus', function($timeout) {
+    return {
+        link: function(scope, element, attrs) {
+            $timeout(function() {
+                element.focus();
+            });
+        }
+    }
+});
+
 app.directive('focusEnter', function () {
     return {
         restrict: 'A',
