@@ -289,7 +289,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group text-center" ng-show="factura.facturado">
-                                        <a class="btn btn-info btn-lg" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ factura.idFactura }}&type={{ factura.tipo }}" title="IMPRIMIR FACTURA">
+                                        <a class="btn btn-info btn-lg" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ factura.idFactura }}" title="IMPRIMIR FACTURA">
                                             <span class="glyphicon glyphicon-print"></span> IMPRIMIR
                                         </a>
                                     </div>
@@ -332,8 +332,7 @@
                                             <th class="text-center">Cliente</th>
                                             <th class="text-center">Direccion</th>
                                             <th class="text-center">Fecha Facturacion</th>
-                                            <th class="text-center">General</th>
-                                            <th class="text-center">Detalle</th>
+                                            <th class="text-center"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -344,12 +343,7 @@
                                             <td>{{ item.direccion }}</td>
                                             <td class="text-center">{{ item.fechaRegistro }}</td>
                                             <td class="text-center">
-                                                <a class="btn btn-info btn-sm" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ item.idFactura }}&type=g" title="IMPRIMIR FACTURA">
-                                                    <span class="glyphicon glyphicon-print"></span>
-                                                </a>
-                                            </td>
-                                            <td class="text-center">
-                                                <a class="btn btn-info btn-sm" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ item.idFactura }}&type=d" title="IMPRIMIR FACTURA">
+                                                <a class="btn btn-info btn-sm" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ item.idFactura }}" title="IMPRIMIR FACTURA">
                                                     <span class="glyphicon glyphicon-print"></span>
                                                 </a>
                                             </td>
@@ -583,7 +577,7 @@
                                 </button>
                             </div>
                             <br><br>
-                            <a class="btn btn-info btn-lg" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ impresionFactura.idFactura }}&type={{ impresionFactura.type }}" title="IMPRIMIR FACTURA">
+                            <a class="btn btn-info btn-lg" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ impresionFactura.idFactura }}" title="IMPRIMIR FACTURA">
                                 <span class="glyphicon glyphicon-print"></span> IMPRIMIR
                             </a>
                         </div>
