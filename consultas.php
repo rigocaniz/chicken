@@ -662,6 +662,19 @@ switch ( $data->opcion )
 		echo json_encode( $evento->guardarMovimiento( $data->movimiento ) );
 		break;
 
+	// GUARDAR MOVIMIENTO CAJA
+	case 'guardarMovimientoCaja':
+		$caja = new Caja();
+		echo json_encode( $caja->guardarMovimiento( $data->movimiento ) );
+		break;
+
+	// LISTA DE MOVIMIENTOS REALIZADOS
+	case 'lstMovimientos':
+		$data->fecha = isset( $data->fecha ) ? $data->fecha : null;
+		$caja        = new Caja();
+		echo json_encode( $caja->lstMovimientos( $data->fecha ) );
+		break;
+
 	// FACTURAR EVENTO
 	case 'facturarEvento':
 		$evento = new Evento();

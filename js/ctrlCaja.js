@@ -137,4 +137,62 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 		}
 	};
 
+	$scope.movimiento = {
+		idTipoMovimiento : '3',
+		motivo           : '',
+		monto            : '',
+	};
+
+	$scope.guardarMovimiento = function() {
+		if( !( $scope.movimiento.idTipoMovimiento > 0 ) )
+			alertify.notify( 'Tipo Movimiento no definido', 'danger', 3 );
+		
+		else if( !( $scope.movimiento.monto > 0 ) )
+			alertify.notify( 'Monto debe ser mayor a cero', 'warning', 4 );
+
+		else if( !( $scope.movimiento.motivo.length > 3 ) )
+			alertify.notify( 'Motivo muy corto', 'warning', 4 );
+
+		else{
+			$http.post('consultas.php',{
+				opcion     : 'guardarMovimientoCaja',
+				movimiento : {
+					accion           : 'insert',
+					idTipoMovimiento : $scope.movimiento.idTipoMovimiento,
+					motivo           : $scope.movimiento.motivo,
+					monto            : $scope.movimiento.monto,
+				}
+			})
+			.success(function(data){
+				alertify.notify( ( data.mensaje || data ), ( data.respuesta || 'danger' ), 5 );
+
+				if( data.respuesta == 'success' )
+				{
+					$scope.getMovimientos();
+					$scope.movimiento = {
+						idTipoMovimiento : '3',
+						motivo           : '',
+						monto            : '',
+					};
+				}
+			});
+		}
+	};
+
+	$scope.lstMovimientos = [];
+	$scope.totalIngresos  = 0;
+	$scope.totalEgresos   = 0;
+	($scope.getMovimientos = function() {
+		$scope.lstMovimientos = [];
+		$scope.totalIngresos  = 0;
+		$scope.totalEgresos   = 0;
+		$http.post('consultas.php',{
+			opcion : 'lstMovimientos'
+		})
+		.success(function(data){
+			$scope.lstMovimientos = data.lstMovimientos;
+			$scope.totalIngresos  = data.ingresos;
+			$scope.totalEgresos   = data.egresos;
+		});
+	})();
 });

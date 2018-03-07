@@ -341,7 +341,7 @@ class Evento
 		{
 			if ( $accion == 'insertMove' )
 			{
-				$idEstadoMovimiento = 1;
+				$idEstadoMovimiento = 5;
 	 			$sql = "CALL consultaMovimiento( 'insert', {$id}, 1, {$idEstadoMovimiento}, {$idFormaPago}, {$idEvento}, '{$motivo}', {$monto}, {$comentario} )";
 			}
 

@@ -27,6 +27,11 @@
 						<span class="glyphicon glyphicon-list"></span> CAJA
 					</a>
 				</li>
+				<li role="presentation" ng-class="{'active' : menuCaja=='verAjuste'}" ng-click="menuCaja='verAjuste'">
+					<a href="" role="tab" data-toggle="tab">
+						<span class="glyphicon glyphicon-sort"></span> AJUSTES
+					</a>
+				</li>
 			</ul>
 
 			<div class="tab-content">
@@ -145,6 +150,96 @@
 							</div>
 						</form>
 					</fieldset>
+				</div>
+
+				<!--  INGRESO / EGRESO CAJA -->
+				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuCaja=='verAjuste'}" ng-show="menuCaja=='verAjuste'">
+					<fieldset class="fieldset">
+						<legend class="legend info">INGRESOS / EGRESOS VARIOS</legend>
+						<form class="form-horizontal" autocomplete="off" novalidate>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Tipo Movimiento</label>
+								<div class="col-sm-4">
+									<select ng-model="movimiento.idTipoMovimiento" class="form-control" focus-enter>
+										<option value="3">Ingreso</option>
+										<option value="4">Egreso</option>
+									</select>
+								</div>
+								<div class="col-sm-2">
+									<span class="label label-success" ng-show="movimiento.idTipoMovimiento==3">INGRESO</span>
+									<span class="label label-danger" ng-show="movimiento.idTipoMovimiento==4">EGRESO</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Monto</label>
+								<div class="col-sm-2">
+									<input type="number" class="form-control" ng-model="movimiento.monto" placeholder="Q." focus-enter>
+								</div>
+								<label class="col-sm-2 control-label">Motivo</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" ng-model="movimiento.motivo" placeholder="Motivo" focus-enter>
+								</div>
+							</div>
+
+							<!-- DENOMINACIONES -->
+							<div class="form-group text-center">
+								<button type="button" class="btn btn-success" ng-click="guardarMovimiento()">
+									<span class="glyphicon glyphicon-ok"></span> Guardar Movimiento
+								</button>
+								<button type="button" class="btn btn-default" ng-click="movimiento={idTipoMovimiento:'3',motivo:'',monto:''}">
+									<span class="glyphicon glyphicon-remove"></span> Cancelar
+								</button>
+							</div>
+						</form>
+					</fieldset>
+
+					<!-- LISTA DE MOVIMIENTOS DEL DIA -->
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title" style="padding-bottom:9px">
+								Movimientos
+								<button type="button" class="btn btn-sm btn-success" style="float:right">
+									T. Ingresos <span class="badge" style="color:#222">{{totalIngresos | number:2}}</span>
+								</button>
+								<button type="button" class="btn btn-sm btn-danger" style="float:right;margin-right:3px">
+									T. Egresos <span class="badge" style="color:#222">{{totalEgresos | number:2}}</span>
+								</button>
+							</h3>
+						</div>
+						<div class="panel-body">
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th>Tipo Movimiento</th>
+										<th>Monto</th>
+										<th>Motivo</th>
+										<th>Usuario Caja</th>
+										<th>Fecha Registro</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="mov in lstMovimientos">
+										<td>
+											<span class="label label-success text-uppercase" ng-show="mov.idTipoMovimiento==3">
+												<span class="glyphicon glyphicon-plus"></span>
+												{{mov.tipoMovimiento}}
+											</span>
+											<span class="label label-danger text-uppercase" ng-show="mov.idTipoMovimiento==4">
+												<span class="glyphicon glyphicon-minus"></span>
+												{{mov.tipoMovimiento}}
+											</span>
+										</td>
+										<td>
+											<strong>{{mov.monto | number:2}}</strong>
+										</td>
+										<td>{{mov.motivo}}</td>
+										<td>{{mov.usuarioCaja}}</td>
+										<td>{{mov.fechaRegistro}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

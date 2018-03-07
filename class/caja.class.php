@@ -278,6 +278,111 @@ class Caja
 	}
 
 
+ 	// GUARDA MOVIMIENTO EVENTO
+ 	function guardarMovimiento( $movimiento )
+ 	{
+		$respuesta = "";
+		$mensaje   = "";
+		$lastId    = null;
+
+		$id                 = isset( $movimiento->id ) ? (int)$movimiento->id : 'NULL';
+		$idTipoMovimiento   = (int)$movimiento->idTipoMovimiento;
+		$idEstadoMovimiento = 5;
+		$idFormaPago        = 1;
+		$motivo             = $this->con->real_escape_string( $movimiento->motivo );
+		$monto              = (double)$movimiento->monto;
+		$comentario         = isset( $movimiento->comentario ) ? "'" . $this->con->real_escape_string( $movimiento->comentario ) . "'" : "NULL";
+		$accion             = $movimiento->accion;
+
+		if ( !( strlen( $motivo ) > 3 ) )
+			$msgError = "Motivo demasiado corto";
+
+		else if ( !( $monto > 0 ) )
+			$msgError = "Monto no válido, debe ser mayor a cero";
+
+		if ( !( $accion == 'insert' ) )
+			$msgError = "Acción no válida";
+
+		else
+		{
+			$sql = "CALL consultaMovimiento( '$accion', {$id}, {$idTipoMovimiento}, {$idEstadoMovimiento}, {$idFormaPago}, NULL, '{$motivo}', {$monto}, {$comentario} )";
+
+ 			$rs = $this->con->query( $sql );
+ 			@$this->con->next_result();
+
+ 			if ( $rs AND $row = $rs->fetch_object() )
+ 			{
+				$respuesta = $row->respuesta;
+				$mensaje   = $row->mensaje;
+ 			}
+ 			else
+ 			{
+ 				$respuesta = "danger";
+				$mensaje   = "Error al ejecutar la consulta";
+ 			}
+		}
+
+		if ( isset( $msgError ) )
+		{
+			$respuesta = "danger";
+			$mensaje   = $msgError;
+		}
+
+		return array(
+			'respuesta'     => $respuesta,
+			'mensaje'       => $mensaje,
+		);
+ 	}
+
+ 	// LISTA DE MOVIMIENTOS
+	function lstMovimientos( $fecha = null )
+	{
+		$lst      = array();
+		$ingresos = 0;
+		$egresos  = 0;
+
+		$where = 'CURDATE()';
+		if( !is_null( $fecha ) )
+			$where = " '{$fecha}' ";
+
+		$sql = "SELECT
+					m.motivo,
+				    m.monto,
+				    tm.idTipoMovimiento,
+				    tm.tipoMovimiento,
+				    c.usuario AS 'usuarioCaja',
+				    em.fechaRegistro
+				FROM movimiento AS m
+					JOIN logEstadoMovimiento AS em
+						ON em.idMovimiento = m.idMovimiento
+				        
+					JOIN caja AS c
+						ON c.idCaja = m.idCaja
+				        
+					JOIN tipoMovimiento AS tm
+						ON tm.idTipoMovimiento = m.idTipoMovimiento
+					
+				    JOIN estadoMovimiento AS e
+						ON e.idEstadoMovimiento = m.idEstadoMovimiento
+				WHERE c.fechaApertura = $where 
+				ORDER BY m.idMovimiento DESC";
+		
+		$rs = $this->con->query( $sql );
+		while( $rs AND $row = $rs->fetch_object() ){
+			$row->monto = (double)$row->monto;
+
+			if ( $row->idTipoMovimiento == 3 )
+				$ingresos += $row->monto;
+
+			else
+				$egresos += $row->monto;
+
+			$lst[] = $row;
+		}
+		
+		return array( 'lstMovimientos' => $lst, 'ingresos' => $ingresos, 'egresos' => $egresos );
+	}
+
  	function getRespuesta()
  	{
  		return $respuesta = array( 
@@ -287,8 +392,6 @@ class Caja
  				'data'      => $this->data
  			);
  	}
-
-
 }
 
 ?>
