@@ -56,15 +56,15 @@
                     </div>
                 </div>
                 <!-- TABS -->
-                <div class="col-sm-12" style="margin-top: -15px">
+                <div style="margin-top: 15px">
                     <ul class="nav nav-tabs tabs-title" role="tablist">
                         <li role="presentation" ng-class="{'active' : $parent.idTab==factura.idTab}" 
                             ng-repeat="factura in lstFacturas">
                             <a href="" role="tab" ng-click="$parent.idTab=factura.idTab" style="padding-right:32px">
                                 <span class="glyphicon glyphicon-shopping-cart"></span> {{factura.tab}} <span class="label label-primary">{{factura.lstDetalle.length}}</span>
                             </a>
-                            <button type="button" class="remove-tab" ng-dblclick="quitarFactura( factura.idTab )" 
-                                ng-hide="factura.principal" data-title="Doble clic para eliminar" data-placement="left" bs-tooltip>
+                            <button type="button" ng-class="{'remove-tab': !factura.facturado}" ng-dblclick="quitarFactura( factura.idTab );" 
+                                ng-hide="factura.principal || factura.facturado" data-title="Doble clic para eliminar" data-placement="left" bs-tooltip>
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>
                         </li>
@@ -77,7 +77,7 @@
                 </div>
 
                 <!-- CONTENT-TABS -->
-                <div class="col-sm-12">
+                <div>
                     <div class="tab-content" ng-repeat="factura in lstFacturas" ng-show="$parent.idTab==factura.idTab">
                         <!-- BUSQUEDA Y NIT -->
                         <div class="form-group">
@@ -222,10 +222,10 @@
                                             </tr>
                                             <tr class="success">
                                                 <td colspan="5" class="text-right">
-                                                    <h4><strong>TOTAL</strong></h4>
+                                                    <strong>TOTAL</strong>
                                                 </td>
                                                 <td class="text-right">
-                                                    <h4><strong>Q. {{ factura.detallePago.total | number: 2 }}</strong></h4>
+                                                    <strong>Q. {{ factura.detallePago.total | number: 2 }}</strong>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -237,40 +237,40 @@
                             <div class="col-xs-4 col-sm-5">
                                 <fieldset class="fieldset" style="padding: 5px 25px;">
                                     <legend class="legend info">DETALLE PAGO (Ctrl+P)</legend>
-                                    <div class="form-group">
+                                    <div class="form-group group-factura">
                                         <div class="input-group input-group-lg">
                                             <span class="input-group-addon">
                                                 <b>Total</b>
                                             </span>
-                                            <input type="text" class="form-control" value="{{factura.detallePago.total | number:2}}" placeholder="Q." disabled style="background:#fff">
+                                            <input type="text" class="form-control monto" value="{{factura.detallePago.total | number:2}}" placeholder="Q." disabled style="background:#fff">
                                         </div>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group group-factura">
                                         <div class="input-group input-group-lg">
-                                            <input type="number" class="form-control" id="efectivo_{{factura.idTab}}" ng-model="factura.detallePago.efectivo" placeholder="Efectivo" focus-enter ng-change="calculoFactura( 'totalPago' )" ng-disabled="factura.facturado">
                                             <span class="input-group-btn">
-                                                <button class="btn btn-success" type="button">
+                                                <span class="btn btn-success">
                                                     <b>Q.</b>
-                                                </button>
+                                                </span>
                                             </span>
+                                            <input type="number" class="form-control monto" id="efectivo_{{factura.idTab}}" ng-model="factura.detallePago.efectivo" placeholder="Efectivo" focus-enter ng-change="calculoFactura( 'totalPago' )" ng-disabled="factura.facturado">
                                         </div>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group group-factura">
                                         <div class="input-group input-group-lg">
-                                            <input type="number" class="form-control" ng-model="factura.detallePago.tarjeta" placeholder="Tarjeta Débito / Crédito" focus-enter ng-change="calculoFactura( 'totalPago' )" ng-disabled="factura.facturado">
                                             <span class="input-group-btn">
-                                                <button class="btn btn-primary" type="button">
+                                                <span class="btn btn-primary">
                                                     <span class="glyphicon glyphicon-credit-card"></span>
-                                                </button>
+                                                </span>
                                             </span>
+                                            <input type="number" class="form-control monto" ng-model="factura.detallePago.tarjeta" placeholder="Tarjeta Débito / Crédito" focus-enter ng-change="calculoFactura( 'totalPago' )" ng-disabled="factura.facturado">
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <div class="input-group">
+                                    <div class="form-group group-factura">
+                                        <div class="input-group input-group-lg">
                                             <span class="input-group-addon">
-                                                <b>CAMBIO</b>
+                                                <b>Cambio</b>
                                             </span>
-                                            <input type="text" class="form-control" ng-model="factura.detallePago.cambio" placeholder="Q." disabled style="background:#fff">
+                                            <input type="text" class="form-control monto" value="{{ factura.detallePago.cambio | number:2 }}" placeholder="Q." disabled style="background:#fff">
                                         </div>
                                     </div>
                                     <div class="clearfix"></div>
@@ -285,7 +285,7 @@
                                             </button>
                                         </div>
                                         <div class="col-sm-12" ng-show="factura.detallePago.tipo=='p'" style="margin-top:5px">
-                                            <textarea ng-model="factura.detallePago.descripcion" placeholder="Ingrese Descripción de la Factura" rows="3" class="form-control"></textarea>
+                                            <textarea ng-model="factura.detallePago.descripcion" placeholder="Ingrese Descripción de la Factura" rows="3" class="form-control" factura.facturado></textarea>
                                         </div>
                                     </div>
                                     <div class="form-group text-center" ng-show="factura.facturado">

@@ -1086,12 +1086,13 @@ div.inactive-key{
     border: 1px solid #cccccc;
 }
 
-.monto input[type=number] {
-    padding: 2px 7px;
-    border-radius: 4px;
-    text-align: right;
-    font-size: 22px;
-    height: 36px;
+.group-factura {
+    margin-bottom: 10px;
+}
+
+.monto {
+    text-align: right !important;
+    font-size: 20px !important;
 }
 
 .label-ticket{
