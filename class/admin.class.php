@@ -40,6 +40,47 @@ class Admin
 	}
 
 
+	// CARGAR LISTA PERFILES
+	function consultaPerfil( $accion, $data )
+	{
+		$validar = new Validar();
+
+		$idPerfil = "NULL";
+		if( $accion == 'update' ):
+ 			$idPerfil = (int)$data->idPerfil > 0 ? (int)$data->idPerfil : NULL;
+ 			$idPerfil = $validar->validarNumero( $data->idPerfil, NULL, TRUE, 1 );
+ 		endif;
+
+ 		$perfil = $this->con->real_escape_string( $validar->validarTexto( $data->perfil, NULL, TRUE, 3, 45, 'el Perfil' ) );
+
+ 		if( $validar->getIsError() ): 			
+ 			$this->respuesta = 'warning';
+ 			$this->mensaje   = $validar->getMsj();
+ 			$this->tiempo    = $validar->getTiempo();
+
+ 		else:
+
+			$sql = "INSERT INTO perfil ( idPerfil, perfil )
+						VALUES( {$idPerfil}, '{$perfil}' )
+							ON DUPLICATE KEY UPDATE
+								perfil = '{$perfil}';";
+			
+			if( $rs = $this->con->query( $sql ) )
+			{
+				$this->respuesta = 'success';
+				$this->mensaje = 'Guardado correctamente';
+			}
+			else{
+				$this->respuesta = 'danger';
+				$this->mensaje = 'Error al ejecutar la instrucción';
+			}
+
+ 		endif;
+
+		return $this->getRespuesta();
+	}
+
+
 	function asignarModulo( $idPerfil, $idModulo, $asignado )
 	{
 		$asignado = (int)$asignado;

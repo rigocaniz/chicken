@@ -119,17 +119,37 @@
 
 				<!--  PANEL PERFILES -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : adminMenu=='perfiles'}" ng-show="adminMenu=='perfiles'">
-					<div class="col-sm-offset-2 col-sm-8">
+					<div class="col-sm-offset-1 col-sm-10">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h4 class="panel-title">PERFILES</h4>
+							</div>
+							<div class="panel-body">
+								<div class="row">
+									<label class="col-xs-1 col-sm-2 col-md-2 control-label">Perfil</label>
+									<div class="col-xs-6 col-sm-6">
+										<input type="text" id="medida" ng-keyup="$event.keyCode == 13 && consultaPerfil()" class="form-control" ng-model="perfil.perfil" maxlength="45" ng-disabled="loading">
+									</div>
+									<div class="col-xs-5 col-sm-4 col-md-4">
+										<button type="button" class="btn btn-sm" ng-class="{'btn-success': accion == 'insert', 'btn-info': accion == 'update'}" ng-click="consultaPerfil()" ng-disabled="loading">
+											<span class="glyphicon glyphicon-saved"></span> {{ accion == 'insert' ? 'Guardar' : 'Actualizar' }} (F6)
+										</button>
+										<button type="button" class="btn btn-sm btn-default" ng-click="resetValores( 'perfil' )">
+											Cancelar
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-offset-1 col-sm-10">
 						<div class="panel panel-default">
 							<div class="panel-heading">
 								<span class="glyphicon glyphicon-th-list"></span>
 								<STRONG>LISTA DE USUARIOS</STRONG>
 							</div>
 							<div class="panel-body">
-								<button type="button" class="btn btn-sm btn-success" ng-click="agregarPerfil()">
-									<span class="glyphicon glyphicon-plus"></span> AGREGAR PERFILES
-								</button>
-								<br><br>
+
 								<table class="table table-hover">
 									<thead>
 										<tr>
@@ -290,7 +310,6 @@
 		</div>
 	</div>
 </script>
-
 
 
 <!-- DIALOGO ADMINISTRACIÓN USUARIO => INSERT / UPDATE -->

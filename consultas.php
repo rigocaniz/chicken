@@ -326,6 +326,11 @@ switch ( $data->opcion )
 		$admin = new Admin();
 		echo json_encode( $admin->asignarModulo( $data->idPerfil, $data->idModulo, $data->asignado ) );
 		break;
+
+	case 'consultaPerfil':			// ACCION MEDIDA: INSERT / UPDATE
+		$admin = new Admin();
+		echo json_encode( $admin->consultaPerfil( $data->accion, $data->datos ) );
+		break;
 			
 
 	/////////////////////////
