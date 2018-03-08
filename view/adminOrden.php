@@ -370,38 +370,31 @@
                 <div class="modal-body">
                 	<div class="row">
 	                    <div class="col-xs-6">
-							<legend>Atajos en Ordenes (Menú|Ticket)</legend>
-	                    	<ul class="list-group">
-								<li class="list-group-item"><kbd>→</kbd> Enfoca Grupo Siguiente</li>
-								<li class="list-group-item"><kbd>←</kbd> Enfoca Grupo Anterior</li>
-								<li class="list-group-item"><kbd>Retroceso(BACKSPACE)</kbd> Deselecciona Grupo</li>
-								<li class="list-group-item"><kbd>T</kbd> Selecciona Todas las Ordenes</li>
-								<li class="list-group-item"><kbd>N</kbd> Deselecciona Todas las Ordenes</li>
-								<li class="list-group-item"><kbd>+</kbd> Selecciona Asc. la próxima Orden No Seleccionada</li>
-								<li class="list-group-item"><kbd>-</kbd> Deselecciona Des. la próxima Orden Seleccionada</li>
-								<li class="list-group-item"><kbd>↓</kbd> Enfoca Orden Siguiente</li>
-								<li class="list-group-item"><kbd>↑</kbd> Enfoca Orden Anterior</li>
-								<li class="list-group-item"><kbd>ESPACIO</kbd> Des/Selecciona Orden Enfocada</li>
-								<li class="list-group-item"><kbd>ALT + ENTER</kbd> Confirma Acción de Selección Actual</li>
-							</ul>
-	                    	<legend>Cambio de Usuario</legend>
+	                    	<legend>Vista: <b>COCINA</b></legend>
 		                    <ul class="list-group">
-								<li class="list-group-item"><kbd>ALT + U</kbd> Cambio Rápido de Usuario</li>
+								<li class="list-group-item"><kbd>↑</kbd> Selecciona el Producto <b>Anterior</b></li>
+								<li class="list-group-item"><kbd>↓</kbd> Selecciona el Producto <b>Siguiente</b></li>
+								<li class="list-group-item"><kbd>F6</kbd> Confirmar la acción de la cantidad de productos ingresados</li>
+								<li class="list-group-item"><kbd>Ctrl + P</kbd> Muestra productos con estado <b>PENDIENTE</b></li>
+								<li class="list-group-item"><kbd>Ctrl + C</kbd> Muestra productos con estado <b>COCINANDO</b></li>
+								<li class="list-group-item"><kbd>Ctrl + L</kbd> Muestra productos con estado <b>LISTO</b></li>
+								<li class="list-group-item"><kbd>Ctrl + S</kbd> Muestra productos con estado <b>SERVIDO</b></li>
+							</ul>
+							<legend>Pantalla Principal ( Menú | Ticket )</legend>
+	                    	<ul class="list-group">
+								<li class="list-group-item"><kbd>Ctrl + →</kbd> cambia a vista <b>Cocina</b></li>
+								<li class="list-group-item"><kbd>Ctrl + ←</kbd> cambia a vista <b>Mesero</b></li>
 							</ul>
 						</div>
 	                    <div class="col-xs-6">
-	                    	<legend>Vista Ordenes</legend>
+	                    	<legend>Vista: <b>MESERO</b></legend>
 	                    	<ul class="list-group">
-								<li class="list-group-item"><kbd>ALT + M</kbd> Muestra Ordenes Por Menú</li>
-								<li class="list-group-item"><kbd>ALT + D</kbd> Muestra Ordenes Por Menú/Ticket</li>
-								<li class="list-group-item"><kbd>ALT + T</kbd> Muestra Ordenes Por Ticket</li>
-							</ul>
-							<legend>Ordenes Por Estado</legend>
-	                    	<ul class="list-group">
-								<li class="list-group-item"><kbd>P</kbd> Ordenes Pendientes</li>
-								<li class="list-group-item"><kbd>C</kbd> Ordenes Cocinando</li>
-								<li class="list-group-item"><kbd>L</kbd> Ordenes Listas</li>
-								<li class="list-group-item"><kbd>S</kbd> Ordenes Servidas</li>
+	                    		<li class="list-group-item"><kbd>Ctrl + K</kbd> Muestra ordenes Pendientes de <b>FINALIZAR</b></li>
+								<li class="list-group-item"><kbd>Ctrl + F</kbd> Muestra ordenes <b>FINALIZADAS</b></li>
+								<li class="list-group-item"><kbd>↑</kbd> Selecciona la Orden <b>Anterior</b></li>
+								<li class="list-group-item"><kbd>↓</kbd> Selecciona la Orden <b>Siguiente</b></li>
+								<li class="list-group-item"><kbd>ENTER</kbd> seleccina el producto siguiente de Orden Actual</li>
+								<li class="list-group-item"><kbd>F6</kbd> de # Productos Seleccioandos cambia estado a <b>SERVIDO</b></li>
 							</ul>
 		                </div>
 		            </div>

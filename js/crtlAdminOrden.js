@@ -716,16 +716,16 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		/************ CONSULTA POR ESTADO ************ 
 		**********************************************/
 		// CAMBIO DE ESTADO
-		else if ( !altDerecho && key == 80 ) // {P}
+		else if ( altDerecho && key == 80 ) // {P}
 			$scope.cambioEstadoOrden( 1 );
 
-		else if ( !altDerecho && key == 67 ) // {C}
+		else if ( altDerecho && key == 67 ) // {C}
 			$scope.cambioEstadoOrden( 2 );
 
-		else if ( !altDerecho && key == 76 ) // {L}
+		else if ( altDerecho && key == 76 ) // {L}
 			$scope.cambioEstadoOrden( 3 );
 
-		else if ( !altDerecho && key == 83 ) // {S}
+		else if ( altDerecho && key == 83 ) // {S}
 			$scope.cambioEstadoOrden( 4 );
 
 

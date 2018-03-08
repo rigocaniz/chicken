@@ -32,7 +32,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	alertify.set('notifier','position', 'top-right');
 
 	// DIALOGOS
-	$scope.dialOrden            = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false, keyboard: false });
+	$scope.dlAyuda              = $modal({scope: $scope,template:'ayuda.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialOrden            = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialOrdenCliente     = $modal({scope: $scope,template:'dial.orden.cliente.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialCantidad  		= $modal({scope: $scope,template:'dial.cantidad.html', show: false, backdrop:false, keyboard: false });
 	$scope.dialOrdenMenu        = $modal({scope: $scope,template:'dial.orden-menu.html', show: false, backdrop:false, keyboard: false });
@@ -1055,8 +1056,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	};
 
 	// ATAJOS PANTALLA PRINCIPAL
-	$scope._keyInicioOrden = function ( key ) {
-		if ( key == 78 ) // {N}
+	$scope._keyInicioOrden = function ( key, altDerecho ) {
+		if ( altDerecho && key == 79 ) // {O}
 			$scope.nuevaOrden();
 
 		if ( key == 38 ) // {UP} // ORDEN SIGUIENTE
@@ -1072,10 +1073,11 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 			$scope.miIndex = ( $scope.lstOrdenCliente.length - 1 );
 
 		// ORDENES POR ESTADO
-		if ( key == 80 ) $scope.idEstadoOrden = 1; // {P}
-		if ( key == 76 ) $scope.idEstadoOrden = 3; // {F}
-		if ( key == 70 ) $scope.idEstadoOrden = 4; // {F}
-		if ( key == 67 ) $scope.idEstadoOrden = 10; // {C}
+		if ( altDerecho && key == 80 ) $scope.idEstadoOrden = 1; // {P}
+		if ( altDerecho && key == 76 ) $scope.idEstadoOrden = 3; // {F}
+		if ( altDerecho && key == 70 ) $scope.idEstadoOrden = 4; // {F}
+		if ( altDerecho && key == 67 ) $scope.idEstadoOrden = 10; // {C}
+		if ( altDerecho && key == 83 ) $scope.idEstadoOrden = 6; // {S}
 
 		// BUSQUEDA POR TICKET
 		if ( key >= 48 && key <= 57 && !$("#buscarTicket").is(":focus") ) // {0-9}
@@ -1097,8 +1099,17 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		if ( key == 121 && $scope.infoOrden.idOrdenCliente > 0 ) // {F10}
 			$location.path( "/factura/" + $scope.infoOrden.idOrdenCliente );
 
-		if ( key == 65 && $scope.infoOrden.idOrdenCliente > 0 ) // {O}
+		if ( altDerecho && key == 65 && $scope.infoOrden.idOrdenCliente > 0 ) // {O}
 			$scope.consultaOrden( $scope.infoOrden );
+
+		else if ( altDerecho && key == 88 && $scope.infoOrden.idOrdenCliente > 0 )// {X}
+		{
+			$scope.dialOrdenCancelar.show();
+			$scope.comentario = '';
+			$timeout(function () {
+				document.getElementById( 'txtCancelar' ) && document.getElementById( 'txtCancelar' ).focus();
+			});
+		}
 	};
 
 	// ATAJOS DIALOGO INGRESO DE TICKET
@@ -1245,7 +1256,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 		// SI NO EXISTE NINGUN DIALOGO ABIERTO
 		if ( !$scope.modalOpen() )
-			$scope._keyInicioOrden( key );
+			$scope._keyInicioOrden( key, altDerecho );
 
 		// CUANDO ESTE ABIERTO ALGUN CUADRO DE DIALOGO
 		else{

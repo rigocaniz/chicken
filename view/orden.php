@@ -12,11 +12,14 @@
         <div class="col-sm-5 col-xs-6" style="margin-bottom:9px">
             <button type="button" class="btn btn-success" ng-click="nuevaOrden()">
                 <span class="glyphicon glyphicon-plus"></span>
-                <u>N</u>ueva Orden
+                Nueva <u>O</u>rden
             </button>
             <button type="button" class="btn btn-default" ng-click="dialUltimasOrdenes.show()">
                 <span class="glyphicon glyphicon-print"></span>
                 Últimas Ordenes
+            </button>
+            <button type="button" class="btn btn-info" ng-click="dlAyuda.show()">
+                <span class="glyphicon glyphicon-question-sign"></span>
             </button>
         </div>
 		<div class="col-sm-offset-2 col-sm-4 col-xs-5">
@@ -44,10 +47,14 @@
                     <span class="glyphicon glyphicon-flag"></span>
                     <span class="hidden-xs"><u>F</u>inalizados</span>
                 </button>
-				<button class="bt-danger" ng-class="{'active':idEstadoOrden==10}" ng-click="idEstadoOrden=10">
-					<span class="glyphicon glyphicon-remove"></span>
-					<span class="hidden-xs"><u>C</u>ancelados</span>
-				</button>
+                <button class="bt-danger" ng-class="{'active':idEstadoOrden==10}" ng-click="idEstadoOrden=10">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    <span class="hidden-xs"><u>C</u>ancelados</span>
+                </button>
+                <button class="bt-primary" ng-class="{'active':idEstadoOrden==6}" ng-click="idEstadoOrden=6">
+                    <span class="glyphicon glyphicon-shopping-cart"></span>
+                    <span class="hidden-xs">Facturado<u>s</u></span>
+                </button>
 			</div>
 		</div>
 	</div>
@@ -134,7 +141,7 @@
                 <div class="col-xs-12 text-center" ng-show="infoOrden.idEstadoOrden==1 || infoOrden.idEstadoOrden==2">
                     <button type="button" class="btn btn-info" ng-click="consultaOrden( infoOrden )">
                         <span class="glyphicon glyphicon-plus"></span>
-                        <b><u>A</u>gregar Orden</b>
+                        <b><u>A</u>gregar Menú</b>
                     </button>
                 </div>
             </div>
@@ -311,13 +318,12 @@
 <script type="text/ng-template" id="dial.orden.cliente.html">
     <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_cliente">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content panel-default">
+            <div class="modal-content panel-primary">
                 <div class="modal-header panel-heading">
                     <h4>
                     	<span ng-show="ordenActual.idOrdenCliente>0">Orden # <span class="badge-orden">{{ordenActual.idOrdenCliente}}</span></span> - 
                     	<span ng-show="ordenActual.noTicket>0">Ticket: <span class="badge-ticket">{{ordenActual.noTicket}}</span></span>
-                        <span class="label label-default" style="float:right" ng-show="accionOrden=='nuevo'">Nuevo</span>
-                        <span class="label label-info" style="float:right" ng-show="accionOrden=='modificar'">Agregar</span>
+                        <span class="label label-primary" style="float:right">Confirmar Orden</span>
                     </h4>
                 </div>
                 <div class="modal-body">
@@ -748,7 +754,7 @@
                     <div class="row">
                         <div class="col-sm-offset-2 col-sm-8">
                             <label>Ingrese motivo de Cancelación</label>
-                            <textarea ng-model="$parent.comentario" rows="3" class="form-control"></textarea>
+                            <textarea ng-model="$parent.comentario" id="txtCancelar" rows="3" class="form-control"></textarea>
                         </div>
                     </div>
                 </div>
@@ -987,3 +993,67 @@
         </div>
     </div>
 </script>
+
+
+<!-- AYUDA -->
+<script type="text/ng-template" id="ayuda.html">
+    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-default">
+                <div class="modal-header panel-heading">
+                    <button type="button" class="close" ng-click="$hide()">&times;</button>
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                    Atajos de Teclado
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <legend class="legend primary">Pantalla de Inicio</legend>
+                            <ul class="list-group">
+                                <li class="list-group-item"><kbd>Ctrl + O</kbd> Dialogo para <b>NUEVA</b> Orden</li>
+                                <li class="list-group-item"><kbd>Ctrl + P</kbd> Ordenes con estado <b>PENDIENTE</b></li>
+                                <li class="list-group-item"><kbd>Ctrl + L</kbd> Ordenes con estado <b>LISTO</b></li>
+                                <li class="list-group-item"><kbd>Ctrl + F</kbd> Ordenes con estado <b>FINALIZADO/SERVIDO</b></li>
+                                <li class="list-group-item"><kbd>Ctrl + C</kbd> Ordenes con estado <b>CANCELADO</b></li>
+                                <li class="list-group-item"><kbd>Ctrl + S</kbd> Ordenes con estado <b>FACTURADO</b></li>
+                                <li class="list-group-item"><kbd>↑</kbd> selecciona la orden <b>Siguiente</b></li>
+                                <li class="list-group-item"><kbd>↓</kbd> selecciona la orden <b>Anterior</b></li>
+                                <li class="list-group-item"><kbd>Ctrl + A</kbd> <b>Agregar Menú</b> a la <b>Orden Actual</b></li>
+                                <li class="list-group-item"><kbd>F10</kbd> <b>Facturar</b> orden actual</li>
+                                <li class="list-group-item"><kbd>Ctrl + X</kbd> Muestra dialog para <b>CANCELAR</b> Orden Actual</li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-6">
+                            <legend class="legend primary">Dialogo: CONFIRMAR ORDEN</legend>
+                            <ul class="list-group">
+                                <li class="list-group-item"><kbd>Ctrl + A</kbd> Agregar menú de Orden</li>
+                                <li class="list-group-item"><kbd>→</kbd> pestaña <b>Siguiente</b> Tipo Servicio</li>
+                                <li class="list-group-item"><kbd>←</kbd> pestaña <b>Anterior</b> Tipo Servicio</li>
+                                <li class="list-group-item"><kbd>F6</kbd> Confirma los menús/combos seleccionados</li>
+                                <li class="list-group-item"><kbd>ESC</kbd> abandonar la ventana actual</li>
+                            </ul>
+                            <legend class="legend primary">Dialogo: INGRESE CANTIDAD MENÚ</legend>
+                            <ul class="list-group">
+                                <li class="list-group-item"><kbd>Ctrl + L</kbd> Menú para Llevar</li>
+                                <li class="list-group-item"><kbd>Ctrl + R</kbd> Menú para Restaurante</li>
+                                <li class="list-group-item"><kbd>Ctrl + D</kbd> Menú para Servicio a Domicilio</li>
+                                <li class="list-group-item"><kbd>Ctrl + M</kbd> Muetra lista de <b>Menús</b></li>
+                                <li class="list-group-item"><kbd>Ctrl + C</kbd> Muetra lista de <b>Combos</b></li>
+                                <li class="list-group-item"><kbd>-</kbd> Restar uno a la <b>Cantidad</b></li>
+                                <li class="list-group-item"><kbd>+</kbd> Sumar uno a la <b>Cantidad</b></li>
+                                <li class="list-group-item"><kbd>ENTER</kbd> Busca menú/combo por <b>Código Rápido</b></li>
+                                <li class="list-group-item"><kbd>ESC</kbd> abandonar la ventana actual</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" ng-click="$hide()">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        <b>Salir</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script> 
