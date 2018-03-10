@@ -227,7 +227,7 @@ class Usuario
 
 
 	// LOGIN USUARIO
-	function login( $usuario, $clave, $codigo = 'NULL' )
+	function login( $usuario, $clave, $codigo = 'NULL', $redirect = TRUE )
 	{
 		$validar = new Validar();
 		$sesion = new Sesion();
@@ -235,7 +235,7 @@ class Usuario
 		$clave = $this->con->real_escape_string( $validar->validarTexto( $clave, NULL, TRUE, 4, 16, "CONTRASEÑA" ) );
 
 		if ( $codigo === 'NULL' )
-			$usuario = $this->con->real_escape_string( $validar->validarTexto( $usuario, NULL, TRUE, 8, 16, "USUARIO" ) );
+			$usuario = "'" . $this->con->real_escape_string( $validar->validarTexto( $usuario, NULL, TRUE, 8, 16, "USUARIO" ) ) . "'";
 
 		else
 			$codigo = $this->con->real_escape_string( $validar->validarNumero( $codigo, NULL, TRUE, 1, 4, "CODIGO" ) );
@@ -245,7 +245,7 @@ class Usuario
  			$this->mensaje   = $validar->getMsj();
  		else:
 
-			$sql = "CALL login( '{$usuario}', '{$clave}', {$codigo} );";
+			$sql = "CALL login( {$usuario}, '{$clave}', {$codigo} );";
 			
 			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 				$this->siguienteResultado();
@@ -263,7 +263,7 @@ class Usuario
 					$sesion->setVariable( 'codigoUsuario', $row->codigoUsuario );
 					$modulo->consultarModulosPerfil( (int)$row->idPerfil, TRUE );
 					
-					if ( $codigo === 'NULL' )
+					if ( $redirect )
 						header( "Location: ./" );
 				}
 			}

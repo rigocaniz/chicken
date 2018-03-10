@@ -35,10 +35,11 @@ if( !isset( $_SESSION[ 'idPerfil' ] ) AND !isset( $_SESSION[ 'username' ] )  ) {
         $conexion = new Conexion();
         $usuario  = new Usuario();
 
-        $username  = $_POST['username'];
-        $password  = $_POST['password'];
+        $username = is_numeric( $username ) ? 'NULL' : $_POST['username'];
+        $password = $_POST['password'];
+        $codigo   = is_numeric( $username ) ? $username : 'NULL';
 
-        $respuesta = $usuario->login( $username, $password );
+        $respuesta = $usuario->login( $username, $password, $codigo, TRUE );
 
         if( $respuesta['respuesta'] == 'danger' ){           // ERROR NO EXISTE USUARIO o CONTRASEÑA
             $error    = true;
@@ -108,13 +109,13 @@ if( !isset( $_SESSION[ 'idPerfil' ] ) AND !isset( $_SESSION[ 'username' ] )  ) {
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-user"></i>
                         </span>
-                        <input class="form-control" type="text" name="username" value="<?= $username; ?>" maxlength="12" placeholder="Usuario" <?= $disabled; ?> />
+                        <input class="form-control" type="text" name="username" value="<?= $username; ?>" maxlength="12" onkeydown="nextInput(event)" placeholder="Usuario" <?= $disabled; ?> />
                     </div>
                     <div class="form-group input-group">
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-lock"></i>
                         </span>
-                        <input class="form-control" type="password" maxlength="25" name="password" value="<?= $password; ?>" placeholder="Contraseña" <?= $disabled; ?> />
+                        <input class="form-control" type="password" id="pass" maxlength="25" name="password" value="<?= $password; ?>" placeholder="Contraseña" <?= $disabled; ?> />
                     </div>
                     <?php 
                         if( $response == 2 && $error ):
@@ -138,6 +139,14 @@ if( !isset( $_SESSION[ 'idPerfil' ] ) AND !isset( $_SESSION[ 'username' ] )  ) {
             </p>
         </div>
     </div>
+    <script>
+        function nextInput(ev) {
+            if ( event.keyCode == 13 ) {
+                event.preventDefault();
+                document.getElementById('pass').focus();
+            }
+        }
+    </script>
 </body>
 </html>
 <?php
