@@ -1095,8 +1095,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		if ( key == 13 || key == 117 ) // {F6}
 			$scope.buscarOrdenTicket();
 
-		// F10: FACTURAR ORDEN SELECCIONADA
-		if ( key == 121 && $scope.infoOrden.idOrdenCliente > 0 ) // {F10}
+		// F4: FACTURAR ORDEN SELECCIONADA
+		if ( key == 115 && $scope.infoOrden.idOrdenCliente > 0 ) // {F4}
 			$location.path( "/factura/" + $scope.infoOrden.idOrdenCliente );
 
 		if ( altDerecho && key == 65 && $scope.infoOrden.idOrdenCliente > 0 ) // {O}

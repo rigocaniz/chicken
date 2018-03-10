@@ -109,7 +109,7 @@
                 <div class="col-sm-6 col-xs-12 text-right">
                 	<a href="#/factura/{{infoOrden.idOrdenCliente}}" class="btn btn-sm btn-primary" ng-show="infoOrden.idEstadoOrden>=1 && infoOrden.idEstadoOrden<=4">
                         <span class="glyphicon glyphicon-shopping-cart"></span>
-                        <b>Facturar</b> (F10)
+                        <b>Facturar</b> (F4)
                     </a>
                     <button type="button" class="btn btn-sm btn-danger" ng-click="dialOrdenCancelar.show();comentario=''" ng-show="infoOrden.idEstadoOrden==1">
                         <span class="glyphicon glyphicon-remove"></span>
@@ -1019,7 +1019,7 @@
                                 <li class="list-group-item"><kbd>↑</kbd> selecciona la orden <b>Siguiente</b></li>
                                 <li class="list-group-item"><kbd>↓</kbd> selecciona la orden <b>Anterior</b></li>
                                 <li class="list-group-item"><kbd>Ctrl + A</kbd> <b>Agregar Menú</b> a la <b>Orden Actual</b></li>
-                                <li class="list-group-item"><kbd>F10</kbd> <b>Facturar</b> orden actual</li>
+                                <li class="list-group-item"><kbd>F4</kbd> <b>Facturar</b> orden actual</li>
                                 <li class="list-group-item"><kbd>Ctrl + X</kbd> Muestra dialog para <b>CANCELAR</b> Orden Actual</li>
                             </ul>
                         </div>
