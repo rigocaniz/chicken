@@ -50,6 +50,8 @@ class Evento
 
 		else
 		{
+ 			$this->con->query( "START TRANSACTION" );
+
 	 		if( $accion == 'insert' ):
 	 			$sql = "CALL consultaEvento( 'insert', NULL, '{$evento}', {$idCliente}, DATE( '{$fechaEvento}' ), {$idSalon}, 1, {$numeroPersonas}, TIME( '{$horaInicio}' ), TIME( '{$horaFinal}' ), '{$observacion}', {$comentario} )";
 
@@ -58,6 +60,7 @@ class Evento
 	 		endif;
 
  			$rs = $this->con->query( $sql );
+ 			@$this->con->next_result();
  			if ( $rs AND $row = $rs->fetch_object() )
  			{
 				$respuesta = $row->respuesta;
@@ -71,7 +74,11 @@ class Evento
 				$mensaje   = "Error al ejecutar la consulta";
  			}
 
- 			@$this->con->next_result();
+ 			if ( $respuesta == 'success' )
+ 				$this->con->query( "COMMIT" );
+
+ 			else
+ 				$this->con->query( "ROLLBACK" );
 		}
 
 		if ( isset( $msgError ) )
@@ -141,6 +148,8 @@ class Evento
 	 			$sql = "CALL consultaOtroServicio( '{$accion}', {$id}, {$idEvento}, '{$otroMenu}', {$cantidad}, {$precioUnitario}, '{$comentario}' )";
 	 		}
 
+ 			$this->con->query( "START TRANSACTION" );
+
  			$rs = $this->con->query( $sql );
  			@$this->con->next_result();
 
@@ -156,6 +165,12 @@ class Evento
  				$respuesta = "danger";
 				$mensaje   = "Error al ejecutar la consulta";
  			}
+
+ 			if ( $respuesta == "success" )
+ 				$this->con->query( "COMMIT" );
+
+ 			else
+ 				$this->con->query( "ROLLBACK" );
 		}
 
 		if ( isset( $msgError ) )
@@ -350,6 +365,8 @@ class Evento
 	 			$sql = "CALL consultaMovimiento( 'delete', {$id}, NULL, NULL, NULL, NULL, NULL, NULL, NULL )";
 			}
 
+ 			$this->con->query( "START TRANSACTION" );
+
  			$rs = $this->con->query( $sql );
  			@$this->con->next_result();
 
@@ -365,6 +382,12 @@ class Evento
  				$respuesta = "danger";
 				$mensaje   = "Error al ejecutar la consulta";
  			}
+
+ 			if ( $respuesta == 'success' )
+ 				$this->con->query( "COMMIT" );
+
+ 			else
+ 				$this->con->query( "ROLLBACK" );
 		}
 
 		if ( isset( $msgError ) )

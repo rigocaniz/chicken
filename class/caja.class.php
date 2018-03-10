@@ -307,6 +307,8 @@ class Caja
 		{
 			$sql = "CALL consultaMovimiento( '$accion', {$id}, {$idTipoMovimiento}, {$idEstadoMovimiento}, {$idFormaPago}, NULL, '{$motivo}', {$monto}, {$comentario} )";
 
+ 			$this->con->query( "START TRANSACTION" );
+
  			$rs = $this->con->query( $sql );
  			@$this->con->next_result();
 
@@ -320,6 +322,12 @@ class Caja
  				$respuesta = "danger";
 				$mensaje   = "Error al ejecutar la consulta";
  			}
+
+ 			if ( $respuesta == "success" )
+ 				$this->con->query( "COMMIT" );
+
+ 			else
+ 				$this->con->query( "ROLLBACK" );
 		}
 
 		if ( isset( $msgError ) )

@@ -107,52 +107,61 @@ class Orden
 
 		$observacion = isset( $data->observacion ) AND strlen( $data->observacion ) > 3 ? "'" . $data->observacion . "'" : 'NULL';
 
-		if ( true ):
-			$idDetalleOrdenMenu = $validar->validarEntero( $data->idDetalleOrdenMenu, NULL, TRUE, 'El No. del Detalle de Orden no es válido' );
+		$idDetalleOrdenMenu = $validar->validarEntero( $data->idDetalleOrdenMenu, NULL, TRUE, 'El No. del Detalle de Orden no es válido' );
 
-			if( $accion == 'menu-cantidad' ):
-				$idMenu   = $validar->validarEntero( $data->idMenu, NULL, TRUE, 'El No. del Menu de la Orden no es válido' );
-				$cantidad = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 50000, 'la cantidad' );
+	
+		// INICIO TRANSACCION
+		$this->con->query( "START TRANSACTION" );
 
-			elseif( $accion == 'estado' ):
-				$idEstadoDetalleOrden = $validar->validarEntero( $data->idEstadoDetalleOrden, NULL, TRUE, 'El No. del Estado de Orden no es válido' );
 
-			elseif( $accion == 'responsable' ):
-				$usuarioResponsable = $this->con->real_escape_string( $validar->validarTexto( $usuarioResponsable, NULL, TRUE, 8, 16, "Usuario responsable" ) );
+		if( $accion == 'menu-cantidad' ):
+			$idMenu   = $validar->validarEntero( $data->idMenu, NULL, TRUE, 'El No. del Menu de la Orden no es válido' );
+			$cantidad = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 50000, 'la cantidad' );
 
-			elseif( $accion == 'factura' ):
-				$idFactura = $validar->validarEntero( $data->idFactura, NULL, TRUE, 'El No. de Factura no es válido' );
+		elseif( $accion == 'estado' ):
+			$idEstadoDetalleOrden = $validar->validarEntero( $data->idEstadoDetalleOrden, NULL, TRUE, 'El No. del Estado de Orden no es válido' );
 
-			elseif( $accion == 'tipoServicio' ):
-				$idTipoServicio = $validar->validarEntero( $data->idTipoServicio, NULL, TRUE, 'El No. del Tipo de Servicio no es válido' );
+		elseif( $accion == 'responsable' ):
+			$usuarioResponsable = $this->con->real_escape_string( $validar->validarTexto( $usuarioResponsable, NULL, TRUE, 8, 16, "Usuario responsable" ) );
 
-			elseif( $accion == 'asignarOtroCliente' ):
-				$usuarioResponsable = $this->con->real_escape_string( $validar->validarTexto( $usuarioResponsable, NULL, TRUE, 8, 16, "Usuario responsable" ) );
-			endif;
-			
-			// OBTENER RESULTADO DE VALIDACIONES
-	 		if( $validar->getIsError() ):
-		 		$this->respuesta = 'danger';
-		 		$this->mensaje   = $validar->getMsj();
-		 		$this->tiempo    = $validar->getTiempo();
-	 		else:
+		elseif( $accion == 'factura' ):
+			$idFactura = $validar->validarEntero( $data->idFactura, NULL, TRUE, 'El No. de Factura no es válido' );
 
-		 		$sql = "CALL consultaDetalleOrdenMenu( '{$accion}', {$idDetalleOrdenMenu}, {$idMenu}, {$cantidad}, {$idEstadoDetalleOrden}, {$idTipoServicio}, {$idFactura}, {$usuarioResponsable}, {$observacion}, NULL );";
+		elseif( $accion == 'tipoServicio' ):
+			$idTipoServicio = $validar->validarEntero( $data->idTipoServicio, NULL, TRUE, 'El No. del Tipo de Servicio no es válido' );
 
-		 		if( $rs = $this->con->query( $sql ) ){
-		 			@$this->con->next_result();
-		 			if( $row = $rs->fetch_object() ){
-		 				$this->respuesta = $row->respuesta;
-		 				$this->mensaje   = $row->mensaje;
-		 			}
-		 		}
-		 		else{
-		 			$this->respuesta = 'danger';
-		 			$this->mensaje   = 'Error al ejecutar la instrucción.';
-		 		}
- 			endif;
-		 		
+		elseif( $accion == 'asignarOtroCliente' ):
+			$usuarioResponsable = $this->con->real_escape_string( $validar->validarTexto( $usuarioResponsable, NULL, TRUE, 8, 16, "Usuario responsable" ) );
 		endif;
+		
+		// OBTENER RESULTADO DE VALIDACIONES
+ 		if( $validar->getIsError() ):
+	 		$this->respuesta = 'danger';
+	 		$this->mensaje   = $validar->getMsj();
+	 		$this->tiempo    = $validar->getTiempo();
+ 		else:
+
+	 		$sql = "CALL consultaDetalleOrdenMenu( '{$accion}', {$idDetalleOrdenMenu}, {$idMenu}, {$cantidad}, {$idEstadoDetalleOrden}, {$idTipoServicio}, {$idFactura}, {$usuarioResponsable}, {$observacion}, NULL );";
+
+	 		if( $rs = $this->con->query( $sql ) ){
+	 			@$this->con->next_result();
+	 			if( $row = $rs->fetch_object() ){
+	 				$this->respuesta = $row->respuesta;
+	 				$this->mensaje   = $row->mensaje;
+	 			}
+	 		}
+	 		else{
+	 			$this->respuesta = 'danger';
+	 			$this->mensaje   = 'Error al ejecutar la instrucción.';
+	 		}
+		endif;
+
+		if ( $this->respuesta == 'success')
+			$this->con->query( "COMMIT" );
+
+		else
+			$this->con->query( "ROLLBACK" );
+
 
  		return $this->getRespuesta();
  	}
