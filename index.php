@@ -42,7 +42,9 @@
         <p><span class="glyphicon glyphicon-alert"></span> Error de conexión...</p>
     </div>
     <div id="divFocus">
-        <h2>Haga clic aquí</h2>
+        <div class="back">
+            <h2>Haga clic aquí</h2>
+        </div>
     </div>
 
     <input type="hidden" id="resuFoni" value="<?= $token; ?>">
@@ -108,7 +110,7 @@
         </ul>
     </nav>
 
-    <div ng-view></div>
+    <div id="ng_view" ng-view></div>
 
     <!-- MODAL SUBIR IMAGEN -->
     <div class="modal fade" tabindex="-1" id="subirImagen" role="dialog" data-backdrop="static">

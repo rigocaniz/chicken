@@ -279,10 +279,20 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
         })
     })();  
 
-    //$scope.catTipoCliente();
+    
+    // SI ESTA ENFOCADO LA PESTAÑA NAVEGADOR
+    $scope.focusTabApp = true;
 
-    //$scope.clienteMenu = 1;
-    //$scope.tipo = null;
+    $window.onfocus = function() {
+        $scope.focusTabApp = true;
+        $("#divFocus").hide();
+        $("#ng_view").removeClass("back-blur");
+    };
+    $window.onblur = function() {
+        $scope.focusTabApp = true;
+        $("#divFocus").show();
+        $("#ng_view").addClass("back-blur");
+    };
 
 });
 
