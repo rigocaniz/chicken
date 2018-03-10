@@ -38,6 +38,9 @@
     <script src="js/libs/moment.min.js"></script>
 </head>
 <body ng-controller="inicioCtrl" ng-keydown="pressKey( $event.keyCode, $event.ctrlKey, $event );" style="overflow-x: hidden;">
+    <div class="network-bad">
+        <p><span class="glyphicon glyphicon-alert"></span> Error de conexión...</p>
+    </div>
     <div id="divFocus">
         <h2>Haga clic aquí</h2>
     </div>

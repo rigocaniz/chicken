@@ -1200,7 +1200,46 @@ div.inactive-key{
     border-top: solid 12px rgba(0, 0, 0, 0.16);
 }
 
+.network-bad{
+    text-align: center;
+    background-color: #ccc;
+    color: #fff;
+    height: 30px;
+    padding-top: 5px;
+    font-size: 15px;
+    top: 0;
+    width: 100%;
+    position: fixed;
+    z-index: 1900;
+    animation: pulse-back 1.5s infinite;
+    -webkit-animation: pulse-back 1.5s infinite;
+    opacity: 0.7;
+    display: none;
+}
 
+@keyframes pulse-back {
+  0% {
+    background-color: #860000;
+  }
+  50% {
+    background-color: #ee0000;
+  }
+  100% {
+    background-color: #860000;
+  }
+}
+
+@-webkit-keyframes pulse-back {
+  0% {
+    background-color: #860000;
+  }
+  50% {
+    background-color: #ee0000;
+  }
+  100% {
+    background-color: #860000;
+  }
+}
 
 
 

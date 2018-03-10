@@ -97,11 +97,15 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
 
     $scope.hideLoading();
 
-    
     // LISTEN INFO NODE
     socket.on('connect', function() {
-        console.log("CONECT..!", code);
-        socket.emit( "sesion", { code : code });
+        $(".network-bad").hide();
+        console.log("CONECT..!");
+    });
+
+    socket.on('disconnect', function() {
+        $(".network-bad").show();
+        console.log("DISCONECT..!");
     });
 
     socket.on('info', function(data) {  
