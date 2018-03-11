@@ -83,6 +83,8 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     $scope.lstU        = [];
     $scope.loading     = false;
     $scope.loadingText = "Cargando...";
+    $scope.changeUser = $modal({scope: $scope,template:'change.user.html', show: false, backdrop:false, keyboard: true });
+    $scope.userInfo = {};
 
     $scope.hideLoading = function(){
         $scope.loading     = false;
@@ -169,7 +171,17 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
         if ( ( key == 117 || altDerecho ) && !( event.ctrlKey && event.shiftKey ) )
             event.preventDefault();
 
-        if( altDerecho && ( key == 13 || key == 92 || key == 91 ) ) {
+        // SI SE PRESIONA: Ctrl + alt + U [CAMBIO DE USUARIO RAPIDO]
+        if ( key == 85 && event.ctrlKey && event.altKey )
+        {
+            $scope.userInfo._usuario = '';
+            $scope.userInfo._clave   = '';
+            $scope.changeUser.show();
+            $timeout(function () {
+                document.getElementById('_usuario') && document.getElementById('_usuario').focus();
+            });
+        }
+        else if( altDerecho && ( key == 13 || key == 92 || key == 91 ) ) {
             $window.location.href = "#/";
         }
 
@@ -198,6 +210,7 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
                     $window.location.href = "#/reportes";      break;
             }
         }
+
         console.log( "K:", key );
     };
 
@@ -284,31 +297,39 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
     })();  
 
     
-    // SI ESTA ENFOCADO LA PESTAÑA NAVEGADOR
-    $scope.focusTabApp = true;
+    $scope.cambiarUsuario = function () {
+        console.log( $scope.userInfo );
+        if ( $scope.loading )
+            return false;
 
+        $scope.loading = true; // cargando...
+
+        // CONSULTA TIPO DE SERVICIOS
+        $http.post('consultas.php', { 
+            opcion  : 'login',
+            usuario : $scope.userInfo._usuario,
+            clave   : $scope.userInfo._clave
+        })
+        .success(function (data) {
+            console.log( data );
+            $scope.loading = false; // cargando...
+            if ( data.respuesta == 'success' ){
+                $scope.changeUser.hide();
+                window.location.href = './';
+            }
+            else
+                alertify.notify( ( data.mensaje || data ), 'danger', 6 );
+        });
+    };
+
+    // SI ESTA ENFOCADO LA PESTAÑA NAVEGADOR
     $window.onfocus = function() {
-        $scope.focusTabApp = true;
         $("#divFocus").hide();
         $("#ng_view").removeClass("back-blur");
     };
     $window.onblur = function() {
-        $scope.focusTabApp = true;
-        $("#divFocus").show();
-        $("#ng_view").addClass("back-blur");
+        //$("#divFocus").show();
+        //$("#ng_view").addClass("back-blur");
     };
 
 });
-
-
-/*
-window.onfocus = function() {
-    console.log( "Focus" );
-    $("#divFocus").removeClass("noFocusApp");
-};
-
-window.onblur = function() {
-    console.log( "Blur" );
-    $("#divFocus").addClass("noFocusApp");
-};
-*/

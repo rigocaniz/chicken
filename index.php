@@ -147,6 +147,48 @@
         </div>
     </div>
     
+    <!-- DIALOGO CAMBIO DE USUARIO RAPIDO -->
+    <script type="text/ng-template" id="change.user.html">
+        <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content panel-primary">
+                    <div class="modal-header panel-heading">
+                        <button type="button" class="close" ng-click="$hide()">&times;</button>
+                        <h4>
+                            <span class="glyphicon glyphicon-user"></span>
+                            Cambio de Usuario Rápido
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <label class="col-xs-2 col-xs-offset-2">Usuario:</label>
+                            <div class="col-xs-4">
+                                <input type="text" class="form-control" ng-model="userInfo._usuario" id="_usuario" focus-enter required>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:7px">
+                            <label class="col-xs-2 col-xs-offset-2">Clave:</label>
+                            <div class="col-xs-4">
+                                <input type="password" class="form-control" ng-model="userInfo._clave" ng-keydown="$event.keyCode==13 && cambiarUsuario()">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" ng-click="cambiarUsuario()">
+                            <span class="glyphicon glyphicon-log-in"></span>
+                            <b>Autenticarse</b>
+                            <span class="glyphicon glyphicon-user"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" ng-click="$hide()">
+                            <span class="glyphicon glyphicon-log-out"></span>
+                            <b>Salir</b>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script> 
+
     <!-- CONTROLADORES -->
     <script src="js/app.js"></script>
     <script src="js/rutas.js"></script>
