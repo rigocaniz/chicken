@@ -107,6 +107,10 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
         $(".network-bad").show();
         console.log("DISCONECT..!");
     });
+    $timeout(function () {
+        if ( !socket.connected )
+            $(".network-bad").show();
+    });
 
     socket.on('info', function(data) {  
         console.log( data );
