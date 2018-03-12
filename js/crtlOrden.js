@@ -1099,7 +1099,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		if ( key == 115 && $scope.infoOrden.idOrdenCliente > 0 ) // {F4}
 			$location.path( "/factura/" + $scope.infoOrden.idOrdenCliente );
 
-		if ( altDerecho && key == 65 && $scope.infoOrden.idOrdenCliente > 0 ) // {O}
+		if ( altDerecho && key == 65 && $scope.infoOrden.idOrdenCliente > 0 && $scope.infoOrden.idEstadoOrden <= 4 ) // {A}
 			$scope.consultaOrden( $scope.infoOrden );
 
 		else if ( altDerecho && key == 88 && $scope.infoOrden.idOrdenCliente > 0 )// {X}

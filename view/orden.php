@@ -138,7 +138,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12 text-center" ng-show="infoOrden.idEstadoOrden==1 || infoOrden.idEstadoOrden==2">
+                <div class="col-xs-12 text-center" ng-show="infoOrden.idEstadoOrden>=1 && infoOrden.idEstadoOrden<=4">
                     <button type="button" class="btn btn-info" ng-click="consultaOrden( infoOrden )">
                         <span class="glyphicon glyphicon-plus"></span>
                         <b><u>A</u>gregar Menú</b>
