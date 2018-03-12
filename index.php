@@ -36,6 +36,7 @@
     <script src="js/libs/dirPagination.js"></script>
     <script src="js/libs/fileinput.js"></script>
     <script src="js/libs/moment.min.js"></script>
+    <script src="js/libs/highcharts.js"></script>
 </head>
 <body ng-controller="inicioCtrl" ng-keydown="pressKey( $event.keyCode, $event.ctrlKey, $event );" style="overflow-x: hidden;">
     <div class="network-bad">
@@ -203,6 +204,7 @@
     <script src="js/crtlFactura.js"></script>
     <script src="js/ctrlCaja.js"></script>
     <script src="js/crtlEvento.js"></script>
+    <script src="js/crtlTen.js"></script>
     <script src="js/alertify.js"></script>
 
     <script>

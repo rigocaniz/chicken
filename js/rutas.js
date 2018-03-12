@@ -48,6 +48,11 @@ app.config(function($routeProvider) {
         templateUrl : 'view/caja.php',
         controller  : 'ctrlCaja'
     })
+
+    .when('/tendencia',{
+        templateUrl : 'view/tendencia.php',
+        controller  : 'ctrlTendencia'
+    })
     .otherwise({
         redirectTo:'/'
     });

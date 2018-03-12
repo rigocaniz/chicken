@@ -2026,6 +2026,88 @@ class Orden
 		return $lst;
  	}
 
+ 	public function topFechaMenu( $tipoMenu, $deFecha, $paraFecha, $idMenu = NULL, $idCombo = NULL )
+ 	{
+ 		$limit = 10;
+		$lstResultado = array();
+
+	 	$rs = $this->con->query( "SELECT TIMESTAMPDIFF( DAY, '{$deFecha}', '{$paraFecha}' )AS 'dif'" );
+	 	$row = $rs->fetch_object();
+
+	 	if ( $row->dif > 35 )
+	 	{
+			$this->respuesta = "warning";
+			$this->mensaje   = "Rango máximo 35 días";
+	 	}
+	 	else if ( $row->dif < 0 ){
+	 		$this->respuesta = "warning";
+			$this->mensaje   = "Rango no válido";
+	 	}
+	 	else{
+	 		$this->respuesta = "success";
+			$where   = '';
+			$idMenu  = (int)$idMenu;
+			$idCombo = (int)$idCombo;
+
+			if ( $idMenu > 0 )
+				$where = " AND m.idMenu = $idMenu ";
+
+			else if ( $idCombo > 0 )
+				$where = " AND c.idCombo = $idCombo ";
+
+	 		if ( $tipoMenu == 'menu' )
+		 		$sql = "SELECT
+							m.codigo,
+						    m.menu,
+						    COUNT( dom.idDetalleOrdenMenu )AS 'total'
+						FROM detalleOrdenMenu AS dom
+							JOIN ordenCliente AS oc
+								ON dom.idOrdenCliente = oc.idOrdenCliente
+						        
+							JOIN menu AS m
+								ON dom.idMenu = m.idMenu
+						WHERE
+							!dom.perteneceCombo
+						    AND dom.idEstadoDetalleOrden = 6
+						    AND ( DATE( oc.fechaRegistro ) BETWEEN '{$deFecha}' AND '{$paraFecha}' )
+						    $where
+						GROUP BY dom.idMenu
+						ORDER BY total DESC
+						LIMIT $limit ";
+
+			else
+				$sql = "SELECT
+							c.codigo,
+							c.combo AS menu,
+							COUNT( doc.idDetalleOrdenCombo )AS 'total'
+						FROM detalleOrdenCombo AS doc
+							JOIN ordenCliente AS oc
+								ON doc.idOrdenCliente = oc.idOrdenCliente
+								
+							JOIN combo AS c
+								ON doc.idCombo = c.idCombo
+						WHERE doc.idEstadoDetalleOrden = 6
+							AND ( DATE( oc.fechaRegistro ) BETWEEN '{$deFecha}' AND '{$paraFecha}' )
+							$where
+						GROUP BY doc.idCombo
+						ORDER BY total DESC
+						LIMIT $limit";
+
+			$rs = $this->con->query( $sql );
+			while ( $rs AND $row = $rs->fetch_object() ):
+				$lstResultado[] = (object)array(
+					'name' => $row->menu . " #" . $row->codigo,
+					'data' => array( (int)$row->total ),
+				);
+			endwhile;
+	 	}
+
+	 	return array(
+			'respuesta'    => $this->respuesta,
+			'mensaje'      => $this->mensaje,
+			'lstResultado' => $lstResultado,
+	 	);
+ 	}
 
  	function getRespuesta()
  	{

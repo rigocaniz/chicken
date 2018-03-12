@@ -704,6 +704,12 @@ switch ( $data->opcion )
 		$orden = new Orden();
 		echo json_encode( $orden->detalleOrdenFactura( $data->idOrdenCliente ) );
 		break;
+
+	// REASIGNAR DETALLE DE ORDEN
+	case 'topFechaMenu':
+		$orden = new Orden();
+		echo json_encode( $orden->topFechaMenu( $data->tipoMenu, $data->deFecha, $data->paraFecha, $data->idMenu, $data->idCombo ) );
+		break;
 }
 
 $conexion->close();
