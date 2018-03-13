@@ -557,43 +557,6 @@
 </script>
 
 
-<script type="text/ng-template" id="dial.printFactura.html">
-    <div class="modal" tabindex="-1" role="dialog" id="dial_printFactura">
-        <div class="modal-dialog">
-            <div class="modal-content panel-info">
-                <div class="modal-header panel-heading text-center">
-                    <button type="button" class="close" ng-click="$hide();">&times;</button>
-                    <span class="glyphicon glyphicon-list-alt"></span> IMPRIMIR FACTURA
-                </div>
-                <div class="modal-body">
-                    <form class="form-horizontal" autocomplete="off" novalidate>
-                        <div class="form-group text-center">
-                            <div class="btn-group btn-group-sm" role="group">
-                                <button type="button" class="btn btn-default" ng-click="impresionFactura.type='d'">
-                                    <span class="glyphicon" ng-class="{'glyphicon-check': impresionFactura.type=='d', 'glyphicon-unchecked': impresionFactura.type!='d'}"></span> A Detalle
-                                </button>
-                                <button type="button" class="btn btn-default" ng-click="impresionFactura.type='g'">
-                                    <span class="glyphicon" ng-class="{'glyphicon-check': impresionFactura.type=='g', 'glyphicon-unchecked': impresionFactura.type!='g'}"></span> General
-                                </button>
-                            </div>
-                            <br><br>
-                            <a class="btn btn-info btn-lg" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ impresionFactura.idFactura }}" title="IMPRIMIR FACTURA">
-                                <span class="glyphicon glyphicon-print"></span> IMPRIMIR
-                            </a>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" ng-click="$hide();">
-                        <span class="glyphicon glyphicon-log-out"></span>
-                        <b>Salir</b>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</script>
-
 
 <!-- MODA CAJA APERTURA / CIERRE DE CAJA -->
 <script type="text/ng-template" id="dial.caja.html">
