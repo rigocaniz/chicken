@@ -214,6 +214,17 @@ app.controller('inicioCtrl', function($scope, $rootScope, $timeout, $http, $moda
         console.log( "K:", key );
     };
 
+
+    // ESTADOS FACTURA
+    $scope.lstEstadosFactura = [];
+    $scope.catEstadosFactura = function(){
+        $http.post('consultas.php',{
+            opcion:'catEstadosFactura'
+        }).success(function(data){
+            $scope.lstEstadosFactura = data || [];
+        })
+    };
+
     $scope.imagen = {
         id     : null,
         tipo   : '',

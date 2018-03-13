@@ -327,15 +327,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		})
 	};
 
-	// ESTADOS FACTURA
-	$scope.catEstadosFactura = function(){
-		$http.post('consultas.php',{
-			opcion:'catEstadosFactura'
-		}).success(function(data){
-			$scope.lstEstadosFactura = data || [];
-		})
-	};
-
 	// UBICACIÓN PRODUCTO
 	$scope.catUbicacion = function(){
 		$http.post('consultas.php',{
@@ -453,8 +444,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		.success(function(data){
 			$scope.lstMedidas        = data.catMedidas || [];
 			$scope.lstTipoProducto   = data.catTipoProducto || [];
-			$scope.lstEstadosFactura = data.catEstadosFactura || [];
 			$scope.lstUbicacion      = data.catUbicacion || [];
+			if( !$scope.lstEstadosFactura.length )
+				$scope.catEstadosFactura();
 		})
 		$scope.resetValores( 1 );
 		$scope.resetValores( 'compras' );

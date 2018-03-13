@@ -34,6 +34,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		}).success(function(data){
 		    $scope.lstFormasPago = data;
 		    $scope.facturacion.lstFormasPago = data;
+		    if( !$scope.lstEstadosFactura.length )
+				$scope.catEstadosFactura();
 		})
 	})();
 
@@ -58,7 +60,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 
 	$scope.dialAccionCliente = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialOrdenBusqueda = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialPrintFactura  = $modal({scope: $scope,template:'dial.printFactura.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialReimpresion   = $modal({scope: $scope,template:'dial.reimpresion.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialCaja          = $modal({scope: $scope,template:'dial.caja.html', show: false, backdrop:false, keyboard: true });
 	
@@ -73,71 +74,10 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		$scope.consultaDetalleOrden( orden );
 
 		$timeout(function () {
-			//document.getElementById('searchPrincipal').focus();
 			$scope.modalInfo( orden, true );
 		});
 	};
 
-	$scope.impresionFactura = {
-		type      : 'd',
-		idFactura : null
-	};
-
-	$scope.consultaFacturaCliente = function() {
-		$scope.facturacion.total = $scope.retornarTotalOrden();
-		
-		var efectivo = ( $scope.facturacion.lstFormasPago[ 0 ].monto || 0 ),
-			tarjeta  = ( $scope.facturacion.lstFormasPago[ 1 ].monto || 0 );
-
-		var vuelto = ( ( efectivo + tarjeta ) - $scope.facturacion.total );
-		
-		if( !($scope.facturacion.datosCliente.idCliente && $scope.facturacion.datosCliente.idCliente > 0) )
-			alertify.notify('Seleccione un cliente', 'warning', 4);
-		
-		else if( !($scope.facturacion.idOrdenCliente && $scope.facturacion.idOrdenCliente > 0) )
-			alertify.notify('Número de orden de Cliente no válido', 'warning', 4);
-		
-		else if( !($scope.facturacion.lstOrden && $scope.facturacion.lstOrden.length > 0) )
-			alertify.notify('La lista de ordenes está vacia', 'warning', 4);
-		
-		else if( !($scope.facturacion.total && $scope.facturacion.total > 0) )
-			alertify.notify('El total del cobro debe ser mayor a 0', 'warning', 4);
-
-		else if( !( vuelto >= 0 ) )
-			alertify.notify('Verifique que la forma de pago este correcta', 'warning', 4);
-
-		else {
-
-			var factura = angular.copy( $scope.facturacion );
-
-			// MONTO REAL EN EFECTIVO
-			factura.lstFormasPago[ 0 ].monto -= vuelto;
-
-			$scope.$parent.showLoading( 'Guardando...' );
-			
-			$http.post('consultas.php',{
-			    opcion : "consultaFacturaCliente",
-			    accion : $scope.accion,
-			    data   : factura
-			}).success(function(data){
-			    console.log(data);		    
-				alertify.set('notifier','position', 'top-right');
-				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
-				if( data.respuesta == 'success' ) {
-					$scope.resetValores( 'facturacion' );
-					$scope.impresionFactura.idFactura = data.data;
-					$scope.dialPrintFactura.show();
-					
-					$timeout(function () {
-						$("#btn_print_factura").focus();
-					});
-				}
-				$scope.$parent.hideLoading();
-			});
-			
-		}
-
-	};
 	
 	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% DIALOGO PARA MAS INFORMACION DE ORDEN %%%%%%%%%%%%%%%%%%%%%% */
 	$scope.consultarDetalleOrden = function(){
@@ -279,12 +219,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				$('#nit').focus();
 			},175);
 		}
-		else if( altDerecho && key == 70 ){
-			if( !$scope.modalOpen() )
-				$scope.consultaFacturaCliente();
-			else
-				alertify.notify('Acción no válida', 'info', 3);
-		}
+
 	});
 
     $scope.resetValores = function( accion ){
@@ -390,8 +325,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			$scope.deBusqueda    = true;
 		}
 
-		$scope.ordenesCliente  = [];
-		$scope.idTab = '';
+		$scope.ordenesCliente = [];
+		$scope.idTab          = '';
 		//$scope.lstDetalleOrden = [];
 
 		$scope.$parent.loading = true;
@@ -430,14 +365,15 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			factura.numeroOrden = 1;
 
 		$scope.lstFacturas.push({
-			numeroOrden : factura.numeroOrden,
-			idTab 		: factura.idTab,
-			facturado   : false,
-			idFactura   : null,
-			tab         : factura.tab,
-			principal   : factura.principal,
-			lstDetalle  : ( factura.lstDetalle || [] ),
-			cliente 	   : {
+			numeroOrden     : factura.numeroOrden,
+			idTab 		        : factura.idTab,
+			facturado       : false,
+			idFactura       : null,
+			idEstadoFactura : 1,
+			tab             : factura.tab,
+			principal       : factura.principal,
+			lstDetalle      : ( factura.lstDetalle || [] ),
+			cliente 	    : {
 				idCliente     : ( factura.idCliente || '' ),
 				nit           : ( factura.nit || '' ),
 				nombre        : ( factura.nombre || '' ),
@@ -704,7 +640,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			}
 		}
 
-		
 		// SI OCURRIO ALGUN ERROR
 		if ( msgError != null && ( msgError.length ) )
 		{
@@ -716,6 +651,10 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		
 		// MONTO REAL EN EFECTIVO
 		$scope.$parent.showLoading( 'Guardando...' );
+
+		var winFactEvent = window.open( '', '_blank' );
+		winFactEvent.document.body.innerHTML = "<h4>Espere, guardando...</h4>";
+		window.focus();
 		
 		$http.post('consultas.php',{
 		    opcion : "consultaFacturaCliente",
@@ -728,15 +667,14 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			if( data.respuesta == 'success' )
 			{
 				$scope.resetValores( 'facturacion' );
-				$scope.lstFacturas[ ixFactura ].idFactura = data.data;
-				$scope.impresionFactura.idFactura = data.data;
-				//$scope.dialPrintFactura.show();
-				$timeout(function () {
-					$("#btn_print_factura").focus();
-				});
-
 				$scope.lstFacturas[ ixFactura ].facturado = true;
+				$scope.lstFacturas[ ixFactura ].idFactura = data.data;
+				winFactEvent.location = "print.php?id=" + data.data;
+		  		winFactEvent.focus();
 			}
+			else
+				winFactEvent.close();
+
 			$scope.$parent.hideLoading();
 		});
 	};
@@ -994,8 +932,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	};
 
 
-		// *** RETORNA INDEX DE ARREGLO
-
+	// *** RETORNA INDEX DE ARREGLO
 	$scope.indexArray = function ( arr, cmp, _value ) {
 		var index = -1, arreglo = [];
 
