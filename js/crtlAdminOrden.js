@@ -181,8 +181,8 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 	// CONSULTA DETALLE DE ORDEN (***DETALLE***)
-	$scope.consultaDetalleOrden = function () {
-		if ( $scope.$parent.loading )
+	$scope.consultaDetalleOrden = function ( force ) {
+		if ( $scope.$parent.loading && force === undefined )
 			return false;
 
 		// SI NO ESTA DEFINIDO LA ORDEN
@@ -942,7 +942,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				/*
 					================= CANCELAR ORDEN PARCIAL ================
 				*/
-
 				var lstMO = angular.copy( datos.data.info.paraCocina );
 
 				/* >>>>>>COCINA<<<<<<< */
@@ -1013,7 +1012,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 					else if ( $scope.ticketActual.idOrdenCliente == datos.data.idOrdenCliente )
 					{
 						$scope.lstTickets[ ixTicket ] = orden;
-						$scope.consultaDetalleOrden();
+						$scope.consultaDetalleOrden( true );
 					}
 				}
 			break;
@@ -1059,7 +1058,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 						}
 					} // FIN CAMBIO EN ESTADO ORDEN
 
-					console.log( $scope.lstTickets );
 					var it = $scope.indexArray( 'lstTickets', 'numeroTicket', item.numeroTicket );
 					// SI EXISTE EL NUMERO DE TICKET
 					if ( it >= 0 )
