@@ -416,7 +416,6 @@
 									<div class="col-sm-6 col-md-5">
 										<label class="control-label">ESTADO DE LA FACTURA</label>
 										<div class="btn-group" role="group" aria-label="">
-										
 											<button type="button" class="btn btn-default btn-sm" ng-class="{'btn-success': compras.idEstadoFactura==1 && compras.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-danger': compras.idEstadoFactura==2 && compras.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-warning': compras.idEstadoFactura==3 && compras.idEstadoFactura == estadoFactura.idEstadoFactura}" ng-repeat="estadoFactura in lstEstadosFactura" ng-click="compras.idEstadoFactura = estadoFactura.idEstadoFactura">
 												<span class="glyphicon" ng-class="{'glyphicon-check': compras.idEstadoFactura == estadoFactura.idEstadoFactura, 'glyphicon-unchecked': compras.idEstadoFactura != estadoFactura.idEstadoFactura}"></span>
 												{{ estadoFactura.estadoFactura }}

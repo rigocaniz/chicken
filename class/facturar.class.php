@@ -60,28 +60,21 @@ class Factura
 			$direccion       = 'NULL';
 			$descripcion     = 'NULL';
 
-			//print_r( $data );
 			// SETEO VARIABLES
-	 		$data->idEstadoFactura      = isset( $data->idEstadoFactura ) 		? (int)$data->idEstadoFactura 			: NULL;
-	 		$data->idEstadoFactura      = (int)$data->idEstadoFactura > 0 		? (int)$data->idEstadoFactura 			: NULL;
-	 		$data->cliente->idCliente 	= isset( $data->cliente->idCliente ) 	? (int)$data->cliente->idCliente 		: NULL;
-	 		$data->cliente->idCliente   = (int)$data->cliente->idCliente > 0 	? (int)$data->cliente->idCliente 		: NULL;
-	 		$data->cliente->nombre      = isset( $data->cliente->nombre ) 		? (string)$data->cliente->nombre 		: NULL;
-	 		$data->nombre               = strlen( $data->cliente->nombre ) > 1	? (string)$data->cliente->nombre 		: NULL;
-	 		$data->cliente->direccion   = isset( $data->cliente->direccion ) 	? (string)$data->cliente->direccion 	: NULL;
-	 		$data->direccion            = strlen( $data->cliente->direccion ) > 3 ? (string)$data->cliente->direccion : NULL;
+	 		$data->idEstadoFactura = isset( $data->idEstadoFactura ) 	? (int)$data->idEstadoFactura 		: NULL;
+	 		$data->idCliente 	   = isset( $data->cliente->idCliente ) ? (int)$data->cliente->idCliente 	: NULL;
+	 		$data->nombre          = isset( $data->cliente->nombre ) 	? (string)$data->cliente->nombre 	: NULL;
+	 		$data->direccion       = isset( $data->cliente->direccion ) ? (string)$data->cliente->direccion : NULL;
 
 	 		if( $accion == 'update' ):
-		 		$data->idFactura = isset( $data->idFactura ) 	? (int)$data->idFactura 	: NULL;
-		 		$data->idFactura = (int)$data->idFactura > 0 	? (int)$data->idFactura 	: NULL;
+		 		$data->idFactura = isset( $data->idFactura ) ? (int)$data->idFactura : NULL;
+		 		$data->idFactura = (int)$data->idFactura > 0 ? (int)$data->idFactura : NULL;
 
 	 			$idFactura = $validar->validarEntero( $data->idFactura, NULL, TRUE, 'El ID de la FACTURA no es válida' );
 	 		endif;
 
-			if( $accion <> 'insert' )
-				$idEstadoFactura = $validar->validarEntero( $data->idEstadoFactura, NULL, TRUE, 'El estado de la factura no es válido' );
-
-			$idCliente       = $validar->validarEntero( $data->cliente->idCliente, NULL, TRUE, 'El Código del Cliente no es válido' );
+			$idEstadoFactura = $validar->validarEntero( $data->idEstadoFactura, NULL, TRUE, 'El estado de la factura no es válido' );
+			$idCliente       = $validar->validarEntero( $data->idCliente, NULL, TRUE, 'El Código del Cliente no es válido' );
 			$nombre          = $this->con->real_escape_string( $validar->validarTexto( $data->nombre, NULL, TRUE, 3, 60, 'el nombre del combo' ) );
 			$direccion       = $this->con->real_escape_string( $validar->validarTexto( $data->direccion, NULL, TRUE, 3, 75, ' dirección del cliente' ) );
 
@@ -104,7 +97,7 @@ class Factura
 
 				$sql = "CALL consultaFacturaCliente( '{$accion}', {$idFactura}, {$idEstadoFactura}, {$idCliente}, {$idCaja}, '{$nombre}', '{$direccion}', {$total}, {$descripcion} );";
 
-				//echo $sql;	
+				//echo $sql;
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
 		 			$this->siguienteResultado();
 
@@ -538,7 +531,7 @@ class Factura
 				    vstFactura $where
 				ORDER BY fechaRegistro DESC;";
 
-			//	echo $sql;
+		//	echo $sql;
  		if( $rs = $this->con->query( $sql ) ){
  			while( $row = $rs->fetch_object() ){
  				$row->siDetalle = (bool)$row->siDetalle;
@@ -702,15 +695,6 @@ class Factura
 	// OBTENER ARREGLO RESPUESTA
  	private function getRespuesta()
  	{
- 		/*
- 		if( $this->respuesta == 'success' )
- 			$this->tiempo = 4;
- 		elseif( $this->respuesta == 'warning')
- 			$this->tiempo = 5;
- 		elseif( $this->respuesta == 'danger')
- 			$this->tiempo = 7;
- 		*/
-
  		return $respuesta = array( 
  				'respuesta' => $this->respuesta,
  				'mensaje'   => $this->mensaje,

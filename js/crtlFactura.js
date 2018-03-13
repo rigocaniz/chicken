@@ -34,6 +34,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		}).success(function(data){
 		    $scope.lstFormasPago = data;
 		    $scope.facturacion.lstFormasPago = data;
+		    if( !$scope.lstEstadosFactura.length )
+				$scope.catEstadosFactura();
 		})
 	})();
 
@@ -323,8 +325,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			$scope.deBusqueda    = true;
 		}
 
-		$scope.ordenesCliente  = [];
-		$scope.idTab = '';
+		$scope.ordenesCliente = [];
+		$scope.idTab          = '';
 		//$scope.lstDetalleOrden = [];
 
 		$scope.$parent.loading = true;
@@ -363,14 +365,15 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			factura.numeroOrden = 1;
 
 		$scope.lstFacturas.push({
-			numeroOrden : factura.numeroOrden,
-			idTab 		: factura.idTab,
-			facturado   : false,
-			idFactura   : null,
-			tab         : factura.tab,
-			principal   : factura.principal,
-			lstDetalle  : ( factura.lstDetalle || [] ),
-			cliente 	   : {
+			numeroOrden     : factura.numeroOrden,
+			idTab 		        : factura.idTab,
+			facturado       : false,
+			idFactura       : null,
+			idEstadoFactura : 1,
+			tab             : factura.tab,
+			principal       : factura.principal,
+			lstDetalle      : ( factura.lstDetalle || [] ),
+			cliente 	    : {
 				idCliente     : ( factura.idCliente || '' ),
 				nit           : ( factura.nit || '' ),
 				nombre        : ( factura.nombre || '' ),

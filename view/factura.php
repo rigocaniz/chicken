@@ -118,7 +118,15 @@
         						<input type="text" class="form-control" ng-model="factura.cliente.direccion" ng-disabled="factura.cliente.idCliente!=1 || factura.facturado" focus-enter>
         					</div>
         				</div>
-
+                        <div class="form-group">
+                            <label class="control-label">ESTADO DE LA FACTURA:</label>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default btn-sm" ng-class="{'btn-success': factura.idEstadoFactura==1 && factura.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-danger': factura.idEstadoFactura==2 && factura.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-warning': factura.idEstadoFactura==3 && factura.idEstadoFactura == estadoFactura.idEstadoFactura}" ng-repeat="estadoFactura in lstEstadosFactura" ng-click="factura.idEstadoFactura = estadoFactura.idEstadoFactura">
+                                    <span class="glyphicon" ng-class="{'glyphicon-check': factura.idEstadoFactura == estadoFactura.idEstadoFactura, 'glyphicon-unchecked': factura.idEstadoFactura != estadoFactura.idEstadoFactura}"></span>
+                                    {{ estadoFactura.estadoFactura }}
+                                </button>
+                            </div>
+                        </div>
                         <!-- DATOS DE PAGO Y DETALLE DE ORDEN -->
                         <div class="row">
                             <!-- DETALLE ORDEN -->

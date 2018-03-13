@@ -85,7 +85,7 @@ switch ( $data->opcion )
 
 		$datos[ 'catMedidas' ]        = $consulta->catMedidas();
 		$datos[ 'catTipoProducto' ]   = $consulta->catTipoProducto();
-		$datos[ 'catEstadosFactura' ] = $consulta->catEstadosFactura();
+		//$datos[ 'catEstadosFactura' ] = $consulta->catEstadosFactura();
 		$datos[ 'catUbicacion' ]      = $consulta->catUbicacion();
 		
 		echo json_encode( $datos );

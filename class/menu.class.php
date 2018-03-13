@@ -110,8 +110,8 @@ class Menu
 		$observacion = "NULL";
 
 		// SETEO VARIABLES GENERALES
- 		$data->idMenu      = isset( $data->idMenu )		? (int)$data->idMenu 		: NULL;
- 		$data->idProducto  = isset( $data->idProducto )	? (int)$data->idProducto 	: NULL;
+ 		$data->idMenu      = isset( $data->idMenu )		? (int)$data->idMenu 	 : NULL;
+ 		$data->idProducto  = isset( $data->idProducto )	? (int)$data->idProducto : NULL;
 
  		// VALIDACIONES
  		$idMenu      = $validar->validarEntero( $data->idMenu, NULL, TRUE, 'El ID del Menú no es válido, verifique.' );
@@ -119,8 +119,8 @@ class Menu
 
  		if( $accion == 'insert' OR $accion == 'update' )
  		{
- 			$data->cantidad    = isset( $data->cantidad )		? (int)$data->cantidad 			: NULL;
- 			$data->observacion = isset( $data->observacion )	? (string)$data->observacion	: NULL;
+ 			$data->cantidad    = isset( $data->cantidad )	 ? (int)$data->cantidad 	  : NULL;
+ 			$data->observacion = isset( $data->observacion ) ? (string)$data->observacion : NULL;
 
 	 		// VALIDACIONES
 			$cantidad    = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 2500, 'la cantidad' );
@@ -277,8 +277,10 @@ class Menu
 				WHERE idEstadoMenu <> 3 {$where} 
 				ORDER BY idMenu $orden LIMIT $inicio, $limite;";
 
-		if( $rs = $this->con->query( $sql ) ){
-			while( $row = $rs->fetch_object() ){
+		if( $rs = $this->con->query( $sql ) )
+		{
+			while( $row = $rs->fetch_object() )
+			{
 				if( $row->imagen != '' )
 					$row->imagen = file_exists( $row->imagen ) ? $row->imagen : 'img-menu/notFound.png';
 
