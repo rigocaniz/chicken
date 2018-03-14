@@ -323,7 +323,7 @@
 <script type="text/ng-template" id="dial.mantenimientoFact.html">
     <div class="modal" tabindex="-1" role="dialog" id="dial_orden_busqueda">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content panel-info">
+            <div class="modal-content panel-warning">
                 <div class="modal-header panel-heading">
                     <span class="glyphicon glyphicon-wrench"></span>
                     <strong>MANTENIMIENTO DE FACTURAS</strong>

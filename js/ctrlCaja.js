@@ -51,7 +51,6 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 			else if( $scope.accion != 'cierre' && $scope.accion != 'insert' )
 				alertify.notify( 'Acción no válida', 'info', 3 );
 		}
-
 	});
 
 
@@ -62,34 +61,16 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 		.success(function(data){
 			console.log( "iniciocaja::: ", data );
 			$scope.caja = data;
-			/*
-			$scope.caja.cajero            = data.cajero;
-			$scope.caja.cajaAtrasada      = data.dataCaja.cajaAtrasada;
-			$scope.caja.idCaja            = data.dataCaja.idCaja;
-			$scope.caja.usuario           = data.dataCaja.usuario;
-			$scope.caja.codigoUsuario     = data.dataCaja.codigoUsuario;
-			$scope.caja.idEstadoCaja      = data.dataCaja.idEstadoCaja;
-			$scope.caja.estadoCaja        = data.dataCaja.estadoCaja;
-			*/
-			$scope.caja.fechaApertura     = moment( data.fechaApertura );
-			/*
-			$scope.caja.fechaHoraApertura = data.dataCaja.fechaHoraApertura;
-			$scope.caja.efectivoInicial   = data.dataCaja.efectivoInicial;
-			$scope.caja.efectivoFinal     = data.dataCaja.efectivoFinal;
-			$scope.caja.efectivoSobrante  = data.dataCaja.efectivoSobrante;
-			$scope.caja.efectivoFaltante  = data.dataCaja.efectivoFaltante;
-			$scope.caja.idCaja            = data.dataCaja.idCaja;
-			$scope.caja.lstDenominaciones = data.dataCaja.lstDenominaciones;
-			*/
+			$scope.caja.fechaApertura = moment( data.fechaApertura );
+
 			if( !($scope.caja.idCaja > 0) ){
 				$scope.accion = 'insert';
 				$timeout(function(){
 					$('#efectivoInicio').focus();
 				}, 150);
 			}
-			else{
+			else
 				$scope.accion = 'cierre';
-			}
 		});
 	})();
 

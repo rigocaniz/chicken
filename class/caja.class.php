@@ -45,6 +45,10 @@ class Caja
 			'efectivoFaltante'  => (double)0,
 			'idEstadoCaja'      => 2,
 			'estadoCaja'        => 'Cerrada',
+			'egresosCaja'       => 0,
+			'ingresosCaja'      => 0,
+			'totalEfectivo'     => 0,
+			'totalCierre'       => 0,
 			'lstDenominaciones' => $this->lstDenominaciones( 1 )
 		);
 
@@ -74,24 +78,29 @@ class Caja
 			if( $row->fechaApertura <> $fechaApertura )
 				$row->cajaAtrasada = TRUE;
 
+			$movimientos = (object)$this->lstMovimientos( NULL, TRUE );
+
  			$dataCaja = array(
- 					'idCaja'            => (int)$row->idCaja,
- 					'cajero'            => $this->sess->getNombre(),
- 					'cajaAtrasada'      => $row->cajaAtrasada,
- 					'usuario'           => $row->usuario,
- 					'codigoUsuario'     => $this->sess->getCodigoUsuario(),
- 					'fechaApertura'     => $row->fechaApertura,
- 					'fechaHoraApertura' => $row->fechaHoraApertura,
- 					'efectivoInicial'   => (double)$row->efectivoInicial,
- 					'efectivoFinal'     => (double)$row->efectivoFinal,
- 					'efectivoSobrante'  => (double)$row->efectivoSobrante,
- 					'efectivoFaltante'  => (double)$row->efectivoFaltante,
- 					'idEstadoCaja'      => (int)$row->idEstadoCaja,
- 					'estadoCaja'        => $row->estadoCaja,
- 					'totalCierre'       => 0,
- 					'egresos'           => 0,
- 					'agregarFaltante'   => FALSE,
- 					'lstDenominaciones' => $this->lstDenominaciones( 1 )
+					'idCaja'            => (int)$row->idCaja,
+					'cajero'            => $this->sess->getNombre(),
+					'cajaAtrasada'      => $row->cajaAtrasada,
+					'usuario'           => $row->usuario,
+					'codigoUsuario'     => $this->sess->getCodigoUsuario(),
+					'fechaApertura'     => $row->fechaApertura,
+					'fechaHoraApertura' => $row->fechaHoraApertura,
+					'efectivoInicial'   => (double)$row->efectivoInicial,
+					'efectivoFinal'     => (double)$row->efectivoFinal,
+					'efectivoSobrante'  => (double)$row->efectivoSobrante,
+					'efectivoFaltante'  => (double)$row->efectivoFaltante,
+					'idEstadoCaja'      => (int)$row->idEstadoCaja,
+					'estadoCaja'        => $row->estadoCaja,
+					'egresos'           => 0,
+					'agregarFaltante'   => FALSE,
+					'egresosCaja'       => (double)$movimientos->egresos,
+					'ingresosCaja'      => (double)$movimientos->ingresos,
+					'totalEfectivo'     => (double)$movimientos->ingresos + $row->efectivoInicial,
+					'totalCierre'       => (double)$movimientos->egresos,
+					'lstDenominaciones' => $this->lstDenominaciones( 1 )
  				);
  		}
 
@@ -155,6 +164,7 @@ class Caja
 				$efectivoFaltante = ( $montoIngresos - $montoEfectivo );
 
 			$idEstadoCaja = 2;
+
  		endif;
 
  		// OBTENER RESULTADO DE VALIDACIONES
@@ -341,7 +351,7 @@ class Caja
  	}
 
  	// LISTA DE MOVIMIENTOS
-	function lstMovimientos( $fecha = null )
+	function lstMovimientos( $fecha = null, $validarUsuario = FALSE )
 	{
 		$lst      = array();
 		$ingresos = 0;
@@ -350,6 +360,9 @@ class Caja
 		$where = 'CURDATE()';
 		if( !is_null( $fecha ) )
 			$where = " '{$fecha}' ";
+		
+		if( $validarUsuario )
+			$where .= " AND c.usuario = '{$this->sess->getUsuario()}'";
 
 		$sql = "SELECT
 					m.motivo,
@@ -361,18 +374,15 @@ class Caja
 				FROM movimiento AS m
 					JOIN logEstadoMovimiento AS em
 						ON em.idMovimiento = m.idMovimiento
-				        
 					JOIN caja AS c
 						ON c.idCaja = m.idCaja
-				        
 					JOIN tipoMovimiento AS tm
 						ON tm.idTipoMovimiento = m.idTipoMovimiento
-					
 				    JOIN estadoMovimiento AS e
 						ON e.idEstadoMovimiento = m.idEstadoMovimiento
 				WHERE c.fechaApertura = $where 
 				ORDER BY m.idMovimiento DESC";
-		
+		//echo $sql;
 		$rs = $this->con->query( $sql );
 		while( $rs AND $row = $rs->fetch_object() ){
 			$row->monto = (double)$row->monto;
