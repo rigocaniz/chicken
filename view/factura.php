@@ -326,11 +326,24 @@
             <div class="modal-content panel-info">
                 <div class="modal-header panel-heading">
                     <span class="glyphicon glyphicon-search"></span>
-                    REIMPRESIÓN DE FACTURAS
+                    <strong>REIMPRESIÓN DE FACTURAS</strong>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-xs-12">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" ng-class="{'active': tabFactura==1}" ng-click="tabFactura=1">
+                            <a href="" role="tab" data-toggle="tab">Reimpresión</a>
+                        </li>
+                        <li role="presentation" ng-class="{'active': tabFactura==2}" ng-click="tabFactura=2">
+                            <a href="" role="tab" data-toggle="tab">
+                                Pendientes
+                                <span class="badge">
+                                    {{ lstFactPendientes.length }}
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" ng-class="{'active': tabFactura==1}">
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
@@ -354,6 +367,46 @@
                                                 <a class="btn btn-info btn-sm" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ item.idFactura }}" title="IMPRIMIR FACTURA">
                                                     <span class="glyphicon glyphicon-print"></span>
                                                 </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" ng-class="{'active': tabFactura==2}">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center"># Orden</th>
+                                            <th class="text-center">NIT</th>
+                                            <th class="text-center">Cliente</th>
+                                            <th class="text-center">Direccion</th>
+                                            <th class="text-center">Fecha Facturacion</th>
+                                            <th class="text-center"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in lstFactPendientes track by $index">
+                                            <td>{{ $index + 1 }}</td>
+                                            <td class="text-center">{{ item.nit }}</td>
+                                            <td>{{ item.nombre }}</td>
+                                            <td>{{ item.direccion }}</td>
+                                            <td class="text-center">{{ item.fechaRegistro }}</td>
+                                            <td class="text-center">
+                                                <div class="menu-contenedor">
+                                                    <button type="button" class="btn btn-warning noBorde">
+                                                        <span class="glyphicon glyphicon-th"></span>
+                                                    </button>
+                                                    <div class="menu-horizontal">
+                                                        <button type="button" class="btn" ng-click="editarFactura( facturaCompra, 'editar' )" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
+                                                            <span class="glyphicon glyphicon-pencil"></span>
+                                                        </button>
+                                                        <a class="btn" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ item.idFactura }}" title="IMPRIMIR FACTURA">
+                                                            <span class="glyphicon glyphicon-print"></span>
+                                                        </a>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -573,7 +626,7 @@
             <div class="modal-content panel-info">
                 <div class="modal-header panel-heading text-center">
                     <button type="button" class="close" ng-click="$hide();">&times;</button>
-                    <span class="glyphicon glyphicon-inbox"></span> APERTURA / CIERRE DE CAJA
+                    <strong><span class="glyphicon glyphicon-inbox"></span> APERTURA / CIERRE DE CAJA</strong>
                 </div>
                 <div class="modal-body" ng-controller="ctrlCaja">
                     <div class="text-right">
@@ -617,9 +670,6 @@
                                     <input type="text" class="form-control" ng-model="caja.usuario" placeholder="Cajero" disabled>
                                 </div>
                             </div>
-                            <!--
-                            {{caja|json}}
-                        -->
                             <!-- DENOMINACIONES -->
                             <legend class="text-center" ng-show="accionCaja">
                                 <i class="fa fa-money" aria-hidden="true"></i> DENOMINACIONES

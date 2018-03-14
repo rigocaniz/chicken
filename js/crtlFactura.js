@@ -43,14 +43,17 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		console.log("TEST");
 	};
 
-	$scope.lstFacturasDia = [];
+	$scope.lstFacturasDia    = [];
+	$scope.lstFactPendientes = [];
+	$scope.tabFactura = 1;
 	$scope.cargarlstFacturasDia = function(){
 		$http.post('consultas.php',{
 		    opcion : "lstFacturas"
 		}).success(function(data){
 			console.log( data );
-		    $scope.lstFacturasDia = data || [];
-		    if( $scope.lstFacturasDia.length )
+		    $scope.lstFacturasDia    = data.lstFacturas || [];
+		    $scope.lstFactPendientes = data.lstFactPendientes || [];
+		    if( $scope.lstFacturasDia.length || $scope.lstFactPendientes.length )
 		    	$scope.dialReimpresion.show();
 		    else
 		    	alertify.notify('No hay facturas registradas el día de hoy', 'info', 4);

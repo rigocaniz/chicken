@@ -66,35 +66,33 @@ class Caja
 				    	vstCaja
  				WHERE usuario = '{$this->sess->getUsuario()}' AND idEstadoCaja = 1;";
  		
- 		if( $rs = $this->con->query( $sql ) ){
+ 		if( $rs = $this->con->query( $sql ) AND $rs->num_rows AND $row = $rs->fetch_object() )
+ 		{
+ 			
+			$row->cajaAtrasada = FALSE;
 
- 			if( $rs->num_rows AND $row = $rs->fetch_object() ){
+			if( $row->fechaApertura <> $fechaApertura )
+				$row->cajaAtrasada = TRUE;
 
-				$row->cajaAtrasada = FALSE;
- 				if( $row->fechaApertura <> $fechaApertura )
- 					$row->cajaAtrasada = TRUE;
-
-	 			$dataCaja = array(
-	 					'idCaja'            => (int)$row->idCaja,
-	 					'cajero'            => $this->sess->getNombre(),
-	 					'cajaAtrasada'      => $row->cajaAtrasada,
-	 					'usuario'           => $row->usuario,
-	 					'codigoUsuario'     => $this->sess->getCodigoUsuario(),
-	 					'fechaApertura'     => $row->fechaApertura,
-	 					'fechaHoraApertura' => $row->fechaHoraApertura,
-	 					'efectivoInicial'   => (double)$row->efectivoInicial,
-	 					'efectivoFinal'     => (double)$row->efectivoFinal,
-	 					'efectivoSobrante'  => (double)$row->efectivoSobrante,
-	 					'efectivoFaltante'  => (double)$row->efectivoFaltante,
-	 					'idEstadoCaja'      => (int)$row->idEstadoCaja,
-	 					'estadoCaja'        => $row->estadoCaja,
-	 					'totalCierre'       => 0,
-	 					'egresos'           => 0,
-	 					'agregarFaltante'   => FALSE,
-	 					'lstDenominaciones' => $this->lstDenominaciones( 1 )
-	 				);
- 			}
-
+ 			$dataCaja = array(
+ 					'idCaja'            => (int)$row->idCaja,
+ 					'cajero'            => $this->sess->getNombre(),
+ 					'cajaAtrasada'      => $row->cajaAtrasada,
+ 					'usuario'           => $row->usuario,
+ 					'codigoUsuario'     => $this->sess->getCodigoUsuario(),
+ 					'fechaApertura'     => $row->fechaApertura,
+ 					'fechaHoraApertura' => $row->fechaHoraApertura,
+ 					'efectivoInicial'   => (double)$row->efectivoInicial,
+ 					'efectivoFinal'     => (double)$row->efectivoFinal,
+ 					'efectivoSobrante'  => (double)$row->efectivoSobrante,
+ 					'efectivoFaltante'  => (double)$row->efectivoFaltante,
+ 					'idEstadoCaja'      => (int)$row->idEstadoCaja,
+ 					'estadoCaja'        => $row->estadoCaja,
+ 					'totalCierre'       => 0,
+ 					'egresos'           => 0,
+ 					'agregarFaltante'   => FALSE,
+ 					'lstDenominaciones' => $this->lstDenominaciones( 1 )
+ 				);
  		}
 
  		return (object)$dataCaja;
@@ -128,8 +126,6 @@ class Caja
  		if( $accion == 'cierre' ):
 			$idCaja        = $validar->validarEntero( $data->idCaja, NULL, TRUE, 'El ID de la CAJA no es válido' );
 			$efectivoFinal = (double)$validar->validarDinero( $data->efectivoFinal, NULL, TRUE, 'el EFECTIVO FINAL' );
-
-
 			$montoDespacho = 0;
 			$otrosIngresos = 0;
 			$egresos       = 0;
@@ -137,7 +133,9 @@ class Caja
 
 			// CONSULTA CIERRE DE CAJA (ingresos, egresos, despacho)
  			$sql = "CALL consultaCuadre( {$idCaja}, 1 );";
-	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
+	 		{
 				$this->siguienteResultado();
 				$montoDespacho = (double)$row->montoDespacho;
 				$otrosIngresos = (double)$row->ingresos;

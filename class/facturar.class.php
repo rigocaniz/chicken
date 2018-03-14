@@ -499,7 +499,7 @@ class Factura
 
 
 
- 	function lstFacturas( $idFactura = NULL, $filtrarPorFecha = NULL  )
+ 	function lstFacturas( $idFactura = NULL, $filtrarPorFecha = NULL, $pendientes = FALSE )
  	{
  		$where = "";
  		if( !is_null( $idFactura ) AND $idFactura > 0 )
@@ -509,6 +509,8 @@ class Factura
  			$fechaRegistro = date("Y-m-d");
  			$where .= "WHERE DATE( fechaRegistro ) = '{$fechaRegistro}'";
  		}
+ 		elseif( is_null( $filtrarPorFecha ) AND is_null( $filtrarPorFecha ) AND $pendientes )
+ 			$where .= "WHERE idEstadoFactura = 3";
 
  		$lstFacturas = array();
 
@@ -530,12 +532,11 @@ class Factura
 				FROM
 				    vstFactura $where
 				ORDER BY fechaRegistro DESC;";
-
 		//	echo $sql;
  		if( $rs = $this->con->query( $sql ) ){
  			while( $row = $rs->fetch_object() ){
  				$row->siDetalle = (bool)$row->siDetalle;
- 				$lstFacturas[] = $row;
+ 				$lstFacturas[]  = $row;
  			}
  		}
 

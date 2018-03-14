@@ -539,7 +539,11 @@ switch ( $data->opcion )
 
 	case 'lstFacturas': 		// 	CONSULTAR FACTURAS DEL DÍA
 		$factura = new Factura();
-		echo json_encode( $factura->lstFacturas( NULL, TRUE ) );
+
+		$datos[ 'lstFacturas' ]       = $factura->lstFacturas( NULL, TRUE );
+		$datos[ 'lstFactPendientes' ] = $factura->lstFacturas( NULL, NULL, TRUE );
+		
+		echo json_encode( $datos );
 		break;
 
 	// LISTA DE ORDENES DETALLE => POR DESTINO
