@@ -26,7 +26,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			$scope.numeroTicket = null;
 			$scope.facturacion.lstOrden = [];
 		}
-	});
+	});	
 
 	($scope.catFormasPago = function(){
 		$http.post('consultas.php',{
@@ -39,13 +39,37 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		})
 	})();
 
-	$scope.test = function () {
-		console.log("TEST");
+	$scope.editFactura = {};
+	$scope.editarFactura = function ( factura, idEstadoFactura ) {
+		$scope.editFactura = angular.copy( factura );
+		$scope.editFactura.idEstadoNuevo = idEstadoFactura;
+		$scope.dialMantenimientoF.hide();
+		$scope.dialEditarFactura.show();
+	};
+
+	$scope.actualizarEstadoFactura = function()
+	{
+		$scope.$parent.loading = true;
+		$http.post('consultas.php', { 
+			opcion : 'consultaEstadoFacturaCli',
+			datos  : $scope.editFactura,
+		})
+		.success(function (data) {
+			console.log( data );
+			$scope.$parent.loading = false;
+			alertify.set('notifier','position', 'top-right');
+			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+			if( data.respuesta == 'success' )
+			{
+				$scope.cargarlstFacturasDia();
+				$scope.dialEditarFactura.hide();
+			}
+		});
 	};
 
 	$scope.lstFacturasDia    = [];
 	$scope.lstFactPendientes = [];
-	$scope.tabFactura = 1;
+	$scope.tabFactura        = 1;
 	$scope.cargarlstFacturasDia = function(){
 		$http.post('consultas.php',{
 		    opcion : "lstFacturas"
@@ -54,17 +78,18 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		    $scope.lstFacturasDia    = data.lstFacturas || [];
 		    $scope.lstFactPendientes = data.lstFactPendientes || [];
 		    if( $scope.lstFacturasDia.length || $scope.lstFactPendientes.length )
-		    	$scope.dialReimpresion.show();
+		    	$scope.dialMantenimientoF.show();
 		    else
 		    	alertify.notify('No hay facturas registradas el día de hoy', 'info', 4);
 		})
 	};
 
-
-	$scope.dialAccionCliente = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialOrdenBusqueda = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialReimpresion   = $modal({scope: $scope,template:'dial.reimpresion.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialCaja          = $modal({scope: $scope,template:'dial.caja.html', show: false, backdrop:false, keyboard: true });
+	/************ VENTANAS MODAL ***************/
+	$scope.dialAccionCliente  = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialOrdenBusqueda  = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialMantenimientoF = $modal({scope: $scope,template:'dial.mantenimientoFact.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialCaja           = $modal({scope: $scope,template:'dial.caja.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialEditarFactura  = $modal({scope: $scope,template:'dial.editarFactura.html', show: false, backdrop:false, keyboard: true });
 	
 
 	$scope.seleccionarDeBusqueda = function ( orden ) {

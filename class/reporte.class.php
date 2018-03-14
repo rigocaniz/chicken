@@ -40,7 +40,8 @@ class Reporte
 					FROM vstFactura AS vF
 						JOIN vstDetalleOrdenFactura AS vOf
 							ON vF.idFactura = vOf.idFactura
-					WHERE vF.fechaFactura BETWEEN '2018-02-01' AND '2018-02-10';";
+					#WHERE vF.fechaFactura BETWEEN '2018-02-01' AND '2018-02-10';
+				";
 
 		if( $rs = $this->con->query( $sql ) )
 		{

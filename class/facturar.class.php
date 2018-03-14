@@ -497,6 +497,49 @@ class Factura
  		return $lst;
  	}
 
+ 	// ACTUALIZAR ESTADO FACTURA CLIENTE
+ 	public function consultaEstadoFacturaCli( $data )
+ 	{
+		// INICIALIZACIÓN VARIABLES
+		$idFactura       = 'NULL';
+		$idEstadoNuevo = 'NULL';
+
+		$validar = new Validar();
+
+		// SETEO VARIABLES
+		$data->idEstadoNuevo = isset( $data->idEstadoNuevo ) 	? (int)$data->idEstadoNuevo 	: NULL;
+		$data->idFactura     = isset( $data->idFactura ) 		? (int)$data->idFactura 		: NULL;
+		$idFactura           = $validar->validarEntero( $data->idFactura, NULL, TRUE, 'El ID de la FACTURA no es válida' );
+		$idEstadoNuevo       = $validar->validarEntero( $data->idEstadoNuevo, NULL, TRUE, 'El nuevo estado de la factura no es válido' );
+
+ 		// OBTENER RESULTADO DE VALIDACIONES
+ 		if( $validar->getIsError() ):
+	 		$this->respuesta = 'danger';
+	 		$this->mensaje   = $validar->getMsj();
+
+ 		else:
+ 		
+			$sql = "CALL consultaFacturaCliente( 'status', {$idFactura}, {$idEstadoNuevo}, NULL, NULL, NULL, NULL, NULL, NULL );";
+
+			//echo $sql;
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+	 			$this->siguienteResultado();
+
+ 				$this->respuesta = $row->respuesta;
+ 				$this->mensaje   = $row->mensaje;
+
+				if( $this->respuesta == 'danger' )
+					$this->respuesta .= ' (Facturar Cliente)';
+	 		}
+	 		else{
+	 			$this->respuesta = 'danger';
+	 			$this->mensaje   = 'Error en la instrucción (Facturar Cliente).';
+	 		}
+
+	 	endif;
+
+	 	return $this->getRespuesta();
+ 	}
 
 
  	function lstFacturas( $idFactura = NULL, $filtrarPorFecha = NULL, $pendientes = FALSE )
@@ -510,7 +553,7 @@ class Factura
  			$where .= "WHERE DATE( fechaRegistro ) = '{$fechaRegistro}'";
  		}
  		elseif( is_null( $filtrarPorFecha ) AND is_null( $filtrarPorFecha ) AND $pendientes )
- 			$where .= "WHERE idEstadoFactura = 3";
+ 			$where .= "WHERE ( idEstadoFactura = 3 OR idEstadoFactura = 2 )";
 
  		$lstFacturas = array();
 

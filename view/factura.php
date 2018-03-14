@@ -22,9 +22,9 @@
                 <button type="button" class="btn btn-sm btn-primary" ng-click="dialCaja.show()">
                     <span class="glyphicon glyphicon-inbox"></span> ACCIONES DE CAJA
                 </button>
-                <button type="button" class="btn btn-sm btn-info" ng-click="cargarlstFacturasDia()">
-                    <span class="glyphicon glyphicon-list"></span>
-                    REIMPRESIÓN
+                <button type="button" class="btn btn-sm btn-warning" ng-click="cargarlstFacturasDia()">
+                    <span class="glyphicon glyphicon-wrench"></span>
+                    MANTENIMIENTO FACTURAS
                 </button>
             </div>
             <legend>
@@ -319,14 +319,14 @@
 </div>
 
 
-<!-- FACTURAS REGISTRADAS -->
-<script type="text/ng-template" id="dial.reimpresion.html">
+<!-- MANTENIMIENTO DE FACTURAS -->
+<script type="text/ng-template" id="dial.mantenimientoFact.html">
     <div class="modal" tabindex="-1" role="dialog" id="dial_orden_busqueda">
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-info">
                 <div class="modal-header panel-heading">
-                    <span class="glyphicon glyphicon-search"></span>
-                    <strong>REIMPRESIÓN DE FACTURAS</strong>
+                    <span class="glyphicon glyphicon-wrench"></span>
+                    <strong>MANTENIMIENTO DE FACTURAS</strong>
                 </div>
                 <div class="modal-body">
                     <ul class="nav nav-tabs" role="tablist">
@@ -343,7 +343,7 @@
                         </li>
                     </ul>
                     <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" ng-class="{'active': tabFactura==1}">
+                        <div role="tabpanel" class="tab-pane" ng-class="{'active': tabFactura==1}">
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
@@ -364,9 +364,25 @@
                                             <td>{{ item.direccion }}</td>
                                             <td class="text-center">{{ item.fechaRegistro }}</td>
                                             <td class="text-center">
-                                                <a class="btn btn-info btn-sm" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ item.idFactura }}" title="IMPRIMIR FACTURA">
-                                                    <span class="glyphicon glyphicon-print"></span>
-                                                </a>
+                                                <div class="menu-contenedor">
+                                                    <button type="button" class="btn btn-warning noBorde">
+                                                        <span class="glyphicon glyphicon-th"></span>
+                                                    </button>
+                                                    <div class="menu-horizontal">
+                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 2" ng-click="editarFactura( item, 2 )" title="Cambiar Pendiente" data-toggle="tooltip" data-placement="top" tooltip>
+                                                            <span class="glyphicon glyphicon-flag"></span>
+                                                        </button>
+                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 1" ng-click="editarFactura( item, 1 )" title="Cambiar a Pagado" data-toggle="tooltip" data-placement="top" tooltip>
+                                                            <span class="glyphicon glyphicon-ok"></span>
+                                                        </button>
+                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 3" ng-click="editarFactura( item, 3 )" title="Cambiar a Pagado Parcialmente" data-toggle="tooltip" data-placement="top" tooltip>
+                                                            <span class="glyphicon glyphicon-bullhorn"></span>
+                                                        </button>
+                                                        <a class="btn" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ item.idFactura }}" title="IMPRIMIR FACTURA">
+                                                            <span class="glyphicon glyphicon-print"></span>
+                                                        </a>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -399,8 +415,14 @@
                                                         <span class="glyphicon glyphicon-th"></span>
                                                     </button>
                                                     <div class="menu-horizontal">
-                                                        <button type="button" class="btn" ng-click="editarFactura( facturaCompra, 'editar' )" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
-                                                            <span class="glyphicon glyphicon-pencil"></span>
+                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 2" ng-click="editarFactura( item, 2 )" title="Cambiar Pendiente" data-toggle="tooltip" data-placement="top" tooltip>
+                                                            <span class="glyphicon glyphicon-flag"></span>
+                                                        </button>
+                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 1" ng-click="editarFactura( item, 1 )" title="Cambiar a Pagado" data-toggle="tooltip" data-placement="top" tooltip>
+                                                            <span class="glyphicon glyphicon-ok"></span>
+                                                        </button>
+                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 3" ng-click="editarFactura( item, 3 )" title="Cambiar a Pagado Parcialmente" data-toggle="tooltip" data-placement="top" tooltip>
+                                                            <span class="glyphicon glyphicon-bullhorn"></span>
                                                         </button>
                                                         <a class="btn" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ item.idFactura }}" title="IMPRIMIR FACTURA">
                                                             <span class="glyphicon glyphicon-print"></span>
@@ -427,9 +449,107 @@
 </script> 
 
 
+<!-- *********** EDITAR FACTURA ********* -->
+<script type="text/ng-template" id="dial.editarFactura.html">
+    <div class="modal" tabindex="-1" role="dialog" id="dial_orden_busqueda">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content panel-danger">
+                <div class="modal-header panel-heading">
+                    <span class="glyphicon" ng-class="{'glyphicon-ok': editFactura.idEstadoNuevo==1, 'glyphicon-bullhorn': editFactura.idEstadoNuevo==3, 'glyphicon-flag': editFactura.idEstadoNuevo==2}"></span>
+                    ACTUALIZAR ESTADO DE FACTURA
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" novalidate autocomplete="off">
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                <label class="control-label">NO. FACTURA</label>
+                                <div>
+                                    <span class="badge">#{{ editFactura.idFactura }}</span>
+                                </div>
+                            </div>  
+                            <div class="col-md-4">
+                                <label class="control-label">FECHA DE COMPRA</label>
+                                <div>
+                                    {{ formatoFecha( editFactura.fechaFactura, 'D[/]MM[/]YYYY' ) }}
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <br>
+                                <div class="text-right">
+                                    <span class="label label-danger titulo-nombre" style="font-size: 18px">
+                                        TOTAL: Q. {{ editFactura.total }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-2">
+                                <label class="control-label">NIT</label>
+                                <div>
+                                     {{editFactura.nit}}
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">CLIENTE</label>
+                                <div>
+                                    {{ editFactura.nombre }}
+                                </div>
+                            </div>  
+                            <div class="col-sm-6">
+                                <label class="control-label">DIRECCIÓN</label>
+                                <div>
+                                    {{ editFactura.direccion }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-8 col-md-7">
+                                <label class="control-label">ESTADO ACTUAL DE LA FACTURA</label>
+                                <div class="btn-group" role="group" aria-label="">
+                                    <button type="button" class="btn btn-default" ng-class="{'btn-success': editFactura.idEstadoFactura==1 && editFactura.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-danger': editFactura.idEstadoFactura==2 && editFactura.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-warning': editFactura.idEstadoFactura==3 && editFactura.idEstadoFactura == estadoFactura.idEstadoFactura}" ng-repeat="estadoFactura in lstEstadosFactura">
+                                        <span class="glyphicon" ng-class="{'glyphicon-check': editFactura.idEstadoFactura == estadoFactura.idEstadoFactura, 'glyphicon-unchecked': editFactura.idEstadoFactura != estadoFactura.idEstadoFactura}"></span>
+                                        {{ estadoFactura.estadoFactura }}
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-md-5">
+                                <label class="control-label">ESTADO ACTUAL DE LA FACTURA</label>
+                                <div>
+                                    <div class="btn btn-default" ng-class="{'btn-success': editFactura.idEstadoNuevo==1 && editFactura.idEstadoNuevo == estadoFactura.idEstadoFactura, 'btn-danger': editFactura.idEstadoNuevo==2 && editFactura.idEstadoNuevo == estadoFactura.idEstadoFactura, 'btn-warning': editFactura.idEstadoNuevo==3 && editFactura.idEstadoNuevo == estadoFactura.idEstadoFactura}" ng-repeat="estadoFactura in lstEstadosFactura" ng-click="editFactura.idEstadoNuevo = estadoFactura.idEstadoFactura" ng-show="editFactura.idEstadoNuevo == estadoFactura.idEstadoFactura">
+                                        <span class="glyphicon" ng-class="{'glyphicon-check': editFactura.idEstadoNuevo == estadoFactura.idEstadoFactura, 'glyphicon-unchecked': editFactura.idEstadoNuevo != estadoFactura.idEstadoFactura}"></span>
+                                        <strong>» {{ estadoFactura.estadoFactura | uppercase }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6 col-md-5">
+                                <small>
+                                    <kbd>FACTURADO POR: {{ editFactura.usuario | uppercase }}</kbd>
+                                </small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" ng-click="actualizarEstadoFactura();">
+                        <span class="glyphicon glyphicon-saved"></span>
+                        Actualizar Estado (F6)
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="$hide();">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <b>Salir</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script> 
+
+
 <!-- *********** BUSQUEDA DE ORDEN ********* -->
 <script type="text/ng-template" id="dial.orden-busqueda.html">
-    <div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="dial_orden_busqueda">
+    <div class="modal" tabindex="-1" role="dialog" id="dial_orden_busqueda">
         <div class="modal-dialog modal-lg">
             <div class="modal-content panel-info">
                 <div class="modal-header panel-heading">
@@ -616,7 +736,6 @@
         </div>
     </div>
 </script>
-
 
 
 <!-- MODA CAJA APERTURA / CIERRE DE CAJA -->

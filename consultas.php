@@ -537,12 +537,17 @@ switch ( $data->opcion )
 		echo json_encode( $factura->consultaFacturaCliente( $data->accion, $data->data ) );
 		break;
 
+	case 'consultaEstadoFacturaCli':	// ACTUALIZAR ESTADO FACTURA CLIENTE
+		$factura = new Factura();
+		echo json_encode( $factura->consultaEstadoFacturaCli( $data->datos ) );
+		break;
+
 	case 'lstFacturas': 		// 	CONSULTAR FACTURAS DEL DÍA
 		$factura = new Factura();
 
 		$datos[ 'lstFacturas' ]       = $factura->lstFacturas( NULL, TRUE );
 		$datos[ 'lstFactPendientes' ] = $factura->lstFacturas( NULL, NULL, TRUE );
-		
+
 		echo json_encode( $datos );
 		break;
 
