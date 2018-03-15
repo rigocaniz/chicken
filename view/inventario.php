@@ -829,10 +829,9 @@
 	<div class="modal" tabindex="-1" role="dialog">
 		<div class="modal-dialog modal-xl">
 			<div class="modal-content panel-primary">
-				<div class="modal-header panel-heading text-center">
+				<div class="panel-heading text-center">
 					<button type="button" class="close" ng-click="$hide()">&times;</button>
-					<span class="glyphicon glyphicon-list-alt"></span>
-					HISTORIAL CIERRE DIARIO DE INVENTARIO
+					<span class="glyphicon glyphicon-list-alt"></span> HISTORIAL CIERRE DIARIO DE INVENTARIO
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" role="form" name="$parent.formCierre">
@@ -860,10 +859,10 @@
 						    		<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 						    			<div class="panel panel-default" ng-repeat="(ixCuadreProducto, cuadreProducto) in ubicacion.lstCuadreProducto">
 						    				<div class="panel-heading">
-						    					<button type="button" class="btn btn-sm btn-info" ng-click="cuadreProducto.mostrar=!cuadreProducto.mostrar">
+						    					<button type="button" class="btn btn-sm btn-warning" ng-click="cuadreProducto.mostrar=!cuadreProducto.mostrar">
 						    						<span class="glyphicon" ng-class="{'glyphicon-chevron-right': cuadreProducto.mostrar, 'glyphicon-chevron-down': !cuadreProducto.mostrar}"></span>
 						    					</button>
-						    					CUADRE #{{ cuadreProducto.noCuadre }}
+						    					<b>CUADRE #{{ cuadreProducto.noCuadre }}</b>
 						    					<div class="pull-right">
 						    						<b>ESTADO {{ cuadreProducto.estadoCuadre | uppercase}}</b>
 						    					</div>
@@ -934,12 +933,20 @@
 															</td>
 															<td class="text-right table-bordered" ng-class="{'danger' : inv.diferenciaApertura < 0, 'success': inv.diferenciaApertura > 0}">		
 																{{ inv.diferenciaApertura }}
+																<br ng-if="inv.diferenciaApertura < 0">
+																<span title="{{inv.comentarioApertura}}" data-toggle="tooltip" data-placement="top" tooltip ng-if="inv.diferenciaApertura < 0">
+																	<span class="glyphicon glyphicon-comment"></span>
+																</span>
 															</td>
 															<td class="text-right table-bordered">
 																{{ inv.cantidadCierre }}
 															</td>
 															<td class="text-right table-bordered " ng-class="{'danger' : inv.diferenciaCierre < 0, 'success': inv.diferenciaCierre > 0}">
 																{{ inv.diferenciaCierre }}
+																<br ng-if="inv.diferenciaCierre < 0">
+																<span title="{{inv.comentarioCierre}}" data-toggle="tooltip" data-placement="top" tooltip ng-if="inv.diferenciaCierre < 0">
+																	<span class="glyphicon glyphicon-comment"></span>
+																</span>
 															</td>
 															<td class="text-center">
 																{{ inv.medida }}
