@@ -111,7 +111,7 @@
 									<div class="form-group">
 										<label class="col-sm-4">EFECTIVO FALTANTE</label>
 										<div class="col-sm-4">
-											<input type="number" min="0"  class="form-control" ng-model="caja.efectivoFaltante" placeholder="Total Efectivo" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="1">
+											<input type="number" min="0" class="form-control" ng-model="caja.efectivoFaltante" placeholder="Total Efectivo" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="1">
 										</div>
 										<div class="col-sm-4 text-right">
 											<kbd class="numEfectivo">
@@ -177,7 +177,7 @@
 							<div class="form-group">
 								<label class="col-sm-2 control-label">Monto</label>
 								<div class="col-sm-2">
-									<input type="number" class="form-control" ng-model="movimiento.monto" placeholder="Q." focus-enter>
+									<input type="number" class="form-control" ng-model="movimiento.monto" min="0" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" placeholder="Q." focus-enter>
 								</div>
 								<label class="col-sm-2 control-label">Motivo</label>
 								<div class="col-sm-6">

@@ -29,7 +29,7 @@ class Reporte
 
 
  	// OBTENER VENTAS POR FECHA
- 	public function getVentasFecha()
+ 	public function getVentasFecha( $filtro, $deFecha, $aFecha )
  	{
  		$ventas = new stdClass();
  		$ventas->total         = 0;
@@ -40,8 +40,8 @@ class Reporte
 					FROM vstFactura AS vF
 						JOIN vstDetalleOrdenFactura AS vOf
 							ON vF.idFactura = vOf.idFactura
-					#WHERE vF.fechaFactura BETWEEN '2018-02-01' AND '2018-02-10';
-				";
+					WHERE vF.fechaFactura AND vF.idEstadoFactura
+					BETWEEN '{$deFecha}' AND '{$aFecha}';";
 
 		if( $rs = $this->con->query( $sql ) )
 		{
@@ -50,6 +50,36 @@ class Reporte
 				$ventas->encontrado = TRUE;
 	 			while( $row = $rs->fetch_object() )
 	 			{
+	 				$iFactura = -1;
+
+	 				if( $filtro == 'factura' )
+	 				{
+	 					foreach ( $ventas->detalleVentas AS $ixFactura => $factura ) {
+	 						if( $factura->idFactura == $row->idFactura )
+	 						{
+	 							$iFactura = $ixFactura;
+	 							break;
+	 						}
+	 					}
+	 				}
+
+
+	 				if( $iFactura == -1 )
+	 				{
+	 					$iFactura = count( $ventas );
+	 					$ventas->detalleVentas[ $iFactura ] = 
+								(object)array(
+									'idFactura'      => $row->idFactura,
+									'total'          => $row->total,
+									'detalleFactura' => array()
+			 					);
+	 				}
+
+
+	 				if( $filtro == 'factura' )
+	 					$ventas->detalleVentas[ $iFactura ]->detalleFactura[] = $row;
+
+/*
 	 				$row->idCombo             = (int)$row->idCombo?:NULL;
 					$row->idMenu              = (int)$row->idMenu?:NULL;
 					$row->idDetalleOrdenCombo = (int)$row->idDetalleOrdenCombo;
@@ -110,6 +140,7 @@ class Reporte
 					$ventas->detalleVentas[ $index ]->subTotal = ( $ventas->detalleVentas[ $index ]->cantidad * $row->precioReal );
 					// SUMA EL TOTAL DE LA ORDEN
 					$ventas->total += (double)$row->precioMenu;
+ 		*/
 	 			}
 			}
 			else{

@@ -686,7 +686,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		    accion : $scope.accion,
 		    data   : factura
 		}).success(function(data){
-		    console.log(data);		    
+		    console.log(data);
 			alertify.set('notifier','position', 'top-right');
 			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 			if( data.respuesta == 'success' )

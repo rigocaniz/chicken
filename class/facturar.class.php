@@ -97,8 +97,8 @@ class Factura
 
 				$sql = "CALL consultaFacturaCliente( '{$accion}', {$idFactura}, {$idEstadoFactura}, {$idCliente}, {$idCaja}, '{$nombre}', '{$direccion}', {$total}, {$descripcion} );";
 
-				//echo $sql;
-		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
+		 		{
 		 			$this->siguienteResultado();
 
 	 				$this->respuesta = $row->respuesta;
@@ -141,7 +141,7 @@ class Factura
 		$validar   = new Validar();
 		$guardados = 0;
 		$idFactura = (int)$idFactura;
-		//print_r( $lstDetalle );
+
 		foreach ( $lstDetalle AS $ixOrden => $orden )
 		{
 			$lst                 = array();
@@ -161,7 +161,9 @@ class Factura
 			{
 				$sql = "SELECT idMenuPersonalizado FROM menuPersonalizado
 						WHERE idMenuPersonalizado = {$orden->idMenuPersonalizado} AND idEstadoDetalleOrden = 1 ";
+				
 				$rs = $this->con->query( $sql );
+
 				if ( $rs AND $row = $rs->fetch_object() ) {
 					$orden->descuento = (double)$orden->descuento;
 
@@ -216,6 +218,7 @@ class Factura
 							LIMIT {$cantidad}; ";
 				
 				$result = $this->con->query( $sql );
+
 				while( $result AND $row = $result->fetch_object() )
 			 		$lst[] = $row;
 
@@ -281,7 +284,7 @@ class Factura
 			if( $this->respuesta == 'danger' )
 				break;
 		}
-
+		
 		if( !$guardados )
 		{
 			$this->respuesta = 'danger';

@@ -55,19 +55,15 @@ switch ( $data->opcion )
 	////////////////////////
 	case 'getVentasFecha':			// REPORTE DE VENTAS
 		$reporte = new Reporte();
-
-		echo json_encode( $reporte->getVentasFecha() );
+		echo json_encode( $reporte->getVentasFecha( $data->filtro, $data->fechaInicio, $data->fechaFinal ) );
 		break;
 
 	/////////////////////////
 	//***** INICIOS
 	////////////////////////
 	case 'inicioCaja':			// DATOS MEDIDA
-		//$consulta = new Consulta();
 		$caja     = new Caja();
-		$datos = $caja->consultarEstadoCaja();
-
-		echo json_encode( $datos );
+		echo json_encode( $caja->consultarEstadoCaja() );
 		break;
 	
 	case 'inicioAdmin':			// DATOS MEDIDA

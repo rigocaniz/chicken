@@ -121,7 +121,7 @@
                         <div class="form-group">
                             <label class="control-label">ESTADO DE LA FACTURA:</label>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-default btn-sm" ng-class="{'btn-success': factura.idEstadoFactura==1 && factura.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-danger': factura.idEstadoFactura==2 && factura.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-warning': factura.idEstadoFactura==3 && factura.idEstadoFactura == estadoFactura.idEstadoFactura}" ng-repeat="estadoFactura in lstEstadosFactura" ng-click="factura.idEstadoFactura = estadoFactura.idEstadoFactura">
+                                <button type="button" class="btn btn-default btn-sm" ng-class="{'btn-success': factura.idEstadoFactura==1 && factura.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-danger': factura.idEstadoFactura==2 && factura.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-warning': factura.idEstadoFactura==3 && factura.idEstadoFactura == estadoFactura.idEstadoFactura}" ng-repeat="estadoFactura in lstEstadosFactura" ng-click="factura.idEstadoFactura = estadoFactura.idEstadoFactura" ng-show="estadoFactura.idEstadoFactura!=10">
                                     <span class="glyphicon" ng-class="{'glyphicon-check': factura.idEstadoFactura == estadoFactura.idEstadoFactura, 'glyphicon-unchecked': factura.idEstadoFactura != estadoFactura.idEstadoFactura}"></span>
                                     {{ estadoFactura.estadoFactura }}
                                 </button>
@@ -260,7 +260,7 @@
                                                     <b>Q.</b>
                                                 </span>
                                             </span>
-                                            <input type="number" class="form-control monto" id="efectivo_{{factura.idTab}}" ng-model="factura.detallePago.efectivo" placeholder="Efectivo" focus-enter ng-change="calculoFactura( 'totalPago' )" ng-disabled="factura.facturado">
+                                            <input type="number" class="form-control monto" id="efectivo_{{factura.idTab}}" ng-model="factura.detallePago.efectivo" placeholder="Efectivo" min="0" focus-enter ng-change="calculoFactura( 'totalPago' )" ng-disabled="factura.facturado">
                                         </div>
                                     </div>
                                     <div class="form-group group-factura">
@@ -270,7 +270,7 @@
                                                     <span class="glyphicon glyphicon-credit-card"></span>
                                                 </span>
                                             </span>
-                                            <input type="number" class="form-control monto" ng-model="factura.detallePago.tarjeta" placeholder="Tarjeta Débito / Crédito" focus-enter ng-change="calculoFactura( 'totalPago' )" ng-disabled="factura.facturado">
+                                            <input type="number" class="form-control monto" ng-model="factura.detallePago.tarjeta" placeholder="Tarjeta Débito / Crédito" min="0" focus-enter ng-change="calculoFactura( 'totalPago' )" ng-disabled="factura.facturado">
                                         </div>
                                     </div>
                                     <div class="form-group group-factura">

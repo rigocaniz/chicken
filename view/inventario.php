@@ -1198,10 +1198,10 @@
 			<div class="modal-content" ng-class="{'panel-warning': accion == 'insert', 'panel-info': accion == 'update'}">
 				<div class="modal-header panel-heading">
 					<button type="button" class="close" ng-click="$hide()">&times;</button>
-					<h3 class="panel-title">
+					<strong>
 						<span class="glyphicon" ng-class="{'glyphicon-plus': accion == 'insert', 'glyphicon glyphicon-pencil': accion == 'update'}"></span>
 						{{ accion == 'insert' ? 'INGRESAR' : 'ACTUALIZAR' }} PRODUCTO
-					</h3>
+					</strong>
 				</div>
 				<div class="modal-body">
 					<fieldset class="fieldset">

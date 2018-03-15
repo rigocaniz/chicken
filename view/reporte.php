@@ -59,12 +59,24 @@
 						    </div>
 						    <div>
 						    	<br>
-						    	<button type="button" class="btn btn-sm btn-danger" ng-click="consultarVentas()">
+						    	<button type="button" class="btn btn-sm btn-warning" ng-click="consultarVentas()">
+						    		CONSULTAR REPORTE <span class="glyphicon glyphicon-ok"></span>
+						    	</button>
+						    	<button type="button" class="btn btn-sm btn-danger">
 						    		GENERAR REPORTE <span class="glyphicon glyphicon-download-alt"></span>
 						    	</button>
 						    </div>
 						</div>
 						<hr>
+						<b>AGRUPAR POR:</b>
+						<div class="btn-group" role="group" aria-label="...">
+						  	<button type="button" class="btn btn-default" ng-click="filtro='combo'">
+						  		COMBO <span class="glyphicon" ng-class="{'glyphicon-check': filtro=='combo', 'glyphicon-unchecked': filtro!='combo'}"></span>
+						  	</button>
+						  	<button type="button" class="btn btn-default" ng-click="filtro='precio'">
+						  		MENÚ <span class="glyphicon" ng-class="{'glyphicon-check': filtro=='precio', 'glyphicon-unchecked': filtro!='precio'}"></span>
+						  	</button>
+						</div>
 						<div class="form-group" ng-show="ventas.encontrado">
 							<div class="text-right">
 								<span class="label label-danger titulo-nombre" style="font-size: 20px">
