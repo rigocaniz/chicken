@@ -173,7 +173,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		// CTRL + ESPACION (NUEVA ORDEN)
 		if ( altDerecho && key == 32 && $scope.lstFacturas.length )
 			$scope.agregarFactura({});
-
 		
 		// CTRL + DERECHA (SIGUIENRE ORDEN)
 		if ( altDerecho && key == 39 && $scope.lstFacturas.length )
@@ -215,7 +214,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			if ( indexFactura > 0 )
 				$scope.idTab = $scope.lstFacturas[ indexFactura - 1 ].idTab;
 		}
-
 
 		// TECLA C
 		if ( altDerecho && key == 67 && $scope.accionCliente == '' )
@@ -526,15 +524,14 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		$scope.calculoFactura( 'totalFactura' );
 	};
 
-	$scope.asignarDetalle = function ( idTabActual, idTabDestino, orden, ixDetalle ) {
-		console.log( idTabActual, idTabDestino, orden, ixDetalle );
+	$scope.asignarDetalle = function ( idTabActual, idTabDestino, orden, ixDetalle ) {		
 		// SI LA FACTURA NO ESTA DEFINIDA LA CREA ORDEN ACTUAL
 
 		var ixFacturaA = $scope.indexArray( 'lstFacturas', 'idTab', idTabActual );
 		var factActual = angular.copy( $scope.lstFacturas[ ixFacturaA ] );
 
-		if( factActual.facturado ){
-			console.log( factActual );
+		if( factActual.facturado )
+		{
 			alertify.notify( 'El detalle de la orden ya está facturado en la <b>ORDEN ACTUAL</b>', 'warning', 6);
 			return;
 		}
@@ -867,7 +864,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			$timeout(function(){
 				$('#buscador').focus();
 			});
-	        $scope.dialAccionCliente.show();
+	        //$scope.dialAccionCliente.show();
 		}
 		
 		if( valor.length >= 1 ){
