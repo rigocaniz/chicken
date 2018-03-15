@@ -831,21 +831,27 @@
                                     </div>
                                 </div>
                             </div>
+
+                                
                             <div class="col-sm-4 col-md-6 col-lg-7"></div>
                             <div class="col-sm-8 col-md-6 col-lg-5">
                                 <h4><b>
-                                <table class="table table-hover">
+                                <table class="table table-hover table-condensed">
                                     <tr ng-show="accionCaja=='cierreCaja'">
-                                        <td class="col-sm-7 text-right"><b>EFECTIVO INICIAL:</b></td>
-                                        <td class="col-sm-5 text-right">Q. {{ caja.efectivoInicial | number: 2 }}</td>
+                                        <td class="col-sm-5 col-lg-4 text-right"><b>EFECTIVO INICIAL</b></td>
+                                        <td class="col-sm-4 text-right">Q. {{ caja.efectivoInicial | number: 2 }}</td>
+                                    </tr>
+                                    <tr ng-show="accionCaja=='cierreCaja'">
+                                        <td class="col-sm-5 col-lg-4 text-right"><b>EGRESOS CAJA</b></td>
+                                        <td class="col-sm-4 text-right">Q. {{ caja.totalEgresos | number: 2 }}</td>
                                     </tr>
                                     <tr ng-show="caja.agregarFaltante && accionCaja=='cierreCaja' && caja.efectivoFaltante > 0">
-                                        <td class="col-sm-7 text-right"><b>EFECTIVO FALTANTE:</b></td>
-                                        <td class="col-sm-5 text-right">Q. {{ caja.efectivoFaltante | number: 2 }}</td>
+                                        <td class="col-sm-5 col-lg-4 text-right"><b>EFECTIVO FALTANTE</b></td>
+                                        <td class="col-sm-4 text-right">Q. {{ caja.efectivoFaltante | number: 2 }}</td>
                                     </tr>
                                     <tr ng-show="accionCaja">
-                                        <td class="col-sm-7 text-right"><b>EFECTIVO {{ accionCaja == 'cierreCaja' ? 'FINAL' : 'INICIAL' }}:</b></td>
-                                        <td class="col-sm-5 text-right">Q. {{ retornarTotal() | number: 2 }}</td>
+                                        <td class="col-sm-5 col-lg-4 text-right"><b>EFECTIVO {{ accionCaja == 'cierreCaja' ? 'FINAL' : 'INICIAL' }}</b></td>
+                                        <td class="col-sm-4 text-right">Q. {{ retornarTotal() | number: 2 }}</td>
                                     </tr>
                                 </table>
                                 </b></h4>

@@ -168,8 +168,11 @@ class Validar
 
 	function compararValores( $valor1, $valor2, $campo1, $campo2, $accion = 4 )
 	{
-
-		if( $accion == 1 ){
+		if( $this->error )
+			return;
+		
+		if( $accion == 1 )
+		{
 			if( $valor1 == $valor2 ){
 				$this->error   = TRUE;
 				$this->mensaje = "El valor de " . $campo1 . " no debe ser igual " . $campo2;

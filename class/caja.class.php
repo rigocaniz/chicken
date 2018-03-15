@@ -31,26 +31,23 @@ class Caja
  	function consultarEstadoCaja()
  	{
  		$fechaApertura = date("Y-m-d");
-	
-		$dataCaja = array(
-			'idCaja'            => 0,
-			'cajaAtrasada'      => FALSE,
-			'cajero'            => $this->sess->getNombre(),
-			'usuario'           => $this->sess->getUsuario(),
-			'codigoUsuario'     => $this->sess->getCodigoUsuario(),
-			'fechaApertura'     => $fechaApertura,
-			'efectivoInicial'   => (double)0,
-			'efectivoFinal'     => (double)0,
-			'efectivoSobrante'  => (double)0,
-			'efectivoFaltante'  => (double)0,
-			'idEstadoCaja'      => 2,
-			'estadoCaja'        => 'Cerrada',
-			'egresosCaja'       => 0,
-			'ingresosCaja'      => 0,
-			'totalEfectivo'     => 0,
-			'totalCierre'       => 0,
-			'lstDenominaciones' => $this->lstDenominaciones( 1 )
-		);
+		$dataCaja = new stdClass();
+
+		$dataCaja->idCaja            = 0;
+		$dataCaja->cajaAtrasada      = FALSE;
+		$dataCaja->cajero            = $this->sess->getNombre();
+		$dataCaja->usuario           = $this->sess->getUsuario();
+		$dataCaja->codigoUsuario     = $this->sess->getCodigoUsuario();
+		$dataCaja->fechaApertura     = $fechaApertura;
+		$dataCaja->efectivoInicial   = (double)0;
+		$dataCaja->efectivoFinal     = (double)0;
+		$dataCaja->efectivoSobrante  = (double)0;
+		$dataCaja->efectivoFaltante  = (double)0;
+		$dataCaja->idEstadoCaja      = 2;
+		$dataCaja->estadoCaja        = 'Cerrada';
+		$dataCaja->totalIngresos     = 0;
+		$dataCaja->totalEgresos      = 0;
+		$dataCaja->lstDenominaciones = $this->lstDenominaciones( 1 );
 
  		$sql = "SELECT 
 				    idCaja,
@@ -72,42 +69,45 @@ class Caja
  		
  		if( $rs = $this->con->query( $sql ) AND $rs->num_rows AND $row = $rs->fetch_object() )
  		{
- 			
 			$row->cajaAtrasada = FALSE;
 
 			if( $row->fechaApertura <> $fechaApertura )
 				$row->cajaAtrasada = TRUE;
 
-			$movimientos = (object)$this->lstMovimientos( NULL, TRUE );
+			//$movimientos = (object)$this->lstMovimientos( NULL, TRUE );
+			$dataCaja->idCaja            = (int)$row->idCaja;
+			$dataCaja->cajero            = $this->sess->getNombre();
+			$dataCaja->cajaAtrasada      = $row->cajaAtrasada;
+			$dataCaja->usuario           = $row->usuario;
+			$dataCaja->codigoUsuario     = $this->sess->getCodigoUsuario();
+			$dataCaja->fechaApertura     = $row->fechaApertura;
+			$dataCaja->fechaHoraApertura = $row->fechaHoraApertura;
+			$dataCaja->efectivoInicial   = (double)$row->efectivoInicial;
+			$dataCaja->efectivoFinal     = (double)$row->efectivoFinal;
+			$dataCaja->efectivoSobrante  = (double)$row->efectivoSobrante;
+			$dataCaja->efectivoFaltante  = (double)$row->efectivoFaltante;
+			$dataCaja->idEstadoCaja      = (int)$row->idEstadoCaja;
+			$dataCaja->estadoCaja        = $row->estadoCaja;
+			$dataCaja->agregarFaltante   = FALSE;
+ 		}
 
- 			$dataCaja = array(
-					'idCaja'            => (int)$row->idCaja,
-					'cajero'            => $this->sess->getNombre(),
-					'cajaAtrasada'      => $row->cajaAtrasada,
-					'usuario'           => $row->usuario,
-					'codigoUsuario'     => $this->sess->getCodigoUsuario(),
-					'fechaApertura'     => $row->fechaApertura,
-					'fechaHoraApertura' => $row->fechaHoraApertura,
-					'efectivoInicial'   => (double)$row->efectivoInicial,
-					'efectivoFinal'     => (double)$row->efectivoFinal,
-					'efectivoSobrante'  => (double)$row->efectivoSobrante,
-					'efectivoFaltante'  => (double)$row->efectivoFaltante,
-					'idEstadoCaja'      => (int)$row->idEstadoCaja,
-					'estadoCaja'        => $row->estadoCaja,
-					'egresos'           => 0,
-					'agregarFaltante'   => FALSE,
-					'egresosCaja'       => (double)$movimientos->egresos,
-					'ingresosCaja'      => (double)$movimientos->ingresos,
-					'totalEfectivo'     => (double)$movimientos->ingresos + $row->efectivoInicial,
-					'totalCierre'       => (double)$movimientos->egresos,
-					'lstDenominaciones' => $this->lstDenominaciones( 1 )
- 				);
+ 		if( $dataCaja->idCaja )
+ 		{
+	 		$sql = "CALL consultaCuadre( {$dataCaja->idCaja}, 1 );";
+
+	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
+	 		{
+	 			$this->siguienteResultado();
+	 			$dataCaja->totalIngresos = (double)$row->montoDespacho + (double)$row->ingresos;
+	 			$dataCaja->totalEgresos  = (double)$row->egresos;
+	 		}
  		}
 
  		return (object)$dataCaja;
  	}
 
 
+ 	// CONSULTA CAJA
  	function consultaCaja( $accion, $data, $total )
  	{
 		$idCaja           = "NULL";
@@ -163,8 +163,12 @@ class Caja
 	 		if ( $montoEfectivo < $montoIngresos )
 				$efectivoFaltante = ( $montoIngresos - $montoEfectivo );
 
+			// COMPARAR CANTIDADES CONSULTADAS VS EL SISTEMA
+			$validar->compararValores( $montoDespacho, ( (double)$data->totalIngresos - $otrosIngresos ), 'Monto de Despacho', 'El sistema', 4 );
+			$validar->compararValores( $otrosIngresos, ( (double)$data->totalIngresos - $montoDespacho ), 'Otros Ingresos', 'El sistema', 4 );
+			$validar->compararValores( $egresos, ( (double)$data->totalEgresos ), 'cantidad de Egresos', 'El sistema', 4 );
+			
 			$idEstadoCaja = 2;
-
  		endif;
 
  		// OBTENER RESULTADO DE VALIDACIONES

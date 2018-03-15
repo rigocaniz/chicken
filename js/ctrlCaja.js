@@ -90,16 +90,27 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 
 	$scope.consultaCaja = function() {
 		var caja = $scope.caja;
+
 		if( $scope.accion == 'cierre' && !( caja.idCaja && caja.idCaja > 0 ) )
 			alertify.notify( 'El Cierre de caja no es válido', 'danger', 3 );
 		
 		else if( $scope.accion == 'insert' && !( $scope.retornarTotal() && $scope.retornarTotal() > 0 ) )
-			alertify.notify( 'El EFECTIVO INICIAL debe ser mayor a 0', 'warning', 4 );
+			alertify.notify( 'El <b>EFECTIVO INICIAL</b> debe ser mayor a 0', 'warning', 4 );
 
 		else if( $scope.accion == 'cierre' && !( $scope.retornarTotal() && $scope.retornarTotal() > 0 ) )
-			alertify.notify( 'El EFECTIVO FINAL debe ser mayor a 0', 'warning', 4 );
+			alertify.notify( 'El <b>EFECTIVO FINAL</b> debe ser mayor a 0', 'warning', 4 );
 
-		else{
+		else if( $scope.accion == 'cierre' && ( ( ( caja.totalIngresos + caja.efectivoInicial ) - caja.totalEgresos )  ) - $scope.retornarTotal() > 0 )
+		{
+			var faltante = ( ( ( caja.totalIngresos + caja.efectivoInicial ) - caja.totalEgresos ) - $scope.retornarTotal() );
+			$scope.caja.agregarFaltante  = true;
+			$scope.caja.efectivoFaltante = faltante;
+			alertify.notify( 'Existe un faltante de ' + faltante, 'warning', 4 );
+		}
+		
+		else
+		{
+			$scope.$parent.showLoading( 'Guardando...' );
 			$http.post('consultas.php',{
 				opcion : 'consultaCaja',
 				accion : $scope.accion,
@@ -107,13 +118,15 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 				total  : $scope.retornarTotal()
 			})
 			.success(function(data){
-				console.log( data );
 				alertify.set('notifier','position', 'top-right');
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 				if( data.respuesta == 'success' ){
 					$scope.accionCaja = '';
 					$scope.inicioCaja();
 				}
+				$scope.$parent.hideLoading();
+			}).error(function(data){
+				$scope.$parent.hideLoading();
 			});
 		}
 	};
