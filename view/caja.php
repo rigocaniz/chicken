@@ -39,6 +39,9 @@
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : menuCaja=='verCaja'}" ng-show="menuCaja=='verCaja'">
 					<div class="text-right">
 						<p>
+							<button type="button" class="btn btn-info noBorde" ng-click="abrirDialogoHistorial()">
+								<span class="glyphicon glyphicon-th-list"></span> HISTORIAL CAJA(S)
+							</button>
 							<button type="button" class="btn btn-warning" ng-click="accionCaja='cierreCaja'" ng-show="caja.idCaja">
 								<span class="glyphicon glyphicon-flag"></span> CERRAR CAJA
 							</button>
@@ -250,16 +253,14 @@
 	</div>
 </div>
 
-
-<!-- DIALOGO CONSULTAR CIERRE DIARIO -->
-<script type="text/ng-template" id="dial.verCierreDiario.html">
+<!-- DIALOGO CONSULTAR APERTURA/CIERRE CAJA -->
+<script type="text/ng-template" id="dial.historialCaja.html">
 	<div class="modal" tabindex="-1" role="dialog">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content panel-primary">
-				<div class="modal-header panel-heading text-center">
+				<div class="panel-heading text-center">
 					<button type="button" class="close" ng-click="$hide()">&times;</button>
-					<span class="glyphicon glyphicon-list-alt"></span>
-					HISTORIAL CIERRE DIARIO DE INVENTARIO
+					<span class="glyphicon glyphicon-list-alt"></span> <strong>HISTORIAL APERTURA/ CIERRE CAJA</strong>
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" role="form" name="$parent.formCierre">
@@ -270,88 +271,62 @@
 								  	<span class="input-group-addon">
     									<span class="fa fa-calendar"></span>
 								  	</span>
-    								<input type="text" class="form-control" ng-model="fechaCierre" ng-change="cargarFechaCierre( fechaCierre )" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker>
+    								<input type="text" class="form-control" ng-model="fechaCaja" ng-change="cargarHistorialCaja( fechaCaja )" data-date-format="dd/MM/yyyy" data-max-date="today" placeholder="dd/mm/yyyy" data-autoclose="1" bs-datepicker>
 								</div>
 							</div>	
 						</div>
 						<hr>
-						<div ng-show="fechaCierreP.encontrado">
-							<div class="form-group">
-								<div class="col-sm-3 col-xs-6">
-									<label class="control-label">FECHA DE CIERRE</label>
-									<div class="input-group">
-									  	{{ fechaCierreP.fechaCierre }}
-									</div>
-								</div>s
-								<div class="col-sm-3 col-xs-6">
-									<label class="control-label">REALIZADO POR:</label>
-									<div>
-										<kbd class="numEfectivo">Q. {{ fechaCierreP.usuario | uppercase }}</kbd>
-									</div>
-								</div>
-								<div class="col-sm-3 col-xs-6">
-									<label class="control-label">FECHA / HORA:</label>
-									<div>
-										<kbd class="numEfectivo">Q. {{ fechaCierreP.fechaHora }}</kbd>
-									</div>
-								</div>
-								<div class="col-sm-3 col-xs-6">
-									<label class="control-label">TIPO DE CIERRE:</label>
-									<div>
-										<kbd class="numEfectivo">Q. {{ fechaCierreP.todos ? 'TODOS LOS PRODUCTOS' : 'PRODUCTOS IMPORTANTES' }}</kbd>
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-12">
-									<label class="control-label">COMENTARIO:</label>
-									<div>
-										{{ fechaCierreP.comentario }}
-									</div>
-								</div>
-							</div>
-							<table class="table table-hover">
-								<thead>
-									<tr>
-										<th class="col-sm-1 text-center">No.</th>
-										<th class="col-sm-3 text-center">Producto</th>
-										<th class="col-sm-2 text-center">Tipo Producto</th>
-										<th class="col-sm-1 text-center">Perecedero</th>
-										<th class="col-sm-2 text-center">Cantidad</th>
-										<th class="col-sm-2 text-center">Medida</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="inv in fechaCierreP.lstProductos" ng-class="{'border-success':inv.importante}">
-										<td class="text-right">
-											{{ $index + 1 }}
-										</td>
-										<td>
-											{{ inv.producto }}
-										</td>
-										<td class="text-center">
-											{{ inv.tipoProducto }}
-										</td>
-										<td class="text-center">
-											{{ inv.perecedero ? 'SI' : 'NO' }}
-										</td>
-										<td class="text-center success">
-											{{ inv.cantidadCierre }}
-										</td>
-										<td class="text-center">
-											{{ inv.medida }}
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						<div ng-show="!fechaCierreP.encontrado && fechaCierre">
+						<table class="table table-hover" ng-show="historialCaja.encontrado">
+							<thead>
+								<tr>
+									<th class="text-center">No.</th>
+									<th class="col-sm-2 text-center">Cajero</th>
+									<th class="col-sm-2 text-center">Efectivo <br>Inicial</th>
+									<th class="col-sm-2 text-center">Efectivo <br>Faltante</th>
+									<th class="col-sm-2 text-center" ng-show="<?= $sesion->getIdPerfil() == 1 ? TRUE : FALSE ?>">Efectivo <br>Sobrante</th>
+									<th class="col-sm-2 text-center">Efectivo <br>Final</th>
+									<th class="col-sm-2 text-center">Estado</th>
+									<th class="text-center"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="caja in historialCaja.lstCajas" ng-class="{'border-success':inv.importante}">
+									<td class="text-right">
+										{{ $index + 1 }}
+									</td>
+									<td>
+										{{ caja.usuario }}
+									</td>
+									<td class="text-right">
+										{{ caja.efectivoInicial | number: 2 }}
+									</td>
+									<td class="text-right" ng-class="{'danger': caja.efectivoFaltante > 0}">
+										{{ caja.efectivoFaltante | number: 2 }}
+									</td>
+									<td class="text-right" ng-class="{'success': caja.efectivoSobrante  > 0}" ng-show="<?= $sesion->getIdPerfil() == 1 ? TRUE : FALSE ?>">
+										{{ caja.efectivoSobrante | number: 2 }}
+									</td>
+									<td class="text-right">
+										{{ caja.efectivoFinal | number: 2 }}
+									</td>
+									<td class="text-center">
+										{{ caja.estadoCaja }}
+									</td>
+									<td class="text-center">
+										<label class="label" ng-class="{'label-success': caja.idEstadoCaja == 1, 'label-danger': caja.idEstadoCaja == 2}">
+											
+											<span class="glyphicon" ng-class="{'glyphicon-folder-open': caja.idEstadoCaja == 1, 'glyphicon-folder-close': caja.idEstadoCaja == 2}""></span>
+										</label>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div ng-show="!historialCaja.encontrado && fechaCaja">
 							<div class="alert alert-warning" role="alert">
 								<span class="glyphicon glyphicon-info-sign"></span> NO SE ENCONTRARON RESULTADOS
 							</div>
 						</div>
 					</form>
-			
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" ng-click="$hide()">

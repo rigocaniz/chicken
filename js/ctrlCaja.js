@@ -1,4 +1,4 @@
-app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
+app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout, $filter ){
 
 	$scope.menuCaja   = 'verCaja';
 	$scope.accionCaja = '';
@@ -26,6 +26,31 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout ){
 			}, 150);
 		}
 	});
+
+
+	$scope.dialHistorialCaja = $modal({scope: $scope,template:'dial.historialCaja.html', show: false, backdrop: 'static', keyboard: false});
+
+	$scope.abrirDialogoHistorial = function(){
+		$scope.dialHistorialCaja.show();
+	};
+
+	$scope.fechaCaja     = null;
+	$scope.historialCaja = {};
+	$scope.cargarHistorialCaja = function( fechaCaja )
+	{
+		if( fechaCaja )
+		{
+			var fechaCaja = $filter('date')( fechaCaja,"yyyy-MM-dd");
+			$http.post('consultas.php', {
+				opcion    : 'historialCaja',
+				fechaCaja : fechaCaja
+			})
+			.success(function(data){
+				console.log( data );
+				$scope.historialCaja = data || {};
+			});	
+		}
+	};
 
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key, altDerecho )

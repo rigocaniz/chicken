@@ -95,6 +95,11 @@ switch ( $data->opcion )
 		echo json_encode( $caja->consultaCaja( $data->accion, $data->data, $data->total ) );
 		break;
 
+	case 'historialCaja':			// CONSULTAR HISTORIAL DE CAJAS POR FECHA
+		$caja = new Caja();
+		echo json_encode( $caja->historialCaja( $data->fechaCaja ) );
+		break;
+
 		
 
 	/////////////////////////

@@ -26,6 +26,53 @@ class Caja
  			$this->con->next_result();
  	}
 
+	// CONSULTAR HISTORIAL DE CAJAS
+ 	public function historialCaja( $fecha )
+ 	{
+ 		$cajas = new stdClass();
+ 		$cajas->encontrado = FALSE;
+ 		$cajas->lstCajas   = [];
+
+ 		$where = "";
+ 		if( $this->sess->getIdPerfil() <> 1 )
+ 			$where .= "AND usuario = '{$this->sess->getUsuario()}'";
+
+ 		$sql = "SELECT * 
+ 					FROM vstCaja
+ 				WHERE fechaApertura = '{$fecha}' $where ORDER BY idCaja DESC;";
+
+ 		if( $rs = $this->con->query( $sql ) AND $rs->num_rows )
+ 		{
+ 			$cajas->encontrado = TRUE;
+ 			while ( $row = $rs->fetch_object() )
+ 				$cajas->lstCajas[] = $row;
+ 				//$row->lstDenominaciones = $this->lstDenominacionesCaja( $row->idCaja );
+ 		}
+
+ 		return $cajas;
+ 	}
+
+
+	private function lstDenominacionesCaja( $idCaja )
+ 	{
+ 		$lstDenominaciones = new stdClass;
+ 		$lstDenominaciones->apertura = [];
+ 		$lstDenominaciones->cierre   = [];
+
+ 		$sql = "SELECT * FROM vDenominacionCaja WHERE idCaja = {$idCaja};";
+
+ 		if( $rs = $this->con->query( $sql ) AND $rs->num_rows )
+ 		{
+ 			while ( $row = $rs->fetch_object() ){
+ 				if( $row->idEstadoCaja == 1 )
+ 					$lstDenominaciones->apertura[] = $row;
+ 				elseif( $row->idEstadoCaja == 2 )
+ 					$lstDenominaciones->cierre[] = $row;
+ 			}
+ 		}
+
+ 		return $lstDenominaciones;
+ 	}
 
  	// CONSULTAR ESTADO Caja
  	function consultarEstadoCaja()
