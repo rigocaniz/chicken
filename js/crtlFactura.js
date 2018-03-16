@@ -26,7 +26,143 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			$scope.numeroTicket = null;
 			$scope.facturacion.lstOrden = [];
 		}
-	});	
+	});
+
+		// CONSULTA ORDENES
+	$scope.idEstadoOrden   = 1;
+	$scope.lstOrdenCliente = [];
+	$scope.consultaOrdenCliente = function () {
+		if ( $scope.$parent.loading )
+			return false;
+
+		$scope.lstOrdenCliente = [];
+		//if ( $scope.idEstadoOrden > 0 ) {
+			$scope.miIndex         = -1;
+			$scope.$parent.loading = true; // cargando...
+			// CONSULTA TIPO DE SERVICIOS
+			$http.post('consultas.php', { opcion : 'lstOrdenCliente', idEstadoOrden : 1 })
+			.success(function (data) {
+				console.log( data );
+				$scope.$parent.loading = false; // cargando...
+
+				if ( Array.isArray( data ) )
+					$scope.lstOrdenCliente = data;
+
+				$timeout(function () {
+					// SI EXISTE AL MENOS UNA ORDEN SELECCIONA LA PRIMERA
+					if ( $scope.lstOrdenCliente.length )
+						$scope.miIndex = 0;
+				});
+			});
+		//}
+	};
+
+	// SELECCION DE TICKET PARA MOSTRAR DETALLE DE TICKET
+	$scope.seleccionarTicket = function ( idOrdenCliente ) {
+		$scope.miIndex = -1;
+
+		// SI ORDEN DE CLIENTE ES VALIDO
+		if ( idOrdenCliente && idOrdenCliente > 0 ) {
+			for (var i = 0; i < $scope.lstOrdenCliente.length; i++) {
+				if ( $scope.lstOrdenCliente[ i ].idOrdenCliente == idOrdenCliente ) {
+					$scope.miIndex = i;
+					break;
+				}
+			}
+		}
+	};
+
+
+// SI CAMBIA EL INDEX DE PEDIDO
+	$scope.$watch('miIndex', function ( _new ) {
+		$scope.infoOrden = {};
+
+		// SI ES UN INDEX VALIDO
+		if ( _new >= 0 && $scope.lstOrdenCliente[ _new ] )
+			$scope.consultaDetalleOrden( $scope.lstOrdenCliente[ _new ] );
+	});
+
+	$scope.infoOrden = {};
+	$scope.deBusqueda = false;
+	$scope.lstEstados = [ 
+		{ abr : 'P', title : 'Pendiente', css : 'default' },
+		{ abr : 'C', title : 'Cocinando', css : 'info' },
+		{ abr : 'L', title : 'Listo', css : 'primary' },
+		{ abr : 'S', title : 'Servido', css : 'success' }
+	];
+	$scope.consultaDetalleOrden = function ( orden, deBusqueda, force ) {
+		if ( $scope.$parent.loading && force === undefined )
+			return false;
+
+		if ( orden !== undefined )
+		{
+			// SI NO ES DE BUSQUEDA
+			if ( deBusqueda == undefined ) {
+				$scope.deBusqueda = false;
+			}
+			// SI ES DE BUSQUEDA
+			else {
+				$scope.idEstadoOrden = 0;
+				$scope.deBusqueda    = true;
+			}
+
+			$scope.infoOrden = orden;
+		}
+
+		// SI NO ESTA DEFINIDO LA ORDEN
+		if ( !( $scope.infoOrden.idOrdenCliente > 0 ) )
+			return false;
+
+		$scope.$parent.loading = true;
+		$http.post('consultas.php', { opcion : 'lstDetalleOrdenCliente', idOrdenCliente : $scope.infoOrden.idOrdenCliente, todo : $scope.todoDetalle })
+		.success(function (data) {
+			$scope.$parent.loading = false;
+			if ( data.lst ) {
+				
+				for (var ix = 0; ix < data.lst.length; ix++)
+				{
+					var lstEstados = [];
+					for (var im = 0; im < data.lst[ ix ].lstMenus.length; im++)
+					{
+						var menu = data.lst[ ix ].lstMenus[ im ];
+						var ixT = -1;
+						var idEstadoActual = parseInt( menu.perteneceCombo ? menu.idEstadoDetalleOrdenCombo : menu.idEstadoDetalleOrden );
+						
+						for (var ie = 0; ie < lstEstados.length; ie++) 
+						{
+							if ( idEstadoActual == lstEstados[ ie ].idEstado )
+							{
+								ixT = ie;
+								break;
+							}
+						}
+
+						if ( ixT == -1 )
+						{
+							var estado = $scope.lstEstados[ idEstadoActual - 1 ] || {};
+
+							ixT = lstEstados.length;
+							lstEstados.push({
+								idEstado : idEstadoActual,
+								abr      : estado.abr,
+								title    : estado.title,
+								css      : estado.css,
+								total    : 0
+							});
+						}
+
+						lstEstados[ ixT ].total++;
+					}
+
+					data.lst[ ix ].estados = lstEstados;
+				}
+
+				$scope.infoOrden.lstOrden = data.lst;
+				$scope.infoOrden.lstOtros = data.lstOtros;
+				$scope.infoOrden.total    = data.total;
+			}
+		});
+	};
 
 	($scope.catFormasPago = function(){
 		$http.post('consultas.php',{
@@ -85,12 +221,18 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	};
 
 	/************ VENTANAS MODAL ***************/
-	$scope.dialAccionCliente  = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialOrdenBusqueda  = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialMantenimientoF = $modal({scope: $scope,template:'dial.mantenimientoFact.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialCaja           = $modal({scope: $scope,template:'dial.caja.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialEditarFactura  = $modal({scope: $scope,template:'dial.editarFactura.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialAccionCliente    = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialOrdenBusqueda    = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialMantenimientoF   = $modal({scope: $scope,template:'dial.mantenimientoFact.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialCaja             = $modal({scope: $scope,template:'dial.caja.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialEditarFactura    = $modal({scope: $scope,template:'dial.editarFactura.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialOrdenesPendientes = $modal({scope: $scope,template:'dial.ordenesPendientes.html', show: false, backdrop:false, keyboard: true });
 	
+	$scope.abrirOrdenesPendientes = function(){
+		$scope.consultaOrdenCliente();
+		//if( !$scope.$parent.loading )
+		$scope.dialOrdenesPendientes.show();
+	};
 
 	$scope.seleccionarDeBusqueda = function ( orden ) {
 		console.log( orden );

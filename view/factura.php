@@ -18,7 +18,12 @@
             <a href="#/">
                 <span class="glyphicon glyphicon-home" style="font-size: 20px; padding: 10px"></span>
             </a>
+
             <div class="text-right" style="margin-top: -25px; margin-right: 90px">
+                <button type="button" class="btn btn-default" ng-click="abrirOrdenesPendientes()">
+                    <span class="glyphicon glyphicon-time"></span>
+                    Ordenes Pendientes
+                </button>
                 <button type="button" class="btn btn-sm btn-primary" ng-click="dialCaja.show()">
                     <span class="glyphicon glyphicon-inbox"></span> ACCIONES DE CAJA
                 </button>
@@ -317,6 +322,198 @@
 		</div>
 	</div>
 </div>
+
+
+<!-- ORDENES PENDIENTES -->
+<script type="text/ng-template" id="dial.ordenesPendientes.html">
+    <div class="modal" tabindex="-1" role="dialog" id="dial_orden_busqueda">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content panel-info">
+                <div class="modal-header panel-heading">
+                    <span class="glyphicon glyphicon-time"></span>
+                    <strong>ORDENES PENDIENTES</strong>
+                </div>
+                <div class="modal-body">
+                    <div class="panel-body">
+                        <div class="row contenedor-tickets">
+                            <!-- *********** LISTA DE TICKETS ********* -->
+                            <div class="col-xs-12 col-sm-2 hidden-xs">
+                                <div class="list-group">
+                                    <button type="button" class="list-group-item" ng-repeat="item in lstOrdenCliente track by $index" ng-class="{'active':$index==miIndex}"
+                                        ng-click="seleccionarTicket( item.idOrdenCliente )" ng-hide="deBusqueda">
+                                        <span class="tkt-active"></span>
+                                        <span class="glyphicon" ng-class="{'glyphicon-bookmark':(item.numeroTicket>0), 'glyphicon-home':!(item.numeroTicket>0)}"></span>
+                                        {{(item.numeroTicket>0?item.numeroTicket:item.idOrdenCliente)}}
+                                        <span class="badge">{{item.numMenu}}</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="col-xs-12" ng-hide="lstOrdenCliente.length || deBusqueda">
+                                <div class="alert alert-info" role="alert">No existen ordenes</div>
+                            </div>
+
+                            <!-- *********** INFORMACION DE ORDEN ********* -->
+                            <div class="col-xs-12 col-sm-10 info-orden-ticket" ng-show="lstOrdenCliente.length || deBusqueda">
+                                <!-- BOTONES PARA AVANZAR -->
+                                <div class="row visible-xs" ng-show="!deBusqueda">
+                                    <div class="col-xs-12 text-center">
+                                        <button type="button" class="btn btn-sm btn-default" ng-click="miIndex=0">
+                                            <span class="glyphicon glyphicon-fast-backward"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-default" ng-click="downUpOrdenes( true )">
+                                            <span class="glyphicon glyphicon-chevron-left"></span>
+                                            <b>Anterior</b>
+                                        </button>
+                                        <span class="badge" style="font-size:17px">{{ ( miIndex + 1 ) + " de " + lstOrdenCliente.length }}</span>
+                                        <button type="button" class="btn btn-sm btn-default" ng-click="downUpOrdenes( false )">
+                                            <span class="glyphicon glyphicon-chevron-right"></span>
+                                            <b>Siguiente</b>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-default" ng-click="miIndex = ( lstOrdenCliente.length - 1 )">
+                                            <span class="glyphicon glyphicon-fast-forward"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- *********** INFORMACION DE ORDEN ********* -->
+                                <div class="row">
+                                    <div class="col-sm-6 col-xs-12">
+                                        <h4>
+                                            <b>Orden # </b> {{infoOrden.idOrdenCliente}} » 
+                                            <span class="badge-ticket">Ticket # {{infoOrden.numeroTicket}}</span>
+                                        </h4>
+                                    </div>
+                                    <div class="col-sm-6 col-xs-12 text-right">
+                                        <a href="#/factura/{{infoOrden.idOrdenCliente}}" class="btn btn-sm btn-primary" ng-show="infoOrden.idEstadoOrden>=1 && infoOrden.idEstadoOrden<=4">
+                                            <span class="glyphicon glyphicon-shopping-cart"></span>
+                                            <b>Facturar</b> (F4)
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-danger" ng-click="dialOrdenCancelar.show();comentario=''" ng-show="infoOrden.idEstadoOrden==1">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                            <b>Cancelar Orden</b>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 col-xs-12">
+                                        <span class="etiqueta">Estado: </span>
+                                        <span class="valor">{{infoOrden.estadoOrden}}</span>
+                                    </div>
+                                    <div class="col-sm-6 col-xs-12">
+                                        <span class="etiqueta">Lapso: </span>
+                                        <span class="valor">{{tiempoTranscurrido( infoOrden.fechaRegistro )}}</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 col-xs-12">
+                                        <span class="etiqueta"># Menús: </span>
+                                        <span class="valor">{{infoOrden.numMenu}}</span>
+                                    </div>
+                                    <div class="col-sm-6 col-xs-12">
+                                        <span class="etiqueta">Responsable: </span>
+                                        <span class="valor">{{infoOrden.usuarioResponsable}}</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 text-center" ng-show="infoOrden.idEstadoOrden>=1 && infoOrden.idEstadoOrden<=4">
+                                        <button type="button" class="btn btn-info" ng-click="consultaOrden( infoOrden )">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <b><u>A</u>gregar Menú</b>
+                                        </button>
+                                    </div>
+                                </div>
+                                <legend class="legend2">Menús Ordenados</legend>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="35px"></th>
+                                                        <th></th>
+                                                        <th>Cantidad</th>
+                                                        <th>Orden</th>
+                                                        <th>Subtotal</th>
+                                                        <th width="35px"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="item in infoOrden.lstOrden track by $index">
+                                                        <td>
+                                                            <button type="button" class="btn btn-sm btn-default" ng-click="editarDetalle( item )" title="Editar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
+                                                                <span class="glyphicon glyphicon-pencil"></span>
+                                                            </button>
+                                                        </td>
+                                                        <td>
+                                                            <img ng-src="{{item.imagen}}" style="height:40px">
+                                                        </td>
+                                                        <td>{{item.cantidad}}</td>
+                                                        <td>
+                                                            <button type="button" class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}">
+                                                                <span ng-show="item.idTipoServicio==2" title="Restaurante" data-toggle="tooltip" data-placement="top" tooltip>R</span>
+                                                                <span ng-show="item.idTipoServicio==3" title="A Domicilio" data-toggle="tooltip" data-placement="top" tooltip>D</span>
+                                                                <span ng-show="item.idTipoServicio==1" title="Para Llevar" data-toggle="tooltip" data-placement="top" tooltip>L</span>
+                                                            </button>
+                                                            <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
+                                                            <span>{{item.descripcion}}</span>
+                                                            <span class="estado-menu {{est.css}}" ng-repeat="est in item.estados" title="{{est.title}}" data-toggle="tooltip" data-placement="top" tooltip>{{est.abr}} <span class="badge">{{est.total}}</span></span>
+                                                            <p ng-show="item.observacion.length" class="label label-primary">
+                                                                <span class="glyphicon glyphicon-star"></span>
+                                                                {{item.observacion}}
+                                                            </p>
+                                                        </td>
+                                                        <td>{{item.subTotal | number:2}}</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarDetalle( item.lstDetalle )" title="Cancelar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
+                                                                <span class="glyphicon glyphicon-remove"></span>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr ng-repeat="otro in infoOrden.lstOtros track by $index">
+                                                        <td></td>
+                                                        <td>
+                                                            <img ng-src="img/otroMenu.png" style="height:40px" class="img-thumbnail">
+                                                        </td>
+                                                        <td>{{otro.cantidad}}</td>
+                                                        <td>
+                                                            <b>{{otro.descripcion}}</b>
+                                                            <p ng-show="otro.observacion.length" class="label label-primary">
+                                                                <span class="glyphicon glyphicon-star"></span>
+                                                                {{otro.observacion}}
+                                                            </p>
+                                                        </td>
+                                                        <td>{{(otro.cantidad*otro.precioUnidad) | number:2}}</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarOtroMenu( otro )" title="Eliminar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
+                                                                <span class="glyphicon glyphicon-remove"></span>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="4" class="text-right"><b>TOTAL</b></td>
+                                                        <td><b>Q. {{infoOrden.total | number:2}}</b></td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                               </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" ng-click="$hide();">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <b>Salir</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
 
 
 <!-- MANTENIMIENTO DE FACTURAS -->
