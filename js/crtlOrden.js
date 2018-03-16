@@ -490,8 +490,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 								// SI EL PEDIDO ES A DOMICILIO
 								$timeout(function () {
-									if ( $scope.lstOrdenCliente.length == 1 )
-										$scope.miIndex = 0;
+									if ( $scope.ordenActual.idOrdenCliente == data.data.idOrdenCliente )
+										$scope.miIndex = ( $scope.lstOrdenCliente.length - 1 );
 								});
 							}
 							else{
@@ -1313,8 +1313,8 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 						// SELECCIONAR LA ORDEN AGREGADA SI ES LA UNICA
 						$timeout(function () {
-							if ( $scope.lstOrdenCliente.length == 1 )
-								$scope.miIndex = 0;
+							if ( $scope.ordenActual.idOrdenCliente == datos.data.idOrdenCliente )
+								$scope.miIndex = ( $scope.lstOrdenCliente.length - 1 );
 						});
 					}
 				}
