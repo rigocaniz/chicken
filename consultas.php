@@ -55,7 +55,7 @@ switch ( $data->opcion )
 	////////////////////////
 	case 'getVentasFecha':			// REPORTE DE VENTAS
 		$reporte = new Reporte();
-		echo json_encode( $reporte->getVentasFecha( $data->filtro, $data->fechaInicio, $data->fechaFinal ) );
+		echo json_encode( $reporte->getVentasFecha( $data->fechaInicio, $data->fechaFinal ) );
 		break;
 
 	/////////////////////////

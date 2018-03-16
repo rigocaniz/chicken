@@ -6,7 +6,7 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 	$scope.ventas      = {};
 	$scope.filtro      = 'combo';
 
-	$scope.consultarVentas = function()
+	$scope.consultarVentas = function( accion )
 	{
 		if( !($scope.fechaInicio) )
 			alertify.notify( 'Ingrese fecha de Inicio', 'info', 3 );
@@ -16,28 +16,33 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 
 		else
 		{
-			$scope.$parent.showLoading();
-
 			var 
-				fechaInicio = $filter('date')($scope.fechaInicio, "yyyy-MM-dd"),
-				fechaFinal = $filter('date')($scope.fechaFinal, "yyyy-MM-dd");
+				fechaInicio = $filter('date')( $scope.fechaInicio, "yyyy-MM-dd" ),
+				fechaFinal  = $filter('date')( $scope.fechaFinal, "yyyy-MM-dd" );
 
-			$http.post('consultas.php', {
-				opcion      : 'getVentasFecha',
-				filtro: $scope.filtro,
-				fechaInicio : fechaInicio,
-				fechaFinal  : fechaFinal
-			})
-			.success(function(data ){
-				console.log(data);
-				$scope.ventas = data || {};
-				if( !data.encontrado )
-					alertify.notify( data.mensaje, data.respuesta, 4 );
+			if( accion == 'consultar' )
+			{
+				$scope.$parent.showLoading();
 
-				$scope.$parent.hideLoading();
-			}).error(function(data){
-				$scope.$parent.hideLoading();
-			});
+				$http.post('consultas.php', {
+					opcion      : 'getVentasFecha',
+					fechaInicio : fechaInicio,
+					fechaFinal  : fechaFinal
+				})
+				.success(function(data ){
+					//console.log(data);
+					$scope.ventas = data || {};
+					if( !data.encontrado )
+						alertify.notify( 'No se encontraron Resultados', 'warning' );
+
+					$scope.$parent.hideLoading();
+				}).error(function(data){
+					$scope.$parent.hideLoading();
+				});
+				
+			}
+			else if( accion == 'descargar' )
+    			window.open('reporte.php?fechaInicio=' + fechaInicio + '&&fechaFinal=' + fechaFinal, '_blank');
 		}
 	};
 

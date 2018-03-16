@@ -49,56 +49,32 @@
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : reporteMenu==1}" ng-show="reporteMenu==1">
 					<form class="form-horizontal">
 						<div class="form-group">
-						    <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
+						    <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3">
 						    	<label><i class="fa fa-calendar"></i> DE FECHA:</label>
 						      	<input class="form-control" ng-model="fechaInicio" data-max-date="{{ fechaFinal }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
 						    </div>
-						    <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
+						    <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3">
 						    	<label><i class="fa fa-calendar"></i> A FECHA:</label>
 						      	<input class="form-control" ng-model="fechaFinal" data-min-date="{{ fechaInicio }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
 						    </div>
 						    <div>
 						    	<br>
-						    	<button type="button" class="btn btn-sm btn-warning" ng-click="consultarVentas()">
-						    		CONSULTAR REPORTE <span class="glyphicon glyphicon-ok"></span>
+						    	<button type="button" class="btn btn-sm btn-warning" ng-click="consultarVentas( 'consultar' )">
+						    		CONSULTAR <span class="glyphicon glyphicon-ok"></span>
 						    	</button>
-						    	<button type="button" class="btn btn-sm btn-danger">
+						    	<button type="button" class="btn btn-sm btn-danger" ng-click="consultarVentas( 'descargar' )">
 						    		GENERAR REPORTE <span class="glyphicon glyphicon-download-alt"></span>
 						    	</button>
 						    </div>
 						</div>
 						<hr>
-						<b>AGRUPAR POR:</b>
-						<div class="btn-group" role="group" aria-label="...">
-						  	<button type="button" class="btn btn-default" ng-click="filtro='combo'">
-						  		COMBO <span class="glyphicon" ng-class="{'glyphicon-check': filtro=='combo', 'glyphicon-unchecked': filtro!='combo'}"></span>
-						  	</button>
-						  	<button type="button" class="btn btn-default" ng-click="filtro='precio'">
-						  		MENÚ <span class="glyphicon" ng-class="{'glyphicon-check': filtro=='precio', 'glyphicon-unchecked': filtro!='precio'}"></span>
-						  	</button>
-						</div>
-
-						<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-							<div class="panel panel-default">
-							    <div class="panel-heading" role="tab" id="headingOne">
-							      	<h4 class="panel-title">
-							        	<a role="button" href="" aria-expanded="true" aria-controls="collapseOne">
-							          	Collapsible Group Item #1
-							        	</a>
-							      	</h4>
-							    </div>
-								<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-									<div class="panel-body">
-									</div>
-								</div>
-							</div>
-						</div>
-
-
 						<div class="form-group" ng-show="ventas.encontrado">
 							<div class="text-right">
-								<span class="label label-danger titulo-nombre" style="font-size: 20px">
-									TOTAL: Q. {{ ventas.total | number: 2 }}
+								<span class="label label-warning titulo-nombre" style="font-size: 18px; padding: 4px 10px">
+									Estimado Q. {{ ventas.totalEstimado | number: 2 }}
+								</span>
+								<span class="label label-danger titulo-nombre" style="font-size: 18px; padding: 4px 10px">
+									Total Q. {{ ventas.totalVentas | number: 2 }}
 								</span>
 							</div>
 							<br>
@@ -106,30 +82,31 @@
 								<thead>
 									<tr>
 										<th class="text-center">No.</th>
-										<th class="text-center col-sm-3">Descripción</th>
-										<th class="text-center col-sm-2">Precio Real</th>
-										<th class="text-center col-sm-2">Precio Menu</th>
-										<th class="text-center col-sm-2">Tipo de <br>Servicio</th>
-										<th class="text-center">Comentario</th>
+										<th class="text-center col-sm-1">Codigo<br> Menu</th>
+										<th class="text-center col-sm-4">Descripción</th>
+										<th class="text-center col-sm-2">Cantidad</th>
+										<th class="text-center col-sm-2">Total Estimado</th>
 										<th class="text-center col-sm-3">Subtotal</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr ng-repeat="venta in ventas.detalleVentas">
 										<td>{{ $index + 1 }}</td>
-										<td>{{ venta.descripcion }}</td>
-										<td class="text-right">{{ venta.precioReal | number: 2 }}</td>
-										<td class="text-right">{{ venta.precioMenu | number: 2 }}</td>
-										<td class="text-center">{{ venta.tipoServicio }}</td>
-										<td>{{ venta.comentario }}</td>
-										<td class="text-right">{{ venta.subTotal | number: 2 }}</td>
+										<td class="text-center">{{ venta.codigoMenu }}</td>
+										<td>{{ venta.descripcionOrden }}</td>
+										<td class="text-center">{{ venta.cantidad }}</td>
+										<td class="text-right">{{ venta.totalEstimado | number: 2 }}</td>
+										<td class="text-right">{{ venta.totalVenta | number: 2 }}</td>
 									</tr>
 									<tr>
-										<th colspan="6" class="text-right">
-											<h4><b>TOTAL</b></h4>
+										<th colspan="4" class="text-right" ng-class="{'success': ventas.totalVentas == ventas.totalEstimado}">
+											<b>TOTAL</b>
 										</th>
-										<th class="text-right">
-											<h4><b>{{ ventas.total | number: 2 }}</b></h4>
+										<th class="text-right" ng-class="{'success': ventas.totalVentas == ventas.totalEstimado}">
+											<b>{{ ventas.totalEstimado | number: 2 }}</b>
+										</th>
+										<th class="text-right"  ng-class="{'danger': ventas.totalVentas < ventas.totalEstimado, 'success': ventas.totalVentas == ventas.totalEstimado}">
+											<b>{{ ventas.totalVentas | number: 2 }}</b>
 										</th>
 									</tr>
 								</tbody>
