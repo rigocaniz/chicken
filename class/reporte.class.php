@@ -29,6 +29,41 @@ class Reporte
 
 
  	// OBTENER VENTAS POR FECHA
+ 	public function getComprasFecha( $deFecha, $paraFecha )
+ 	{
+ 		$ventas = new stdClass();
+		$ventas->totalCompras   = 0;
+		$ventas->detalleCompras = [];
+		$ventas->encontrado     = FALSE;
+
+ 		$sql = "SELECT 
+					fC.fechaFactura, iP.idProducto, iP.producto, iP.medida , iP.tipoProducto,
+				    SUM( iP.cantidad ) AS cantidad,
+				    SUM( iP.costo ) AS costoTotal
+						FROM lstFacturaCompra fC
+							JOIN lstIngresoProducto AS iP
+								ON ip.idFacturaCompra = fC.idFacturaCompra
+						WHERE fC.idEstadoFactura = 1 AND ( fC.fechaFactura BETWEEN '{$deFecha}' AND '{$paraFecha}' )
+					GROUP BY fC.fechaFactura, iP.idProducto
+					ORDER BY fC.fechaFactura ASC;";
+
+		if( $rs = $this->con->query( $sql ) )
+		{
+			if( $rs->num_rows )
+			{
+				$ventas->encontrado = TRUE;
+	 			while( $row = $rs->fetch_object() ):
+					$ventas->totalCompras      += $row->costoTotal;
+					$ventas->detalleCompras[]   = $row;
+				endwhile;
+			}
+ 		}
+
+ 		return $ventas;
+ 	}
+
+
+ 	// OBTENER VENTAS POR FECHA
  	public function getVentasFecha( $deFecha, $paraFecha )
  	{
  		$ventas = new stdClass();

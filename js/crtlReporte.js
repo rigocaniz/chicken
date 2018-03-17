@@ -3,6 +3,8 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 
 	$scope.fechaInicio = null;
 	$scope.fechaFinal  = null;
+	$scope.fechaInicioC = null;
+	$scope.fechaFinalC  = null;
 	$scope.ventas      = {};
 	$scope.filtro      = 'combo';
 
@@ -43,6 +45,47 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 			}
 			else if( accion == 'descargar' )
     			window.open('reporte.php?fechaInicio=' + fechaInicio + '&&fechaFinal=' + fechaFinal, '_blank');
+		}
+	};
+
+	$scope.compras = {};
+	$scope.consultarCompras = function( accion )
+	{
+		if( !($scope.fechaInicioC) )
+			alertify.notify( 'Ingrese fecha de Inicio', 'info', 3 );
+
+		else if( !($scope.fechaFinalC) )
+			alertify.notify( 'Ingrese fecha Final', 'info', 3 );
+
+		else
+		{
+			var 
+				fechaInicio = $filter('date')( $scope.fechaInicioC, "yyyy-MM-dd" ),
+				fechaFinal  = $filter('date')( $scope.fechaFinalC, "yyyy-MM-dd" );
+
+			if( accion == 'consultar' )
+			{
+				$scope.$parent.showLoading();
+
+				$http.post('consultas.php', {
+					opcion      : 'getComprasFecha',
+					fechaInicio : fechaInicio,
+					fechaFinal  : fechaFinal
+				})
+				.success(function(data ){
+					console.log(data);
+					$scope.compras = data || {};
+					if( !data.encontrado )
+						alertify.notify( 'No se encontraron Resultados', 'warning' );
+
+					$scope.$parent.hideLoading();
+				}).error(function(data){
+					$scope.$parent.hideLoading();
+				});
+				
+			}
+			else if( accion == 'descargar' )
+    			window.open('reporte.compras.php?fechaInicio=' + fechaInicio + '&&fechaFinal=' + fechaFinal, '_blank');
 		}
 	};
 
