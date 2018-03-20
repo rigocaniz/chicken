@@ -16,6 +16,7 @@ class Cliente
  	function __construct()
  	{
  		GLOBAL $conexion, $sesion;
+
  		$this->con  = $conexion;
  		$this->sess = $sesion;
  	}
@@ -27,6 +28,7 @@ class Cliente
  	}
 
 
+ 	// GUARDAR // ACTUALIZAR CLIENTE
  	function consultaCliente( $accion, $cliente )
  	{
  		$validar   = new Validar();
@@ -88,11 +90,11 @@ class Cliente
  		return $this->getRespuesta();
  	}
 
-
- 	function consultarCliente( $valor )
+ 	// CONSULTAR CLIENTE
+ 	public function consultarCliente( $valor )
  	{
- 		$where       = "";
- 		$tipo        = "";
+ 		$where = "";
+ 		$tipo  = "";
  		
  		$resultado = new stdClass();
 
@@ -129,16 +131,17 @@ class Cliente
 	 			$resultado->lstResultados[] = $row;
 	 	}
 	 	else{
-	 		$resultado->lstResultados[] = array(
-												'idCliente'     => null,
-												'nit'           => $tipo == 'nit' 		? $valor : '',
-												'nombre'        => $tipo == 'nombre' 	? $valor : '',
-												'cui'           => $tipo == 'cui' 		? $valor : '',
-												'correo'        => '',
-												'telefono'      => '',
-												'direccion'     => '',
-												'idTipoCliente' => 1,
-									 		);
+	 		$resultado->lstResultados[] = 
+				array(
+					'idCliente'     => null,
+					'nit'           => $tipo == 'nit' 	 ? $valor 							: '',
+					'nombre'        => $tipo == 'nombre' ? str_replace( '%', ' ', $valor )  : '',
+					'cui'           => $tipo == 'cui' 	 ? $valor 							: '',
+					'correo'        => '',
+					'telefono'      => '',
+					'direccion'     => '',
+					'idTipoCliente' => 1,
+		 		);
 	 	}
 
 	 	return $resultado;

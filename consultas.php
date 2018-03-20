@@ -58,9 +58,14 @@ switch ( $data->opcion )
 		echo json_encode( $reporte->getVentasFecha( $data->fechaInicio, $data->fechaFinal ) );
 		break;
 
-	case 'getComprasFecha':			// REPORTE DE COMPRAS
+	case 'getComprasFecha':			// REPORTE DE COMPRAS INVENTARIO
 		$reporte = new Reporte();
 		echo json_encode( $reporte->getComprasFecha( $data->fechaInicio, $data->fechaFinal ) );
+		break;
+
+	case 'getOrdenesCanceladas':	// REPORTE ORDENES CANCELADAS
+		$reporte = new Reporte();
+		echo json_encode( $reporte->getOrdenesCanceladas( $data->fechaInicio, $data->fechaFinal ) );
 		break;
 
 	/////////////////////////
