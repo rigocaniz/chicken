@@ -1,9 +1,9 @@
 app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeParams ){
 	
-	$scope.accionCliente     = 'ninguna';
-	$scope.accion            = 'insert';
-	$scope.buscarTicket      = null;
-	$scope.idTab = '';
+	$scope.accionCliente = 'ninguna';
+	$scope.accion        = 'insert';
+	$scope.buscarTicket  = null;
+	$scope.idTab         = '';
 
 	$scope.facturacion = {
 		datosCliente : {
@@ -71,7 +71,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	};
 
 
-// SI CAMBIA EL INDEX DE PEDIDO
+	// SI CAMBIA EL INDEX DE PEDIDO
 	$scope.$watch('miIndex', function ( _new ) {
 		$scope.infoOrden = {};
 
@@ -208,7 +208,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		$http.post('consultas.php',{
 		    opcion : "lstFacturas"
 		}).success(function(data){
-			console.log( data );
+			//console.log( data );
 		    $scope.lstFacturasDia    = data.lstFacturas || [];
 		    $scope.lstFactPendientes = data.lstFactPendientes || [];
 		    if( $scope.lstFacturasDia.length || $scope.lstFactPendientes.length )
@@ -219,16 +219,15 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	};
 
 	/************ VENTANAS MODAL ***************/
-	$scope.dialAccionCliente    = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialOrdenBusqueda    = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialMantenimientoF   = $modal({scope: $scope,template:'dial.mantenimientoFact.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialCaja             = $modal({scope: $scope,template:'dial.caja.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialEditarFactura    = $modal({scope: $scope,template:'dial.editarFactura.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialAccionCliente     = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialOrdenBusqueda     = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialMantenimientoF    = $modal({scope: $scope,template:'dial.mantenimientoFact.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialCaja              = $modal({scope: $scope,template:'dial.caja.html', show: false, backdrop:false, keyboard: true });
+	$scope.dialEditarFactura     = $modal({scope: $scope,template:'dial.editarFactura.html', show: false, backdrop:false, keyboard: true });
 	$scope.dialOrdenesPendientes = $modal({scope: $scope,template:'dial.ordenesPendientes.html', show: false, backdrop:false, keyboard: true });
 	
 	$scope.abrirOrdenesPendientes = function(){
 		$scope.consultaOrdenCliente();
-		//if( !$scope.$parent.loading )
 		$scope.dialOrdenesPendientes.show();
 	};
 
@@ -245,11 +244,12 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		});
 	};
 
-	
 	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%% DIALOGO PARA MAS INFORMACION DE ORDEN %%%%%%%%%%%%%%%%%%%%%% */
+	/*
 	$scope.consultarDetalleOrden = function(){
 		$scope.buscarOrdenTicket( $scope.facturacion.idOrdenCliente );
 	};
+	*/
 
 	$scope.infoOrden = {};
 	$scope.deBusqueda = false;
@@ -267,8 +267,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			$scope.deBusqueda    = true;
 		}
 
-		console.log( 'orden>>> ', orden.idOrdenCliente );
-
+		//console.log( 'orden>>> ', orden.idOrdenCliente );
 		$scope.$parent.loading = true;
 		$scope.infoOrden = orden;
 		$http.post('consultas.php', { 
@@ -280,14 +279,13 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		.success(function (data) {
 			console.log( data );
 			$scope.$parent.loading    = false;
-			if ( data.length ) {
+			if ( data.length )
 				$scope.facturacion.lstOrden = data;
-			}
+			
 			else{
 				alertify.set('notifier','position', 'top-right');
                 alertify.notify( 'No se encontraron ordenes con el No. de Ticket', 'info', 7 );
 			}
-
 		});
 	};
 

@@ -100,7 +100,7 @@ class Reporte
 				WHERE f.idEstadoFactura = 1 
 					AND ( f.fechaFactura BETWEEN '{$deFecha}' AND '{$paraFecha}' )
 				GROUP BY f.fechaFactura, codigoMenu, descripcionOrden
-				ORDER BY f.fechaFactura ASC ";
+				ORDER BY f.fechaFactura ASC;";
 
 		if( $rs = $this->con->query( $sql ) )
 		{

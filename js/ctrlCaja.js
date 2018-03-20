@@ -125,10 +125,10 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout, $filter )
 		else if( $scope.accion == 'cierre' && !( $scope.retornarTotal() && $scope.retornarTotal() > 0 ) )
 			alertify.notify( 'El <b>EFECTIVO FINAL</b> debe ser mayor a 0', 'warning', 4 );
 
-		else if( $scope.accion == 'cierre' && ( ( ( caja.totalIngresos + caja.efectivoInicial ) - caja.totalEgresos )  ) - $scope.retornarTotal() > 0 )
+		else if( $scope.accion == 'cierre' && !caja.agregarFaltante && ( ( ( caja.totalIngresos + caja.efectivoInicial ) - caja.totalEgresos )  ) - $scope.retornarTotal() > 0 )
 		{
 			var faltante = ( ( ( caja.totalIngresos + caja.efectivoInicial ) - caja.totalEgresos ) - $scope.retornarTotal() );
-			$scope.caja.agregarFaltante  = true;
+			//$scope.caja.agregarFaltante  = true;
 			$scope.caja.efectivoFaltante = faltante;
 			alertify.notify( 'Existe un faltante de ' + faltante, 'warning', 4 );
 		}

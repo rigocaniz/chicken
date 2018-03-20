@@ -37,11 +37,13 @@
 						COMPRAS
 					</a>
 				</li>
+				<!--
 				<li role="presentation" ng-class="{'active' : reporteMenu==4}" ng-click="reporteMenu=4;">
 					<a href="" role="tab" data-toggle="tab">
 						INVENTARIO
 					</a>
 				</li>
+			-->
 			</ul>
 			<!-- CONTENIDO TABS -->
 			<div class="tab-content">
