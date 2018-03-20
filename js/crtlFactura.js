@@ -28,7 +28,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		}
 	});
 
-		// CONSULTA ORDENES
+	// CONSULTA ORDENES
 	$scope.idEstadoOrden   = 1;
 	$scope.lstOrdenCliente = [];
 	$scope.consultaOrdenCliente = function () {
@@ -36,25 +36,23 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			return false;
 
 		$scope.lstOrdenCliente = [];
-		//if ( $scope.idEstadoOrden > 0 ) {
-			$scope.miIndex         = -1;
-			$scope.$parent.loading = true; // cargando...
-			// CONSULTA TIPO DE SERVICIOS
-			$http.post('consultas.php', { opcion : 'lstOrdenCliente', idEstadoOrden : 1 })
-			.success(function (data) {
-				console.log( data );
-				$scope.$parent.loading = false; // cargando...
+		$scope.miIndex         = -1;
+		$scope.$parent.loading = true; // cargando...
+		// CONSULTA TIPO DE SERVICIOS
+		$http.post('consultas.php', { opcion : 'lstOrdenCliente', idEstadoOrden : 1 })
+		.success(function (data) {
+			console.log( data );
+			$scope.$parent.loading = false; // cargando...
 
-				if ( Array.isArray( data ) )
-					$scope.lstOrdenCliente = data;
+			if ( Array.isArray( data ) )
+				$scope.lstOrdenCliente = data;
 
-				$timeout(function () {
-					// SI EXISTE AL MENOS UNA ORDEN SELECCIONA LA PRIMERA
-					if ( $scope.lstOrdenCliente.length )
-						$scope.miIndex = 0;
-				});
+			$timeout(function () {
+				// SI EXISTE AL MENOS UNA ORDEN SELECCIONA LA PRIMERA
+				if ( $scope.lstOrdenCliente.length )
+					$scope.miIndex = 0;
 			});
-		//}
+		});
 	};
 
 	// SELECCION DE TICKET PARA MOSTRAR DETALLE DE TICKET
@@ -79,7 +77,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 
 		// SI ES UN INDEX VALIDO
 		if ( _new >= 0 && $scope.lstOrdenCliente[ _new ] )
-			$scope.consultaDetalleOrden( $scope.lstOrdenCliente[ _new ] );
+			$scope.consultaDetalleOrdenes( $scope.lstOrdenCliente[ _new ] );
 	});
 
 	$scope.infoOrden = {};
@@ -90,7 +88,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		{ abr : 'L', title : 'Listo', css : 'primary' },
 		{ abr : 'S', title : 'Servido', css : 'success' }
 	];
-	$scope.consultaDetalleOrden = function ( orden, deBusqueda, force ) {
+	$scope.consultaDetalleOrdenes = function ( orden, deBusqueda, force ) {
 		if ( $scope.$parent.loading && force === undefined )
 			return false;
 
@@ -235,7 +233,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	};
 
 	$scope.seleccionarDeBusqueda = function ( orden ) {
-		console.log( orden );
 		$scope.miIndex = -1;
 		$scope.dialOrdenBusqueda.hide();
 		$scope.facturacion.numeroTicket   = angular.copy( parseInt( orden.numeroTicket ) );
@@ -503,7 +500,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		.success(function (data) {
 			$scope.$parent.loading = false;
 			console.log( data );
-
 			if ( Array.isArray( data ) )
 			{
 				$scope.agregarFactura({
@@ -861,7 +857,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	// efectivo
    	$scope.lstTicketBusqueda = [];
 	$scope.buscarOrdenTicket = function ( idOrdenCliente ) {
-
 		if ( $scope.$parent.loading )
 			return false;
 
@@ -869,6 +864,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			$scope.lstTicketBusqueda = [];
 			$scope.$parent.loading = true; // cargando...
 			
+		console.log( "cargando....." );
 			// CONSULTA TIPO DE SERVICIOS
 			$http.post('consultas.php', { 
 				opcion         : 'busquedaTicket',
@@ -876,6 +872,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				idOrdenCliente : idOrdenCliente
 			})
 			.success(function (data) {
+				console.log( data );
 				$scope.$parent.loading = false;
 
 				if ( Array.isArray( data ) && data.length ) {

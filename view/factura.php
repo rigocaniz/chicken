@@ -332,6 +332,7 @@
                 <div class="modal-header panel-heading">
                     <span class="glyphicon glyphicon-time"></span>
                     <strong>ORDENES PENDIENTES</strong>
+                    <button type="button" class="close" ng-click="$hide();">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="panel-body">
@@ -343,7 +344,7 @@
                                         ng-click="seleccionarTicket( item.idOrdenCliente )" ng-hide="deBusqueda">
                                         <span class="tkt-active"></span>
                                         <span class="glyphicon" ng-class="{'glyphicon-bookmark':(item.numeroTicket>0), 'glyphicon-home':!(item.numeroTicket>0)}"></span>
-                                        {{(item.numeroTicket>0?item.numeroTicket:item.idOrdenCliente)}}
+                                        {{ ( item.numeroTicket > 0 ? item.numeroTicket : item.idOrdenCliente ) }}
                                         <span class="badge">{{item.numMenu}}</span>
                                     </button>
                                 </div>
@@ -384,14 +385,16 @@
                                         </h4>
                                     </div>
                                     <div class="col-sm-6 col-xs-12 text-right">
-                                        <a href="#/factura/{{infoOrden.idOrdenCliente}}" class="btn btn-sm btn-primary" ng-show="infoOrden.idEstadoOrden>=1 && infoOrden.idEstadoOrden<=4">
+                                        <a href="#/factura/{{infoOrden.idOrdenCliente}}" class="btn btn-sm btn-primary" ng-show="infoOrden.idEstadoOrden>=1 && infoOrden.idEstadoOrden<=4" ng-click="$hide();">
                                             <span class="glyphicon glyphicon-shopping-cart"></span>
                                             <b>Facturar</b> (F4)
                                         </a>
+                                        <!--
                                         <button type="button" class="btn btn-sm btn-danger" ng-click="dialOrdenCancelar.show();comentario=''" ng-show="infoOrden.idEstadoOrden==1">
                                             <span class="glyphicon glyphicon-remove"></span>
                                             <b>Cancelar Orden</b>
                                         </button>
+                                        -->
                                     </div>
                                 </div>
                                 <div class="row">
@@ -414,6 +417,7 @@
                                         <span class="valor">{{infoOrden.usuarioResponsable}}</span>
                                     </div>
                                 </div>
+                                <!--
                                 <div class="row">
                                     <div class="col-xs-12 text-center" ng-show="infoOrden.idEstadoOrden>=1 && infoOrden.idEstadoOrden<=4">
                                         <button type="button" class="btn btn-info" ng-click="consultaOrden( infoOrden )">
@@ -422,6 +426,7 @@
                                         </button>
                                     </div>
                                 </div>
+                                -->
                                 <legend class="legend2">Menús Ordenados</legend>
                                 <div class="row">
                                     <div class="col-xs-12">
@@ -429,21 +434,27 @@
                                             <table class="table table-hover">
                                                 <thead>
                                                     <tr>
+                                                        <!--
                                                         <th width="35px"></th>
+                                                        -->
                                                         <th></th>
                                                         <th>Cantidad</th>
                                                         <th>Orden</th>
                                                         <th>Subtotal</th>
+                                                        <!--
                                                         <th width="35px"></th>
+                                                        -->
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr ng-repeat="item in infoOrden.lstOrden track by $index">
+                                                        <!--
                                                         <td>
                                                             <button type="button" class="btn btn-sm btn-default" ng-click="editarDetalle( item )" title="Editar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
                                                                 <span class="glyphicon glyphicon-pencil"></span>
                                                             </button>
                                                         </td>
+                                                        -->
                                                         <td>
                                                             <img ng-src="{{item.imagen}}" style="height:40px">
                                                         </td>
@@ -462,15 +473,19 @@
                                                                 {{item.observacion}}
                                                             </p>
                                                         </td>
-                                                        <td>{{item.subTotal | number:2}}</td>
+                                                        <td class="text-right">{{item.subTotal | number:2}}</td>
+                                                        <!--
                                                         <td>
                                                             <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarDetalle( item.lstDetalle )" title="Cancelar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
                                                                 <span class="glyphicon glyphicon-remove"></span>
                                                             </button>
                                                         </td>
+                                                        -->
                                                     </tr>
                                                     <tr ng-repeat="otro in infoOrden.lstOtros track by $index">
+                                                        <!--
                                                         <td></td>
+                                                        -->
                                                         <td>
                                                             <img ng-src="img/otroMenu.png" style="height:40px" class="img-thumbnail">
                                                         </td>
@@ -482,17 +497,18 @@
                                                                 {{otro.observacion}}
                                                             </p>
                                                         </td>
-                                                        <td>{{(otro.cantidad*otro.precioUnidad) | number:2}}</td>
+                                                        <td class="text-right">{{(otro.cantidad*otro.precioUnidad) | number:2}}</td>
+                                                        <!--
                                                         <td>
                                                             <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarOtroMenu( otro )" title="Eliminar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
                                                                 <span class="glyphicon glyphicon-remove"></span>
                                                             </button>
                                                         </td>
+                                                        -->
                                                     </tr>
                                                     <tr>
-                                                        <td colspan="4" class="text-right"><b>TOTAL</b></td>
-                                                        <td><b>Q. {{infoOrden.total | number:2}}</b></td>
-                                                        <td></td>
+                                                        <td colspan="3" class="text-right"><b>TOTAL</b></td>
+                                                        <td class="text-right"><b>Q. {{infoOrden.total | number:2}}</b></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
