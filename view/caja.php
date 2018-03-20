@@ -101,7 +101,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="text-right" ng-show="accionCaja=='cierreCaja'">
+							<div class="text-right" ng-show="accionCaja=='cierreCaja' && caja.efectivoFaltante">
 								<button type="button" class="btn btn-sm btn-success" ng-click="caja.agregarFaltante=!caja.agregarFaltante">
 									<span class="glyphicon glyphicon-plus"></span>
 									Agregar Faltante

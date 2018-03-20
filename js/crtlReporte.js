@@ -1,12 +1,12 @@
 app.controller('reporteCtrl', function( $scope, $http, $filter ){
-	$scope.reporteMenu = 1;
-
-	$scope.fechaInicio = null;
-	$scope.fechaFinal  = null;
-	$scope.fechaInicioC = null;
-	$scope.fechaFinalC  = null;
-	$scope.ventas      = {};
-	$scope.filtro      = 'combo';
+	$scope.reporteMenu       = 1;
+	$scope.fechaInicio       = null;
+	$scope.fechaFinal        = null;
+	$scope.fechaInicioC      = null;
+	$scope.fechaFinalC       = null;
+	$scope.ventas            = {};
+	$scope.ordenesCanceladas = {};
+	$scope.filtro            = 'combo';
 
 	// ORDENES CANCELADAS
 	$scope.consultarOrdenesC = function( accion )
@@ -34,7 +34,7 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 				})
 				.success(function(data ){
 					//console.log(data);
-					$scope.ventas = data || {};
+					$scope.ordenesCanceladas = data || {};
 					if( !data.encontrado )
 						alertify.notify( 'No se encontraron Resultados', 'warning' );
 
