@@ -19,6 +19,7 @@ elseif( !isset( $_GET[ 'fechaFinal' ] ) ):
 
 endif;
 
+
 include 'class/conexion.class.php';
 include 'class/reporte.class.php';
 include 'class/sesion.class.php';
@@ -32,11 +33,11 @@ $deFecha   = $_GET[ 'fechaInicio' ];
 $paraFecha = $_GET[ 'fechaFinal' ];
 
 $reporte = new Reporte();
-$resultado = $reporte->getComprasFecha( $deFecha, $paraFecha );
+$resultado = $reporte->getOrdenesCanceladas( $deFecha, $paraFecha );
 $conexion->close();
 unset( $conexion );
 header("Content-Type:   application/vnd.ms-excel; charset=utf-8");
-header("Content-Disposition: attachment; filename=reporte-". DATE('d-m-Y') ."-compras-inv.xls");  //File name extension was wrong
+header("Content-Disposition: attachment; filename=reporte-". DATE('d-m-Y') ."-ordenes-canceladas.xls");
 header("Expires: 0");
 header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 header("Cache-Control: private",false);
@@ -57,25 +58,27 @@ header("Cache-Control: private",false);
 <table border="1">
 	<thead>
 		<tr>
-			<th class="titulo">Codigo</th>
-			<th class="titulo">Descripcion</th>
-			<th class="titulo">Medida</th>
-			<th class="titulo">Tipo Producto</th>
-			<th class="titulo">Cantidad</th>
-			<th class="titulo">costoTotal</th>
+			<th>Cantidad</th>
+			<th>Descripcion</th>
+			<th>Tipo</th>
+			<th>Responsable</th>
+			<th>Cancelacion</th>
+			<th>Comentarios / Observaciones</th>
 		</tr>
 	</thead>
 	<tbody>
 <?php
-	foreach ($resultado->detalleCompras AS $compras ):
+	foreach ($resultado->detalleOrdenesC AS $ordenCancelada ):
+		$ordenCancelada->menu = utf8_decode( $ordenCancelada->menu );
+		$ordenCancelada->tipo = utf8_decode( $ordenCancelada->tipo );
 		echo "
 		<tr>
-			<td>{$compras->idProducto}</td>
-			<td>{$compras->producto}</td>
-			<td class='num'>{$compras->medida}</td>
-			<td class='num'>{$compras->tipoProducto}</td>
-			<td class='num'>{$compras->cantidad}</td>
-			<td class='num'>{$compras->costoTotal}</td>
+			<td>{$ordenCancelada->cantidad}</td>
+			<td>{$ordenCancelada->menu}</td>
+			<td>{$ordenCancelada->tipo}</td>
+			<td>{$ordenCancelada->usuarioResponsable}</td>
+			<td>{$ordenCancelada->usuarioCancelacion}</td>
+			<td>{$ordenCancelada->comentarioCancelacion}</td>
 		</tr>";
 	endforeach;
 ?>

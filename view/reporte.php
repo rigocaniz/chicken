@@ -43,7 +43,7 @@
 						INVENTARIO
 					</a>
 				</li>
-			-->
+				-->
 			</ul>
 			<!-- CONTENIDO TABS -->
 			<div class="tab-content">
@@ -120,20 +120,48 @@
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : reporteMenu==2}" ng-show="reporteMenu==2">
 					<form class="form-horizontal">
 						<div class="form-group">
-						    <div class="col-xs-4 col-sm-6 col-md-4 col-lg-3">
+						    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-3">
 						    	<label><i class="fa fa-calendar"></i> DE FECHA:</label>
-						      	<input class="form-control" ng-model="fromDate" data-max-date="{{ untilDate }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
+						      	<input class="form-control" ng-model="fechaInicioOC" data-max-date="{{ fechaFinalOC }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
 						    </div>
-						    <div class="col-xs-4 col-sm-6 col-md-4 col-lg-3">
+						    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-3">
 						    	<label><i class="fa fa-calendar"></i> A FECHA:</label>
-						      	<input class="form-control" ng-model="untilDate" data-min-date="{{ fromDate }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
+						      	<input class="form-control" ng-model="fechaFinalOC" data-min-date="{{ fechaInicioOC }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
 						    </div>
 						    <div>
 						    	<br>
-						    	<button type="button" class="btn btn-sm btn-danger">
+						    	<button type="button" class="btn btn-sm btn-warning" ng-click="consultarOrdenesC( 'consultar' )">
+						    		CONSULTAR <span class="glyphicon glyphicon-ok"></span>
+						    	</button>
+						    	<button type="button" class="btn btn-sm btn-danger" ng-click="consultarOrdenesC( 'descargar' )">
 						    		GENERAR REPORTE <span class="glyphicon glyphicon-download-alt"></span>
 						    	</button>
 						    </div>
+						</div>
+						<hr>
+						<div class="form-group" ng-show="ordenesCanceladas.encontrado">
+							<table class="table table-hover table-striped">
+								<thead>
+									<tr>
+										<th class="text-center">Cantidad</th>
+										<th class="text-center col-sm-3">Descripción</th>
+										<th class="text-center col-sm-2">Tipo</th>
+										<th class="text-center col-sm-1">Responsable</th>
+										<th class="text-center col-sm-1">Cancelación</th>
+										<th class="text-center col-sm-5">Comentarios</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="ordenCancelada in ordenesCanceladas.detalleOrdenesC">
+										<td>{{ ordenCancelada.cantidad }}</td>
+										<td>{{ ordenCancelada.menu }}</td>
+										<td class="text-center">{{ ordenCancelada.tipo }}</td>
+										<td class="text-center">{{ ordenCancelada.usuarioResponsable }}</td>
+										<td class="text-center">{{ ordenCancelada.usuarioCancelacion }}</td>
+										<td>{{ ordenCancelada.comentarioCancelacion }}</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</form>
 				</div>
