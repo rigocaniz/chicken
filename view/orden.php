@@ -34,6 +34,8 @@
             </div>
 		</div>
 		<div class="col-xs-12" style="margin-top:5px">
+
+            {{ $parent.idEstadoOrden }}
 			<div class="btn-orden">
 				<button class="bt-info" ng-class="{'active':(idEstadoOrden==1 || idEstadoOrden==2)}" ng-click="idEstadoOrden=1">
 					<span class="glyphicon glyphicon-time"></span>

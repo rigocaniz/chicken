@@ -336,7 +336,22 @@
                 </div>
                 <div class="modal-body">
                     <div class="panel-body">
+                        <div class="col-xs-12" style="margin-top:-30px; padding: 0px;">
                         <div class="row contenedor-tickets">
+                            <div class="btn-orden text-right">
+                                <button class="bt-info" ng-class="{'active':(idEstadoOrden==1 || idEstadoOrden==2)}" ng-click="$parent.idEstadoOrden=1">
+                                    <span class="glyphicon glyphicon-time"></span>
+                                    <span class="hidden-xs"><u>P</u>endientes</span>
+                                </button>
+                                <button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="$parent.idEstadoOrden=3">
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                    <span class="hidden-xs"><u>L</u>isto</span>
+                                </button>
+                                <button class="bt-primary" ng-class="{'active':idEstadoOrden==4}" ng-click="$parent.idEstadoOrden=4">
+                                    <span class="glyphicon glyphicon-flag"></span>
+                                    <span class="hidden-xs"><u>F</u>inalizados</span>
+                                </button>
+                            </div>
                             <!-- *********** LISTA DE TICKETS ********* -->
                             <div class="col-xs-12 col-sm-2 hidden-xs">
                                 <div class="list-group">

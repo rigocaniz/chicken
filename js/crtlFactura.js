@@ -4,6 +4,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	$scope.accion        = 'insert';
 	$scope.buscarTicket  = null;
 	$scope.idTab         = '';
+	$scope.idEstadoOrden = 1;
 
 	$scope.facturacion = {
 		datosCliente : {
@@ -29,30 +30,32 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	});
 
 	// CONSULTA ORDENES
-	$scope.idEstadoOrden   = 1;
 	$scope.lstOrdenCliente = [];
 	$scope.consultaOrdenCliente = function () {
 		if ( $scope.$parent.loading )
 			return false;
 
 		$scope.lstOrdenCliente = [];
-		$scope.miIndex         = -1;
-		$scope.$parent.loading = true; // cargando...
-		// CONSULTA TIPO DE SERVICIOS
-		$http.post('consultas.php', { opcion : 'lstOrdenCliente', idEstadoOrden : 1 })
-		.success(function (data) {
-			console.log( data );
-			$scope.$parent.loading = false; // cargando...
+		if ( $scope.idEstadoOrden > 0 )
+		{
+			$scope.miIndex         = -1;
+			$scope.$parent.loading = true; // cargando...
+			// CONSULTA TIPO DE SERVICIOS
+			$http.post('consultas.php', { opcion : 'lstOrdenCliente', idEstadoOrden : $scope.idEstadoOrden })
+			.success(function (data) {
+				console.log( data );
+				$scope.$parent.loading = false; // cargando...
 
-			if ( Array.isArray( data ) )
-				$scope.lstOrdenCliente = data;
+				if ( Array.isArray( data ) )
+					$scope.lstOrdenCliente = data;
 
-			$timeout(function () {
-				// SI EXISTE AL MENOS UNA ORDEN SELECCIONA LA PRIMERA
-				if ( $scope.lstOrdenCliente.length )
-					$scope.miIndex = 0;
+				$timeout(function () {
+					// SI EXISTE AL MENOS UNA ORDEN SELECCIONA LA PRIMERA
+					if ( $scope.lstOrdenCliente.length )
+						$scope.miIndex = 0;
+				});
 			});
-		});
+		}
 	};
 
 	// SELECCION DE TICKET PARA MOSTRAR DETALLE DE TICKET
@@ -432,6 +435,12 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				$("#nit").focus();
 			});
 		}
+	});
+
+	$scope.$watch('idEstadoOrden', function (){
+		console.log( 'data' );
+		$scope.todoDetalle = false;
+		$scope.consultaOrdenCliente();
 	});
 
 
