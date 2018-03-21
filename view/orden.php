@@ -243,7 +243,7 @@
                 		</div>
                 		<div class="col-xs-7">
 							<div class="input-group">
-								<input type="number" class="form-control input-lg input-focus" ng-model="$parent.noTicket" id="noTicket">
+								<input type="number" min="1" class="form-control input-lg input-focus" ng-model="$parent.noTicket" id="noTicket">
 								<span class="input-group-btn">
 									<button class="btn btn-lg btn-info" type="button" ng-click="auxKeyTicket( 'supr', 0, 'noTicket' )">
 										<span class="glyphicon glyphicon-remove"></span>
@@ -342,13 +342,13 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <input type="number" class="form-control" ng-model="$parent.menuPer.cantidad">
+                                            <input type="number" min="1" class="form-control" ng-model="$parent.menuPer.cantidad">
                                         </td>
                                         <td>
                                             <input type="text" class="form-control" ng-model="$parent.menuPer.descripcion">
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control" ng-model="$parent.menuPer.precioUnidad">
+                                            <input type="number" min="0" class="form-control" ng-model="$parent.menuPer.precioUnidad">
                                         </td>
                                         <td><b>{{$parent.menuPer.cantidad*$parent.menuPer.precioUnidad | number:2}}</b></td>
                                         <td>
@@ -885,7 +885,7 @@
                                     <tr ng-repeat="tipo in itemDetalle.lstTipoServicio">
                                         <td>{{tipo.tipoServicio}}</td>
                                         <td>
-                                            <input type="number" class="form-control" ng-model="tipo.cantidad" id="input_ts_{{$index}}" focus-enter>
+                                            <input type="number" min="1" class="form-control" ng-model="tipo.cantidad" id="input_ts_{{$index}}" focus-enter>
                                         </td>
                                     </tr>
                                 </tbody>
