@@ -43,7 +43,7 @@
 						INVENTARIO
 					</a>
 				</li>
-			-->
+				-->
 			</ul>
 			<!-- CONTENIDO TABS -->
 			<div class="tab-content">
@@ -140,12 +140,6 @@
 						</div>
 						<hr>
 						<div class="form-group" ng-show="ordenesCanceladas.encontrado">
-							<div class="text-right">
-								<span class="label label-danger titulo-nombre" style="font-size: 18px; padding: 4px 10px">
-									Encontrados {{ ordenesCanceladas.detalleOrdenesC.length }}
-								</span>
-							</div>
-							<br>
 							<table class="table table-hover table-striped">
 								<thead>
 									<tr>

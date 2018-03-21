@@ -326,7 +326,7 @@
 
 <!-- ORDENES PENDIENTES -->
 <script type="text/ng-template" id="dial.ordenesPendientes.html">
-    <div class="modal" tabindex="-1" role="dialog" id="dial_orden_busqueda">
+    <div class="modal" tabindex="-1" role="dialog" id="ordenesPendientes">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header panel-heading">
