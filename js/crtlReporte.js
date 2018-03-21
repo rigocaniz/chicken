@@ -4,6 +4,8 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 	$scope.fechaFinal        = null;
 	$scope.fechaInicioC      = null;
 	$scope.fechaFinalC       = null;
+	$scope.fechaInicioOC      = null;
+	$scope.fechaFinalOC       = null;
 	$scope.ventas            = {};
 	$scope.ordenesCanceladas = {};
 	$scope.filtro            = 'combo';
@@ -11,17 +13,17 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 	// ORDENES CANCELADAS
 	$scope.consultarOrdenesC = function( accion )
 	{
-		if( !($scope.fechaInicio) )
+		if( !($scope.fechaInicioOC) )
 			alertify.notify( 'Ingrese fecha de Inicio', 'info', 3 );
 
-		else if( !($scope.fechaFinal) )
+		else if( !($scope.fechaFinalOC) )
 			alertify.notify( 'Ingrese fecha Final', 'info', 3 );
 
 		else
 		{
 			var 
-				fechaInicio = $filter('date')( $scope.fechaInicio, "yyyy-MM-dd" ),
-				fechaFinal  = $filter('date')( $scope.fechaFinal, "yyyy-MM-dd" );
+				fechaInicio = $filter('date')( $scope.fechaInicioOC, "yyyy-MM-dd" ),
+				fechaFinal  = $filter('date')( $scope.fechaFinalOC, "yyyy-MM-dd" );
 
 			if( accion == 'consultar' )
 			{
@@ -33,7 +35,7 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 					fechaFinal  : fechaFinal
 				})
 				.success(function(data ){
-					//console.log(data);
+					console.log("data ", data);
 					$scope.ordenesCanceladas = data || {};
 					if( !data.encontrado )
 						alertify.notify( 'No se encontraron Resultados', 'warning' );
@@ -45,7 +47,7 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 				
 			}
 			else if( accion == 'descargar' )
-    			window.open('reporte.php?fechaInicio=' + fechaInicio + '&&fechaFinal=' + fechaFinal, '_blank');
+    			window.open('reporte.ordCanceladas.php?fechaInicio=' + fechaInicio + '&&fechaFinal=' + fechaFinal, '_blank');
 		}
 	};
 

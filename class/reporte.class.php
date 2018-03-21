@@ -27,34 +27,69 @@ class Reporte
  			$this->con->next_result();
  	}
 
- 	// OBTENER VENTAS POR FECHA
+ 	// OBTENER ORDENES CANCELADAS POR RANGO DE FECHAS
  	public function getOrdenesCanceladas( $deFecha, $paraFecha )
  	{
  		$ventas = new stdClass();
-		$ventas->totalCompras   = 0;
 		$ventas->detalleOrdenesC = [];
-		$ventas->encontrado     = FALSE;
+		$ventas->encontrado      = FALSE;
 
- 		$sql = "SELECT 
-					fC.fechaFactura, iP.idProducto, iP.producto, iP.medida , iP.tipoProducto,
-				    SUM( iP.cantidad ) AS cantidad,
-				    SUM( iP.costo ) AS costoTotal
-						FROM lstFacturaCompra fC
-							JOIN lstIngresoProducto AS iP
-								ON ip.idFacturaCompra = fC.idFacturaCompra
-						WHERE fC.idEstadoFactura = 1 AND ( fC.fechaFactura BETWEEN '{$deFecha}' AND '{$paraFecha}' )
-					GROUP BY fC.fechaFactura, iP.idProducto
-					ORDER BY fC.fechaFactura ASC;";
+ 		$sql = "(SELECT
+						oc.idOrdenCliente,
+					    oc.numeroTicket,
+					    oc.usuarioResponsable,
+					    oc.fechaRegistro AS 'fechaOrden',
+					    COUNT( dom.idDetalleOrdenMenu )AS 'cantidad',
+					    'Menú' AS 'tipo',
+					    m.menu,
+					    IFNULL( bom.usuario, boc.usuario )AS 'usuarioCancelacion',
+					    IFNULL( bom.fechaRegistro, boc.fechaRegistro )AS 'fechaCancelacion',
+					    IFNULL( bom.comentario, boc.comentario )AS 'comentarioCancelacion'
+					FROM ordenCliente AS oc
+						JOIN
+							(detalleOrdenMenu AS dom
+								JOIN  menu AS m ON dom.idMenu = m.idMenu AND dom.perteneceCombo = 0
+								JOIN bitacoraOrdenMenu AS bom ON dom.idDetalleOrdenMenu = bom.idDetalleOrdenMenu AND bom.idEstadoDetalleOrden = 10 )
+					        ON oc.idOrdenCliente = dom.idOrdenCliente
+						
+					    LEFT JOIN bitacoraOrdenCliente AS boc
+							ON oc.idOrdenCliente = boc.idOrdenCliente AND boc.idEstadoOrden = 10
+					WHERE ( oc.idEstadoOrden = 10 OR dom.idEstadoDetalleOrden = 10 )
+						AND ( DATE( oc.fechaRegistro ) BETWEEN '{$deFecha}' AND '{$paraFecha}' )
+					GROUP BY oc.idOrdenCliente, m.idMenu, comentarioCancelacion)
+					UNION ALL
+					(SELECT
+						oc.idOrdenCliente,
+					    oc.numeroTicket,
+					    oc.usuarioResponsable,
+					    oc.fechaRegistro AS 'fechaOrden',
+					    COUNT( doc.idDetalleOrdenCombo )AS 'cantidad',
+					    'Combo' AS 'tipo',
+					    c.combo,
+					    IFNULL( bocb.usuario, boc.usuario )AS 'usuarioCancelacion',
+					    IFNULL( bocb.fechaRegistro, boc.fechaRegistro )AS 'fechaCancelacion',
+					    IFNULL( bocb.comentario, boc.comentario )AS 'comentarioCancelacion'
+					FROM ordenCliente AS oc
+						JOIN
+							(detalleOrdenCombo AS doc
+								JOIN combo AS c ON doc.idCombo = c.idCombo
+								JOIN bitacoraOrdenCombo AS bocb ON doc.idDetalleOrdenCombo = bocb.idDetalleOrdenCombo AND bocb.idEstadoDetalleOrden = 10 )
+					        ON oc.idOrdenCliente = doc.idOrdenCliente
+					        
+						LEFT JOIN bitacoraOrdenCliente AS boc
+							ON oc.idOrdenCliente = boc.idOrdenCliente AND boc.idEstadoOrden = 10
+					WHERE ( boc.idEstadoOrden = 10 OR doc.idEstadoDetalleOrden = 10 )
+						AND ( DATE( oc.fechaRegistro ) BETWEEN '{$deFecha}' AND '{$paraFecha}' )
+					GROUP BY oc.idOrdenCliente, c.idCombo, comentarioCancelacion)
+					ORDER BY idOrdenCliente;";
 
 		if( $rs = $this->con->query( $sql ) )
 		{
 			if( $rs->num_rows )
 			{
 				$ventas->encontrado = TRUE;
-	 			while( $row = $rs->fetch_object() ):
-					$ventas->totalCompras      += $row->costoTotal;
+	 			while( $row = $rs->fetch_object() )
 					$ventas->detalleOrdenesC[]   = $row;
-				endwhile;
 			}
  		}
 
