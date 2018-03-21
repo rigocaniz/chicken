@@ -67,7 +67,6 @@
                     <span class="tkt-active"></span>
                     <span class="glyphicon" ng-class="{'glyphicon-bookmark':(item.numeroTicket>0), 'glyphicon-home':!(item.numeroTicket>0)}"></span>
                     {{(item.numeroTicket>0?item.numeroTicket:item.idOrdenCliente)}}
-                    <span class="badge">{{item.numMenu}}</span>
                 </button>
             </div>
         </div>

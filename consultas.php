@@ -677,6 +677,12 @@ switch ( $data->opcion )
 
 	// REASIGNAR DETALLE DE ORDEN
 	case 'reasignarDetalleOrden':
+		if ( !isset( $data->idOrdenCliente ) )
+			$data->idOrdenCliente = 0;
+
+		if ( !isset( $data->idOrdenClienteDestino ) )
+			$data->idOrdenClienteDestino = 0;
+
 		$orden = new Orden();
 		$orden->reasignarDetalleOrden( $data->idOrdenCliente, $data->idOrdenClienteDestino, $data->lstDetalle ) ;
 		echo json_encode( $orden->getRespuesta() );

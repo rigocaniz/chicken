@@ -382,29 +382,38 @@ class Orden
  	{
 	 	$this->con->query( "START TRANSACTION" );
 
-		foreach ( $lstDetalleOrden as $ix => $item ):
+		$idOrdenCliente        = (int)$idOrdenCliente;
+		$idOrdenClienteDestino = (int)$idOrdenClienteDestino;
 
-			if ( $item->idDetalleOrdenMenu > 0 )
-				$sql = "CALL consultaDetalleOrdenMenu( 'asignarOtroCliente', {$item->idDetalleOrdenMenu}, {$idOrdenClienteDestino}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL )";
-			
-			else if ( $item->tipoMenu == 'combo' )
-				$sql = "CALL consultaDetalleOrdenCombo( 'asignarOtroCliente', {$item->idDetalleOrdenCombo}, {$idOrdenClienteDestino}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );";
+		if ( !( $idOrdenCliente > 0 AND $idOrdenClienteDestino > 0 ) ):
+			$this->respuesta = 'danger';
+		 	$this->mensaje   = 'Ticket de Destino u Origen sin definir';
+		
+		else:
+			foreach ( $lstDetalleOrden as $ix => $item ):
 
-	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
-	 			if( $row = $rs->fetch_object() ) {
-					$this->respuesta = $row->respuesta;
-					$this->mensaje   = $row->mensaje;
-	 			}
-	 		}
-	 		else{
-	 			$this->respuesta = 'danger';
-	 			$this->mensaje   = 'Error al ejecutar la instrucción: ' . $this->con->error;
-	 			break;
-	 		}
-	 		
-	 		if ( $this->respuesta == 'danger' ) break;
-		endforeach;
+				if ( $item->idDetalleOrdenMenu > 0 )
+					$sql = "CALL consultaDetalleOrdenMenu( 'asignarOtroCliente', {$item->idDetalleOrdenMenu}, {$idOrdenClienteDestino}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL )";
+				
+				else if ( $item->tipoMenu == 'combo' )
+					$sql = "CALL consultaDetalleOrdenCombo( 'asignarOtroCliente', {$item->idDetalleOrdenCombo}, {$idOrdenClienteDestino}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );";
+
+		 		if( $rs = $this->con->query( $sql ) ){
+		 			@$this->con->next_result();
+		 			if( $row = $rs->fetch_object() ) {
+						$this->respuesta = $row->respuesta;
+						$this->mensaje   = $row->mensaje;
+		 			}
+		 		}
+		 		else{
+		 			$this->respuesta = 'danger';
+		 			$this->mensaje   = 'Error al ejecutar la instrucción: ' . $this->con->error;
+		 			break;
+		 		}
+		 		
+		 		if ( $this->respuesta == 'danger' ) break;
+			endforeach;
+		endif;
 
 		if ( $this->respuesta == 'success' ) {
 	 		$this->con->query( "COMMIT" );
