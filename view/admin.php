@@ -33,13 +33,17 @@
 						<span class="glyphicon glyphicon-briefcase"></span> PERFILES
 					</a>
 				</li>
-
+				<li role="presentation" ng-class="{'active' : adminMenu=='ajustes'}" ng-click="adminMenu='ajustes'">
+					<a href="" role="tab" data-toggle="tab">
+						<span class="glyphicon glyphicon-cog"></span> AJUSTES
+					</a>
+				</li>
 			</ul>
 			<!-- INGRESO NUEVO PRODUCTO -->
 			<div class="tab-content">
 
 				<!--  PANEL USUARIOS -->
-				<div role="tabpanel" class="tab-pane" ng-class="{'active' : adminMenu=='usuarios'}" ng-show="adminMenu=='usuarios'">
+				<div role="tabpanel" class="tab-pane active" ng-show="adminMenu=='usuarios'">
 					<button type="button" class="btn btn-sm btn-success" ng-click="agregarUsuario()">
 						<span class="glyphicon glyphicon-plus"></span> AGREGAR USUARIO
 					</button>
@@ -118,7 +122,7 @@
 				</div>
 
 				<!--  PANEL PERFILES -->
-				<div role="tabpanel" class="tab-pane" ng-class="{'active' : adminMenu=='perfiles'}" ng-show="adminMenu=='perfiles'">
+				<div role="tabpanel" class="tab-pane active" ng-show="adminMenu=='perfiles'">
 					<div class="col-sm-offset-1 col-sm-10">
 						<div class="panel panel-primary">
 							<div class="panel-heading">
@@ -181,6 +185,34 @@
 									</tbody>
 								</table>
 								
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!--  PANEL AJUSTES -->
+				<div role="tabpanel" class="tab-pane active" ng-show="adminMenu=='ajustes'">
+					<div class="col-sm-offset-1 col-sm-10">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h4 class="panel-title">No. de Grupos de Cocina <span class="glyphicon glyphicon-cutlery"></span></h4>
+							</div>
+							<div class="panel-body">
+								<div class="row">
+									<label class="col-xs-1 col-sm-2 col-md-2 control-label"># Grupos</label>
+									<div class="col-xs-6 col-sm-6">
+										<input type="text" class="form-control" ng-model="parametro.valor">
+										<kbd>{{parametro.parametro}}</kbd>
+									</div>
+									<div class="col-xs-5 col-sm-4 col-md-4">
+										<button type="button" class="btn btn-success" ng-click="guardarParametro()">
+											<span class="glyphicon glyphicon-ok"></span> Guardar
+										</button>
+									</div>
+								</div>
+								<div class="col-sm-12" style="margin-top:7px">
+									<mark>Configuración para definir <b>Número de grupos</b> donde se <b>distribuirá</b> las ordenes de clientes en cocina</mark>
+								</div>
 							</div>
 						</div>
 					</div>

@@ -1,6 +1,6 @@
 app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
-	$scope.adminMenu       = 'usuarios';
+	$scope.adminMenu       = 'ajustes';
 	$scope.accion          = 'insert';
 	$scope.filtroUsuario   = 'activos';
 
@@ -90,11 +90,21 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 
 
 	$scope.lstPerfiles = [];
+	$scope.parametro   = null;
 	$scope.cargarLstPerfiles = function(){
 		$http.post('consultas.php',{
 			opcion : 'lstPerfiles'
 		}).success(function(data){
 			$scope.lstPerfiles = data;
+		});
+
+		$scope.parametro = null;
+		$http.post('consultas.php',{
+			opcion      : 'getParams',
+			idParametro : 'gruposCocina'
+		}).success(function(data){
+			if ( data != null )
+				$scope.parametro = data;
 		});
 	};
 
@@ -106,6 +116,24 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			console.log( data );
 			$scope.lstUsuarios = data;
 		});
+	};
+
+	$scope.guardarParametro = function () {
+		if ( $scope.parametro.idParametro == undefined )
+			alertify.notify( 'Parámetro no válido', 'warning', 4 );
+
+		else if ( $scope.parametro.valor == undefined )
+			alertify.notify( 'Valor no válido', 'warning', 4 );
+
+		else{
+			$http.post('consultas.php',{
+				opcion      : 'setParams',
+				idParametro : $scope.parametro.idParametro,
+				valor       : $scope.parametro.valor,
+			}).success(function(data){
+				alertify.notify( ( data.mensaje || data ), ( data.respuesta || 'danger' ), 4 );
+			});
+		}
 	};
 
 	($scope.inicio = function(){

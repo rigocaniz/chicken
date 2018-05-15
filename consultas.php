@@ -736,6 +736,18 @@ switch ( $data->opcion )
 		$orden = new Orden();
 		echo json_encode( $orden->topFechaMenu( $data->tipoMenu, $data->deFecha, $data->paraFecha, $data->idMenu, $data->idCombo ) );
 		break;
+
+	// OBTENER PARAMETRO
+	case 'getParams':
+		$admin = new Admin();
+		echo json_encode( $admin->getParams( $data->idParametro ) );
+		break;
+
+	// GUARDAR PARAMETRO
+	case 'setParams':
+		$admin = new Admin();
+		echo json_encode( $admin->setParams( $data->idParametro, $data->valor ) );
+		break;
 }
 
 $conexion->close();

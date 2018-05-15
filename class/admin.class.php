@@ -113,5 +113,35 @@ class Admin
  	}
 
 
+ 	function getParams( $idParametro = '' )
+	{
+		$result = null;
+
+		$sql = "SELECT idParametro, parametro, valor
+				FROM parametro WHERE idParametro = '{$idParametro}'";
+		
+		$rs = $this->con->query( $sql );
+		if( $rs AND $row = $rs->fetch_object() )
+			$result = $row;
+		
+		return $result;
+	}
+
+	function setParams( $idParametro, $valor )
+	{
+		if ( $idParametro == 'gruposCocina' )
+			$valor = (int)$valor?:1;
+
+		$sql = "UPDATE parametro 	SET	  valor = '{$valor}'
+				WHERE idParametro = '{$idParametro}'";
+		
+		if ( $this->con->query( $sql ) )
+			$result = array( 'respuesta' => 'success', 'mensaje' => 'Parámetro guardado correctamente.' );
+
+		else
+			$result = array( 'respuesta' => 'danger', 'mensaje' => 'Error al guardar el Parámetro' );
+		
+		return $result;
+	}
 }
 ?>
