@@ -12,7 +12,7 @@
         <div class="col-sm-5 col-xs-6" style="margin-bottom:9px">
             <button type="button" class="btn btn-success" ng-click="nuevaOrden()">
                 <span class="glyphicon glyphicon-plus"></span>
-                Nueva <u>O</u>rden
+                Nue<u>v</u>a Orden
             </button>
             <button type="button" class="btn btn-default" ng-click="dialUltimasOrdenes.show()">
                 <span class="glyphicon glyphicon-print"></span>

@@ -1057,7 +1057,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 	// ATAJOS PANTALLA PRINCIPAL
 	$scope._keyInicioOrden = function ( key, altDerecho ) {
-		if ( altDerecho && key == 79 ) // {O}
+		if ( altDerecho && key == 86 ) // {V}
 			$scope.nuevaOrden();
 
 		if ( key == 38 ) // {UP} // ORDEN SIGUIENTE
