@@ -80,8 +80,8 @@
         </div>
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="#/mantenimiento" class="item-menu">
-                <img src="img/mantenimiento.png" alt="">
-                <span><u>M</u>antenimientos</span>
+                <img src="img/menus.png" alt="">
+                <span><u>M</u>enús</span>
             </a>
         </div>
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">

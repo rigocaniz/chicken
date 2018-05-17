@@ -474,29 +474,22 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 					$scope.dialOrdenCliente.hide();
 					$scope.ordenActual.lstAgregar = [];
-					
-					if ( !( $scope.ordenActual.noTicket > 0 ) )
+						
+					if ( data.myId != $scope.myId )
 					{
-						window.location.href = "#/factura/" + $scope.ordenActual.idOrdenCliente;
-					}
-					else
-					{
-						if ( data.myId != $scope.myId )
+						$scope.myId = data.myId;
+						if ( $scope.accionOrden == 'nuevo' )
 						{
-							$scope.myId = data.myId;
-							if ( $scope.accionOrden == 'nuevo' )
-							{
-								$scope.lstOrdenCliente.push( data.data.paraMesero );
+							$scope.lstOrdenCliente.push( data.data.paraMesero );
 
-								// SI EL PEDIDO ES A DOMICILIO
-								$timeout(function () {
-									if ( $scope.ordenActual.idOrdenCliente == data.data.idOrdenCliente )
-										$scope.miIndex = ( $scope.lstOrdenCliente.length - 1 );
-								});
-							}
-							else{
-								$scope.consultaDetalleOrden();
-							}
+							// SI EL PEDIDO ES A DOMICILIO
+							$timeout(function () {
+								if ( $scope.ordenActual.idOrdenCliente == data.data.idOrdenCliente )
+									$scope.miIndex = ( $scope.lstOrdenCliente.length - 1 );
+							});
+						}
+						else{
+							$scope.consultaDetalleOrden();
 						}
 					}
 				}
