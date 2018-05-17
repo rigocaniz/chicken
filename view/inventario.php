@@ -1250,7 +1250,7 @@
 									</select>
 								</div>
 								<div class="col-sm-1">
-									<label class="control-label">Pedecedero</label>
+									<label class="control-label">Perecedero</label>
 									<button type="button" class="btn btn-sm" ng-class="{'btn-success': producto.perecedero, 'btn-warning':!producto.perecedero}" ng-click="producto.perecedero=!producto.perecedero">
 										<span class="glyphicon" ng-class="{'glyphicon-unchecked' : !producto.perecedero, 'glyphicon-check' : producto.perecedero}"></span>
 										{{ producto.perecedero ? 'SI' : 'NO' }}

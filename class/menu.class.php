@@ -124,7 +124,7 @@ class Menu
 
 	 		// VALIDACIONES
 			$cantidad    = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 2500, 'la cantidad' );
-			$observacion = $this->con->real_escape_string( $validar->validarTexto( $data->observacion, NULL, !esNulo( $data->observacion ), 15, 1500, 'la observación' ) );
+			$observacion = $this->con->real_escape_string( $validar->validarTexto( $data->observacion, '', FALSE, 15, 1500, 'la observación' ) );
  		}
 
  		// OBTENER RESULTADOS

@@ -32,13 +32,6 @@
 						<span class="glyphicon glyphicon-list-alt"></span> COMBOS
 					</a>
 				</li>
-				<!--
-				<li role="presentation" ng-class="{'active' : menuTab=='superCombo'}" ng-click="resetValores(); menuTab='superCombo'">
-					<a href="" role="tab" data-toggle="tab">
-						<span class="glyphicon glyphicon-book"></span> SUPERCOMBOS
-					</a>
-				</li>
-				-->
 			</ul>
 		</div>
 
@@ -524,10 +517,16 @@
 							<fieldset class="fieldset">
 								<legend class="legend">Ingresar Receta</legend>
 								<div class="form-group">
+									<div class="col-sm-12 text-right">
+										<button type="button" class="btn btn-success" ng-click="$hide();dialAdministrar.show()">
+											<span class="glyphicon glyphicon-plus"></span>
+											<b>Nuevo Producto</b>
+										</button>
+									</div>
 									<div class="col-sm-7 col-md-5">
 										<label class="control-label">Producto</label>
 										<div ng-show="!prod.seleccionado">
-											<input type="text" id="producto" class="form-control" ng-model="prod.producto" maxlength="35" placeholder="Ingrese producto" ng-change="buscarProducto( prod.producto )" ng-keydown="seleccionKeyElemento( $event.keyCode, 'producto' );">
+											<input type="text" id="producto" class="form-control" ng-model="prod.producto" maxlength="35" placeholder="Ingrese producto a agregar" ng-change="buscarProducto( prod.producto )" ng-keydown="seleccionKeyElemento( $event.keyCode, 'producto' );">
 											<ul class="list-group ul-list" ng-show="lstBusqueda.length">
 
 											    <li class="list-group-item" ng-class="{'active': $parent.idxElSeleccionado == ixProducto}" ng-repeat="(ixProducto, producto) in lstBusqueda" ng-click="seleccionarElemento( producto, 'producto' )" ng-mouseenter="$parent.idxElSeleccionado = ixProducto">
@@ -996,3 +995,103 @@
 		</div>
 	</div>
 </script>
+
+<!-- MODAL AGREGAR / EDITAR PRODUCTO -->
+<script type="text/ng-template" id="dialAdmin.producto.html">
+	<div class="modal" tabindex="0" role="dialog" id="dialAdminProducto">
+		<div class="modal-dialog">
+			<div class="modal-content" ng-class="{'panel-warning': accionProducto == 'insert', 'panel-info': accionProducto == 'update'}">
+				<div class="modal-header panel-heading">
+					<button type="button" class="close" ng-click="$hide()">&times;</button>
+					<strong>
+						<span class="glyphicon" ng-class="{'glyphicon-plus': accionProducto == 'insert', 'glyphicon glyphicon-pencil': accionProducto == 'update'}"></span>
+						{{ accionProducto == 'insert' ? 'INGRESAR' : 'ACTUALIZAR' }} PRODUCTO
+					</strong>
+				</div>
+				<div class="modal-body">
+					<fieldset class="fieldset">
+						<legend class="legend">DATOS</legend>
+						<!-- FORMULARIO PRODUCTO -->
+						<form class="form-horizontal" role="form" name="$parent.formProducto">
+							<div class="text-right">
+								<label>Ubicación</label>
+								<div class="btn-group" role="group" aria-label="">
+								  	<button type="button" class="btn btn-default" ng-repeat="ubicacion in lstUbicacion" ng-click="producto.idUbicacion=ubicacion.idUbicacion">
+								  		<span class="glyphicon" ng-class="{'glyphicon-check': producto.idUbicacion==ubicacion.idUbicacion, 'glyphicon-unchecked': producto.idUbicacion!=ubicacion.idUbicacion}"></span>
+								  		{{ ubicacion.ubicacion }}
+								  	</button>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-8">
+									<label class="control-label">Nombre Producto</label>
+									<input type="text" id="nombreProducto" class="form-control" ng-model="producto.producto" maxlength="45" required>
+								</div>
+								<div class="col-sm-3" ng-show="accionProducto!='insert'">
+									<label class="control-label">No. Producto</label>
+									<input type="text" class="form-control" ng-model="producto.idProducto" disabled>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-5">
+									<label class="control-label">Tipo Producto</label>
+									<select class="form-control" ng-model="producto.idTipoProducto" required>
+										<option ng-repeat="tp in lstTipoProducto" value="{{ tp.idTipoProducto }}">
+											{{ tp.tipoProducto }}
+										</option>
+									</select>
+								</div>
+								<div class="col-sm-4">
+									<label class="control-label">Tipo Medida</label>
+									<select class="form-control" ng-model="producto.idMedida" required>
+										<option ng-repeat="m in lstMedidas" value="{{m.idMedida}}">{{m.medida}}</option>
+									</select>
+								</div>
+								<div class="col-sm-1">
+									<label class="control-label">Perecedero</label>
+									<button type="button" class="btn btn-sm" ng-class="{'btn-success': producto.perecedero, 'btn-warning':!producto.perecedero}" ng-click="producto.perecedero=!producto.perecedero">
+										<span class="glyphicon" ng-class="{'glyphicon-unchecked' : !producto.perecedero, 'glyphicon-check' : producto.perecedero}"></span>
+										{{ producto.perecedero ? 'SI' : 'NO' }}
+									</button>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-2">Cantidad minima</label>
+								<div class="col-sm-3">
+									<input type="number" min="0" class="form-control" ng-model="producto.cantidadMinima" required>
+								</div>
+								<label class="control-label col-sm-2">Cantidad maxima</label>
+								<div class="col-sm-3">
+									<input type="number" min="0" class="form-control" ng-model="producto.cantidadMaxima">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-2">Disponibilidad</label>
+								<div class="col-sm-3">
+									<input type="number" min="0" class="form-control" ng-model="producto.disponibilidad" ng-disabled="accionProducto!='insert'">
+								</div>
+								<label class="control-label col-sm-2">Producto Importante</label>
+								<div class="col-sm-1">
+									<button type="button" class="btn btn-sm" ng-class="{'btn-success': producto.importante, 'btn-warning':!producto.importante}" ng-click="producto.importante=!producto.importante">
+										<span class="glyphicon" ng-class="{'glyphicon-unchecked' : !producto.importante, 'glyphicon-check' : producto.importante}"></span>
+										{{ producto.importante ? 'SI' : 'NO' }}
+									</button>
+								</div>
+							</div>
+						</form>
+					</fieldset>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn" ng-class="{'btn-success': accionProducto == 'insert', 'btn-info': accionProducto == 'update'}" ng-click="consultaProducto()" ng-disabled="loading">
+						<span class="glyphicon glyphicon-saved"></span> Guardar (F6)
+					</button>
+					<button type="button" class="btn btn-default" ng-click="resetValores( 1 ); $hide()">
+						<span class="glyphicon glyphicon-log-out"></span>
+						<b>Salir</b>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+

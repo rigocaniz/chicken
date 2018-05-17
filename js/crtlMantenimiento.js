@@ -10,11 +10,21 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	$scope.lstMenu         = [];
 	$scope.menu            = {};
 	$scope.combo           = {};
+	$scope.prod = {
+		idMenu         : null,
+		idProducto     : null,
+		nombreProducto : '',
+		medida         : '',
+		cantidad       : null,
+		observacion    : '',
+		seleccionado   : false
+	};
 
 	$scope.dialAdminMenu    = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static', keyboard: false});
 	$scope.dialRecetaMenu   = $modal({scope: $scope,template:'dial.recetaMenu.html', show: false, backdrop: 'static', keyboard: false});
 	$scope.dialAdminCombo   = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static', keyboard: false});
 	$scope.dialDetalleCombo = $modal({scope: $scope,template:'dial.detalleCombo.html', show: false, backdrop: 'static', keyboard: false});
+	$scope.dialAdministrar  = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
 
 
 	// TECLA PARA ATAJOS RAPIDOS
@@ -393,6 +403,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	// BUSCAR PRODUCTOS
 	$scope.lstBusqueda = [];
 	$scope.buscarProducto = function( nombreProducto ){
+		console.log( $scope.prod );
 		if( nombreProducto.length && !$scope.prod.seleccionado )
 		{
 			$http.post('consultas.php',{opcion: 'buscarProducto', nombreProducto: nombreProducto})
@@ -775,4 +786,83 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		}
 	};
 
+	($scope.resetValoresProducto = function( accion ) {
+		$scope.accionProducto 	  = 'insert';
+		$scope.buscarTipoProducto = '';
+		$scope.buscarMedida       = '';
+		$scope.producto = {
+			'producto'       : '',
+			'idUbicacion'    : 1,
+			'idTipoProducto' : null,
+			'idMedida'       : null,
+			'perecedero'     : true,
+			'cantidadMinima' : null,
+			'cantidadMaxima' : null,
+			'disponibilidad' : '',
+			'importante'     : true
+		};
+	})();
+
+	($scope.cargarInicio = function(){
+		$http.post('consultas.php', {opcion: 'inicioInventario'})
+		.success(function(data){
+			$scope.lstMedidas      = data.catMedidas || [];
+			$scope.lstTipoProducto = data.catTipoProducto || [];
+			$scope.lstUbicacion    = data.catUbicacion || [];
+		});
+	})();
+
+	// INSERTAR / ACTUALIZAR PRODUCTO
+	$scope.consultaProducto = function(){
+		if ( $scope.$parent.loading )
+			return false;
+
+		var producto = $scope.producto, accion = $scope.accionProducto;
+
+		if( accion == 'update' && !(producto.idProducto > 0) )
+			alertify.notify( 'No. de producto no definido', 'warning', 5 );
+		
+		else if( !(producto.producto && producto.producto.length >= 3) )
+			alertify.notify( 'El nombre del producto debe ser mayor a 3 caracteres', 'warning', 5 );
+
+		else if( !(producto.idUbicacion && producto.idUbicacion > 0) )
+			alertify.notify( 'Seleccione la ubicacion del producto', 'warning', 5 );
+		
+		else if( !(producto.idTipoProducto && producto.idTipoProducto > 0) )
+			alertify.notify( 'Seleccione el tipo de producto', 'warning', 5 );	
+		
+		else if( !(producto.idMedida && producto.idMedida > 0) )
+			alertify.notify( 'Seleccione la medida', 'warning', 5 );	
+	
+		else if( !(producto.cantidadMinima && producto.cantidadMinima > 0) )
+			alertify.notify( 'La cantidad mínima debe ser mayor a 0', 'warning', 5 );	
+		
+		else if( !(producto.cantidadMinima && producto.cantidadMinima > 0) )
+			alertify.notify( 'La cantidad máxima debe ser mayor a 0', 'warning', 5 );	
+		
+		else if( !(producto.disponibilidad && producto.disponibilidad > 0) )
+			alertify.notify( 'La disponibilidad debe ser mayor a 0', 'warning', 5 );	
+		
+		else{
+
+			$scope.$parent.showLoading( 'Guardando...' );
+
+			$http.post('consultas.php',{
+				opcion : "consultaProducto",
+				accion : accion,
+				datos  : $scope.producto
+			}).success(function(data){
+				console.log( data );
+				alertify.set('notifier','position', 'top-right');
+				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+				$scope.$parent.hideLoading();
+
+				if ( data.respuesta == "success" ) {
+					$scope.dialAdministrar.hide();
+					$scope.dialRecetaMenu.show();
+					$scope.resetValoresProducto();
+				}
+			})
+		}
+	};
 });
