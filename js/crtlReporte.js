@@ -6,6 +6,8 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 	$scope.fechaFinalC       = null;
 	$scope.fechaInicioOC      = null;
 	$scope.fechaFinalOC       = null;
+	$scope.fechaInicioD = null;
+	$scope.fechaFinalD = null;
 	$scope.ventas            = {};
 	$scope.ordenesCanceladas = {};
 	$scope.filtro            = 'combo';
@@ -47,10 +49,50 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 				
 			}
 			else if( accion == 'descargar' )
-    			window.open('reporte.ordCanceladas.php?fechaInicio=' + fechaInicio + '&&fechaFinal=' + fechaFinal, '_blank');
+    			window.open('reporte.ordCanceladas.php?fechaInicio=' + fechaInicio + '&fechaFinal=' + fechaFinal, '_blank');
 		}
 	};
 
+	$scope.descuentos = {};
+	$scope.consultarDescuentos = function( accion )
+	{
+		if( !($scope.fechaInicioD) )
+			alertify.notify( 'Ingrese fecha de Inicio', 'info', 3 );
+
+		else if( !($scope.fechaFinalD) )
+			alertify.notify( 'Ingrese fecha Final', 'info', 3 );
+
+		else
+		{
+			var 
+				fechaInicio = $filter('date')( $scope.fechaInicioD, "yyyy-MM-dd" ),
+				fechaFinal  = $filter('date')( $scope.fechaFinalD, "yyyy-MM-dd" );
+
+			if( accion == 'consultar' )
+			{
+				$scope.$parent.showLoading();
+
+				$http.post('consultas.php', {
+					opcion      : 'getDescuentos',
+					fechaInicio : fechaInicio,
+					fechaFinal  : fechaFinal
+				})
+				.success(function(data ){
+					//console.log(data);
+					$scope.descuentos = data || {};
+					if( !data.encontrado )
+						alertify.notify( 'No se encontraron Resultados', 'warning' );
+
+					$scope.$parent.hideLoading();
+				}).error(function(data){
+					$scope.$parent.hideLoading();
+				});
+				
+			}
+			else if( accion == 'descargar' )
+    			window.open('reporte.descuentos.php?fechaInicio=' + fechaInicio + '&fechaFinal=' + fechaFinal, '_blank');
+		}
+	};
 
 	$scope.consultarVentas = function( accion )
 	{
@@ -88,7 +130,7 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 				
 			}
 			else if( accion == 'descargar' )
-    			window.open('reporte.php?fechaInicio=' + fechaInicio + '&&fechaFinal=' + fechaFinal, '_blank');
+    			window.open('reporte.php?fechaInicio=' + fechaInicio + '&fechaFinal=' + fechaFinal, '_blank');
 		}
 	};
 
@@ -129,7 +171,7 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 				
 			}
 			else if( accion == 'descargar' )
-    			window.open('reporte.compras.php?fechaInicio=' + fechaInicio + '&&fechaFinal=' + fechaFinal, '_blank');
+    			window.open('reporte.compras.php?fechaInicio=' + fechaInicio + '&fechaFinal=' + fechaFinal, '_blank');
 		}
 	};
 

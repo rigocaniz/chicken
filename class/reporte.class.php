@@ -21,11 +21,33 @@ class Reporte
  	}
 
 
- 	private function siguienteResultado()
+	// OBTENER DESCUENTOS POR RANGO DE FECHAS
+ 	public function getDescuentos( $deFecha, $paraFecha )
  	{
- 		if( $this->con->more_results() )
- 			$this->con->next_result();
+ 		$descuentos = new stdClass();
+		$descuentos->detalleDescuentos = [];
+		$descuentos->encontrado        = FALSE;
+		$descuentos->totalDescuento    = FALSE;
+
+ 		$sql = "CALL repDescuento( '{$deFecha}', '{$paraFecha}' );";
+
+		if( $rs = $this->con->query( $sql ) )
+		{
+			$this->con->siguienteResultado();
+			if( $rs->num_rows )
+			{
+				$descuentos->encontrado = TRUE;
+	 			while( $row = $rs->fetch_assoc() )
+	 			{
+	 				$descuentos->totalDescuento += $row[ 'totalDescuento' ];
+					$descuentos->detalleDescuentos[] = $row;
+	 			}
+			}
+ 		}
+
+ 		return $descuentos; 		
  	}
+ 	
 
  	// OBTENER ORDENES CANCELADAS POR RANGO DE FECHAS
  	public function getOrdenesCanceladas( $deFecha, $paraFecha )

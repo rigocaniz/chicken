@@ -37,12 +37,12 @@
 						COMPRAS
 					</a>
 				</li>
-				<!--
 				<li role="presentation" ng-class="{'active' : reporteMenu==4}" ng-click="reporteMenu=4;">
 					<a href="" role="tab" data-toggle="tab">
-						INVENTARIO
+						DESCUENTOS
 					</a>
 				</li>
+				<!--
 				-->
 			</ul>
 			<!-- CONTENIDO TABS -->
@@ -228,24 +228,66 @@
 						</div>
 					</form>
 				</div>
-				<!-- INVENTARIO DE PRODUCTOS -->
+				<!-- DESCUENTOS -->
 				<div  role="tabpanel" class="tab-pane" ng-class="{'active' : reporteMenu==4}" ng-show="reporteMenu==4">
 					<form class="form-horizontal">
 						<div class="form-group">
-						    <div class="col-xs-4 col-sm-6 col-md-4 col-lg-3">
+						    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-3">
 						    	<label><i class="fa fa-calendar"></i> DE FECHA:</label>
-						      	<input class="form-control" ng-model="fromDate" data-max-date="{{ untilDate }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
+						      	<input class="form-control" ng-model="fechaInicioD" data-max-date="{{ fechaFinalD }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
 						    </div>
-						    <div class="col-xs-4 col-sm-6 col-md-4 col-lg-3">
+						    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-3">
 						    	<label><i class="fa fa-calendar"></i> A FECHA:</label>
-						      	<input class="form-control" ng-model="untilDate" data-min-date="{{ fromDate }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
+						      	<input class="form-control" ng-model="fechaFinalD" data-min-date="{{ fechaInicioD }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
 						    </div>
 						    <div>
 						    	<br>
-						    	<button type="button" class="btn btn-sm btn-danger">
+						    	<button type="button" class="btn btn-sm btn-warning" ng-click="consultarDescuentos( 'consultar' )">
+						    		CONSULTAR <span class="glyphicon glyphicon-ok"></span>
+						    	</button>
+						    	<button type="button" class="btn btn-sm btn-danger" ng-click="consultarDescuentos( 'descargar' )">
 						    		GENERAR REPORTE <span class="glyphicon glyphicon-download-alt"></span>
 						    	</button>
 						    </div>
+						</div>
+						<hr>
+						<div class="form-group" ng-show="descuentos.encontrado">
+							<div class="text-right">
+								<span class="label label-danger titulo-nombre" style="font-size: 18px; padding: 4px 10px">
+									Total Q. {{ descuentos.totalDescuento | number: 2 }}
+								</span>
+							</div>
+							<br>
+							<table class="table table-hover table-striped">
+								<thead>
+									<tr>
+										<th class="text-center">No.</th>
+										<th class="text-center col-sm-4">Producto</th>
+										<th class="text-center col-sm-2">Nombre</th>
+										<th class="text-center col-sm-2">Usuario</th>
+										<th class="text-center col-sm-2">P. Unitario</th>
+										<th class="text-center col-sm-3">Subtotal</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="descuento in descuentos.detalleDescuentos">
+										<td>{{ $index + 1 }}</td>
+										<td>{{ descuento.menu }}</td>
+										<td class="text-center">{{ descuento.nombre }}</td>
+										<td class="text-center">{{ descuento.usuario }}</td>
+										<td class="text-right">{{ descuento.precioUnitario | number: 2 }}</td>
+										<td class="text-right">{{ descuento.totalDescuento | number: 2 }}</td>
+									</tr>
+									<tr>
+										<th colspan="5" class="text-right success">
+											<b>TOTAL</b>
+										</th>
+										<th class="text-right success">
+											<b>{{ descuentos.totalDescuentos | number: 2 }}</b>
+										</th>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</form>
 				</div>

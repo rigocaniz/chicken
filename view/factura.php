@@ -532,14 +532,13 @@
                                </div>
                             </div>
                         </div>
-                        
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" ng-click="$hide();">
-                        <span class="glyphicon glyphicon-chevron-left"></span>
-                        <b>Salir</b>
-                    </button>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-default" ng-click="$hide();">
+                            <span class="glyphicon glyphicon-chevron-left"></span>
+                            <b>Salir</b>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

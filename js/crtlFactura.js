@@ -311,7 +311,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			if ( altDerecho && key == 80 ) $scope.idEstadoOrden = 1; // {P}
 			if ( altDerecho && key == 76 ) $scope.idEstadoOrden = 3; // {F}
 			if ( altDerecho && key == 70 ) $scope.idEstadoOrden = 4; // {F}
-			if ( altDerecho && key == 83 ) $scope.idEstadoOrden = 6; // {S}
 		}
 
 		// SI ES PANTALLA PRINCIPAL Y PRESIONAR LA TECLA {F6}

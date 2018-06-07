@@ -3,6 +3,9 @@ session_start();
 
 $data = json_decode( file_get_contents("php://input") );
 
+if( !isset( $data->opcion ) )
+	exit();
+
 include 'class/conexion.class.php';
 include 'class/admin.class.php';
 include 'class/cliente.class.php';
@@ -53,6 +56,11 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** REPORTES
 	////////////////////////
+	case 'getDescuentos':			// REPORTE DE VENTAS
+		$reporte = new Reporte();
+		echo json_encode( $reporte->getDescuentos( $data->fechaInicio, $data->fechaFinal ) );
+		break;
+
 	case 'getVentasFecha':			// REPORTE DE VENTAS
 		$reporte = new Reporte();
 		echo json_encode( $reporte->getVentasFecha( $data->fechaInicio, $data->fechaFinal ) );
