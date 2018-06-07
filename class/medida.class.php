@@ -21,14 +21,6 @@ class Medida
  	}
 
  	
- 	// LIBERAR SIGUIENTE RESULTADO
- 	private function siguienteResultado()
- 	{
- 		if( $this->con->more_results() )
- 			$this->con->next_result();
- 	}
-
-
  	// CONSULTAMEDIDA // INSERT // UPDATE
 	function consultaMedida( $accion, $data )
 	{
@@ -58,7 +50,7 @@ class Medida
 	 		$sql = "CALL consultaMedida( '{$accion}', {$idMedida}, '{$medida}' );";
 
 	 		if( $rs = $this->con->query( $sql ) ){
-	 			$this->siguienteResultado();
+	 			$this->con->siguienteResultado();
 
 	 			if( $row = $rs->fetch_object() ){
 	 				$this->respuesta = $row->respuesta;

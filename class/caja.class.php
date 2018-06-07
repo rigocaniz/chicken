@@ -19,13 +19,6 @@ class Caja
  		$this->sess = $sesion;
  	}
 
-
- 	private function siguienteResultado()
- 	{
- 		if( $this->con->more_results() )
- 			$this->con->next_result();
- 	}
-
 	// CONSULTAR HISTORIAL DE CAJAS
  	public function historialCaja( $fecha )
  	{
@@ -144,7 +137,7 @@ class Caja
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
 	 		{
-	 			$this->siguienteResultado();
+	 			$this->con->siguienteResultado();
 	 			$dataCaja->totalIngresos = (double)$row->montoDespacho + (double)$row->ingresos;
 	 			$dataCaja->totalEgresos  = (double)$row->egresos;
 	 		}
@@ -192,7 +185,7 @@ class Caja
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
 	 		{
-				$this->siguienteResultado();
+				$this->con->siguienteResultado();
 				$montoDespacho = (double)$row->montoDespacho;
 				$otrosIngresos = (double)$row->ingresos;
 				$egresos       = (double)$row->egresos;
@@ -230,7 +223,7 @@ class Caja
 	 		$sql = "CALL consultaCaja( '{$accion}', {$idCaja}, {$idEstadoCaja}, {$efectivoInicial}, {$efectivoFinal}, {$efectivoSobrante}, {$efectivoFaltante} )";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-	 				$this->siguienteResultado();
+	 				$this->con->siguienteResultado();
 
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
@@ -283,7 +276,7 @@ class Caja
 		 		$sql = "CALL consultaDenominacionCaja( '{$accion}', {$idCaja}, {$idEstadoCaja}, '{$denominacion}', {$cantidad} );";
 
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-		 			$this->siguienteResultado();
+		 			$this->con->siguienteResultado();
 
 	 				$this->respuesta = $row->respuesta;
 	 				if( $this->respuesta == 'danger' )
@@ -369,7 +362,7 @@ class Caja
  			$this->con->query( "START TRANSACTION" );
 
  			$rs = $this->con->query( $sql );
- 			@$this->con->next_result();
+ 			$this->con->siguienteResultado();
 
  			if ( $rs AND $row = $rs->fetch_object() )
  			{

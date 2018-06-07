@@ -48,7 +48,7 @@ header("Cache-Control: private",false);
 		mso-number-format:General;
 	}
 	.text{
-		mso-number-format:"\@";	/*force text*/
+		mso-number-format:"\@";
 	}
 	.titulo{
 		background-color: #ff3d00;

@@ -56,6 +56,11 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** REPORTES
 	////////////////////////
+	case 'getCierreCaja':			// REPORTE DE VENTAS
+		$reporte = new Reporte();
+		echo json_encode( $reporte->getCierreCaja( $data->fechaInicio, $data->fechaFinal ) );
+		break;
+		
 	case 'getDescuentos':			// REPORTE DE VENTAS
 		$reporte = new Reporte();
 		echo json_encode( $reporte->getDescuentos( $data->fechaInicio, $data->fechaFinal ) );

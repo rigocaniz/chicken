@@ -20,13 +20,6 @@ class Producto
 	}
 
 
-	private function siguienteResultado()
- 	{
- 		if( $this->con->more_results() )
- 			$this->con->next_result();
- 	}
-
-
  	function cargarFechaCierre( $fechaCierre )
  	{
  		$fechaCuadreP = new StdClass();
@@ -224,7 +217,7 @@ class Producto
 				$sql = "CALL consultaCuadreProducto( '{$accion}', {$idCuadreProducto}, '{$fechaCuadre}', '{$comentario}', {$todos}, {$idUbicacion}, {$idEstadoCuadre} );";
 
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-		 			$this->siguienteResultado();
+		 			$this->con->siguienteResultado();
 		 			
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
@@ -300,7 +293,7 @@ class Producto
 					$sql = "CALL consultaCuadreProductoDetalle( '{$accion}', {$idCuadreProducto}, {$idProducto}, {$cantidadApertura}, {$cantidadCierre}, {$diferenciaApertura}, {$diferenciaCierre}, {$actualizarDisp}, {$idEstadoCuadre}, '{$comentarioApertura}', '{$comentarioCierre}' );";
 
 			 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-			 			$this->siguienteResultado();
+			 			$this->con->siguienteResultado();
 
 		 				$this->respuesta = $row->respuesta;
 		 				if( $this->respuesta == 'danger' )
@@ -382,7 +375,7 @@ class Producto
 			$sql = "CALL consultaReajuste( '{$accion}', '{$observacion}' );";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-	 			$this->siguienteResultado();
+	 			$this->con->siguienteResultado();
 	 			
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;
@@ -443,7 +436,7 @@ class Producto
 			$sql = "CALL consultaReajusteProducto( '{$accion}', $this->data, {$idProducto}, {$cantidad}, {$esIncremento} );";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-	 			$this->siguienteResultado();
+	 			$this->con->siguienteResultado();
 	 			
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;
@@ -530,7 +523,7 @@ class Producto
 			$sql = "CALL consultaFactura( '{$accion}', {$idFacturaCompra}, {$idEstadoFactura}, '{$noFactura}', '{$proveedor}', '{$fechaFactura}', '{$comentario}' );";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-	 			$this->siguienteResultado();
+	 			$this->con->siguienteResultado();
 	 			
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;
@@ -612,7 +605,7 @@ class Producto
 			$sql = "CALL consultaIngreso( '{$accion}', {$idIngreso}, {$cantidad}, {$costo}, {$idProducto}, {$idFacturaCompra} );";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-	 			$this->siguienteResultado();
+	 			$this->con->siguienteResultado();
 
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;
@@ -654,7 +647,7 @@ class Producto
 	 		$sql = "CALL consultaTipoProducto( '{$accion}', {$idTipoProducto}, '{$tipoProducto}' );";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-	 			$this->siguienteResultado();
+	 			$this->con->siguienteResultado();
 
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;
@@ -727,7 +720,7 @@ class Producto
 	 		$sql = "CALL consultaProducto( '{$accion}', {$idProducto}, '{$producto}', {$idTipoProducto}, {$idMedida}, {$perecedero}, {$cantidadMinima}, {$cantidadMaxima}, {$disponibilidad}, {$importante}, {$idUbicacion} );";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){	 			
-	 			$this->siguienteResultado();
+	 			$this->con->siguienteResultado();
 
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;

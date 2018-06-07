@@ -16,8 +16,46 @@ class Reporte
  	function __construct()
  	{
  		GLOBAL $conexion, $sesion;
- 		$this->con  = $conexion;
- 		$this->sess = $sesion;
+ 		
+ 		if( is_null( $this->con ) )  
+ 			$this->con  = $conexion;
+ 		
+ 		if( is_null( $this->sess ) )  
+ 			$this->sess = $sesion;
+ 	}
+
+	
+	// OBTENER CIERRE DE CAJA POR RANGO DE FECHAS
+ 	public function getCierreCaja( $deFecha, $paraFecha )
+ 	{
+ 		$cierreCaja = new stdClass();
+		$cierreCaja->detalleCierre  = [];
+		$cierreCaja->encontrado     = FALSE;
+		$cierreCaja->totalSobrante  = 0;
+		$cierreCaja->totalFaltante  = 0;
+		$cierreCaja->totalEfectivoI = 0;
+		$cierreCaja->totalEfectivoF = 0;
+
+ 		$sql = "CALL repCierreCaja( '{$deFecha}', '{$paraFecha}' );";
+
+		if( $rs = $this->con->query( $sql ) )
+		{
+			$this->con->siguienteResultado();
+			if( $rs->num_rows )
+			{
+				$cierreCaja->encontrado = TRUE;
+	 			while( $row = $rs->fetch_assoc() )
+	 			{
+	 				$cierreCaja->totalSobrante 	+= $row[ 'efectivoSobrante' ];
+	 				$cierreCaja->totalFaltante 	+= $row[ 'efectivoFaltante' ];
+	 				$cierreCaja->totalEfectivoI += $row[ 'efectivoInicial' ];
+	 				$cierreCaja->totalEfectivoF += $row[ 'efectivoFinal' ];
+					$cierreCaja->detalleCierre[] = $row;
+	 			}
+			}
+ 		}
+
+ 		return $cierreCaja; 		
  	}
 
 
@@ -26,8 +64,8 @@ class Reporte
  	{
  		$descuentos = new stdClass();
 		$descuentos->detalleDescuentos = [];
+		$descuentos->totalDescuentos   = 0;
 		$descuentos->encontrado        = FALSE;
-		$descuentos->totalDescuento    = FALSE;
 
  		$sql = "CALL repDescuento( '{$deFecha}', '{$paraFecha}' );";
 
@@ -39,7 +77,7 @@ class Reporte
 				$descuentos->encontrado = TRUE;
 	 			while( $row = $rs->fetch_assoc() )
 	 			{
-	 				$descuentos->totalDescuento += $row[ 'totalDescuento' ];
+	 				$descuentos->totalDescuentos += $row[ 'totalDescuento' ];
 					$descuentos->detalleDescuentos[] = $row;
 	 			}
 			}

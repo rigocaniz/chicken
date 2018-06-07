@@ -17,12 +17,6 @@ class Usuario
  			$this->con = $conexion;
 	}
 
-	// LIBERAR SIGUIENTE RESULTADO
- 	private function siguienteResultado()
- 	{
- 		if( $this->con->more_results() )
- 			$this->con->next_result();
- 	}
 
 	// CARGAR LISTA ESTADOS USUARIO
 	function lstEstadoUsuario()
@@ -103,7 +97,7 @@ class Usuario
 	 		$sql = "CALL consultaUsuario( '{$accion}', '{$usuario}', {$codigo}, '{$nombres}', '{$apellidos}', {$idPerfil}, {$idDestinoMenu} );";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-	 			$this->siguienteResultado();
+	 			$this->con->siguienteResultado();
 	 			
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;
@@ -142,7 +136,7 @@ class Usuario
 			$sql = "CALL actualizarEstadoUsuario( '{$usuario}', {$idEstadoUsuario} );";
 
 			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-				$this->siguienteResultado();
+				$this->con->siguienteResultado();
 
 				$this->respuesta = $row->respuesta;
 				$this->mensaje   = $row->mensaje;
@@ -175,7 +169,7 @@ class Usuario
 			$sql = "CALL resetearClave( '{$usuario}' )";
 			
 			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-				$this->siguienteResultado();
+				$this->con->siguienteResultado();
 
 				$this->respuesta = $row->respuesta;
 				$this->mensaje   = $row->mensaje;
@@ -211,7 +205,7 @@ class Usuario
 			$sql = "CALL cambiarClaveUsuario( '{$usuario}', '{$clave}', '{$claveNueva}' );";
 			
 			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-				$this->siguienteResultado();
+				$this->con->siguienteResultado();
 
 				$this->respuesta = $row->respuesta;
 				$this->mensaje   = $row->mensaje;
@@ -248,7 +242,7 @@ class Usuario
 			$sql = "CALL login( {$usuario}, '{$clave}', {$codigo} );";
 			
 			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-				$this->siguienteResultado();
+				$this->con->siguienteResultado();
 
 				$this->respuesta = $row->respuesta;
 				$this->mensaje   = $row->mensaje;

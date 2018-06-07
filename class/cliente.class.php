@@ -21,13 +21,6 @@ class Cliente
  		$this->sess = $sesion;
  	}
 
- 	private function siguienteResultado()
- 	{
- 		if( $this->con->more_results() )
- 			$this->con->next_result();
- 	}
-
-
  	// GUARDAR // ACTUALIZAR CLIENTE
  	function consultaCliente( $accion, $cliente )
  	{
@@ -73,7 +66,7 @@ class Cliente
  			$sql = "CALL consultaCliente( '{$accion}',{$idCliente},'{$nit}', '{$nombre}', '{$cui}', '{$correo}', '{$telefono}', '{$direccion}', {$idTipoCliente} )";
 
  			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
- 				$this->siguienteResultado();
+ 				$this->con->siguienteResultado();
 
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;

@@ -4,12 +4,16 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 	$scope.fechaFinal        = null;
 	$scope.fechaInicioC      = null;
 	$scope.fechaFinalC       = null;
-	$scope.fechaInicioOC      = null;
-	$scope.fechaFinalOC       = null;
-	$scope.fechaInicioD = null;
-	$scope.fechaFinalD = null;
+	$scope.fechaInicioOC     = null;
+	$scope.fechaFinalOC      = null;
+	$scope.fechaInicioD      = null;
+	$scope.fechaFinalD       = null;
+	$scope.fechaInicioCC     = null;
+	$scope.fechaFinalCC      = null;
 	$scope.ventas            = {};
 	$scope.ordenesCanceladas = {};
+	$scope.cierreCaja        = {};
+	$scope.descuentos        = {};
 	$scope.filtro            = 'combo';
 
 	// ORDENES CANCELADAS
@@ -53,7 +57,48 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 		}
 	};
 
-	$scope.descuentos = {};
+	// CONSULTAR CIERRES DE CAJA
+	$scope.consultarCierreCaja = function( accion )
+	{
+		if( !($scope.fechaInicioCC) )
+			alertify.notify( 'Ingrese fecha de Inicio', 'info', 3 );
+
+		else if( !($scope.fechaFinalCC) )
+			alertify.notify( 'Ingrese fecha Final', 'info', 3 );
+
+		else
+		{
+			var 
+				fechaInicio = $filter('date')( $scope.fechaInicioCC, "yyyy-MM-dd" ),
+				fechaFinal  = $filter('date')( $scope.fechaFinalCC, "yyyy-MM-dd" );
+
+			if( accion == 'consultar' )
+			{
+				$scope.$parent.showLoading();
+
+				$http.post('consultas.php', {
+					opcion      : 'getCierreCaja',
+					fechaInicio : fechaInicio,
+					fechaFinal  : fechaFinal
+				})
+				.success(function(data ){
+					//console.log(data);
+					$scope.cierreCaja = data || {};
+					if( !data.encontrado )
+						alertify.notify( 'No se encontraron Resultados', 'warning' );
+
+					$scope.$parent.hideLoading();
+				}).error(function(data){
+					$scope.$parent.hideLoading();
+				});
+				
+			}
+			else if( accion == 'descargar' )
+    			window.open('reporte.cierre.php?fechaInicio=' + fechaInicio + '&fechaFinal=' + fechaFinal, '_blank');
+		}
+	};
+
+	// CONSULTAR DESCUENTOS
 	$scope.consultarDescuentos = function( accion )
 	{
 		if( !($scope.fechaInicioD) )

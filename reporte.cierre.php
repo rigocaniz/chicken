@@ -32,15 +32,15 @@ $deFecha   = $_GET[ 'fechaInicio' ];
 $paraFecha = $_GET[ 'fechaFinal' ];
 
 $reporte = new Reporte();
-$resultado = $reporte->getComprasFecha( $deFecha, $paraFecha );
+$resultado = $reporte->getCierreCaja( $deFecha, $paraFecha );
 $conexion->close();
 unset( $conexion );
-header("Content-Type:   application/vnd.ms-excel; charset=utf-8");
-header("Content-Disposition: attachment; filename=reporte-". DATE('d-m-Y') ."-compras-inv.xls");
+
+header("Content-Type: application/vnd.ms-excel; charset=utf-8");
+header("Content-Disposition: attachment; filename=reporte-". DATE('d-m-Y') ."-cierre-caja.xls");
 header("Expires: 0");
 header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 header("Cache-Control: private",false);
-
 ?>
 <style>
 	.num {
@@ -57,25 +57,31 @@ header("Cache-Control: private",false);
 <table border="1">
 	<thead>
 		<tr>
-			<th class="titulo">Codigo</th>
-			<th class="titulo">Descripcion</th>
-			<th class="titulo">Medida</th>
-			<th class="titulo">Tipo Producto</th>
-			<th class="titulo">Cantidad</th>
-			<th class="titulo">costoTotal</th>
+			<th class="titulo">ID</th>
+			<th class="titulo">Fecha Apertura</th>
+			<th class="titulo">Hora Apertura</th>
+			<th class="titulo">Hora Cierre</th>
+			<th class="titulo">Efectivo Inicial</th>
+			<th class="titulo">Efectivo Final</th>
+			<th class="titulo">Efectivo Sobrante</th>
+			<th class="titulo">Efectivo Faltante</th>
 		</tr>
 	</thead>
 	<tbody>
 <?php
-	foreach ($resultado->detalleCompras AS $compras ):
+	foreach ($resultado->detalleCierre AS $cierre ):
 		echo "
 		<tr>
-			<td>{$compras->idProducto}</td>
-			<td>{$compras->producto}</td>
-			<td class='num'>{$compras->medida}</td>
-			<td class='num'>{$compras->tipoProducto}</td>
-			<td class='num'>{$compras->cantidad}</td>
-			<td class='num'>{$compras->costoTotal}</td>
+			<td>{$cierre['idCaja']}</td>
+			<td>{$cierre['fechaApertura']}</td>
+			<td>{$cierre['horaApertura']}</td>
+			<td>{$cierre['horaCierre']}</td>
+			<td class='num'>{$cierre['usuario']}</td>
+			<td class='num'>{$cierre['nombreUsuario']}</td>
+			<td class='num'>{$cierre['efectivoInicial']}</td>
+			<td class='num'>{$cierre['efectivoFinal']}</td>
+			<td class='num'>{$cierre['efectivoSobrante']}</td>
+			<td class='num'>{$cierre['efectivoFaltante']}</td>
 		</tr>";
 	endforeach;
 ?>
