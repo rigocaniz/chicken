@@ -21,14 +21,6 @@ class Factura
  	}
 
 
- 	// LIBERAR SIGUIENTE RESULTADO
- 	private function siguienteResultado()
- 	{
- 		if( $this->con->more_results() )
- 			$this->con->next_result();
- 	}
-
-
  	// CONSULTA FACTURACION => INSERT / UPDATE
 	function consultaFacturaCliente( $accion, $data )
 	{
@@ -99,7 +91,7 @@ class Factura
 
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
 		 		{
-		 			$this->siguienteResultado();
+		 			$this->con->siguienteResultado();
 
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
@@ -252,7 +244,7 @@ class Factura
 
 						if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
 						{
-							$this->siguienteResultado();
+							$this->con->siguienteResultado();
 
 							$this->respuesta = $row->respuesta;
 							$this->mensaje   = $row->mensaje;
@@ -314,7 +306,7 @@ class Factura
 
 			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
 			{
-				$this->siguienteResultado();
+				$this->con->siguienteResultado();
 				$this->respuesta = $row->respuesta;
 				$this->mensaje   = $row->mensaje;
 				
@@ -345,7 +337,7 @@ class Factura
 
 			if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
 			{
-				$this->siguienteResultado();
+				$this->con->siguienteResultado();
 				$this->respuesta = $row->respuesta;
 				$this->mensaje   = $row->mensaje;
 				
@@ -526,7 +518,7 @@ class Factura
 
 			//echo $sql;
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-	 			$this->siguienteResultado();
+	 			$this->con->siguienteResultado();
 
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;

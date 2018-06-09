@@ -60,7 +60,7 @@ class Evento
 	 		endif;
 
  			$rs = $this->con->query( $sql );
- 			@$this->con->next_result();
+ 			$this->con->siguienteResultado();
  			if ( $rs AND $row = $rs->fetch_object() )
  			{
 				$respuesta = $row->respuesta;
@@ -151,7 +151,7 @@ class Evento
  			$this->con->query( "START TRANSACTION" );
 
  			$rs = $this->con->query( $sql );
- 			@$this->con->next_result();
+ 			$this->con->siguienteResultado();
 
  			if ( $rs AND $row = $rs->fetch_object() )
  			{
@@ -241,7 +241,7 @@ class Evento
 			$sql = "CALL consultaFacturaCliente( 'insert', NULL, NULL, $idCliente, $detalleCaja->idCaja, '$nombre', '$direccion', $totalEvento, $descripcion )";
 
 			$rs = $this->con->query( $sql );
- 			@$this->con->next_result();
+ 			$this->con->siguienteResultado();
  			if ( $rs AND $row = $rs->fetch_object() ) {
 				$respuesta = $row->respuesta;
 				$mensaje   = $row->mensaje;
@@ -259,7 +259,7 @@ class Evento
 					$sql = "CALL consultaFormaPago( 'insert', $idFactura, $pago->idFormaPago, $pago->monto )";
 
 					$rs = $this->con->query( $sql );
-		 			@$this->con->next_result();
+		 			$this->con->siguienteResultado();
 		 			if ( $rs AND $row = $rs->fetch_object() ) {
 						$respuesta = $row->respuesta;
 						$mensaje   = $row->mensaje;
@@ -281,7 +281,7 @@ class Evento
 				$sql = "CALL detalleFacturaEvento( $idFactura, $idEvento )";
 
 				$rs = $this->con->query( $sql );
-	 			@$this->con->next_result();
+	 			$this->con->siguienteResultado();
 	 			if ( $rs AND $row = $rs->fetch_object() ) {
 					$respuesta = $row->respuesta;
 					$mensaje   = $row->mensaje;
@@ -368,7 +368,7 @@ class Evento
  			$this->con->query( "START TRANSACTION" );
 
  			$rs = $this->con->query( $sql );
- 			@$this->con->next_result();
+ 			$this->con->siguienteResultado();
 
  			if ( $rs AND $row = $rs->fetch_object() )
  			{
@@ -455,7 +455,7 @@ class Evento
 		$sql = "CALL consultaDetalleOrdenEvento( {$idEvento} )";
 
 		$rs = $this->con->query( $sql );
-		@$this->con->next_result();
+		$this->con->siguienteResultado();
 		while ( $rs AND $row = $rs->fetch_object() ){
 			$row->cantidad = (double)$row->cantidad;
 			$lst[] = $row;

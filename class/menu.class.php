@@ -20,14 +20,6 @@ class Menu
  	}
 
 
- 	// LIBERAR SIGUIENTE RESULTADO
- 	private function siguienteResultado()
- 	{
- 		if( $this->con->more_results() )
- 			$this->con->next_result();
- 	}
-
-
  	// LST RECETA(S) POR MENU
  	function lstRecetaMenu( $idMenu )
  	{
@@ -76,7 +68,7 @@ class Menu
 		 		$sql = "CALL consultaReceta( '{$accion}', {$idMenu}, {$idProducto}, {$cantidad}, '{$observacion}' );";
 			 		
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-		 			$this->siguienteResultado();
+		 			$this->con->siguienteResultado();
 	 				
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
@@ -136,7 +128,7 @@ class Menu
 	 		$sql = "CALL consultaReceta( '{$accion}', {$idMenu}, {$idProducto}, {$cantidad}, '{$observacion}' );";
 	 		
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-	 			$this->siguienteResultado();
+	 			$this->con->siguienteResultado();
 	 			
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;
@@ -443,7 +435,7 @@ class Menu
 		 		$sql = "CALL consultaMenu( '{$accion}', {$idMenu}, '{$menu}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$idDestinoMenu}, {$idTipoMenu}, {$codigo}, {$tiempoAlerta}, {$data->seCocina} );";
 
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-		 			$this->siguienteResultado();
+		 			$this->con->siguienteResultado();
 
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
@@ -504,7 +496,7 @@ class Menu
 		 		$sql = "CALL consultaMenuPrecio( '{$accion}', {$idMenu}, {$idTipoServicio}, {$precio} );";
 
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-		 			$this->siguienteResultado();
+		 			$this->con->siguienteResultado();
 		 			
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;

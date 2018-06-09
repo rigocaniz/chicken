@@ -21,14 +21,6 @@ class Combo
  	}
 
 
-	// LIBERAR SIGUIENTE RESULTADO
- 	private function siguienteResultado()
- 	{
- 		if( $this->con->more_results() )
- 			$this->con->next_result();
- 	}
-
-
  	// OBTENER TOTAL COMBOS
 	function getTotalPagMenu( $limite = 25, $busqueda )
 	{
@@ -478,7 +470,7 @@ class Combo
 		 		$sql = "CALL consultaCombo( '{$accion}', {$idCombo}, '{$combo}', {$imagen}, '{$descripcion}', {$idEstadoMenu}, {$codigo} );";
 
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-		 			$this->siguienteResultado();
+		 			$this->con->siguienteResultado();
 		 			
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
@@ -533,7 +525,7 @@ class Combo
 		 		$sql = "CALL consultaComboDetalle( '{$accion}', {$idCombo}, {$idMenu}, {$cantidad} );";
 			 		
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-		 			$this->siguienteResultado();
+		 			$this->con->siguienteResultado();
 	 				
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
@@ -578,7 +570,7 @@ class Combo
 		 		$sql = "CALL consultaComboPrecio( '{$accion}', {$idCombo}, {$idTipoServicio}, {$precio} );";
 
 		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-		 			$this->siguienteResultado();
+		 			$this->con->siguienteResultado();
 		 			
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
@@ -628,7 +620,7 @@ class Combo
 	 		$sql = "CALL consultaComboDetalle( '{$accion}', {$idCombo}, {$idMenu}, {$cantidad} );";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-	 			$this->siguienteResultado();
+	 			$this->con->siguienteResultado();
  				
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;
@@ -681,7 +673,7 @@ class Combo
 	 		$sql = "CALL consultaSuperCombo( '{$accion}', {$idSuperCombo}, '{$superCombo}', {$imagen}, '{$descripcion}', {$idEstadoMenu} );";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-	 			$this->siguienteResultado();
+	 			$this->con->siguienteResultado();
 
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;
@@ -733,7 +725,7 @@ class Combo
 	 		$sql = "CALL consultaSuperComboDetalle( '{$accion}', {$idCombo}, {$idSuperCombo}, {$cantidad} );";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-	 			$this->siguienteResultado();
+	 			$this->con->siguienteResultado();
 
  				$this->respuesta = $row->respuesta;
  				$this->mensaje   = $row->mensaje;

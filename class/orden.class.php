@@ -60,7 +60,7 @@ class Orden
 	 		$sql = "CALL consultaOrdenCliente( '{$accion}', {$idOrdenCliente}, {$numeroTicket}, '{$usuarioResponsable}', {$idEstadoOrden}, $comentario )";
 
 	 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
-		 		@$this->con->next_result();
+		 		$this->con->siguienteResultado();
 
 	 			$this->respuesta = $row->respuesta;
 	 			$this->mensaje   = $row->mensaje;
@@ -144,7 +144,7 @@ class Orden
 	 		$sql = "CALL consultaDetalleOrdenMenu( '{$accion}', {$idDetalleOrdenMenu}, {$idMenu}, {$cantidad}, {$idEstadoDetalleOrden}, {$idTipoServicio}, {$idFactura}, {$usuarioResponsable}, {$observacion}, NULL );";
 
 	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
+	 			$this->con->siguienteResultado();
 	 			if( $row = $rs->fetch_object() ){
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
@@ -233,7 +233,7 @@ class Orden
 	 		$sql = "CALL consultaDetalleOrdenCombo( '{$accion}', {$idDetalleOrdenMenu}, {$idCombo}, {$cantidad}, {$idEstadoDetalleOrden}, {$idTipoServicio}, {$idFactura}, {$usuarioResponsable}, {$observacion}, NULL );";
 
 	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
+	 			$this->con->siguienteResultado();
 	 			if( $row = $rs->fetch_object() ){
 	 				$this->respuesta = $row->respuesta;
 	 				$this->mensaje   = $row->mensaje;
@@ -281,7 +281,7 @@ class Orden
 					$notificar = true; // SI SE VA A NOTIFICAR
 
 			 		if( $rs = $this->con->query( $sql ) ){
-			 			@$this->con->next_result();
+			 			$this->con->siguienteResultado();
 			 			if( $row = $rs->fetch_object() ) {
 							$this->respuesta = $row->respuesta;
 							$this->mensaje   = $row->mensaje;
@@ -399,7 +399,7 @@ class Orden
 					$sql = "CALL consultaDetalleOrdenCombo( 'asignarOtroCliente', {$item->idDetalleOrdenCombo}, {$idOrdenClienteDestino}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );";
 
 		 		if( $rs = $this->con->query( $sql ) ){
-		 			@$this->con->next_result();
+		 			$this->con->siguienteResultado();
 		 			if( $row = $rs->fetch_object() ) {
 						$this->respuesta = $row->respuesta;
 						$this->mensaje   = $row->mensaje;
@@ -1128,7 +1128,7 @@ class Orden
 				
 
 		 		if( $rs = $this->con->query( $sql ) ) {
-		 			@$this->con->next_result();
+		 			$this->con->siguienteResultado();
 		 			if( $row = $rs->fetch_object() ) {
 						$this->respuesta = $row->respuesta;
 						$this->mensaje   = $row->mensaje;
@@ -1234,7 +1234,7 @@ class Orden
 					$sql = "CALL consultaDetalleOrdenMenu( 'cancel', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, {$comentario} );";
 
 		 		if( $rs = $this->con->query( $sql ) ) {
-		 			@$this->con->next_result();
+		 			$this->con->siguienteResultado();
 		 			if( $row = $rs->fetch_object() ) {
 						$this->respuesta = $row->respuesta;
 						$this->mensaje   = $row->mensaje;
@@ -1337,7 +1337,7 @@ class Orden
 			$sql = "CALL consultaDetalleOrdenMenu( 'estado', {$item->idDetalleOrdenMenu}, NULL, NULL, NULL, {$idEstadoOrden}, NULL, NULL, NULL, NULL, NULL );";
 			
 	 		if( $rs = $this->con->query( $sql ) ){
-	 			@$this->con->next_result();
+	 			$this->con->siguienteResultado();
 	 			if( $row = $rs->fetch_object() ) {
 					$this->respuesta = $row->respuesta;
 					$this->mensaje   = $row->mensaje;
@@ -1466,7 +1466,7 @@ class Orden
 				$sql = "CALL consultaDetalleOrdenMenu( 'estado', {$rowD->idDetalleOrdenMenu}, NULL, NULL, NULL, {$idEstadoOrden}, NULL, NULL, NULL, NULL, NULL );";
 				
 		 		if( $rs = $this->con->query( $sql ) ){
-		 			@$this->con->next_result();
+		 			$this->con->siguienteResultado();
 		 			if( $row = $rs->fetch_object() ) {
 						$this->respuesta = $row->respuesta;
 						$this->mensaje   = $row->mensaje;
@@ -1864,7 +1864,7 @@ class Orden
 						$sql = "CALL consultaDetalleOrdenCombo( 'estado', {$item->idDetalleOrdenCombo}, NULL, NULL, NULL, 4, NULL, NULL, NULL, NULL, NULL );";
 					
 			 		if( $rs = $this->con->query( $sql ) ){
-			 			@$this->con->next_result();
+			 			$this->con->siguienteResultado();
 			 			if( $row = $rs->fetch_object() ) {
 							$this->respuesta = $row->respuesta;
 							$this->mensaje   = $row->mensaje;

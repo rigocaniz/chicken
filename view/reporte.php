@@ -42,8 +42,11 @@
 						DESCUENTOS
 					</a>
 				</li>
-				<!--
-				-->
+				<li role="presentation" ng-class="{'active' : reporteMenu==5}" ng-click="reporteMenu=5;">
+					<a href="" role="tab" data-toggle="tab">
+						CIERRE DE CAJA
+					</a>
+				</li>
 			</ul>
 			<!-- CONTENIDO TABS -->
 			<div class="tab-content">
@@ -61,10 +64,10 @@
 						    </div>
 						    <div>
 						    	<br>
-						    	<button type="button" class="btn btn-sm btn-warning" ng-click="consultarVentas( 'consultar' )">
+						    	<button type="button" class="btn btn-sm btn-info" ng-click="consultarVentas( 'consultar' )">
 						    		CONSULTAR <span class="glyphicon glyphicon-ok"></span>
 						    	</button>
-						    	<button type="button" class="btn btn-sm btn-danger" ng-click="consultarVentas( 'descargar' )">
+						    	<button type="button" class="btn btn-sm btn-primary" ng-click="consultarVentas( 'descargar' )">
 						    		GENERAR REPORTE <span class="glyphicon glyphicon-download-alt"></span>
 						    	</button>
 						    </div>
@@ -130,10 +133,10 @@
 						    </div>
 						    <div>
 						    	<br>
-						    	<button type="button" class="btn btn-sm btn-warning" ng-click="consultarOrdenesC( 'consultar' )">
+						    	<button type="button" class="btn btn-sm btn-info" ng-click="consultarOrdenesC( 'consultar' )">
 						    		CONSULTAR <span class="glyphicon glyphicon-ok"></span>
 						    	</button>
-						    	<button type="button" class="btn btn-sm btn-danger" ng-click="consultarOrdenesC( 'descargar' )">
+						    	<button type="button" class="btn btn-sm btn-primary" ng-click="consultarOrdenesC( 'descargar' )">
 						    		GENERAR REPORTE <span class="glyphicon glyphicon-download-alt"></span>
 						    	</button>
 						    </div>
@@ -179,10 +182,10 @@
 						    </div>
 						    <div>
 						    	<br>
-						    	<button type="button" class="btn btn-sm btn-warning" ng-click="consultarCompras( 'consultar' )">
+						    	<button type="button" class="btn btn-sm btn-info" ng-click="consultarCompras( 'consultar' )">
 						    		CONSULTAR <span class="glyphicon glyphicon-ok"></span>
 						    	</button>
-						    	<button type="button" class="btn btn-sm btn-danger" ng-click="consultarCompras( 'descargar' )">
+						    	<button type="button" class="btn btn-sm btn-primary" ng-click="consultarCompras( 'descargar' )">
 						    		GENERAR REPORTE <span class="glyphicon glyphicon-download-alt"></span>
 						    	</button>
 						    </div>
@@ -242,10 +245,10 @@
 						    </div>
 						    <div>
 						    	<br>
-						    	<button type="button" class="btn btn-sm btn-warning" ng-click="consultarDescuentos( 'consultar' )">
+						    	<button type="button" class="btn btn-sm btn-info" ng-click="consultarDescuentos( 'consultar' )">
 						    		CONSULTAR <span class="glyphicon glyphicon-ok"></span>
 						    	</button>
-						    	<button type="button" class="btn btn-sm btn-danger" ng-click="consultarDescuentos( 'descargar' )">
+						    	<button type="button" class="btn btn-sm btn-primary" ng-click="consultarDescuentos( 'descargar' )">
 						    		GENERAR REPORTE <span class="glyphicon glyphicon-download-alt"></span>
 						    	</button>
 						    </div>
@@ -265,6 +268,7 @@
 										<th class="text-center col-sm-4">Producto</th>
 										<th class="text-center col-sm-2">Nombre</th>
 										<th class="text-center col-sm-2">Usuario</th>
+										<th class="text-center col-sm-2">Nombre Usuario</th>
 										<th class="text-center col-sm-2">P. Unitario</th>
 										<th class="text-center col-sm-3">Subtotal</th>
 									</tr>
@@ -275,6 +279,7 @@
 										<td>{{ descuento.menu }}</td>
 										<td class="text-center">{{ descuento.nombre }}</td>
 										<td class="text-center">{{ descuento.usuario }}</td>
+										<td class="text-center">{{ descuento.nombreUsuario }}</td>
 										<td class="text-right">{{ descuento.precioUnitario | number: 2 }}</td>
 										<td class="text-right">{{ descuento.totalDescuento | number: 2 }}</td>
 									</tr>
@@ -284,6 +289,92 @@
 										</th>
 										<th class="text-right success">
 											<b>{{ descuentos.totalDescuentos | number: 2 }}</b>
+										</th>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</form>
+				</div>
+				<!-- CIERRE DE CAJA -->
+				<div  role="tabpanel" class="tab-pane" ng-class="{'active' : reporteMenu==5}" ng-show="reporteMenu==5">
+					<form class="form-horizontal">
+						<div class="form-group">
+						    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-3">
+						    	<label><i class="fa fa-calendar"></i> DE FECHA:</label>
+						      	<input class="form-control" ng-model="fechaInicioCC" data-max-date="{{ fechaFinalCC }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
+						    </div>
+						    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-3">
+						    	<label><i class="fa fa-calendar"></i> A FECHA:</label>
+						      	<input class="form-control" ng-model="fechaFinalCC" data-min-date="{{ fechaInicioCC }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
+						    </div>
+						    <div>
+						    	<br>
+						    	<button type="button" class="btn btn-sm btn-info" ng-click="consultarCierreCaja( 'consultar' )">
+						    		CONSULTAR <span class="glyphicon glyphicon-ok"></span>
+						    	</button>
+						    	<button type="button" class="btn btn-sm btn-primary" ng-click="consultarCierreCaja( 'descargar' )">
+						    		GENERAR REPORTE <span class="glyphicon glyphicon-download-alt"></span>
+						    	</button>
+						    </div>
+						</div>
+						<hr>
+						<div class="form-group" ng-show="cierreCaja.encontrado">
+							<div class="text-right">
+								<b>TOTALES:</b>
+								<span class="label label-success titulo-nombre" style="font-size: 16px; padding: 4px 8px">
+									Ef. Inicial Q. {{ cierreCaja.totalEfectivoI | number: 2 }}
+								</span>
+								<span class="label label-success titulo-nombre" style="font-size: 16px; padding: 4px 8px">
+									Ef. Final Q. {{ cierreCaja.totalSobrante | number: 2 }}
+								</span>
+								<span class="label label-warning titulo-nombre" style="font-size: 16px; padding: 4px 8px">
+									Sobrante Q. {{ cierreCaja.totalSobrante | number: 2 }}
+								</span>
+								<span class="label label-danger titulo-nombre" style="font-size: 16px; padding: 4px 8px">
+									Faltante Q. {{ cierreCaja.totalFaltante | number: 2 }}
+								</span>
+							</div>
+							<br>
+							<table class="table table-hover table-striped">
+								<thead>
+									<tr>
+										<th class="text-center">No.</th>
+										<th class="text-center col-sm-4">F. Apertura</th>
+										<th class="text-center col-sm-2">H. Apertura</th>
+										<th class="text-center col-sm-2">H. Cierre</th>
+										<th class="text-center col-sm-2">Efectivo Inicial</th>
+										<th class="text-center col-sm-2">Efectivo Final</th>
+										<th class="text-center col-sm-2">Efectivo Sobrante</th>
+										<th class="text-center col-sm-2">Efectivo Faltante</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="cierre in cierreCaja.detalleCierre">
+										<td>{{ cierre.idCaja }}</td>
+										<td>{{ formatoFecha( cierre.fechaApertura, 'ddd D [de ] MMM [de] YYYY' ) }}</td>
+										<td class="text-center">{{ cierre.horaApertura }}</td>
+										<td class="text-center">{{ cierre.horaCierre }}</td>
+										<td class="text-right">{{ cierre.efectivoInicial | number: 2 }}</td>
+										<td class="text-right">{{ cierre.efectivoFinal | number: 2 }}</td>
+										<td class="text-right">{{ cierre.efectivoSobrante | number: 2 }}</td>
+										<td class="text-right">{{ cierre.efectivoFaltante | number: 2 }}</td>
+									</tr>
+									<tr>
+										<th colspan="4" class="text-right success">
+											<b>TOTALES</b>
+										</th>
+										<th class="text-right success">
+											<b>{{ cierreCaja.totalEfectivoI | number: 2 }}</b>
+										</th>
+										<th class="text-right success">
+											<b>{{ cierreCaja.totalEfectivoF | number: 2 }}</b>
+										</th>
+										<th class="text-right warning">
+											<b>{{ cierreCaja.totalSobrante | number: 2 }}</b>
+										</th>
+										<th class="text-right danger">
+											<b>{{ cierreCaja.totalFaltante | number: 2 }}</b>
 										</th>
 									</tr>
 								</tbody>
