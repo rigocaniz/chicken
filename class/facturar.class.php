@@ -344,7 +344,7 @@ class Factura
 				if( $this->respuesta == 'success' ) {
 					$this->tiempo = 2;
 					$guardados++;
-					$total -= $detallePago->efectivo;
+					$total -= $detallePago->tarjeta;
 				}
 				elseif( $this->respuesta == 'danger' )
 					$this->mensaje .= ' (Forma de Pago)';
