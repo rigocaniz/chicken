@@ -59,8 +59,10 @@ app.controller('crtlEvento', function( $scope, $http, $timeout, $modal, $sce ){
 	})();
 
 	// DIALOGOS
-	$scope.dialEvento = $modal({scope: $scope,template:'dl.evento.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialFactEvento = $modal({scope: $scope,template:'facturar.evento.html', show: false, backdrop:false, keyboard: false });
+	if( document.getElementById("dl.evento.html") )
+		$scope.dialEvento = $modal({scope: $scope,template:'dl.evento.html', show: false, backdrop:false, keyboard: false });
+	if( document.getElementById("facturar.evento.html") )
+		$scope.dialFactEvento = $modal({scope: $scope,template:'facturar.evento.html', show: false, backdrop:false, keyboard: false });
 
 	// MUESTRA DIALOGO DE EVENTO
 	$scope.showDialOrden = function ( _accion, evento, _status ) {

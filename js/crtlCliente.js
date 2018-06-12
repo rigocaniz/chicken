@@ -45,8 +45,10 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
         }
     };
 
-    $scope.resetValores( 'cliente' );
-   	$scope.dialBuscarCliente = $modal({scope: $scope,template:'dial.buscarCliente.html', show: false, backdrop: 'static'});
+    $scope.resetValores( 'cliente' 
+
+    if( document.getElementById("dial.buscarCliente.html") )
+        $scope.dialBuscarCliente = $modal({scope: $scope,template:'dial.buscarCliente.html', show: false, backdrop: 'static'});
 
 	$scope.buscarCliente = function( valor, accion ){
 		console.log( valor, accion );

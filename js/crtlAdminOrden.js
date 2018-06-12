@@ -65,10 +65,12 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.agruparPor  = '';
 	$scope.user = {};
 
-	$scope.dConsultaPersonal = $modal({scope: $scope,template:'consulta.personal.html', show: false, backdrop:false, keyboard: true });
-	$scope.dAyuda = $modal({scope: $scope,template:'ayuda.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("consulta.personal.html") )
+		$scope.dConsultaPersonal = $modal({scope: $scope,template:'consulta.personal.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("ayuda.html") )
+		$scope.dAyuda = $modal({scope: $scope,template:'ayuda.html', show: false, backdrop:false, keyboard: true });
+	
 	alertify.set('notifier','position', 'top-right');
-
 
 	// CONSULTA INFORMACION DE PERSONA
 	$http.post('consultas.php', { opcion : 'iniOrdenAdmin' })

@@ -20,12 +20,16 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		seleccionado   : false
 	};
 
-	$scope.dialAdminMenu    = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static', keyboard: false});
-	$scope.dialRecetaMenu   = $modal({scope: $scope,template:'dial.recetaMenu.html', show: false, backdrop: 'static', keyboard: false});
-	$scope.dialAdminCombo   = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static', keyboard: false});
-	$scope.dialDetalleCombo = $modal({scope: $scope,template:'dial.detalleCombo.html', show: false, backdrop: 'static', keyboard: false});
-	$scope.dialAdministrar  = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
-
+	if( document.getElementById("dial.adminMenu.html") )
+		$scope.dialAdminMenu = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static', keyboard: false});
+	if( document.getElementById("dial.recetaMenu.html") )
+		$scope.dialRecetaMenu = $modal({scope: $scope,template:'dial.recetaMenu.html', show: false, backdrop: 'static', keyboard: false});
+	if( document.getElementById("dial.adminCombo.html") )
+		$scope.dialAdminCombo = $modal({scope: $scope,template:'dial.adminCombo.html', show: false, backdrop: 'static', keyboard: false});
+	if( document.getElementById("dial.detalleCombo.html") )
+		$scope.dialDetalleCombo = $modal({scope: $scope,template:'dial.detalleCombo.html', show: false, backdrop: 'static', keyboard: false});
+	if( document.getElementById("dialAdmin.producto.html") )
+		$scope.dialAdministrar = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
 
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key, altDerecho )

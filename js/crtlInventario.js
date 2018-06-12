@@ -81,13 +81,20 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 	});
 
 
-	$scope.dialIngreso                 = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
-	$scope.dialAdministrar             = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
-	$scope.dialCierreDiario            = $modal({scope: $scope,template:'dial.cierreDiario.html', show: false, backdrop: 'static'});
-	$scope.dialLstFacturaCompra        = $modal({scope: $scope,template:'dial.lstFacturaCompra.html', show: false, backdrop: 'static'});
-	$scope.dialEditarFacturaCompra     = $modal({scope: $scope,template:'dial.editarFacturaCompra.html', show: false, backdrop: 'static'});
-	$scope.dialVerDetalleFacturaCompra = $modal({scope: $scope,template:'dial.verDetalleFacturaCompra.html', show: false, backdrop: 'static'});	
-	$scope.dialVerCierreDiario         = $modal({scope: $scope,template:'dial.verCierreDiario.html', show: false, backdrop: 'static'});	
+	if( document.getElementById("dial.ingreso.html") )
+		$scope.dialIngreso = $modal({scope: $scope,template:'dial.ingreso.html', show: false, backdrop: 'static'});
+	if( document.getElementById("dialAdmin.producto.html") )
+		$scope.dialAdministrar = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
+	if( document.getElementById("dial.cierreDiario.html") )
+		$scope.dialCierreDiario = $modal({scope: $scope,template:'dial.cierreDiario.html', show: false, backdrop: 'static'});
+	if( document.getElementById("dial.lstFacturaCompra.html") )
+		$scope.dialLstFacturaCompra = $modal({scope: $scope,template:'dial.lstFacturaCompra.html', show: false, backdrop: 'static'});
+	if( document.getElementById("dial.editarFacturaCompra.html") )
+		$scope.dialEditarFacturaCompra = $modal({scope: $scope,template:'dial.editarFacturaCompra.html', show: false, backdrop: 'static'});
+	if( document.getElementById("dial.verDetalleFacturaCompra.html") )
+		$scope.dialVerDetalleFacturaCompra = $modal({scope: $scope,template:'dial.verDetalleFacturaCompra.html', show: false, backdrop: 'static'});	
+	if( document.getElementById("dial.verCierreDiario.html") )
+		$scope.dialVerCierreDiario = $modal({scope: $scope,template:'dial.verCierreDiario.html', show: false, backdrop: 'static'});	
 
 	$scope.dialAdministrarAbrir = function(){
 		$scope.dialAdministrar.show();

@@ -4,10 +4,12 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 	$scope.accion          = 'insert';
 	$scope.filtroUsuario   = 'activos';
 
-	$scope.dialAdminUsuario         = $modal({scope: $scope,template:'dial.adminUsuario.html', show: false, backdrop: 'static', keyboard: false});
-	$scope.dialCambiarEstadoUsuario = $modal({scope: $scope,template:'dial.cambiarEstado.html', show: false, backdrop: 'static', keyboard: false});
-	$scope.dialModulosPerfil        = $modal({scope: $scope,template:'dial.modulosPerfil.html', show: false, backdrop: 'static', keyboard: false})
-	
+	if( document.getElementById("dial.adminUsuario.html") )
+		$scope.dialAdminUsuario = $modal({scope: $scope,template:'dial.adminUsuario.html', show: false, backdrop: 'static', keyboard: false});
+	if( document.getElementById("dial.cambiarEstado.html") )
+		$scope.dialCambiarEstadoUsuario = $modal({scope: $scope,template:'dial.cambiarEstado.html', show: false, backdrop: 'static', keyboard: false});
+	if( document.getElementById("dial.modulosPerfil.html") )
+		$scope.dialModulosPerfil = $modal({scope: $scope,template:'dial.modulosPerfil.html', show: false, backdrop: 'static', keyboard: false})
 	
 	$scope.$watch( 'filtroUsuario', function( _old, _new ){
 		if( ( _old != _new ) && $scope.adminMenu == 'usuarios' )

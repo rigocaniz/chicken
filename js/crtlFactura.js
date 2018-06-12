@@ -222,12 +222,18 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	};
 
 	/************ VENTANAS MODAL ***************/
-	$scope.dialAccionCliente     = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialOrdenBusqueda     = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialMantenimientoF    = $modal({scope: $scope,template:'dial.mantenimientoFact.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialCaja              = $modal({scope: $scope,template:'dial.caja.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialEditarFactura     = $modal({scope: $scope,template:'dial.editarFactura.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialOrdenesPendientes = $modal({scope: $scope,template:'dial.ordenesPendientes.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("dial.accionCliente.html") )
+		$scope.dialAccionCliente = $modal({scope: $scope,template:'dial.accionCliente.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("dial.orden-busqueda.html") )
+		$scope.dialOrdenBusqueda = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("dial.mantenimientoFact.html") )
+		$scope.dialMantenimientoF = $modal({scope: $scope,template:'dial.mantenimientoFact.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("dial.caja.html") )
+		$scope.dialCaja = $modal({scope: $scope,template:'dial.caja.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("dial.editarFactura.html") )
+		$scope.dialEditarFactura = $modal({scope: $scope,template:'dial.editarFactura.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("dial.ordenesPendientes.html") )
+		$scope.dialOrdenesPendientes = $modal({scope: $scope,template:'dial.ordenesPendientes.html', show: false, backdrop:false, keyboard: true });
 	
 	$scope.abrirOrdenesPendientes = function(){
 		$scope.consultaOrdenCliente();

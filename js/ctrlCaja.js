@@ -27,8 +27,8 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout, $filter )
 		}
 	});
 
-
-	$scope.dialHistorialCaja = $modal({scope: $scope,template:'dial.historialCaja.html', show: false, backdrop: 'static', keyboard: false});
+	if( document.getElementById("dial.historialCaja.html") )
+		$scope.dialHistorialCaja = $modal({scope: $scope,template:'dial.historialCaja.html', show: false, backdrop: 'static', keyboard: false});
 
 	$scope.abrirDialogoHistorial = function(){
 		$scope.dialHistorialCaja.show();

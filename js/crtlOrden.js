@@ -32,18 +32,30 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	alertify.set('notifier','position', 'top-right');
 
 	// DIALOGOS
-	$scope.dlAyuda              = $modal({scope: $scope,template:'ayuda.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialOrden            = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialOrdenCliente     = $modal({scope: $scope,template:'dial.orden.cliente.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialCantidad  		= $modal({scope: $scope,template:'dial.cantidad.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialOrdenMenu        = $modal({scope: $scope,template:'dial.orden-menu.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialMenuCantidad     = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false, keyboard: false });
-	$scope.dialOrdenBusqueda    = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialOrdenCancelar    = $modal({scope: $scope,template:'dial.orden.cancelar.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialEditarDetalle    = $modal({scope: $scope,template:'dial.orden.editar.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialUltimasOrdenes   = $modal({scope: $scope,template:'dial.ultimas.ordenes.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialCancelarDetalle  = $modal({scope: $scope,template:'dial.orden.cancelar-parcial.html', show: false, backdrop:false, keyboard: true });
-	$scope.dialCancelarOtro  = $modal({scope: $scope,template:'dial.orden.cancelar-otro.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("ayuda.html") )
+		$scope.dlAyuda = $modal({scope: $scope,template:'ayuda.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("dial.orden.nueva.html") )
+		$scope.dialOrden = $modal({scope: $scope,template:'dial.orden.nueva.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("dial.orden.cliente.html") )
+		$scope.dialOrdenCliente = $modal({scope: $scope,template:'dial.orden.cliente.html', show: false, backdrop:false, keyboard: false });
+	if( document.getElementById("dial.cantidad.html") )
+		$scope.dialCantidad = $modal({scope: $scope,template:'dial.cantidad.html', show: false, backdrop:false, keyboard: false });
+	if( document.getElementById("dial.orden-menu.html") )
+		$scope.dialOrdenMenu = $modal({scope: $scope,template:'dial.orden-menu.html', show: false, backdrop:false, keyboard: false });
+	if( document.getElementById("dial.menu-cantidad.html") )
+		$scope.dialMenuCantidad = $modal({scope: $scope,template:'dial.menu-cantidad.html', show: false, backdrop:false, keyboard: false });
+	if( document.getElementById("dial.orden-busqueda.html") )
+		$scope.dialOrdenBusqueda = $modal({scope: $scope,template:'dial.orden-busqueda.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("dial.orden.cancelar.html") )
+		$scope.dialOrdenCancelar = $modal({scope: $scope,template:'dial.orden.cancelar.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("dial.orden.editar.html") )
+		$scope.dialEditarDetalle = $modal({scope: $scope,template:'dial.orden.editar.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("dial.ultimas.ordenes.html") )
+		$scope.dialUltimasOrdenes = $modal({scope: $scope,template:'dial.ultimas.ordenes.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("dial.orden.cancelar-parcial.html") )
+		$scope.dialCancelarDetalle = $modal({scope: $scope,template:'dial.orden.cancelar-parcial.html', show: false, backdrop:false, keyboard: true });
+	if( document.getElementById("dial.orden.cancelar-otro.html") )
+		$scope.dialCancelarOtro = $modal({scope: $scope,template:'dial.orden.cancelar-otro.html', show: false, backdrop:false, keyboard: true });
 
 	($scope.init = function () {
 		// CONSULTA TIPO DE SERVICIOS

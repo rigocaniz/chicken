@@ -1,4 +1,4 @@
-app.controller('ctrlTendencia', function( $scope, $http, $timeout, $modal, $location, $filter ){
+app.controller('ctrlTendencia', function( $scope, $http, $timeout, $location, $filter ){
 	$scope.tipoMenu  = 'menu';
 	$scope.menuTen   = "fechaMenu";
 	$scope.paraFecha = new Date();
