@@ -3,7 +3,7 @@
     	<div class="text-center">
     		<h2>
     			<span class="glyphicon glyphicon-info-sign"></span>
-    			ERROR 403
+    			ERROR
     		</h2>
     		<span><b>NO TIENE PERMISOS PARA ACCEDER A ESTÁ PÁGINA</b></span>
     		<br><br>
