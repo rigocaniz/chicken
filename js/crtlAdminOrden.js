@@ -5,8 +5,6 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.tipoVista      = 'ticket';
 	$scope.ixMenuActual   = -1;
 	$scope.ixTicketActual = -1;
-
-
 	$scope.ixMenuFocus   = -1;
 	$scope.ixTicketFocus = -1;
 

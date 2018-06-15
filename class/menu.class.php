@@ -115,7 +115,7 @@ class Menu
  			$data->observacion = isset( $data->observacion ) ? (string)$data->observacion : NULL;
 
 	 		// VALIDACIONES
-			$cantidad    = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 2500, 'la cantidad' );
+			$cantidad    = $validar->validarCantidad( $data->cantidad, NULL, TRUE, 1, 10000, 'la cantidad' );
 			$observacion = $this->con->real_escape_string( $validar->validarTexto( $data->observacion, '', FALSE, 15, 1500, 'la observación' ) );
  		}
 
