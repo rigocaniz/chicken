@@ -345,7 +345,7 @@
 															{{ lp.tipoServicio }}
 														</td>
 														<td class="text-right">
-															<input type="number" min="0" max="999" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
+															<input type="number" min="0" max="5000" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
 														</td>
 														<td class="text-right">
 															<kbd class="numEfectivo">Q. {{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>
@@ -879,7 +879,7 @@
 														{{ lp.tipoServicio }}
 													</td>
 													<td class="text-right">
-														<input type="number" min="0" max="999" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
+														<input type="number" min="0" max="5000" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
 													</td>
 													<td class="text-right">
 														<kbd class="numEfectivo">Q. {{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>

@@ -51,7 +51,7 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
         $scope.dialBuscarCliente = $modal({scope: $scope,template:'dial.buscarCliente.html', show: false, backdrop: 'static'});
 
 	$scope.buscarCliente = function( valor, accion ){
-		console.log( valor, accion );
+		//console.log( valor, accion );
 		if( valor.length == 0 && accion == 'principal'  ) {
 			$scope.txtCliente = '';
 			$scope.lstClientes = [];
