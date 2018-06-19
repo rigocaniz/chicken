@@ -53,6 +53,9 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 			else if( $scope.modalOpen( 'dialAdminMenu' ) )
 				$scope.consultaMenu();
+
+			else if( $scope.modalOpen( 'dialEditarPrecios' ) )
+				$scope.actualizarPrecios();
 		}
 		else if( altDerecho && key == 65 ) {
 			if( !$scope.modalOpen() )
@@ -97,13 +100,14 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		{limite: "100" }
 	];
 
-
+	/*
 	$scope.filtro = {
 		filter : { filter: 'idMedida', value : 8 },
 		order  : { by: 'idMedia', order: 'ASC' },
 		limit  : 25,
 		page   : 1
 	};
+	*/
 
 	$scope.filter = {
 		pagina   : 1,
@@ -376,7 +380,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 	// SELECCIONAR PRODUCTO
 	$scope.seleccionarElemento = function( valores, elemento ) {
-		console.log( valores, ' ::: ', elemento );
+		//console.log( valores, ' ::: ', elemento );
 		if( elemento == 'producto' )
 		{
 			if( !(valores.idProducto && valores.idProducto > 0) )
@@ -608,19 +612,9 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			error = true;
 			alertify.notify( 'La descripción del menú debe ser mayor a 10 caracteres', 'info', 5 );		
 		}
-		else if( $scope.validarPreciosMenu( menu ) )
+		else if( $scope.validarPreciosMenu( menu, menu.menu ) )
 			error = true;
-		
-		/*else{
-			for (var i = 0; i < menu.lstPrecios.length; i++) {
-				if( !( menu.lstPrecios[ i ].precio && menu.lstPrecios[ i ].precio >= 0 ) ){
-					alertify.notify( 'Ingrese un precio válido en el servicio ' + menu.lstPrecios[ i ].tipoServicio, 'warning', 5 );
-					error = true;
-					break;
-				}
-			}
-		}*/
-		
+
 		if( !error ){
 			$http.post('consultas.php',{
 				opcion : "consultaMenu",

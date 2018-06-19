@@ -206,7 +206,7 @@
 
 <!-- MODAL AGREGAR / EDITAR MENU -->
 <script type="text/ng-template" id="dial.editarPrecios.html">
-	<div class="modal" tabindex="-1" role="dialog" id="dialAdminMenu">
+	<div class="modal" tabindex="-1" role="dialog" id="dialEditarPrecios">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content panel-info">
 				<div class="modal-header panel-heading">
