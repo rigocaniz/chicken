@@ -30,6 +30,9 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		$scope.dialDetalleCombo = $modal({scope: $scope,template:'dial.detalleCombo.html', show: false, backdrop: 'static', keyboard: false});
 	if( document.getElementById("dialAdmin.producto.html") )
 		$scope.dialAdministrar = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
+	if( document.getElementById("dial.editarPrecios.html") )
+		$scope.dialEditarPrecios = $modal({scope: $scope,template:'dial.editarPrecios.html', show: false, backdrop: 'static', keyboard: false});
+	
 
 	// TECLA PARA ATAJOS RAPIDOS
 	$scope.$on('keyPress', function( event, key, altDerecho )
@@ -245,6 +248,19 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			if ( data.respuesta == 'success' ) {
 				$scope.lstComboDetalle( $scope.objCombo.idCombo, false );
 			}
+		});
+	};
+
+
+	// CONSULTAR DETALLE COMBO
+	$scope.consultarMenusPrecios = function()
+	{
+		$http.post('consultas.php',{opcion: 'consultarMenusPrecios'})
+		.success(function(data){
+			console.log( data );
+			$scope.lstMenusPrecios = data || [];
+			if( data.length )
+				$scope.dialEditarPrecios.show();
 		});
 	};
 
@@ -592,15 +608,18 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			error = true;
 			alertify.notify( 'La descripción del menú debe ser mayor a 10 caracteres', 'info', 5 );		
 		}
-		else{
+		else if( $scope.validarPreciosMenu( menu ) )
+			error = true;
+		
+		/*else{
 			for (var i = 0; i < menu.lstPrecios.length; i++) {
 				if( !( menu.lstPrecios[ i ].precio && menu.lstPrecios[ i ].precio >= 0 ) ){
-					alertify.notify( 'Ingrese un precio válido en el servicio ' + menu.lstPrecios[ i ].tipoServicio, 'warning', 4000 );
+					alertify.notify( 'Ingrese un precio válido en el servicio ' + menu.lstPrecios[ i ].tipoServicio, 'warning', 5 );
 					error = true;
 					break;
 				}
 			}
-		}
+		}*/
 		
 		if( !error ){
 			$http.post('consultas.php',{
@@ -618,6 +637,54 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				}
 			})
 		}
+	};
+
+
+	$scope.actualizarPrecios = function()
+	{
+		//console.log( $scope.lstMenusPrecios );
+		var error = false;
+
+		for (var i = 0; i < $scope.lstMenusPrecios.length; i++) {
+			var menuPrecio = $scope.lstMenusPrecios[ i ];
+			if( $scope.validarPreciosMenu( menuPrecio, menuPrecio.menu ) ){
+				error = true;
+				break;
+			}
+		}
+		
+		if( !error )
+		{
+			$http.post('consultas.php',{
+				opcion : "actualizarPrecios",
+				datos  : $scope.lstMenusPrecios
+			}).success(function(data){
+				console.log( data );
+				alertify.set('notifier','position', 'top-right');
+ 				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
+				if ( data.data > 0 )
+					$scope.dialEditarPrecios.hide();
+			});
+		}
+	};
+
+
+	// VALIDAR PRECIOS DE MENU
+	$scope.validarPreciosMenu = function( menu, nombreMenu )
+	{
+		var error = false;
+		if( nombreMenu.length )
+			nombreMenu = ' <b>=> ' + nombreMenu + '</b>';
+
+		for (var i = 0; i < menu.lstPrecios.length; i++) {
+			if( !( menu.lstPrecios[ i ].precio && menu.lstPrecios[ i ].precio >= 0 ) ){
+				alertify.notify( 'Ingrese un precio válido en servicio ' + menu.lstPrecios[ i ].tipoServicio + nombreMenu, 'warning', 5 );
+				error = true;
+				break;
+			}
+		}
+
+		return error;
 	};
 
 
@@ -762,7 +829,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		else{
 			for (var i = 0; i < combo.lstPrecios.length; i++) {
 				if( !( combo.lstPrecios[ i ].precio && combo.lstPrecios[ i ].precio >= 0 ) ){
-					alertify.notify( 'Ingrese un precio válido en el servicio ' + combo.lstPrecios[ i ].tipoServicio, 'warning', 4000 );
+					alertify.notify( 'Ingrese un precio válido en el servicio ' + combo.lstPrecios[ i ].tipoServicio, 'warning', 5 );
 					error = true;
 					break;
 				}

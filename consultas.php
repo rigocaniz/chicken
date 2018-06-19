@@ -153,6 +153,16 @@ switch ( $data->opcion )
 		echo json_encode( $menu->cargarMenuPrecio( $data->idMenu ) );
 		break;
 
+	case 'actualizarPrecios':		// ACTUALIZACION DE PRECIOS MASIVO
+		$menu = new Menu();
+		echo json_encode( $menu->actualizarPrecios( $data->datos ) );
+		break;
+
+	case 'consultarMenusPrecios':
+		$menu = new Menu();
+		echo json_encode( $menu->consultarMenusPrecios() );
+		break;
+
 	case 'cargarMenuPrecio':		// DATOS MENU PRECIO
 		$menu = new Menu();
 		$orden = new Orden();
