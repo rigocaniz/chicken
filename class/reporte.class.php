@@ -248,5 +248,23 @@ class Reporte
  		return $ventas;
  	}
 
+ 	// OBTENER VENTAS POR FECHA
+ 	public function getVentasGeneral( $deFecha, $paraFecha, $agruparVenta )
+ 	{
+ 		$lst = array();
+
+ 		$sql = "CALL repVentasGeneral( '{$deFecha}', '{$paraFecha}', '{$agruparVenta}' )";
+
+		if( $rs = $this->con->query( $sql ) )
+		{
+			if( $rs->num_rows )
+			{
+	 			while( $row = $rs->fetch_object() )
+ 					$lst[] = $row;
+			}
+ 		}
+
+ 		return $lst;
+ 	}
 }
 ?>

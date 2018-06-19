@@ -175,7 +175,7 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 				
 			}
 			else if( accion == 'descargar' )
-    			window.open('reporte.php?fechaInicio=' + fechaInicio + '&fechaFinal=' + fechaFinal, '_blank');
+    			window.open('reporte.php?fechaInicio=' + fechaInicio + '&fechaFinal=' + fechaFinal + '&agruparVenta=' + $scope.agruparVenta , '_blank');
 		}
 	};
 

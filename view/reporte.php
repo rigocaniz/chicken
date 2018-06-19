@@ -62,13 +62,19 @@
 						    	<label><i class="fa fa-calendar"></i> A FECHA:</label>
 						      	<input class="form-control" ng-model="fechaFinal" data-min-date="{{ fechaInicio }}" placeholder="dd/mm/aaaa" bs-datepicker type="text">
 						    </div>
-						    <div>
-						    	<br>
-						    	<button type="button" class="btn btn-sm btn-info" ng-click="consultarVentas( 'consultar' )">
-						    		CONSULTAR <span class="glyphicon glyphicon-ok"></span>
-						    	</button>
+						    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-3">
+						    	<label><i class="fa fa-calendar"></i> Agrupar por:</label>
+						    	<select ng-model="agruparVenta" class="form-control" ng-init="agruparVenta='factura'">
+						    		<option value="dia">Día de la Semana</option>
+						    		<option value="mes">Mes</option>
+						    		<option value="servicio">Servicio</option>
+						    		<option value="menu">Menú</option>
+						    		<option value="factura">Factura</option>
+						    	</select>
+						    </div>
+						    <div class="col-sm-6" style="margin-top:6px">
 						    	<button type="button" class="btn btn-sm btn-primary" ng-click="consultarVentas( 'descargar' )">
-						    		GENERAR REPORTE <span class="glyphicon glyphicon-download-alt"></span>
+						    		DESCARGAR REPORTE <span class="glyphicon glyphicon-download-alt"></span>
 						    	</button>
 						    </div>
 						</div>
