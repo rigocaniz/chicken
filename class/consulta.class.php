@@ -31,9 +31,8 @@ class Consulta
 					ORDER BY idFormaPago;";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() ){
+ 			while( $row = $rs->fetch_assoc() )
  				$catFormasPago[] = $row;
- 			}
  		}
 
  		return $catFormasPago;
@@ -47,7 +46,7 @@ class Consulta
  		$sql = "SELECT idEstadoFactura, estadoFactura FROM estadoFactura;";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while ( $row = $rs->fetch_object() )
+ 			while ( $row = $rs->fetch_assoc() )
  				$catEstadosFactura[] = $row;
  		}
 
@@ -62,7 +61,7 @@ class Consulta
  		$sql = "SELECT * FROM ubicacion;";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while ( $row = $rs->fetch_object() )
+ 			while ( $row = $rs->fetch_assoc() )
  				$catUbicacion[] = $row;
  		}
 
@@ -76,7 +75,7 @@ class Consulta
  		$sql = "SELECT idTipoServicio, tipoServicio, orden FROM tipoServicio ORDER BY orden;";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() )
+ 			while( $row = $rs->fetch_assoc() )
  				$catTiposServicio[] = $row;
  		}
  		
@@ -90,7 +89,7 @@ class Consulta
  		$sql = "SELECT idEstadoMenu, estadoMenu FROM estadoMenu;";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() )
+ 			while( $row = $rs->fetch_assoc() )
  				$catEstadoMenu[] = $row;
  		}
  		
@@ -104,7 +103,7 @@ class Consulta
  		$sql = "SELECT idMedida, medida FROM medida ORDER BY idMedida;";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() )
+ 			while( $row = $rs->fetch_assoc() )
  				$catMedidas[] = $row;
  		}
  		
@@ -118,7 +117,7 @@ class Consulta
  		$sql = "SELECT idDestinoMenu, destinoMenu FROM destinoMenu ORDER BY idDestinoMenu;";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() )
+ 			while( $row = $rs->fetch_assoc() )
  				$catDestinoMenu[] = $row;
  		}
  		
@@ -132,7 +131,7 @@ class Consulta
  		$sql = "SELECT idTipoProducto, tipoProducto FROM tipoProducto ORDER BY idTipoProducto;";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() )
+ 			while( $row = $rs->fetch_assoc() )
  				$catTipoProducto[] = $row;
  		}
  		
@@ -146,7 +145,7 @@ class Consulta
  		$sql = "SELECT idEstadoOrden, estadoOrden FROM estadoOrden ORDER BY idEstadoOrden;";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() )
+ 			while( $row = $rs->fetch_assoc() )
  				$catEstadoOrden[] = $row;
  		}
  		
@@ -161,7 +160,7 @@ class Consulta
  		$sql = "SELECT idTipoCliente, tipoCliente FROM tipoCliente ORDER BY idTipoCliente;";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() )
+ 			while( $row = $rs->fetch_assoc() )
  				$catTiposCliente[] = $row;
  		}
 
@@ -176,7 +175,7 @@ class Consulta
  		$sql = "SELECT idEstadoCaja, estadoCaja FROM estadoCaja ORDER BY idEstadoCaja;";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() )
+ 			while( $row = $rs->fetch_assoc() )
  				$catEstadoCaja[] = $row;
  		}
 
@@ -190,7 +189,7 @@ class Consulta
  		$sql = "SELECT idTipoMenu, tipoMenu FROM tipoMenu ";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() )
+ 			while( $row = $rs->fetch_assoc() )
  				$lst[] = $row;
  		}
 
@@ -204,7 +203,7 @@ class Consulta
  		$sql = "SELECT idSalon, salon FROM salon ";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() )
+ 			while( $row = $rs->fetch_assoc() )
  				$lst[] = $row;
  		}
 
@@ -218,8 +217,8 @@ class Consulta
  		$sql = "SELECT idTipoMovimiento, tipoMovimiento, ingreso FROM tipoMovimiento ";
  		
  		if( $rs = $this->con->query( $sql ) ){
- 			while( $row = $rs->fetch_object() ){
-				$row->ingreso = (int)$row->ingreso;
+ 			while( $row = $rs->fetch_assoc() ){
+				$row[ 'ingreso' ] = (int)$row[ 'ingreso' ];
 				$lst[]        = $row;
  			}
  		}

@@ -175,6 +175,26 @@ class Menu
 		return $menu;
 	}
 
+	// OBTENER LISTA DE MENUS + PRECIOS
+	function consultarMenusPrecios()
+	{
+		$lstMenus = array();
+		$sql = "SELECT idMenu, imagen, menu, tipoMenu, codigoMenu
+					FROM lstMenu 
+				WHERE idEstadoMenu <> 3;";
+
+		if( $rs = $this->con->query( $sql ) AND $rs->num_rows )
+		{
+			while( $row = $rs->fetch_assoc() )
+			{
+				$row[ 'lstPrecios' ] = $this->cargarMenuPrecio( $row[ 'idMenu' ] );
+				$lstMenus[]          = $row;
+			}
+		}
+
+		return $lstMenus;
+	}
+
 
 	// CONSULTAR DATOS MENU PRECIO
 	function cargarMenuPrecio( $idMenu )
@@ -193,12 +213,12 @@ class Menu
 				    idMenu = {$idMenu};";
 
 		if( $rs = $this->con->query( $sql ) ){
-			while( $rs AND $row = $rs->fetch_object() )
+			while( $rs AND $row = $rs->fetch_assoc() )
 				$menuPrecio[] = array(
-					'idMenu'         => (int)$row->idMenu,
-					'idTipoServicio' => (int)$row->idTipoServicio,
-					'tipoServicio'   => $row->tipoServicio,
-					'precio'         => (double)$row->precio,
+					'idMenu'         => (int)$row[ 'idMenu' ],
+					'idTipoServicio' => (int)$row[ 'idTipoServicio' ],
+					'tipoServicio'   => $row[ 'tipoServicio' ],
+					'precio'         => (double)$row[ 'precio' ],
 				);
 		}
 
@@ -386,7 +406,6 @@ class Menu
  	// GUARDAR // ACTUALIZAR => MENU
 	function consultaMenu( $accion, $data )
  	{
- 		
  		if( count( $data->lstPrecios ) ){
 
 	 		$validar = new Validar();
@@ -513,6 +532,30 @@ class Menu
  		}
  	}
 
+
+ 	// ACTUALIZAR PRECIO MASIVO
+ 	function actualizarPrecios( $datos )
+ 	{
+ 		if( count( $datos ) )
+ 		{
+ 			$this->data = 0;
+ 			foreach ($datos AS $menu )
+ 			{
+ 				$this->consultaMenuPrecio( 'insert', $menu->idMenu, $menu->lstPrecios );
+ 				if( $this->respuesta == 'danger' )
+ 					break;
+ 				elseif( $this->respuesta == 'success' )
+ 					$this->data++;
+ 			}
+ 		}
+ 		else{
+ 			$this->respuesta = 'warning';
+		 	$this->mensaje   = 'No hay productos ingresados en la lista de recetas';
+ 		}
+
+ 		return $this->getRespuesta();
+ 	}
+
  	
  	// BUSCAR MENU POR NOMBRE
  	function buscarMenu( $menu )
@@ -558,7 +601,7 @@ class Menu
  	{
 
  		if( $this->respuesta == 'success' )
- 			$this->tiempo = 4;
+ 			$this->tiempo = 3;
  		elseif( $this->respuesta == 'warning')
  			$this->tiempo = 5;
  		elseif( $this->respuesta == 'danger')
