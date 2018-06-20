@@ -26,7 +26,7 @@ class Usuario
 		$sql = "SELECT * FROM estadoUsuario;";
 		
 		if( $rs = $this->con->query( $sql ) ){
-			while( $row = $rs->fetch_object() )
+			while( $row = $rs->fetch_assoc() )
 				$lstEstadoUsuario[] = $row;
 		}
 		
@@ -51,7 +51,7 @@ class Usuario
 		$sql = "SELECT * FROM vUsuario $where ;";
 		
 		if( $rs = $this->con->query( $sql ) ){
-			while( $row = $rs->fetch_object() )
+			while( $row = $rs->fetch_assoc() )
 				$lstUsuarios[] = $row;
 		}
 		

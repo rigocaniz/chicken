@@ -70,24 +70,6 @@ class Medida
  		return $this->getRespuesta();
 	}
 
-
-	// CONSULTAR DATOS MEDIDA
-	function cargarMedida( $idMedida )
-	{
-		$idMedida = (int)$idMedida;
-		$medida   = array();
-
-		$sql = "SELECT idMedida, medida FROM medida WHERE idMedida = {$idMedida};";
-		
-		if( $rs = $this->con->query( $sql ) ){
-			while( $row = $rs->fetch_object() )
-				$medida = $row;
-		}
-
-		return $medida;
-	}
-
-
 	// OBTENER ARREGLO RESPUESTA
  	private function getRespuesta()
  	{

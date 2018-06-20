@@ -128,21 +128,6 @@ switch ( $data->opcion )
 	/////////////////////////
 	//***** CONSULTA DATOS
 	////////////////////////
-	case 'cargarMedida':			// DATOS MEDIDA
-		$medida = new Medida();
-		echo json_encode( $medida->cargarMedida( $data->idMedida ) );
-		break;
-
-	case 'cargarTipoProducto':		// DATOS TIPO PRODUCTO
-		$producto = new Producto();
-		echo json_encode( $producto->cargarTipoProducto( $data->idTipoProducto ) );
-		break;
-
-	case 'cargarProducto':			// DATOS PRODUCTO
-		$producto = new Producto();
-		echo json_encode( $producto->cargarProducto( $data->idProducto ) );
-		break;
-
 	case 'cargarMenu':				// DATOS MENU
 		$menu = new Menu();
 		echo json_encode( $menu->cargarMenu( $data->idMenu ) );

@@ -1,7 +1,6 @@
 app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout ){
 
 	$scope.menuTab         = 'menu';
-	//$scope.accion          = 'insert';
 	$scope.lstDestinoMenu  = [];
 	$scope.lstTipoMenu     = [];
 	$scope.lstTipoServicio = [];
@@ -114,14 +113,12 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		page   : 1
 	};
 	*/
-
 	$scope.filter = {
 		pagina   : 1,
 		limite   : "25",
 		orden    : 'ASC',
 		busqueda : ''
 	};
-
 	// ACTUALIZAR LST RECETA
 	$scope.actualizarLstReceta = function() {
 		var objMenu = $scope.objMenu;
@@ -203,7 +200,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				datos  : $scope.menuD
 			})
 			.success(function(data){
-				console.log(data);
+				//console.log(data);
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
 				if( data.respuesta == 'success' ){
@@ -217,8 +214,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	// ACTUALIZAR LST RECETA
 	$scope.actualizarLstDetalleCombo = function() {
 		var objCombo = $scope.objCombo;
-		console.log( objCombo );
-
+		//console.log( objCombo );
 		if( !(objCombo.lstDetalleCombo && objCombo.lstDetalleCombo.length > 0) )
 			alertify.notify( 'No hay productos ingresados en la lista de recetas', 'warning', 5 );
 		else
@@ -229,13 +225,12 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				datos  : objCombo.lstDetalleCombo
 			})
 			.success(function(data){
-				console.log( data );
+				//console.log( data );
 				alertify.set('notifier','position', 'top-right');
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 
-				if ( data.respuesta == 'success' ) {
+				if ( data.respuesta == 'success' )
 					$scope.dialDetalleCombo.hide();
-				}
 			});
 		}
 	};
@@ -265,7 +260,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	{
 		$http.post('consultas.php',{opcion: 'consultarMenusPrecios'})
 		.success(function(data){
-			console.log( data );
+			//console.log( data );
 			$scope.lstMenusPrecios = data || [];
 			if( data.length )
 				$scope.dialEditarPrecios.show();
@@ -277,7 +272,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	{
 		$http.post('consultas.php',{opcion: 'consultarComboPrecios'})
 		.success(function(data){
-			console.log( data );
+			//console.log( data );
 			$scope.lstCombosPrecios = data || [];
 			if( data.length )
 				$scope.dialEditarPreciosC.show();
@@ -299,7 +294,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	{
 		$http.post('consultas.php',{opcion: 'lstComboDetalle', idCombo: idCombo})
 		.success(function(data){
-			console.log( data );
+			//console.log( data );
 			$scope.objCombo.lstDetalleCombo = data;
 			if( abrirModal )
 				$scope.dialDetalleCombo.show();
@@ -437,7 +432,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 	// BUSCAR PRODUCTOS
 	$scope.buscarProducto = function( nombreProducto ){
-		console.log( $scope.prod );
+		//console.log( $scope.prod );
 		if( nombreProducto.length && !$scope.prod.seleccionado )
 		{
 			$http.post('consultas.php',{opcion: 'buscarProducto', nombreProducto: nombreProducto})

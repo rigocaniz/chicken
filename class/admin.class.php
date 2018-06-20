@@ -32,7 +32,7 @@ class Admin
 		$sql = "SELECT * FROM perfil;";
 		
 		if( $rs = $this->con->query( $sql ) ){
-			while( $row = $rs->fetch_object() )
+			while( $row = $rs->fetch_assoc() )
 				$lstPerfiles[] = $row;
 		}
 		

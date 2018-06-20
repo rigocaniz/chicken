@@ -312,6 +312,7 @@
 	</div>
 </script>
 
+
 <!-- MODAL AGREGAR / EDITAR MENU -->
 <script type="text/ng-template" id="dial.adminMenu.html">
 	<div class="modal" tabindex="-1" role="dialog" id="dialAdminMenu">
@@ -1106,6 +1107,7 @@
 		</div>
 	</div>
 </script>
+
 
 <!-- MODAL AGREGAR / EDITAR PRODUCTO -->
 <script type="text/ng-template" id="dialAdmin.producto.html">
