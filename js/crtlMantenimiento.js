@@ -23,6 +23,8 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		$scope.dialAdministrar = $modal({scope: $scope,template:'dialAdmin.producto.html', show: false, backdrop: 'static'});
 	if( document.getElementById("dial.editarPrecios.html") )
 		$scope.dialEditarPrecios = $modal({scope: $scope,template:'dial.editarPrecios.html', show: false, backdrop: 'static', keyboard: false});
+	if( document.getElementById("dial.editarPreciosC.html") )
+		$scope.dialEditarPreciosC = $modal({scope: $scope,template:'dial.editarPreciosC.html', show: false, backdrop: 'static', keyboard: false});
 	
 
 	// TECLA PARA ATAJOS RAPIDOS
@@ -47,14 +49,28 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 			else if( $scope.modalOpen( 'dialEditarPrecios' ) )
 				$scope.actualizarPrecios();
+
+			else if( $scope.modalOpen( 'dialEditarPreciosC' ) )
+				$scope.actualizarPreciosCombo();
 		}
-		else if( altDerecho && key == 65 ) {
+		else if( altDerecho && ( key == 65 || key == 69 ) ) {
 			if( !$scope.modalOpen() )
 			{
 				if( $scope.menuTab == 'menu' )
-					$scope.agregarMenuCombo( 'menu' );
-				if( $scope.menuTab == 'combo' )
-					$scope.agregarMenuCombo( 'combo' );
+				{
+					if ( key == 65 )
+						$scope.agregarMenuCombo( 'menu' );
+					else if( key == 69 )
+						$scope.consultarMenusPrecios();
+				} 
+				else if( $scope.menuTab == 'combo' )
+				{
+					if( key == 65 )
+						$scope.agregarMenuCombo( 'combo' );
+					else if( key == 69 )
+						$scope.consultarComboPrecios();
+				}
+
 			}
 			else
 				alertify.notify('Acción no válida', 'info', 3);
@@ -244,7 +260,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	};
 
 
-	// CONSULTAR DETALLE COMBO
+	// CONSULTAR PRECIOS DE LOS MENUS
 	$scope.consultarMenusPrecios = function()
 	{
 		$http.post('consultas.php',{opcion: 'consultarMenusPrecios'})
@@ -253,6 +269,18 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			$scope.lstMenusPrecios = data || [];
 			if( data.length )
 				$scope.dialEditarPrecios.show();
+		});
+	};
+
+	// CONSULTAR PRECIOS DE LOS COMBOS 
+	$scope.consultarComboPrecios = function()
+	{
+		$http.post('consultas.php',{opcion: 'consultarComboPrecios'})
+		.success(function(data){
+			console.log( data );
+			$scope.lstCombosPrecios = data || [];
+			if( data.length )
+				$scope.dialEditarPreciosC.show();
 		});
 	};
 
@@ -558,7 +586,8 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	};
 
 	// REGISTRAR MENU
-	$scope.consultaMenu = function(){
+	$scope.consultaMenu = function()
+	{
 		var menu = $scope.menu;
 		
 		if( $scope.accion == 'update' && !(menu.idMenu && menu.idMenu > 0) )
@@ -581,10 +610,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		else if( !( menu.tiempoAlerta && menu.tiempoAlerta > 0 ) )
 			alertify.notify( 'El tiempo límite debe ser mayor a 0', 'info', 4 );
 
-		else if( !( menu.descripcion && menu.descripcion.length > 10 ) )
-			alertify.notify( 'La descripción del menú debe ser mayor a 10 caracteres', 'info', 5 );		
-
-		else if( !$scope.validarPreciosMenu( menu, menu.menu ) )
+		else if( !$scope.validarPreciosCM( menu, menu.menu ) )
 		{
 			$http.post('consultas.php',{
 				opcion : "consultaMenu",
@@ -603,15 +629,42 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		}
 	};
 
-	// ACTUALIZAR PRECIOS MASIVO
+	// GUARDAR // ACTUALIZAR PRECIOS COMBO
+	$scope.actualizarPreciosCombo = function()
+	{
+		var error = false;
+
+		for (var i = 0; i < $scope.lstCombosPrecios.length; i++) {
+			var combo = $scope.lstCombosPrecios[ i ];
+			if( $scope.validarPreciosCM( combo, combo.combo ) ){
+				error = true;
+				break;
+			}
+		}
+		
+		if( !error )
+		{
+			$http.post('consultas.php',{
+				opcion : "actualizarPreciosCombo",
+				datos  : $scope.lstCombosPrecios
+			}).success(function(data){
+				//console.log( data );
+				alertify.set('notifier','position', 'top-right');
+ 				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
+				if ( data.data > 0 )
+					$scope.dialEditarPreciosC.hide();
+			});
+		}
+	};
+
+	// GUARDAR // ACTUALIZAR PRECIOS MENU
 	$scope.actualizarPrecios = function()
 	{
-		//console.log( $scope.lstMenusPrecios );
 		var error = false;
 
 		for (var i = 0; i < $scope.lstMenusPrecios.length; i++) {
 			var menuPrecio = $scope.lstMenusPrecios[ i ];
-			if( $scope.validarPreciosMenu( menuPrecio, menuPrecio.menu ) ){
+			if( $scope.validarPreciosCM( menuPrecio, menuPrecio.menu ) ){
 				error = true;
 				break;
 			}
@@ -623,7 +676,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				opcion : "actualizarPrecios",
 				datos  : $scope.lstMenusPrecios
 			}).success(function(data){
-				console.log( data );
+				//console.log( data );
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
 				if ( data.data > 0 )
@@ -632,17 +685,16 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		}
 	};
 
-
 	// VALIDAR PRECIOS DE MENU
-	$scope.validarPreciosMenu = function( menu, nombreMenu )
+	$scope.validarPreciosCM = function( menuCombo, descripcion )
 	{
 		var error = false;
-		if( nombreMenu.length )
-			nombreMenu = ' <b>=> ' + nombreMenu + '</b>';
+		if( descripcion.length )
+			descripcion = ' <b>=> ' + descripcion + '</b>';
 
-		for (var i = 0; i < menu.lstPrecios.length; i++) {
-			if( !( menu.lstPrecios[ i ].precio && menu.lstPrecios[ i ].precio >= 0 ) ){
-				alertify.notify( 'Ingrese un precio válido en servicio ' + menu.lstPrecios[ i ].tipoServicio + nombreMenu, 'warning', 5 );
+		for (var i = 0; i < menuCombo.lstPrecios.length; i++) {
+			if( !( menuCombo.lstPrecios[ i ].precio && menuCombo.lstPrecios[ i ].precio >= 0 ) ){
+				alertify.notify( 'Ingrese un precio válido en servicio ' + menuCombo.lstPrecios[ i ].tipoServicio + descripcion, 'warning', 5 );
 				error = true;
 				break;
 			}
@@ -651,7 +703,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		return error;
 	};
 
-
+	// RESETEAR VALORES
 	$scope.resetValores = function( accion ){
 		$scope.accion == 'insert';
 		$scope.filter.busqueda = '';
@@ -725,20 +777,19 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	// RESETEAR PRODUCTO
 	$scope.resetValores( 'receta' );
 
-	$scope.agregarMenuCombo = function( tipo ){
+	$scope.agregarMenuCombo = function( tipo )
+	{
 		$scope.accion = 'insert';
+		$scope.resetValores( tipo );
 		if( tipo == 'menu' ){
 			$scope.resetValores( 'producto' );
-			$scope.resetValores( tipo );
 			$scope.dialAdminMenu.show();
 			$timeout(function(){
 				$('#nombreMenu').focus();
 			}, 175);
 		}
-
 		else if( tipo == 'combo' ){
 			$scope.resetValores( 'comboDetalle' );
-			$scope.resetValores( tipo );
 			$scope.dialAdminCombo.show();
 			$timeout(function(){
 				$('#nombreCombo').focus();
@@ -770,7 +821,8 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	};
 
 	// REGISTRAR COMBO
-	$scope.consultaCombo = function(){
+	$scope.consultaCombo = function()
+	{
 		var combo = $scope.combo, error = false;
 
 		if( $scope.accion == 'update' && !(combo.idCombo && combo.idCombo > 0) ){
@@ -789,27 +841,14 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			error = true;
 			alertify.notify( 'Ingrese el código del combo', 'info', 4 );		
 		}
-		else if( !( combo.descripcion && combo.descripcion.length > 10 ) ){
-			error = true;
-			alertify.notify( 'La descripción del combo debe ser mayor a 10 caracteres', 'info', 5 );		
-		}
-		else{
-			for (var i = 0; i < combo.lstPrecios.length; i++) {
-				if( !( combo.lstPrecios[ i ].precio && combo.lstPrecios[ i ].precio >= 0 ) ){
-					alertify.notify( 'Ingrese un precio válido en el servicio ' + combo.lstPrecios[ i ].tipoServicio, 'warning', 5 );
-					error = true;
-					break;
-				}
-			}
-		}
-
-		if( !error ) {
+		else if( !$scope.validarPreciosCM( combo, combo.combo ) )
+		{
 			$http.post('consultas.php',{
 				opcion : "consultaCombo",
 				accion : $scope.accion,
 				datos  : $scope.combo
 			}).success(function(data){
-				console.log( data );
+				//console.log( data );
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
 				if ( data.respuesta == 'success' ) {

@@ -158,7 +158,7 @@ switch ( $data->opcion )
 		echo json_encode( $menu->actualizarPrecios( $data->datos ) );
 		break;
 
-	case 'consultarMenusPrecios':
+	case 'consultarMenusPrecios':	// CONSULTAR LISTA DE PRECIOS POR MENU
 		$menu = new Menu();
 		echo json_encode( $menu->consultarMenusPrecios() );
 		break;
@@ -172,6 +172,16 @@ switch ( $data->opcion )
 				'lstSinDisponibilidad' => $orden->obtenerDisponiblidad( $data->cantidad, $data->idMenu, NULL ),
 			)
 		);
+		break;
+
+	case 'consultarComboPrecios':	// CONSULTAR LISTA DE PRECIOS POR COMBO
+		$combo = new Combo();
+		echo json_encode( $combo->consultarComboPrecios() );
+		break;
+
+	case 'actualizarPreciosCombo':	// ACTUALIZACION DE PRECIOS MASIVO
+		$combo = new Combo();
+		echo json_encode( $combo->actualizarPreciosCombo( $data->datos ) );
 		break;
 
 	case 'cargarCombo':				// DATOS COMBO

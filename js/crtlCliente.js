@@ -1,7 +1,7 @@
 app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
 	
     $scope.menuCliente = 'ingresar';
-    $scope.accion      = 'insert';
+   // $scope.accion      = 'insert';
     $scope.txtCliente  = '';
     $scope.lstClientes = [];
 

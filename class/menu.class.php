@@ -436,7 +436,7 @@ class Menu
 
 			$menu          = $this->con->real_escape_string( $validar->validarTexto( $data->menu, NULL, TRUE, 3, 45, 'el nombre del menu' ) );
 			$codigo        = $validar->validarEntero( $data->codigo, NULL, TRUE, 'El código del Menu no es válido' );
-			$descripcion   = $this->con->real_escape_string( $validar->validarTexto( $data->descripcion, NULL, TRUE, 3, 1500, 'en la descripcion' ) );
+			$descripcion   = $this->con->real_escape_string( $validar->validarTexto( $data->descripcion, NULL, strlen( $data->descripcion ), 5, 1500, 'en la descripcion' ) );
 			$idEstadoMenu  = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado Menú no es válido' );
 			$idDestinoMenu = $validar->validarEntero( $data->idDestinoMenu, NULL, TRUE, 'El ID del tipo de medida no es válido	' );
 			$idTipoMenu    = $validar->validarEntero( $data->idTipoMenu, NULL, TRUE, 'El ID del tipo de menú no es válido' );
@@ -550,7 +550,7 @@ class Menu
  		}
  		else{
  			$this->respuesta = 'warning';
-		 	$this->mensaje   = 'No hay productos ingresados en la lista de recetas';
+		 	$this->mensaje   = 'No hay una lista de menus';
  		}
 
  		return $this->getRespuesta();

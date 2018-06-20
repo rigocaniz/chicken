@@ -342,11 +342,32 @@ class Combo
  	}
 
 
+ 	// OBTENER LISTA DE COMBO + PRECIOS
+	function consultarComboPrecios()
+	{
+		$lstCombos = array();
+		$sql = "SELECT 
+				    idCombo, combo, codigoCombo
+					FROM lstCombo
+						WHERE idEstadoMenu <> 3;";
+
+		if( $rs = $this->con->query( $sql ) AND $rs->num_rows )
+		{
+			while( $row = $rs->fetch_assoc() )
+			{
+				$row[ 'lstPrecios' ] = $this->lstComboPrecio( $row[ 'idCombo' ] );
+				$lstCombos[]          = $row;
+			}
+		}
+
+		return $lstCombos;
+	}
+
+
  	// CONSULTAR LISTA DE COMBOS PRECIO
  	function lstComboPrecio( $idCombo )
  	{
-
- 		$idCombo     = (int)$idCombo;
+		$idCombo         = (int)$idCombo;
 		$lstComboPrecios = array();
 
 		$sql = "SELECT 
@@ -372,8 +393,6 @@ class Combo
 		return $lstComboPrecios;
  	}
 
-
-
  	// CONSULTAR LISTA DE COMBOS
  	function lstSuperCombo()
  	{
@@ -389,7 +408,6 @@ class Combo
 
  		return $lstSuperCombo;
  	}
-
 
  	// CONSULTAR LISTA DE COMBOS PRECIO
  	function lstSuperComboDetalle()
@@ -453,7 +471,7 @@ class Combo
 
 			$combo        = $this->con->real_escape_string( $validar->validarTexto( $data->combo, NULL, TRUE, 3, 45, 'el nombre del combo' ) );
 			$codigo       = $validar->validarEntero( $data->codigo, NULL, TRUE, 'El código del combo no es válido' );
-			$descripcion  = $this->con->real_escape_string( $validar->validarTexto( $data->descripcion, NULL, TRUE, 10, 1500, 'la descripcion' ) );
+			$descripcion  = $this->con->real_escape_string( $validar->validarTexto( $data->descripcion, NULL, strlen( $data->descripcion ), 10, 1500, 'la descripcion' ) );
 			$idEstadoMenu = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado combo no es válido' );
 
 
@@ -547,6 +565,29 @@ class Combo
  	}
 
 
+ 	// ACTUALIZAR PRECIO MASIVO
+ 	function actualizarPreciosCombo( $datos )
+ 	{
+ 		if( count( $datos ) )
+ 		{
+ 			$this->data = 0;
+ 			foreach ($datos AS $combo )
+ 			{
+ 				$this->consultaComboPrecio( 'insert', $combo->idCombo, $combo->lstPrecios );
+ 				if( $this->respuesta == 'danger' )
+ 					break;
+ 				elseif( $this->respuesta == 'success' )
+ 					$this->data++;
+ 			}
+ 		}
+ 		else{
+ 			$this->respuesta = 'warning';
+		 	$this->mensaje   = 'No hay una la lista de Combos';
+ 		}
+
+ 		return $this->getRespuesta();
+ 	}
+
 	// GUARDAR // ACTUALIZAR => COMBO PRECIO
 	function consultaComboPrecio( $accion, $idCombo, $lstPrecios )
  	{
@@ -569,7 +610,8 @@ class Combo
 	 		else:
 		 		$sql = "CALL consultaComboPrecio( '{$accion}', {$idCombo}, {$idTipoServicio}, {$precio} );";
 
-		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() ){
+		 		if( $rs = $this->con->query( $sql ) AND $row = $rs->fetch_object() )
+		 		{
 		 			$this->con->siguienteResultado();
 		 			
 	 				$this->respuesta = $row->respuesta;
