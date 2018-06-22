@@ -100,7 +100,6 @@ class Documento
 
 			else if ( $campo->idTipoItem == 2 )
 			{
-
 				$body      = "";
 				$cols      = "";
 				$resumen   = "";
@@ -137,7 +136,8 @@ class Documento
 					if ( isset( $valor->descuento ) )
 						$valor->descuento  = number_format( $valor->descuento, 2 );
 
-					$valor->subTotal   = number_format( $valor->subTotal, 2 );
+					//echo $valor->subTotal; 
+					//$valor->subTotal   = number_format( $valor->subTotal, 3 );
 					
 					$valor = (array)$valor;
 					$body .= "<tr>";
