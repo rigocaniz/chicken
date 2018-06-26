@@ -7,15 +7,18 @@ class Documento
 	var $documento   = "";
 	var $lstCampos   = array();
 
- 	function __construct( $idDocumento )
+ 	function __construct( $idDocumento = NULL )
  	{
  		GLOBAL $conexion, $sesion;
 
-		$this->idDocumento = $idDocumento;
-		$this->con         = $conexion;
-		$this->sess        = $sesion;
+		$this->con  = $conexion;
+		$this->sess = $sesion;
 
- 		$this->consultaDocumento();
+ 		if ( !is_null( $idDocumento ) )
+ 		{
+			$this->idDocumento = $idDocumento;
+	 		$this->consultaDocumento();
+ 		}
  	}
 
  	// CONSULTA DOCUMENTO
@@ -56,8 +59,15 @@ class Documento
 			$row->idTipoItem    = (int)$row->idTipoItem;
 			$row->x             = (int)$row->x;
 			$row->y             = (int)$row->y;
+			$row->fontSize      = (int)$row->fontSize;
 			$row->mostrarTitulo = (boolean)$row->mostrarTitulo;
 			$row->relativo      = (boolean)$row->relativo;
+			$row->old           = (object)array(
+				'x'             => $row->x,
+				'y'             => $row->y,
+				'fontSize'      => $row->fontSize,
+				'mostrarTitulo' => $row->mostrarTitulo,
+			);
 
 			// SI ES UNA LISTA
 			if ( $row->idTipoItem == 2 )
@@ -77,10 +87,19 @@ class Documento
 		$rs = $this->con->query( $sql );
 
  		while( $rs AND $row = $rs->fetch_object() ):
+ 			$row->width = (int)$row->width;
+ 			$row->old = (object)array(
+				'width' => $row->width,
+			);
 			$lst[] = $row;
 		endwhile;
 
 		return $lst;
+	}
+
+	public function getDocumento()
+	{
+		return $this->lstCampos;
 	}
 
 	// RENDERIZA TODOS LOS CAMPOS
@@ -170,6 +189,61 @@ class Documento
 
 			$ultimoY = $campo->y;
 		}
+	}
+
+	public function guardarDocumento( $lstCampos, $lstColumnas )
+	{
+		$messageError = NULL;
+
+		foreach ($lstCampos as $ixC => $campo) {
+
+			$set = "";
+			
+			foreach ($campo->lstCambio as $ix => $cambio)
+				$set .= $cambio->cmp . " = " . (int)$cambio->val . ",";
+
+			if ( strlen( $set ) )
+			{
+				$set = rtrim( $set, "," );
+				$sql = "UPDATE documentoDetalle SET $set WHERE idDocumentoDetalle = " . $campo->idDocumentoDetalle;
+
+				if ( !$this->con->query( $sql ) )
+				{
+					$messageError = "Error al guardar campos: " . $this->con->error;
+					break;
+				}
+			}
+		}
+
+		if ( is_null( $messageError ) )
+		{
+			foreach ($lstColumnas as $ixC => $columna) {
+				$sql = "UPDATE columnaLista SET width = {$columna->val} WHERE idColumnaLista = {$columna->idColumnaLista}";
+
+				if ( !$this->con->query( $sql ) )
+				{
+					$messageError = "Error al guardar columnas: " . $this->con->error;
+					break;
+				}
+			}
+		}
+
+		if ( is_null( $messageError ) )
+		{
+			$response = array(
+				'respuesta' => "success",
+				'mensaje'   => "Guardado correctamente",
+			);
+		}
+		else
+		{
+			$response = array(
+				'respuesta' => "danger",
+				'mensaje'   => $messageError,
+			);
+		}
+
+		return $response;
 	}
 }
 ?>

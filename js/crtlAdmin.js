@@ -10,7 +10,7 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 		$scope.dialCambiarEstadoUsuario = $modal({scope: $scope,template:'dial.cambiarEstado.html', show: false, backdrop: 'static', keyboard: false});
 	if( document.getElementById("dial.modulosPerfil.html") )
 		$scope.dialModulosPerfil = $modal({scope: $scope,template:'dial.modulosPerfil.html', show: false, backdrop: 'static', keyboard: false})
-	
+
 	$scope.$watch( 'filtroUsuario', function( _old, _new ){
 		if( ( _old != _new ) && $scope.adminMenu == 'usuarios' )
 			$scope.cargarLstUsuarios();
@@ -20,7 +20,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 		$http.post('consultas.php',{
 			opcion : 'lstEstadoUsuario'
 		}).success(function(data){
-			console.log( data );
 			$scope.lstEstadoUsuario = data;
 		});
 	};
@@ -38,7 +37,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			opcion   : 'consultarModulosPerfil',
 			idPerfil : idPerfil
 		}).success(function(data){
-			console.log( data );
 			$scope.dataPerfil.lstModulosPerfil = data || [];
 		});
 	};
@@ -52,7 +50,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			idModulo : idModulo,
 			asignado : asignado
 		}).success(function(data){
-			console.log( data );
 			alertify.set('notifier','position', 'top-right');
 			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 			if( data.respuesta == 'success' )
@@ -71,7 +68,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			opcion : 'actualizarEstadoUsuario',
 			data   : $scope.user
 		}).success(function(data){
-			console.log( data );
 			alertify.set('notifier','position', 'top-right');
 			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 			if( data.respuesta == 'success' ) {
@@ -115,7 +111,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			opcion : 'cargarLstUsuarios',
 			filtro : $scope.filtroUsuario
 		}).success(function(data){
-			console.log( data );
 			$scope.lstUsuarios = data;
 		});
 	};
@@ -137,13 +132,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			});
 		}
 	};
-
-	($scope.inicio = function(){
-		$scope.cargarLstEstadoUsuario();
-		$scope.cargarLstPerfiles();
-		$scope.cargarLstUsuarios();
-	})();
-
 
 	$scope.accion = 'insert';
 	$scope.editarPerfil = function( perfil ){
@@ -244,7 +232,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 				accion : $scope.accion,
 				data   : $scope.usuario
 			}).success(function(data){
-				console.log( data );
 				alertify.set('notifier','position', 'top-right');
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 
@@ -267,7 +254,6 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			opcion  : 'resetearClave',
 			usuario : usuario
 		}).success(function(data){
-			console.log( data );
 			alertify.set('notifier','position', 'top-right');
 			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 		});
@@ -295,4 +281,87 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 		}
 	};
 
+	$scope.documento = [];
+	$scope.getDocumento = function () {
+		if ( !( $scope.idDocumento > 0 ) )return false;
+		$scope.documento = [];
+
+		$http.post('consultas.php', {
+			opcion      : 'getDocumento',
+			idDocumento : $scope.idDocumento
+		})
+		.success(function (data) {
+			if ( data.getDocumento.length )
+				$scope.documento = data.getDocumento;
+		});
+	};
+
+	$scope.guardarDocumento = function () {
+		var lstCampos   = [],
+			lstColumnas = [];
+
+		for (var ixC = 0; ixC < $scope.documento.length; ixC++)
+		{
+			var lstCambio = [],
+				campo     = $scope.documento[ ixC ];
+
+			if ( campo.x > 0 && campo.x != campo.old.x )
+				lstCambio.push({ cmp: 'x', val: campo.x });
+
+			if ( campo.y > 0 && campo.y != campo.old.y )
+				lstCambio.push({ cmp: 'y', val: campo.y });
+
+			if ( campo.fontSize > 0 && campo.fontSize != campo.old.fontSize )
+				lstCambio.push({ cmp: 'fontSize', val: campo.fontSize });
+
+			if ( campo.mostrarTitulo != campo.old.mostrarTitulo )
+				lstCambio.push({ cmp: 'mostrarTitulo', val: campo.mostrarTitulo });
+
+			if ( campo.idTipoItem == 2 )
+			{
+				for (var ixE = 0; ixE < campo.encabezado.length; ixE++) {
+					var columna = campo.encabezado[ ixE ];
+					if ( columna.width > 0 && columna.width != columna.old.width )
+						lstColumnas.push({
+							idColumnaLista : columna.idColumnaLista,
+							val            : columna.width,
+						});
+				}
+			}
+
+			if ( lstCambio.length )
+				lstCampos.push({
+					idDocumentoDetalle : campo.idDocumentoDetalle,
+					lstCambio          : lstCambio,
+				});
+		}
+
+		$http.post('consultas.php', {
+			opcion      : 'guardarDocumento',
+			lstCampos   : lstCampos,
+			lstColumnas : lstColumnas,
+		})
+		.success(function (data) {
+			alertify.notify( data.mensaje, data.respuesta, 4 );
+		});
+	};
+
+	$scope.$watch('idDocumento', function (_new) {
+		$scope.getDocumento();
+	});
+
+	$scope.catDocumentos = [];
+	$scope.idDocumento   = 0;
+	($scope.inicio = function(){
+		$scope.cargarLstEstadoUsuario();
+		$scope.cargarLstPerfiles();
+		$scope.cargarLstUsuarios();
+		$http.post('consultas.php', { opcion: 'catDocumentos' })
+		.success(function (data) {
+			$scope.catDocumentos = data.catDocumentos;
+			$timeout(function () {
+				$scope.idDocumento = $scope.catDocumentos[ 0 ].idDocumento;
+			});
+		});
+	})();
 });

@@ -39,7 +39,6 @@
 					</a>
 				</li>
 			</ul>
-			<!-- INGRESO NUEVO PRODUCTO -->
 			<div class="tab-content">
 
 				<!--  PANEL USUARIOS -->
@@ -216,6 +215,104 @@
 							</div>
 						</div>
 					</div>
+					<!-- AJUSTE IMPRESION -->
+					<div class="col-sm-offset-1 col-sm-10">
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<h4 class="panel-title">Ajuste de Página <span class="glyphicon glyphicon-print"></span></h4>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label class="col-sm-2"><b>Documento</b></label>
+									<div class="col-sm-4">
+										<select ng-model="idDocumento" class="form-control">
+											<option value="{{doc.idDocumento}}" ng-repeat="doc in catDocumentos">{{doc.documento}}</option>
+										</select>
+									</div>
+								</div>
+								<!-- CAMPOS DE DOCUMENTO -->
+								<div class="form-group">
+									<div class="col-sm-12">
+										<table class="table table-hover">
+											<thead>
+												<tr>
+													<th>Campo</th>
+													<th>T. Fuente</th>
+													<th>Mostrar Tit.</th>
+													<th>Posición X</th>
+													<th>Posición Y</th>
+												</tr>
+											</thead>
+											<tbody ng-repeat="(ixCmp, cmp) in documento">
+												<tr>
+													<td><b>{{cmp.label}}</b></td>
+													<td>
+														<input type="number" ng-min="1" min="1" ng-model="cmp.fontSize" style="width:80px">
+													</td>
+													<td>
+														<button type="button" class="btn btn-sm" 
+															ng-class="{'btn-default':!cmp.mostrarTitulo, 'btn-info':cmp.mostrarTitulo}"
+															ng-click="cmp.mostrarTitulo=!cmp.mostrarTitulo">
+															{{cmp.mostrarTitulo?"SI":"NO"}}
+														</button>
+													</td>
+													<td>
+														<input type="number" ng-min="1" min="1" ng-model="cmp.x" style="width:80px">
+													</td>
+													<td>
+														<input type="number" ng-min="1" min="1" ng-model="cmp.y" style="width:80px">
+													</td>
+												</tr>
+												<tr ng-show="cmp.encabezado.length">
+													<td></td>
+													<td colspan="4">
+														<table class="table table-hover">
+															<thead>
+																<tr>
+																	<th ng-repeat="item in cmp.encabezado">{{item.campo}}</th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr>
+																	<td ng-repeat="item in cmp.encabezado">
+																		<input type="number" ng-min="1" min="1" ng-model="item.width" style="width:70px">
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<!-- CAMPOS DE DOCUMENTO -->
+								<!-- VISTA PREVIA -->
+								<div class="form-group">
+									<div class="col-sm-6">
+										<button type="button" class="btn btn-sm btn-default" ng-click="showView=!showView" ng-init="showView=true">
+											<b><span class="glyphicon glyphicon-eye-open"></span> <i>Vista Previa</i></b>
+										</button>
+									</div>
+									<div class="col-sm-6 text-right">
+										<button type="button" class="btn btn-sm btn-success" ng-click="guardarDocumento()">
+											<span class="glyphicon glyphicon-ok"></span>
+											<b>Guardar Cambios Documento</b>
+										</button>
+									</div>
+									<div class="col-sm-12" style="height:300px;border: solid 1px #ccc;margin-top:7px" ng-show="showView">
+										<span ng-repeat="(ixCmp, cmp) in documento" 
+											style="display: block;position: absolute;left:{{cmp.x+'px'}};top:{{cmp.y+'px'}};font-size:{{cmp.fontSize+'px'}};">
+											<b ng-show="cmp.idTipoItem==1">{{cmp.label}}</b>
+											<b ng-repeat="col in cmp.encabezado" style="display: inline-block;width:{{col.width+'px'}};border:solid 1px #1085e4">{{col.campo}}</b>
+										</span>
+									</div>
+								</div>
+								<!-- VISTA PREVIA -->
+							</div>
+						</div>
+					</div>
+					<!-- AJUSTE IMPRESION -->
 				</div>
 			</div>
 

@@ -766,6 +766,30 @@ switch ( $data->opcion )
 		$admin = new Admin();
 		echo json_encode( $admin->setParams( $data->idParametro, $data->valor ) );
 		break;
+
+	case 'catDocumentos':
+		$lst = array();
+		$sql = "SELECT idDocumento, documento FROM documento";
+		$rs = $conexion->query( $sql );
+		while ( $rs AND $row = $rs->fetch_object() )
+			$lst[] = $row;
+
+		echo json_encode( array( 'catDocumentos' => $lst ) );
+		break;
+
+	case 'getDocumento':
+		include 'class/documento.class.php';
+		$docs = new Documento( $data->idDocumento );
+
+		echo json_encode( array( 'getDocumento' => $docs->getDocumento() ) );
+		break;
+
+	case 'guardarDocumento':
+		include 'class/documento.class.php';
+		$docs = new Documento();
+
+		echo json_encode( $docs->guardarDocumento( $data->lstCampos, $data->lstColumnas ) );
+		break;
 }
 
 $conexion->close();
