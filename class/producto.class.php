@@ -737,57 +737,6 @@ class Producto
  		return $this->getRespuesta();
 	}
 
-
-	// CONSULTAR DATOS MEDIDA
-	function cargarTipoProducto( $idTipoProducto )
-	{
-		$idTipoProducto = (int)$idTipoProducto;
-		$tipoProducto   = array();
-
-		$sql = "SELECT idTipoProducto, tipoProducto FROM tipoProducto WHERE idTipoProducto = {$idTipoProducto};";
-		
-		if( $rs = $this->con->query( $sql ) ){
-			if( $row = $rs->fetch_object() )
-				$tipoProducto = $row;
-		}
-
-		return $tipoProducto;
-	}
-
-
-	// CONSULTAR DATOS PRODUCTO
-	function cargarProducto( $idProducto )
-	{
-		$idProducto = (int)$idProducto;
-		$producto   = array();
-
-		$sql = "SELECT 
-				    idProducto,
-				    producto,
-				    idTipoProducto,
-				    idMedida,
-				    perecedero,
-				    cantidadMinima,
-				    cantidadMaxima,
-				    disponibilidad,
-				    importante
-				FROM
-				    lstProducto
-				WHERE idProducto = {$idProducto};";
-		
-		if( $rs = $this->con->query( $sql ) ){
-			if( $row = $rs->fetch_object() )
-				$row->cantidadMinima = (double)$row->cantidadMinima;
-				$row->cantidadMaxima = (double)$row->cantidadMaxima;
-				$row->disponibilidad = (double)$row->disponibilidad;
-				$row->perecedero     = (int)$row->perecedero ? TRUE : FALSE;
-				$row->importante     = (int)$row->importante ? TRUE : FALSE;
-				$producto            = $row;
-		}
-
-		return $producto;
-	}
-
 	
 	// OBTENER TOTAL PRODUCTOS
 	function getTotalProductos( $limite = 25 )
@@ -814,9 +763,8 @@ class Producto
 		$sql = "SELECT idProducto, producto, medida, tipoProducto FROM lstProducto WHERE producto LIKE '%{$nombreProducto}%' LIMIT 10;";
 		
 		if( $rs = $this->con->query( $sql ) ){
-			while( $row = $rs->fetch_object() ){
+			while( $row = $rs->fetch_object() )
 				$lstProductos[] = $row;
-			}
 		}
 
 		return $lstProductos;
@@ -1121,7 +1069,8 @@ class Producto
 					fechaReajuste
 				FROM lstReajusteProducto;";
 		
-		if( $rs = $this->con->query( $sql ) ){
+		if( $rs = $this->con->query( $sql ) )
+		{
 			if( $rs->num_rows > 0 ){
 				$this->respuesta = 'success';
 				while( $row = $rs->fetch_object() )

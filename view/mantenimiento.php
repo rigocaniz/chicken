@@ -127,7 +127,10 @@
 						<div class="panel-body">
 							<div class="text-right">
 								<p>
-									<button type="button" class="btn btn-success" ng-click="agregarMenuCombo( 'combo' )">
+									<button type="button" class="btn btn-sm btn-info" ng-click="consultarComboPrecios()">
+										<span class="glyphicon glyphicon-plus"></span> <strong><u>E</u></strong>DITAR PRECIOS
+									</button>
+									<button type="button" class="btn btn-sm btn-success" ng-click="agregarMenuCombo( 'combo' )">
 										<span class="glyphicon glyphicon-plus"></span> <strong><u>A</u></strong>GREGAR COMBO
 									</button>
 								</p>
@@ -204,15 +207,68 @@
 </div>
 
 
-<!-- MODAL AGREGAR / EDITAR MENU -->
+<!-- MODAL EDITAR PRECIOS COMBOS -->
+<script type="text/ng-template" id="dial.editarPreciosC.html">
+	<div class="modal" tabindex="-1" role="dialog" id="dialEditarPreciosC">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content panel-primary">
+				<div class="modal-header panel-heading">
+					<button type="button" class="close" ng-click="$hide();">&times;</button>
+					<h3 class="panel-title">
+						<span class="glyphicon glyphicon-pencil"></span> EDITAR PRECIOS COMBOS
+					</h3>
+				</div>
+				<div class="modal-body">
+					<fieldset class="fieldset">
+						<legend class="legend primary">EDITAR PRECIOS</legend>
+						<table class="table table-hover table-condensed">
+							<thead>
+								<tr>
+									<th class="text-center">No.</th>
+									<th class="text-center col-sm-2">Código</th>
+									<th class="text-center col-sm-4">Descripción Menú</th>
+									<th class="text-center col-sm-2">Para Llevar</th>
+									<th class="text-center col-sm-2">Restaurante</th>
+									<th class="text-center col-sm-2">Dominicilio</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="(ixCombo, comboPrecio) in lstCombosPrecios">
+									<td>{{ $index + 1 }}</td>
+									<td class="text-center">{{ comboPrecio.codigoCombo }}</td>
+									<td><b>{{ comboPrecio.combo }}</b></td>
+									<td class="text-right" ng-repeat="(ixPrecio, precio) in comboPrecio.lstPrecios">
+										<input type="number" min="0" max="10000" class="form-control" ng-model="precio.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="1" required ng-focus="ixCombo == 0 && ixPrecio==0">
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</fieldset>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-info" ng-click="actualizarPreciosCombo()">
+						<span class="glyphicon glyphicon-saved"></span> Guardar (F6)
+					</button>
+					<button type="button" class="btn btn-default" ng-click="$hide();">
+						<span class="glyphicon glyphicon-log-out"></span>
+						<b>Salir</b>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+
+
+<!-- MODAL EDITAR PRECIOS MENU -->
 <script type="text/ng-template" id="dial.editarPrecios.html">
 	<div class="modal" tabindex="-1" role="dialog" id="dialEditarPrecios">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content panel-info">
 				<div class="modal-header panel-heading">
-					<button type="button" class="close" ng-click="resetValores( 'menu' ); $hide();">&times;</button>
+					<button type="button" class="close" ng-click="$hide();">&times;</button>
 					<h3 class="panel-title">
-						<span class="glyphicon glyphicon-pencil"></span> EDITAR PRECIOS
+						<span class="glyphicon glyphicon-pencil"></span> EDITAR PRECIOS MENUS
 					</h3>
 				</div>
 				<div class="modal-body">
@@ -235,12 +291,7 @@
 									<td class="text-center">{{ menuPrecio.codigoMenu }}</td>
 									<td><b>{{ menuPrecio.menu }}</b></td>
 									<td class="text-right" ng-repeat="(ixPrecio, precio) in menuPrecio.lstPrecios">
-										<input type="number" min="0" max="5000" class="form-control" ng-model="precio.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required ng-focus="ixMenuPrecio == 0 && ixPrecio==0">
-										<!--
-										<small>
-											<kbd>Q. {{ ( precio.precio ? precio.precio : 0 ) | number:2 }}</kbd>
-										</small>
-										-->
+										<input type="number" min="0" max="10000" class="form-control" ng-model="precio.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="1" required ng-focus="ixMenuPrecio == 0 && ixPrecio==0">
 									</td>
 								</tr>
 							</tbody>
@@ -261,11 +312,12 @@
 	</div>
 </script>
 
+
 <!-- MODAL AGREGAR / EDITAR MENU -->
 <script type="text/ng-template" id="dial.adminMenu.html">
 	<div class="modal" tabindex="-1" role="dialog" id="dialAdminMenu">
 		<div class="modal-dialog modal-lg">
-			<div class="modal-content" ng-class="{'panel-warning': accion == 'insert', 'panel-info': accion == 'update'}">
+ 			<div class="modal-content" ng-class="{'panel-warning': accion == 'insert', 'panel-info': accion == 'update'}">
 				<div class="modal-header panel-heading">
 					<button type="button" class="close" ng-click="resetValores( 'menu' ); $hide();">&times;</button>
 					<h3 class="panel-title">
@@ -1055,6 +1107,7 @@
 		</div>
 	</div>
 </script>
+
 
 <!-- MODAL AGREGAR / EDITAR PRODUCTO -->
 <script type="text/ng-template" id="dialAdmin.producto.html">
