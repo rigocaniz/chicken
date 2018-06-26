@@ -35,12 +35,12 @@ $reporte = new Reporte();
 $resultado = $reporte->getVentasGeneral( $deFecha, $paraFecha, $agruparVenta );
 $conexion->close();
 unset( $conexion );
-/*header("Content-Type:   application/vnd.ms-excel; charset=utf-8");
+header("Content-Type:   application/vnd.ms-excel; charset=utf-8");
 header("Content-Disposition: attachment; filename=reporte-". DATE('d-m-Y') ."-ventas.xls");  //File name extension was wrong
 header("Expires: 0");
 header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 header("Cache-Control: private",false);
-*/
+
 ?>
 <style>
 	.num {
@@ -58,7 +58,7 @@ header("Cache-Control: private",false);
 	<thead>
 		<tr>
 			<?php if( $agruparVenta == 'dia' ){ ?>
-			<th class="titulo">Día</th>
+			<th class="titulo"><?= utf8_decode( "Día" ); ?></th>
 
 			<?php } if( $agruparVenta == 'mes' ){ ?>
 			<th class="titulo">Mes</th>
@@ -67,15 +67,15 @@ header("Cache-Control: private",false);
 			<th class="titulo">Servicio</th>
 
 			<?php } if( in_array( $agruparVenta, array( "dia", "mes", "servicio" ) ) ){ ?>
-			<th class="titulo"># Menús</th>
+			<th class="titulo"><?= utf8_decode( "# Menús" ); ?></th>
 			<th class="titulo">Total Precio</th>
 			<th class="titulo">Total Descuento</th>
 			<th class="titulo">Total Efectivo</th>
 			<th class="titulo">Total Tarjeta</th>
 
 			<?php } if( $agruparVenta == "menu" ){ ?>
-			<th class="titulo">Menú</th>
-			<th class="titulo"># Menús</th>
+			<th class="titulo"><?= utf8_decode( "Menú" ); ?></th>
+			<th class="titulo"><?= utf8_decode( "# Menús" ); ?></th>
 			<th class="titulo">Total Precio</th>
 			<th class="titulo">Total Descuento</th>
 
@@ -85,14 +85,14 @@ header("Cache-Control: private",false);
 			<th class="titulo">Hora Factura</th>
 			<th class="titulo">NIT</th>
 			<th class="titulo">Nombre</th>
-			<th class="titulo">Dirección</th>
-			<th class="titulo">Teléfono</th>
+			<th class="titulo"><?= utf8_decode( "Dirección" ); ?></th>
+			<th class="titulo"><?= utf8_decode( "Teléfono" ); ?></th>
 			<th class="titulo">Efectivo</th>
 			<th class="titulo">Tarjeta</th>
 			<th class="titulo">Total Factura</th>
 			<th class="titulo">Servicio</th>
-			<th class="titulo"># Menús</th>
-			<th class="titulo">Menú</th>
+			<th class="titulo"><?= utf8_decode( "# Menús" ); ?></th>
+			<th class="titulo"><?= utf8_decode( "Menú" ); ?></th>
 			<th class="titulo">Total Precio</th>
 			<th class="titulo">Total Descuento</th>
 			<th class="titulo">Comentario (desc)</th>
@@ -110,7 +110,7 @@ header("Cache-Control: private",false);
 			echo "<tr>";
 
 		if( $agruparVenta == 'dia' )
-			echo "<td>" . $dias[ (int)$venta->diaSemana - 1 ] . "</td>";
+			echo "<td>" . utf8_decode( $dias[ (int)$venta->diaSemana - 1 ] ) . "</td>";
 
 		if( $agruparVenta == 'mes' )
 			echo "<td>" . $meses[ (int)$venta->mesFactura - 1 ] . "</td>";
@@ -119,7 +119,7 @@ header("Cache-Control: private",false);
 			echo "<td>" . $venta->servicio . "</td>";
 
 		if( $agruparVenta == 'menu' )
-			echo "<td>" . $venta->menuDesc . "</td>";
+			echo "<td>" . utf8_decode( $venta->menuDesc ) . "</td>";
 			
 		if( in_array( $agruparVenta, array( "dia", "mes", "servicio" ) ) )
 			echo "<td>{$venta->numeroMenus}</td>" .
@@ -142,8 +142,8 @@ header("Cache-Control: private",false);
 						<td rowspan='$infoFactura->count'>{$infoFactura->fechaFactura}</td>
 						<td rowspan='$infoFactura->count'>{$infoFactura->horaFactura}</td>
 						<td rowspan='$infoFactura->count'>{$infoFactura->nit}</td>
-						<td rowspan='$infoFactura->count'>{$infoFactura->nombre}</td>
-						<td rowspan='$infoFactura->count'>{$infoFactura->direccion}</td>
+						<td rowspan='$infoFactura->count'>" . utf8_decode( $infoFactura->nombre ) . "</td>
+						<td rowspan='$infoFactura->count'>" . utf8_decode( $infoFactura->direccion ) . "</td>
 						<td rowspan='$infoFactura->count'>{$infoFactura->telefono}</td>
 						<td rowspan='$infoFactura->count'>{$infoFactura->totalEfectivo}</td>
 						<td rowspan='$infoFactura->count'>{$infoFactura->totalTarjeta}</td>
@@ -154,10 +154,10 @@ header("Cache-Control: private",false);
 			}
 
 			$txtDetalle = "<td>{$venta->numeroMenus}</td>
-							<td>{$venta->menuDesc}</td>
+							<td>" . utf8_decode( $venta->menuDesc ) . "</td>
 							<td>{$venta->totalPrecio}</td>
 							<td>{$venta->totalDescuento}</td>
-							<td>{$venta->comentario}</td>";
+							<td>" . utf8_decode( $venta->comentario ) . "</td>";
 
 			if ( $idFactura !== $venta->idFactura ) {
 				$idFactura = $venta->idFactura;
@@ -191,8 +191,8 @@ header("Cache-Control: private",false);
 						<td rowspan='$infoFactura->count'>{$infoFactura->fechaFactura}</td>
 						<td rowspan='$infoFactura->count'>{$infoFactura->horaFactura}</td>
 						<td rowspan='$infoFactura->count'>{$infoFactura->nit}</td>
-						<td rowspan='$infoFactura->count'>{$infoFactura->nombre}</td>
-						<td rowspan='$infoFactura->count'>{$infoFactura->direccion}</td>
+						<td rowspan='$infoFactura->count'>" . utf8_decode( $infoFactura->nombre ) . "</td>
+						<td rowspan='$infoFactura->count'>" . utf8_decode( $infoFactura->direccion ) . "</td>
 						<td rowspan='$infoFactura->count'>{$infoFactura->telefono}</td>
 						<td rowspan='$infoFactura->count'>{$infoFactura->totalEfectivo}</td>
 						<td rowspan='$infoFactura->count'>{$infoFactura->totalTarjeta}</td>
