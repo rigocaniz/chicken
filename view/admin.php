@@ -219,11 +219,11 @@
 					<div class="col-sm-offset-1 col-sm-10">
 						<div class="panel panel-info">
 							<div class="panel-heading">
-								<h4 class="panel-title">Ajuste de Página <span class="glyphicon glyphicon-print"></span></h4>
+								<h4 class="panel-title">Ajuste de Formato <span class="glyphicon glyphicon-print"></span></h4>
 							</div>
 							<div class="panel-body">
 								<div class="form-group">
-									<label class="col-sm-2"><b>Documento</b></label>
+									<label class="col-sm-2"><b>Formato</b></label>
 									<div class="col-sm-4">
 										<select ng-model="idDocumento" class="form-control">
 											<option value="{{doc.idDocumento}}" ng-repeat="doc in catDocumentos">{{doc.documento}}</option>
