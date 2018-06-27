@@ -1,3 +1,19 @@
+<?php
+    session_start();
+    include '../class/sesion.class.php';
+    
+    $session = new Sesion();
+    $urlManual = 'docs/manual.pdf';
+
+    if( $session->getIdPerfil() == 2 )
+        $urlManual = 'docs/manualCajero.pdf';
+    
+    elseif( $session->getIdPerfil() == 3 )
+        $urlManual = 'docs/manualCocinero.pdf';
+    
+    elseif( $session->getIdPerfil() == 4 OR $session->getIdPerfil() == 5 )
+        $urlManual = 'docs/manualMesero.pdf';
+?>
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
@@ -9,9 +25,6 @@
                 <label class="label label-danger titulo-nombre">
                     <span class="glyphicon glyphicon-user"></span>
                     <?php
-                        session_start();
-                        include '../class/sesion.class.php';
-                        $session = new Sesion();
                         echo $session->getNombre();
                     ?>
                 </label>
@@ -94,6 +107,12 @@
             <a href="#/reporte" class="item-menu">
                 <img src="img/reporte.png" alt="">
                 <span><u>R</u>eportes</span>
+            </a>
+        </div>
+        <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+            <a href="<?= $urlManual; ?>" target="_blank" class="item-menu">
+                <img src="img/book.png" alt="">
+                <span>Manual de Usuario</span>
             </a>
         </div>
     </div>
