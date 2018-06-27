@@ -263,7 +263,7 @@
 						<div class="form-group" ng-show="descuentos.encontrado">
 							<div class="text-right">
 								<span class="label label-danger titulo-nombre" style="font-size: 18px; padding: 4px 10px">
-									Total Q. {{ descuentos.totalDescuento | number: 2 }}
+									Total Q. {{ descuentos.totalDescuentos | number: 2 }}
 								</span>
 							</div>
 							<br>
@@ -332,7 +332,7 @@
 									Ef. Inicial Q. {{ cierreCaja.totalEfectivoI | number: 2 }}
 								</span>
 								<span class="label label-success titulo-nombre" style="font-size: 16px; padding: 4px 8px">
-									Ef. Final Q. {{ cierreCaja.totalSobrante | number: 2 }}
+									Ef. Final Q. {{ cierreCaja.totalEfectivoF | number: 2 }}
 								</span>
 								<span class="label label-warning titulo-nombre" style="font-size: 16px; padding: 4px 8px">
 									Sobrante Q. {{ cierreCaja.totalSobrante | number: 2 }}
