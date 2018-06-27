@@ -294,6 +294,9 @@
 											<b>TOTAL</b>
 										</th>
 										<th class="text-right success">
+											<b>{{ descuentos.totalPUnitario | number: 2 }}</b>
+										</th>
+										<th class="text-right success">
 											<b>{{ descuentos.totalDescuentos | number: 2 }}</b>
 										</th>
 									</tr>
