@@ -2,16 +2,15 @@
     session_start();
     include '../class/sesion.class.php';
     
-    $session = new Sesion();
     $urlManual = 'docs/manual.pdf';
 
-    if( $session->getIdPerfil() == 2 )
+    if( $sesion->getIdPerfil() == 2 )
         $urlManual = 'docs/manualCajero.pdf';
     
-    elseif( $session->getIdPerfil() == 3 )
+    elseif( $sesion->getIdPerfil() == 3 )
         $urlManual = 'docs/manualCocinero.pdf';
     
-    elseif( $session->getIdPerfil() == 4 OR $session->getIdPerfil() == 5 )
+    elseif( $sesion->getIdPerfil() == 4 OR $sesion->getIdPerfil() == 5 )
         $urlManual = 'docs/manualMesero.pdf';
 ?>
 <div class="container">
@@ -24,9 +23,7 @@
                 </h2>
                 <label class="label label-danger titulo-nombre">
                     <span class="glyphicon glyphicon-user"></span>
-                    <?php
-                        echo $session->getNombre();
-                    ?>
+                    <?= $sesion->getNombre(); ?>
                 </label>
             </div>
             <div class="col-md-4 col-sm-5 col-xs-6">
