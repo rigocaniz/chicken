@@ -197,15 +197,15 @@
 						<strong>{{tiempoTranscurrido( ticket.primerTiempo )}}</strong>
 					</div>
 					<div class="col-xs-7 text-right">
+						<button class="btn btn-sm btn-primary" type="button" ng-show="ixTicketActual==$index" ng-click="servirTodo()">
+							<b>Servir TODO</b>
+							<span class="glyphicon glyphicon-flag"></span>
+						</button>
 						<kbd style="font-size:15px;font-weight:bold">TOTAL = {{ticket.total}}</kbd>
 						<span class="estado-menu default">P <span class="badge">{{ticket.pendientes}}</span></span>
 						<span class="estado-menu info">C <span class="badge">{{ticket.cocinando}}</span></span>
 						<span class="estado-menu primary">L <span class="badge">{{ticket.listos}}</span></span>
 						<span class="estado-menu success">S <span class="badge">{{ticket.servidos}}</span></span>
-						<!-- <button class="btn btn-primary" type="button" ng-show="ixTicketActual==$index">
-							<b>Servir TODO</b>
-							<span class="glyphicon glyphicon-flag"></span>
-						</button> -->
 					</div>
 				</div>
 				<div class="body body_lst_ticket" ng-if="ixTicketActual==$index">

@@ -5,13 +5,13 @@
 
 class Redis
 {
- 	function messageRedis( $dataTxt )
- 	{
+	var $client  = null;
+	var $channel = "ch_restaurante"; // NOMBRE DEL CANAL
+	function __construct()
+	{
  		// LIBRERIA NECESARIA
  		require __DIR__.'/../libs/predis-1.1/autoload.php';
 
- 		// NOMBRE DEL CANAL
- 		$channel = "ch_restaurante";
 
  		// DATOS DE CONEXION
 		$single_server = array(
@@ -21,13 +21,17 @@ class Redis
 		);
 		
 		// NUEVA INSTANCIA DE CLIENTE REDIS
-		$client = new Predis\Client( $single_server );
+		$this->client = new Predis\Client( $single_server );
+	}
+
+ 	function messageRedis( $dataTxt )
+ 	{
 
 		// CONVERSION A JSON
 		$dataTxt = json_encode( $dataTxt );
 
 		// PUBLICAR Y RETORNAR 
-		return $client->publish( $channel, $dataTxt );
+		return $this->client->publish( $this->channel, $dataTxt );
  	}
 }
 

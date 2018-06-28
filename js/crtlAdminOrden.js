@@ -251,7 +251,8 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	};
 
 
-	$scope.servirMenu = function ( index ) {
+	// SERVIR MENU DE ORDEN
+	$scope.servirMenu = function( index ) {
 		var orden = angular.copy( $scope.ticketActual.lstOrden[ index ] );
 
 		if ( $scope.$parent.loading || !( orden.seleccionados > 0 ) )
@@ -277,6 +278,55 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 		.success(function (data) {
 			$scope.$parent.loading = false;
 			alertify.notify( ( data.mensaje || data ), ( data.respuesta || 'danger' ), 5 );
+
+			// SI GUARDO CORRECTAMENTE
+			if ( data.respuesta == 'success' )
+			{
+				$scope.ticketActual.lstOrden[ index ].limite           = 0;
+				$scope.ticketActual.lstOrden[ index ].cantidadRestante = 0;
+			}
+		});
+	};
+
+	// SERVIR TODAS LAS ORDENES
+	$scope.servirTodo = function() {
+		var lstOrden = [];
+		for (var ixO = 0; ixO < $scope.ticketActual.lstOrden.length; ixO++)
+		{
+			var orden = $scope.ticketActual.lstOrden[ ixO ];
+			lstOrden.push({
+				idOrdenCliente : $scope.ticketActual.idOrdenCliente,
+				seleccionados  : orden.seleccionados,
+				idCombo        : ( orden.esCombo ? orden.idCombo : null ),
+				idMenu         : ( !orden.esCombo ? orden.idMenu : null ),
+				idTipoServicio : orden.idTipoServicio,
+			});
+		}
+
+		if ( $scope.$parent.loading || !( lstOrden.length > 0 ) )
+			return false;
+
+		var datos = {
+			opcion   : 'servirTodo',
+			lstOrden : lstOrden
+		};
+
+		$scope.$parent.loading = true;
+		$http.post('consultas.php', datos )
+		.success(function (data) {
+			$scope.$parent.loading = false;
+			alertify.notify( ( data.mensaje || data ), ( data.respuesta || 'danger' ), 5 );
+
+			// SI GUARDO CORRECTAMENTE
+			if ( data.respuesta == 'success' )
+			{
+				for (var ixO = 0; ixO < $scope.ticketActual.lstOrden.length; ixO++)
+				{
+					$scope.ticketActual.lstOrden[ ixO ].limite           = 0;
+					$scope.ticketActual.lstOrden[ ixO ].cantidadRestante = 0;
+				}
+
+			}
 		});
 	};
 

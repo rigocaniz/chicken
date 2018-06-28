@@ -664,6 +664,12 @@ switch ( $data->opcion )
 		echo json_encode( $orden->servirMenuCliente( $data->datos ) );
 		break;
 
+	// SIRVE TODOS LOS MENUES AL >>>>>>> CLIENTE <<<<<<<
+	case 'servirTodo':
+		$orden = new Orden();
+		echo json_encode( $orden->servirTodo( $data->lstOrden ) );
+		break;
+
 	// #############################  EVENTO #############################
 	// GUARDAR EVENTO
 	case 'guardarEvento':

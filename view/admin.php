@@ -297,7 +297,7 @@
 									<div class="col-sm-6 text-right">
 										<button type="button" class="btn btn-sm btn-success" ng-click="guardarDocumento()">
 											<span class="glyphicon glyphicon-ok"></span>
-											<b>Guardar Cambios Documento</b>
+											<b>Guardar Cambios Formato</b>
 										</button>
 									</div>
 									<div class="col-sm-12" style="height:300px;border: solid 1px #ccc;margin-top:7px" ng-show="showView">

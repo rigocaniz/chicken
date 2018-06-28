@@ -13,6 +13,7 @@ class Orden
  	private $sess      = NULL;
  	private $con       = NULL;
  	private $data      = array();
+ 	private $redis     = null;
 
  	function __construct()
  	{
@@ -1884,7 +1885,6 @@ class Orden
 
 				if ( $this->respuesta == 'success' )
 				{
-			 		//$this->con->query( "ROLLBACK" );
 			 		$this->con->query( "COMMIT" );
 
 			 		$this->myId = uniqid();
@@ -1906,9 +1906,12 @@ class Orden
 				 	if ( !class_exists( "Redis" ) )
 				 		include 'redis.class.php';
 
+				 	// SI NO SE A INICIALIZADO REDIS
+				 	if ( is_null( $this->redis ) )
+				 		$this->redis = new Redis();
+
 				 	// ENVIA LOS DATOS POR MEDIO DE REDIS
-				 	$red = new Redis();
-					$red->messageRedis( $infoNode );
+					$this->redis->messageRedis( $infoNode );
 				}
 			 	else
 			 		$this->con->query( "ROLLBACK" );
@@ -1920,6 +1923,15 @@ class Orden
 		 	}
 	 	}
 
+
+	 	return $this->getRespuesta();
+ 	}
+
+ 	// SERVIR TODOS LOS MENUS DE LA ORDEN DEL CLIENTE
+ 	public function servirTodo( $lstOrden = array() )
+ 	{
+ 		foreach ($lstOrden as $ixO => $orden)
+ 			$this->servirMenuCliente( $orden );
 
 	 	return $this->getRespuesta();
  	}
