@@ -210,7 +210,7 @@
                                                             </div>
                                                         </div>
                                                         <!-- REASIGNAR -->
-                                                        <button ng-click="orden.conDescuento=true" class="btn btn-sm btn-info" ng-show="!orden.conDescuento" ng-disabled="factura.facturado">
+                                                        <button type="button" ng-click="orden.conDescuento=true" class="btn btn-sm btn-info" ng-show="!orden.conDescuento" ng-disabled="factura.facturado">
                                                             <b>SI</b>
                                                         </button>
                                                         <div class="input-group input-sm" ng-show="orden.conDescuento">
@@ -339,11 +339,11 @@
                         <div class="col-xs-12" style="margin-top:-30px; padding: 0px;">
                         <div class="row contenedor-tickets">
                             <div class="btn-orden text-right">
-                                <button class="bt-info" ng-class="{'active':(idEstadoOrden==1 || idEstadoOrden==2)}" ng-click="$parent.idEstadoOrden=1">
+                                <button type="button" class="bt-info" ng-class="{'active':(idEstadoOrden==1 || idEstadoOrden==2)}" ng-click="$parent.idEstadoOrden=1">
                                     <span class="glyphicon glyphicon-time"></span>
                                     <span class="hidden-xs"><u>P</u>endientes</span>
                                 </button>
-                                <button class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="$parent.idEstadoOrden=3">
+                                <button type="button" class="bt-primary" ng-class="{'active':idEstadoOrden==3}" ng-click="$parent.idEstadoOrden=3">
                                     <span class="glyphicon glyphicon-ok"></span>
                                     <span class="hidden-xs"><u>L</u>isto</span>
                                 </button>
@@ -851,7 +851,7 @@
                                     <input type="text" class="form-control" id="buscador" ng-model="$parent.txtCliente" ng-change="$parent.lstClientes=[]" ng-keypress="$event.keyCode== 13 && buscarCliente( $parent.txtCliente, 'busqueda' )" placeholder="NIT / DPI / NOMBRE">
                                 </div>
                                 <div class="col-xs-3 col-sm-4 col-md-3">
-                                    <button class="btn btn-sm btn-primary" ng-click="buscarCliente( $parent.txtCliente, 'busqueda' )">
+                                    <button type="button" class="btn btn-sm btn-primary" ng-click="buscarCliente( $parent.txtCliente, 'busqueda' )">
                                         <span class="glyphicon glyphicon-search"></span> Buscar
                                     </button>
                                 </div>
