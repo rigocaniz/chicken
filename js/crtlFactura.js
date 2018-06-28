@@ -562,6 +562,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 				nit           : ( factura.nit || '' ),
 				nombre        : ( factura.nombre || '' ),
 				direccion     : ( factura.direccion || '' ),
+				correo     : ( factura.correo || '' ),
+				cui     : ( factura.cui || '' ),
 				idTipoCliente : ( factura.idTipoCliente || '' )
 			},
 			detallePago : {
@@ -1003,6 +1005,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
     	$scope.accionCliente = 'actualizar';
     	$scope.accion        = 'update';
     	$scope.cliente = angular.copy( cliente );
+
     	console.log( cliente );
     	if( accion == 'mostrar' )
     		$scope.dialAccionCliente.show();
@@ -1060,6 +1063,9 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 					$scope.lstFacturas[ ixFacturaActual ].cliente.idCliente     = data.lstResultados[ 0 ].idCliente;
 					$scope.lstFacturas[ ixFacturaActual ].cliente.nit           = data.lstResultados[ 0 ].nit;
 					$scope.lstFacturas[ ixFacturaActual ].cliente.nombre        = data.lstResultados[ 0 ].nombre;
+					$scope.lstFacturas[ ixFacturaActual ].cliente.correo        = data.lstResultados[ 0 ].correo;
+					$scope.lstFacturas[ ixFacturaActual ].cliente.cui           = data.lstResultados[ 0 ].cui;
+					$scope.lstFacturas[ ixFacturaActual ].cliente.telefono      = data.lstResultados[ 0 ].telefono;
 					$scope.lstFacturas[ ixFacturaActual ].cliente.direccion     = data.lstResultados[ 0 ].direccion;
 					$scope.lstFacturas[ ixFacturaActual ].cliente.idTipoCliente = data.lstResultados[ 0 ].idTipoCliente;
 	        		//ASIGNA INFORMACION DE CLIENTE
