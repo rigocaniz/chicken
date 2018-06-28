@@ -118,7 +118,7 @@ class Cliente
 
 	 	$sql = "SELECT * FROM vstCliente where $where ;";
 
-	 	if( $rs = $this->con->query( $sql ) AND $rs->num_rows > 0 ){
+	 	if( $rs = $this->con->query( $sql ) AND $rs->num_rows ){
 	 		$resultado->encontrado = TRUE;
 	 		while( $row = $rs->fetch_object() )
 	 			$resultado->lstResultados[] = $row;

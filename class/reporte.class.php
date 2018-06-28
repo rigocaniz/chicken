@@ -65,6 +65,7 @@ class Reporte
  		$descuentos = new stdClass();
 		$descuentos->detalleDescuentos = [];
 		$descuentos->totalDescuentos   = 0;
+		$descuentos->totalPUnitario    = 0;
 		$descuentos->encontrado        = FALSE;
 
  		$sql = "CALL repDescuento( '{$deFecha}', '{$paraFecha}' );";
@@ -77,6 +78,7 @@ class Reporte
 				$descuentos->encontrado = TRUE;
 	 			while( $row = $rs->fetch_assoc() )
 	 			{
+	 				$descuentos->totalPUnitario  += $row[ 'precioUnitario' ];
 	 				$descuentos->totalDescuentos += $row[ 'totalDescuento' ];
 					$descuentos->detalleDescuentos[] = $row;
 	 			}
