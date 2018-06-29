@@ -84,7 +84,7 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout, $filter )
 			opcion : 'inicioCaja'
 		})
 		.success(function(data){
-			console.log( "iniciocaja::: ", data );
+			//console.log( "iniciocaja::: ", data );
 			$scope.caja = data;
 			$scope.caja.fechaApertura = moment( data.fechaApertura );
 

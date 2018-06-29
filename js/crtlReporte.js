@@ -41,7 +41,7 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 					fechaFinal  : fechaFinal
 				})
 				.success(function(data ){
-					console.log("data ", data);
+					//console.log("data ", data);
 					$scope.ordenesCanceladas = data || {};
 					if( !data.encontrado )
 						alertify.notify( 'No se encontraron Resultados', 'warning' );
@@ -204,7 +204,7 @@ app.controller('reporteCtrl', function( $scope, $http, $filter ){
 					fechaFinal  : fechaFinal
 				})
 				.success(function(data ){
-					console.log(data);
+					//console.log(data);
 					$scope.compras = data || {};
 					if( !data.encontrado )
 						alertify.notify( 'No se encontraron Resultados', 'warning' );

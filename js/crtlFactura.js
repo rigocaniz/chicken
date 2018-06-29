@@ -1,26 +1,48 @@
 app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeParams ){
 	
 	$scope.accionCliente = 'ninguna';
-	$scope.accion        = 'insert';
 	$scope.buscarTicket  = null;
 	$scope.idTab         = '';
 	$scope.idEstadoOrden = 1;
 
-	$scope.facturacion = {
-		datosCliente : {
-			nit          : '',
-			nombre       : '',
-			direccion    : '',
-		},
-		agrupado: true,
-		idEstadoFactura : 1,
-		idOrdenCliente  : null,
-		numeroTicket    : null,
-		noFactura       : null,
-		total           : 0,
-		lstFormasPago   : [],
-		lstOrden        : [],
-	};
+	$scope.resetValores = function( accion ){
+        $scope.accion = 'insert';
+        if( accion == 'cliente' ) {
+            $scope.cliente  = {
+                'nit'           : null,
+                'nombre'        : '',
+                'cui'           : null,
+                'correo'        : '',
+                'telefono'      : null,
+                'direccion'     : '',
+                'idTipoCliente' : 1,
+            };
+        }
+        else if( accion == 'lstClientes' )
+            $scope.lstClientes = [];
+
+        else if( 'facturacion' )
+        {
+        	$scope.lstFacturas  = [];
+			$scope.facturacion = {
+				datosCliente : {
+					nit          : '',
+					nombre       : '',
+					direccion    : '',
+				},
+				agrupado: true,
+				idEstadoFactura : 1,
+				idOrdenCliente  : null,
+				numeroTicket    : null,
+				noFactura       : null,
+				total           : 0,
+				lstFormasPago   : [],
+				lstOrden        : [],
+			};
+        }
+    };
+
+    $scope.resetValores( 'facturacion' );
 
 	$scope.$watch('buscarTicket', function( _new, _old ){
 		if( _old != _new ) {
@@ -401,41 +423,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 
 	});
 
-    $scope.resetValores = function( accion ){
-        $scope.accion = 'insert';
-        if( accion == 'cliente' ) {
-            $scope.cliente  = {
-                'nit'           : null,
-                'nombre'        : '',
-                'cui'           : null,
-                'correo'        : '',
-                'telefono'      : null,
-                'direccion'     : '',
-                'idTipoCliente' : 1,
-            };
-        }
-        else if( accion == 'lstClientes' )
-            $scope.lstClientes = [];
-
-        else if( 'facturacion' ){
-			$scope.facturacion = {
-				datosCliente : {
-					nit          : '',
-					nombre       : '',
-					direccion    : '',
-				},
-				agrupado: true,
-				idEstadoFactura : 1,
-				idOrdenCliente  : null,
-				numeroTicket    : null,
-				noFactura       : null,
-				total           : 0,
-				lstFormasPago   : [],
-				lstOrden        : [],
-			};
-        }
-    };
-
     $scope.resetValores( 'cliente' );
     $scope.resetValores( 'facturacion' );
 
@@ -494,7 +481,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	};
 
 
-	$scope.lstFacturas  = [];
+	$scope.lstFacturas = [];
 	$scope.lstDetalleOrden = [];
 	$scope.consultaDetalleOrden = function ( orden, deBusqueda ) {
 		if ( $scope.$parent.loading )
@@ -886,7 +873,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			$scope.lstTicketBusqueda = [];
 			$scope.$parent.loading = true; // cargando...
 			
-		console.log( "cargando....." );
+			//console.log( "cargando....." )
 			// CONSULTA TIPO DE SERVICIOS
 			$http.post('consultas.php', { 
 				opcion         : 'busquedaTicket',
@@ -960,7 +947,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
                 accion  : $scope.accion,
                 cliente : $scope.cliente
             }).success(function(data){
-                console.log(data);
+                //console.log(data);
                 alertify.set('notifier','position', 'top-right');
                 alertify.notify( data.mensaje,data.respuesta, data.tiempo );
                 if ( data.respuesta == "success" )
@@ -1005,8 +992,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
     	$scope.accionCliente = 'actualizar';
     	$scope.accion        = 'update';
     	$scope.cliente = angular.copy( cliente );
-
-    	console.log( cliente );
+    	//console.log( cliente );
     	if( accion == 'mostrar' )
     		$scope.dialAccionCliente.show();
     }
@@ -1057,7 +1043,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	            }
 	        	else if( ( accion == 'principal' || accion == 'cf' ) && data.lstResultados.length == 1 && data.encontrado ){
 	        		//$scope.facturacion.datosCliente = data.lstResultados[ 0 ];
-	        		
 	        		//ASIGNA INFORMACION DE CLIENTE
 	        		var ixFacturaActual  = $scope.indexArray( 'lstFacturas', 'idTab', $scope.idTab );
 					$scope.lstFacturas[ ixFacturaActual ].cliente.idCliente     = data.lstResultados[ 0 ].idCliente;
@@ -1069,13 +1054,12 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 					$scope.lstFacturas[ ixFacturaActual ].cliente.direccion     = data.lstResultados[ 0 ].direccion;
 					$scope.lstFacturas[ ixFacturaActual ].cliente.idTipoCliente = data.lstResultados[ 0 ].idTipoCliente;
 	        		//ASIGNA INFORMACION DE CLIENTE
-
 	        		$scope.txtCliente = '';
                     
                     if( accion == 'cf' )
 	            		$scope.dialAccionCliente.hide();
 
-	            	console.log(data.lstResultados[ 0 ].nit);
+	            	//console.log(data.lstResultados[ 0 ].nit);
 	            	if ( data.lstResultados[ 0 ].nit == 'CF' )
 	            		$scope.focusHtml( 'nombreCliente_' + $scope.idTab, true );
 	            	
@@ -1120,7 +1104,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		else
 			return !!( $( '#' + _name ).data() && $( '#' + _name ).data().$scope.$isShown );
 	};
-
 
 	// *** RETORNA INDEX DE ARREGLO
 	$scope.indexArray = function ( arr, cmp, _value ) {

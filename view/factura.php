@@ -50,7 +50,7 @@
                         <button type="button" class="btn btn-danger" ng-click="buscarOrdenTicket()" ng-show="!facturacion.numeroTicket">
                             <span class="glyphicon glyphicon-search"></span> Buscar
                         </button>
-                        <button type="button" class="btn btn-warning" ng-click="facturacion.numeroTicket=null;" ng-show="facturacion.numeroTicket">
+                        <button type="button" class="btn btn-warning" ng-click="resetValores( 'facturacion' )" ng-show="facturacion.numeroTicket">
                             <span class="glyphicon glyphicon-refresh"></span> Cambiar
                         </button>
                     </div>
@@ -104,7 +104,7 @@
                             </div>
         					<label class="col-sm-1 control-label">NIT</label>
         					<div class="col-sm-3">
-        						<input type="text" class="form-control" ng-model="factura.cliente.nit" ng-disabled="factura.cliente.idCliente>0 || factura.facturado" id="cliente_nit" style="font-weight:bold">
+        						<input type="text" class="form-control" ng-model="factura.cliente.nit" disabled id="cliente_nit" style="font-weight:bold">
         					</div>
         					<div class="col-sm-2 col-md-1">
         						<button type="button" class="btn btn-info" ng-click="editarCliente( factura.cliente, 'mostrar' );" ng-show="factura.cliente.idCliente && factura.cliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
@@ -116,7 +116,7 @@
         				<div class="form-group">
         					<label class="col-sm-1 control-label">NOMBRE</label>
         					<div class="col-sm-4">
-        						<input type="text" class="form-control" ng-model="factura.cliente.nombre" id="nombreCliente_{{factura.idTab}}" ng-disabled="factura.facturado" style="font-weight:bold">
+        						<input type="text" class="form-control" ng-model="factura.cliente.nombre" id="nombreCliente_{{factura.idTab}}" ng-disabled="factura.facturado || factura.cliente.idCliente !=1" style="font-weight:bold">
         					</div>
         					<label class="col-sm-2 col-lg-1 control-label">DIRECCION</label>
         					<div class="col-sm-5 col-lg-6">
