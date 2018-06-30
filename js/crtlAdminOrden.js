@@ -231,6 +231,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				}
 
 				$scope.ticketActual.lstOrden = data.lst;
+				console.log( data );
 
 				$timeout(function () {
 					var index = -1;
@@ -282,6 +283,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			// SI GUARDO CORRECTAMENTE
 			if ( data.respuesta == 'success' )
 			{
+				console.log( 'ticketActual::: ', $scope.ticketActual );
 				$scope.ticketActual.lstOrden[ index ].limite           = 0;
 				$scope.ticketActual.lstOrden[ index ].cantidadRestante = 0;
 			}
@@ -291,8 +293,10 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	// SERVIR TODAS LAS ORDENES
 	$scope.servirTodo = function() {
 		var lstOrden = [];
+
 		for (var ixO = 0; ixO < $scope.ticketActual.lstOrden.length; ixO++)
 		{
+			//console.log( $scope.ticketActual.lstOrden[ ixO ] );
 			var orden = $scope.ticketActual.lstOrden[ ixO ];
 			lstOrden.push({
 				idOrdenCliente : $scope.ticketActual.idOrdenCliente,
@@ -300,6 +304,8 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 				idCombo        : ( orden.esCombo ? orden.idCombo : null ),
 				idMenu         : ( !orden.esCombo ? orden.idMenu : null ),
 				idTipoServicio : orden.idTipoServicio,
+				limite         : orden.limite
+
 			});
 		}
 
@@ -320,12 +326,14 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			// SI GUARDO CORRECTAMENTE
 			if ( data.respuesta == 'success' )
 			{
-				for (var ixO = 0; ixO < $scope.ticketActual.lstOrden.length; ixO++)
+				if( $scope.ticketActual.lstOrden && $scope.ticketActual.lstOrden.length  )
 				{
-					$scope.ticketActual.lstOrden[ ixO ].limite           = 0;
-					$scope.ticketActual.lstOrden[ ixO ].cantidadRestante = 0;
+					for (var ixO = 0; ixO < $scope.ticketActual.lstOrden.length; ixO++)
+					{
+						$scope.ticketActual.lstOrden[ ixO ].limite           = 0;
+						$scope.ticketActual.lstOrden[ ixO ].cantidadRestante = 0;
+					}
 				}
-
 			}
 		});
 	};

@@ -4,6 +4,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	$scope.buscarTicket  = null;
 	$scope.idTab         = '';
 	$scope.idEstadoOrden = 1;
+	$scope.lstFacturas  = [];
 
 	$scope.resetValores = function( accion ){
         $scope.accion = 'insert';
@@ -23,7 +24,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 
         else if( 'facturacion' )
         {
-        	$scope.lstFacturas  = [];
+        	$scope.lstFacturas = [];
 			$scope.facturacion = {
 				datosCliente : {
 					nit          : '',
@@ -43,6 +44,7 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
     };
 
     $scope.resetValores( 'facturacion' );
+    $scope.resetValores( 'cliente' );
 
 	$scope.$watch('buscarTicket', function( _new, _old ){
 		if( _old != _new ) {
@@ -422,9 +424,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 		}
 
 	});
-
-    $scope.resetValores( 'cliente' );
-    $scope.resetValores( 'facturacion' );
 
 	$scope.lstDetalleTicket = [];
 	$scope.$watch('accionCliente', function(){
@@ -838,11 +837,11 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 			if( data.respuesta == 'success' )
 			{
-				$scope.resetValores( 'facturacion' );
 				$scope.lstFacturas[ ixFactura ].facturado = true;
 				$scope.lstFacturas[ ixFactura ].idFactura = data.data;
 				winFactEvent.location = "print.php?id=" + data.data;
 		  		winFactEvent.focus();
+				//$scope.resetValores( 'facturacion' );
 			}
 			else
 				winFactEvent.close();
