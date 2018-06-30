@@ -68,176 +68,172 @@
 
 				<!--  PRODUCTOS DEL INVENTARIO -->
 				<div role="tabpanel" class="tab-pane" ng-class="{'active' : inventarioMenu=='inventario'}" ng-show="inventarioMenu=='inventario'">
-					<div class="panel panel-primary">
-						<div class="panel-body">
-							<div class="pull-right">
-								<div class="btn-group btn-group-sm" role="group">
-									<button type="button" class="btn btn-default" ng-click="groupBy='sinFiltro'">
-								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='sinFiltro', 'glyphicon-unchecked': groupBy!='sinFiltro'}"></span> <strong><u>S</u></strong>in Filtro
-								  	</button>
-								  	<button type="button" class="btn btn-default" ng-click="groupBy='tipoProducto'" ng-disabled="realizarReajuste">
-								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='tipoProducto', 'glyphicon-unchecked': groupBy!='tipoProducto'}"></span> <strong><u>T</u></strong>ipo de Producto
-								  	</button>
-								  	<button type="button" class="btn btn-default" ng-click="groupBy='medida'" ng-disabled="realizarReajuste">
-								  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='medida', 'glyphicon-unchecked': groupBy!='medida'}"></span> <strong><u>M</u></strong>edidas
-								  	</button>
-								</div>
-							</div>
-														
-							<div class="text-left">
-								<button type="button" class="btn btn-default" ng-click="modalAccionCuadreProducto()" ng-disabled="realizarReajuste">
-									<span class="glyphicon glyphicon-list-alt"></span> <strong><u>C</u></strong>UADRE DE PRODUCTOS
-								</button>
-								<button type="button" class="btn btn-primary" ng-click="realizarReajusteMasivo()" ng-show="!realizarReajuste">
-									<span class="glyphicon glyphicon-edit"></span> <strong><u>R</u></strong>EAJUSTE MASIVO
-								</button>
-								<button type="button" class="btn btn-danger" ng-click="cancelarReajuste()" ng-show="realizarReajuste">
-									<span class="glyphicon glyphicon-remove"></span> <strong><u>C</u></strong>ANCELAR REAJUSTE
-								</button>
-							</div>
-							<br>
-							<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-								<div class="panel panel-default" ng-repeat="(ixInventario, inventario) in lstInventario">
-									<div class="panel-heading" role="tab">
-										<div class="pull-right">
-											<span class="badge"> TOTAL {{ inventario.totalProductos }} </span>	
-										</div>
-										<strong>
-											<button type="button" class="btn btn-default btn-sm" ng-click="inventario.mostrar=!inventario.mostrar">
-												<span class="glyphicon" ng-class="{'glyphicon-chevron-down': !inventario.mostrar, 'glyphicon-chevron-right' : inventario.mostrar}"></span>
-											</button>
-											<span ng-show="groupBy=='sinFiltro'">{{ inventario.listado }}</span>
-											<span ng-show="groupBy=='tipoProducto'">{{ inventario.tipoProducto }}</span>
-											<span ng-show="groupBy=='medida'">{{ inventario.medida }}</span>
-										</strong>
-									</div>
-									<div class="panel-body" ng-show="inventario.mostrar">
-										<div class="text-right">
-											<div class="btn-group btn-group-xs" role="group">
-												<button type="button" class="btn btn-sm btn-success">
-													Stock Alto
-													<span class="badge">
-														{{ inventario.totalStockAlto }}
-													</span>
-												</button>
-												<button type="button" class="btn btn-sm btn-warning">
-													Alerta Stock
-													<span class="badge">
-														{{ inventario.totalAlertas }}
-													</span>
-												</button>
-												<button type="button" class="btn btn-sm btn-danger">
-													Stock Vacio
-													<span class="badge">{{ inventario.totalStockVacio }}</span>
-												</button>
-											</div>
-										</div>
-										<br>
-										<div class="row">
-										  	<div class="col-sm-5 col-md-6 col-lg-7"></div>
-										  	<div class="col-sm-7 col-md-6 col-lg-5">
-										    	<div class="input-group">
-										      		<span class="input-group-addon">
-										        		<span class="glyphicon glyphicon-search"></span>
-										      		</span>
-										      		<input type="text" class="form-control" ng-model="filtroProducto" maxlength="75" placeholder="Buscar producto">
-										    	</div>
-										  	</div>
-										</div>
-										<!-- TABLA -->
-										<table class="table table-hover">
-											<thead>
-												<tr>
-													<th class="text-center">No.</th>
-													<th class="col-sm-3 text-center">Producto</th>
-													<th class="col-sm-2 text-center">Tipo Producto</th>
-													<th class="col-sm-1 text-center">Perecedero</th>
-													<th class="text-center">Mínimo</th>
-													<th class="text-center">Máximo</th>
-													<th class="col-sm-2 text-center">Disponible</th>
-													<th class="col-sm-2 text-center" ng-show="realizarReajuste">Cantidad</th>
-													<th class="col-sm-1 text-center" ng-show="realizarReajuste"></th>
-													<th class="col-sm-2 text-center" ng-show="realizarReajuste">Nueva Disponibilidad</th>
-													<th class="col-sm-1 text-center">Medida</th>
-													<th class="text-center" ng-show="!realizarReajuste">Reajustar Cantidad</th>
-													<th class="text-center" ng-show="!realizarReajuste">Editar</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr ng-repeat="inv in inventario.lstProductos | filter: filtroProducto" ng-class="{'danger border-danger': inv.alertaStock == 1 && !realizarReajuste, 'warning border-warning':  inv.alertaStock == 2 && !realizarReajuste, 'border-success':  inv.alertaStock == 3 && !realizarReajuste}">
-													<td class="text-right">
-														{{ $index + 1 }}
-													</td>
-													<td>
-														{{ inv.producto }}
-														<br>
-														<span class="label label-warning" ng-show="inv.disponibilidad==inv.cantidadMinima">
-															Pronto a agotarse
-														</span>
-													</td>
-													<td class="text-center">
-														{{ inv.tipoProducto }}
-													</td>
-													<td class="text-center">
-														{{ inv.esPerecedero }}
-													</td>
-													<td class="text-center">
-														{{ inv.cantidadMinima }}
-													</td>
-													<td class="text-center">
-														{{ inv.cantidadMaxima }}
-													</td>
-													<td class="text-center">
-														{{ inv.disponibilidad }}
-													</td>
-													<td class="text-center" ng-show="realizarReajuste">
-														<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.cantidad">
-													</td>
-													<td class="text-center" ng-show="realizarReajuste">
-														<button type="button" class="btn btn-xs" ng-class="{'btn-success': inv.esIncremento, 'btn-danger': !inv.esIncremento}" ng-click="inv.esIncremento=!inv.esIncremento" title="Clic para {{ inv.esIncremento ? 'DISMINUIR' : 'INCREMENTAR' }}" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="!inv.cantidad">
-															<span class="glyphicon" ng-class="{'glyphicon-plus-sign': inv.esIncremento, 'glyphicon-minus-sign': !inv.esIncremento}"></span>
-														</button>
-													</td>
-													<td class="text-center" ng-class="{'danger': retornarTotalReajuste( inv.disponibilidad, inv.cantidad, inv.esIncremento ) < 0}" ng-show="realizarReajuste">
-														<b style="font-size: 18px;">{{ retornarTotalReajuste( inv.disponibilidad, inv.cantidad, inv.esIncremento ) }}</b>
-													</td>
-													<td class="text-center">
-														{{ inv.medida }}
-													</td>
-													<td class="text-center" ng-hide="realizarReajuste">
-														<button type="button" ng-click="ingresarReajuste( inv.idProducto, inv.producto, inv.disponibilidad )" class="btn btn-primary btn-sm">
-															<span class="glyphicon glyphicon-plus"></span>
-														</button>
-													</td>
-													<td class="text-center" ng-hide="realizarReajuste">
-														<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( 'update', inv )">
-															<span class="glyphicon glyphicon-pencil"></span>
-														</button>
-													</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-							<div class="text-center" ng-show="realizarReajuste">
-								<textarea class="form-control" rows="2" ng-model="reajusteMasivo.observacion" placeholder="Ingresar Observaciones (Opcional)"></textarea>
+					<div class="pull-right">
+						<div class="btn-group btn-group-sm" role="group">
+							<button type="button" class="btn btn-default" ng-click="groupBy='sinFiltro'">
+						  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='sinFiltro', 'glyphicon-unchecked': groupBy!='sinFiltro'}"></span> <strong><u>S</u></strong>in Filtro
+						  	</button>
+						  	<button type="button" class="btn btn-default" ng-click="groupBy='tipoProducto'" ng-disabled="realizarReajuste">
+						  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='tipoProducto', 'glyphicon-unchecked': groupBy!='tipoProducto'}"></span> <strong><u>T</u></strong>ipo de Producto
+						  	</button>
+						  	<button type="button" class="btn btn-default" ng-click="groupBy='medida'" ng-disabled="realizarReajuste">
+						  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='medida', 'glyphicon-unchecked': groupBy!='medida'}"></span> <strong><u>M</u></strong>edidas
+						  	</button>
+						</div>
+					</div>
+												
+					<div class="text-left">
+						<button type="button" class="btn btn-default" ng-click="modalAccionCuadreProducto()" ng-disabled="realizarReajuste">
+							<span class="glyphicon glyphicon-list-alt"></span> <strong><u>C</u></strong>UADRE DE PRODUCTOS
+						</button>
+						<button type="button" class="btn btn-primary" ng-click="realizarReajusteMasivo()" ng-show="!realizarReajuste">
+							<span class="glyphicon glyphicon-edit"></span> <strong><u>R</u></strong>EAJUSTE MASIVO
+						</button>
+						<button type="button" class="btn btn-danger" ng-click="cancelarReajuste()" ng-show="realizarReajuste">
+							<span class="glyphicon glyphicon-remove"></span> <strong><u>C</u></strong>ANCELAR REAJUSTE
+						</button>
+					</div>
+					<br>
+					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+						<div class="panel panel-default" ng-repeat="(ixInventario, inventario) in lstInventario">
+							<div class="panel-heading" role="tab">
 								<div class="pull-right">
-									<label class="label label-default">
-										Caracteres <span class="badge">{{ reajusteMasivo.observacion.length }}</span>
-									</label>
+									<span class="badge"> TOTAL {{ inventario.totalProductos }} </span>	
 								</div>
+								<strong>
+									<button type="button" class="btn btn-default btn-sm" ng-click="inventario.mostrar=!inventario.mostrar">
+										<span class="glyphicon" ng-class="{'glyphicon-chevron-down': !inventario.mostrar, 'glyphicon-chevron-right' : inventario.mostrar}"></span>
+									</button>
+									<span ng-show="groupBy=='sinFiltro'">{{ inventario.listado }}</span>
+									<span ng-show="groupBy=='tipoProducto'">{{ inventario.tipoProducto }}</span>
+									<span ng-show="groupBy=='medida'">{{ inventario.medida }}</span>
+								</strong>
 							</div>
-							<hr>
-							<div class="text-center" ng-show="realizarReajuste">
-								<button type="button" class="btn btn-success" ng-click="guardarReajusteMasivo()" ng-disabled="loading">
-									<span class="glyphicon glyphicon-saved"></span> REALIZAR REAJUSTE (F6)
-								</button>
-								<button type="button" class="btn btn-danger" ng-click="cancelarReajuste()">
-									<span class="glyphicon glyphicon-remove"></span> <strong><u>C</u></strong>ANCELAR REAJUSTE
-								</button>
+							<div class="panel-body" ng-show="inventario.mostrar">
+								<div class="text-right">
+									<div class="btn-group btn-group-xs" role="group">
+										<button type="button" class="btn btn-sm btn-success">
+											Stock Alto
+											<span class="badge">
+												{{ inventario.totalStockAlto }}
+											</span>
+										</button>
+										<button type="button" class="btn btn-sm btn-warning">
+											Alerta Stock
+											<span class="badge">
+												{{ inventario.totalAlertas }}
+											</span>
+										</button>
+										<button type="button" class="btn btn-sm btn-danger">
+											Stock Vacio
+											<span class="badge">{{ inventario.totalStockVacio }}</span>
+										</button>
+									</div>
+								</div>
+								<br>
+								<div class="row">
+								  	<div class="col-sm-5 col-md-6 col-lg-7"></div>
+								  	<div class="col-sm-7 col-md-6 col-lg-5">
+								    	<div class="input-group">
+								      		<span class="input-group-addon">
+								        		<span class="glyphicon glyphicon-search"></span>
+								      		</span>
+								      		<input type="text" class="form-control" ng-model="filtroProducto" maxlength="75" placeholder="Buscar producto">
+								    	</div>
+								  	</div>
+								</div>
+								<!-- TABLA -->
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th class="text-center">No.</th>
+											<th class="col-sm-3 text-center">Producto</th>
+											<th class="col-sm-2 text-center">Tipo Producto</th>
+											<th class="col-sm-1 text-center">Perecedero</th>
+											<th class="text-center">Mínimo</th>
+											<th class="text-center">Máximo</th>
+											<th class="col-sm-2 text-center">Disponible</th>
+											<th class="col-sm-2 text-center" ng-show="realizarReajuste">Cantidad</th>
+											<th class="col-sm-1 text-center" ng-show="realizarReajuste"></th>
+											<th class="col-sm-2 text-center" ng-show="realizarReajuste">Nueva Disponibilidad</th>
+											<th class="col-sm-1 text-center">Medida</th>
+											<th class="text-center" ng-show="!realizarReajuste">Reajustar Cantidad</th>
+											<th class="text-center" ng-show="!realizarReajuste">Editar</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="inv in inventario.lstProductos | filter: filtroProducto" ng-class="{'danger border-danger': inv.alertaStock == 1 && !realizarReajuste, 'warning border-warning':  inv.alertaStock == 2 && !realizarReajuste, 'border-success':  inv.alertaStock == 3 && !realizarReajuste}">
+											<td class="text-right">
+												{{ $index + 1 }}
+											</td>
+											<td>
+												{{ inv.producto }}
+												<br>
+												<span class="label label-warning" ng-show="inv.disponibilidad==inv.cantidadMinima">
+													Pronto a agotarse
+												</span>
+											</td>
+											<td class="text-center">
+												{{ inv.tipoProducto }}
+											</td>
+											<td class="text-center">
+												{{ inv.esPerecedero }}
+											</td>
+											<td class="text-center">
+												{{ inv.cantidadMinima }}
+											</td>
+											<td class="text-center">
+												{{ inv.cantidadMaxima }}
+											</td>
+											<td class="text-center">
+												{{ inv.disponibilidad }}
+											</td>
+											<td class="text-center" ng-show="realizarReajuste">
+												<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.cantidad">
+											</td>
+											<td class="text-center" ng-show="realizarReajuste">
+												<button type="button" class="btn btn-xs" ng-class="{'btn-success': inv.esIncremento, 'btn-danger': !inv.esIncremento}" ng-click="inv.esIncremento=!inv.esIncremento" title="Clic para {{ inv.esIncremento ? 'DISMINUIR' : 'INCREMENTAR' }}" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="!inv.cantidad">
+													<span class="glyphicon" ng-class="{'glyphicon-plus-sign': inv.esIncremento, 'glyphicon-minus-sign': !inv.esIncremento}"></span>
+												</button>
+											</td>
+											<td class="text-center" ng-class="{'danger': retornarTotalReajuste( inv.disponibilidad, inv.cantidad, inv.esIncremento ) < 0}" ng-show="realizarReajuste">
+												<b style="font-size: 18px;">{{ retornarTotalReajuste( inv.disponibilidad, inv.cantidad, inv.esIncremento ) }}</b>
+											</td>
+											<td class="text-center">
+												{{ inv.medida }}
+											</td>
+											<td class="text-center" ng-hide="realizarReajuste">
+												<button type="button" ng-click="ingresarReajuste( inv.idProducto, inv.producto, inv.disponibilidad )" class="btn btn-primary btn-sm">
+													<span class="glyphicon glyphicon-plus"></span>
+												</button>
+											</td>
+											<td class="text-center" ng-hide="realizarReajuste">
+												<button type="button" class="btn btn-info btn-sm" ng-click="editarAccion( 'update', inv )">
+													<span class="glyphicon glyphicon-pencil"></span>
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
 							</div>
 						</div>
+					</div>
+					<div class="text-center" ng-show="realizarReajuste">
+						<textarea class="form-control" rows="2" ng-model="reajusteMasivo.observacion" placeholder="Ingresar Observaciones (Opcional)"></textarea>
+						<div class="pull-right">
+							<label class="label label-default">
+								Caracteres <span class="badge">{{ reajusteMasivo.observacion.length }}</span>
+							</label>
+						</div>
+					</div>
+					<hr>
+					<div class="text-center" ng-show="realizarReajuste">
+						<button type="button" class="btn btn-success" ng-click="guardarReajusteMasivo()" ng-disabled="loading">
+							<span class="glyphicon glyphicon-saved"></span> REALIZAR REAJUSTE (F6)
+						</button>
+						<button type="button" class="btn btn-danger" ng-click="cancelarReajuste()">
+							<span class="glyphicon glyphicon-remove"></span> <strong><u>C</u></strong>ANCELAR REAJUSTE
+						</button>
 					</div>
 				</div>
 
