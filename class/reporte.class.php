@@ -172,7 +172,7 @@ class Reporte
 				    SUM( iP.costo ) AS costoTotal
 						FROM lstFacturaCompra fC
 							JOIN lstIngresoProducto AS iP
-								ON ip.idFacturaCompra = fC.idFacturaCompra
+								ON iP.idFacturaCompra = fC.idFacturaCompra
 						WHERE fC.idEstadoFactura = 1 AND ( fC.fechaFactura BETWEEN '{$deFecha}' AND '{$paraFecha}' )
 					GROUP BY fC.fechaFactura, iP.idProducto
 					ORDER BY fC.fechaFactura ASC;";

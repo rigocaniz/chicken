@@ -135,6 +135,9 @@ else
         if ( file_exists( $imagen ) )
             unlink( $imagen );
     }
+
+
+    $conexion->close();
     
 
     // SI HAY ERROR ELIMINAR ARCHIVO

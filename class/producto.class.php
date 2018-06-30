@@ -38,7 +38,7 @@ class Producto
 					idEstadoCuadre,
 					estadoCuadre
 				FROM
-					vCuadreproducto WHERE fechaCuadre = '{$fechaCierre}';";
+					vCuadreProducto WHERE fechaCuadre = '{$fechaCierre}';";
  		
  		if( $rs = $this->con->query( $sql ) AND $rs->num_rows > 0 ){
 
@@ -790,7 +790,7 @@ class Producto
 				    idEstadoCuadre,
 				    estadoCuadre
 				FROM
-				    vCuadreproducto
+				    vCuadreProducto
 				WHERE
 				    idUbicacion = {$idUbicacion} AND idEstadoCuadre = 1;";
  		
@@ -862,7 +862,7 @@ class Producto
 				    idUbicacion,
 				    ubicacion
 				FROM
-				    lstproducto WHERE idUbicacion = {$idUbicacion};";
+				    lstProducto WHERE idUbicacion = {$idUbicacion};";
 		
 		if( $rs = $this->con->query( $sql ) ){
 			while( $row = $rs->fetch_object() ){
