@@ -283,9 +283,11 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			// SI GUARDO CORRECTAMENTE
 			if ( data.respuesta == 'success' )
 			{
+				/*
 				console.log( 'ticketActual::: ', $scope.ticketActual );
 				$scope.ticketActual.lstOrden[ index ].limite           = 0;
 				$scope.ticketActual.lstOrden[ index ].cantidadRestante = 0;
+				*/
 			}
 		});
 	};

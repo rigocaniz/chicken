@@ -260,7 +260,7 @@
 												</span>
 												<input type="number" class="form-control" ng-keyup="$event.keyCode==117 && servirMenu( $index )" 
 													ng-model="orden.seleccionados" style="font-weight:bold;font-size:19px;padding:0 7px" 
-													ng-max="orden.limite" ng-min="0" focus-enter id="detalle_orden_{{$index}}">
+													ng-max="orden.limite" max="{{ orden.limite }}" min="0" ng-min="0" focus-enter id="detalle_orden_{{$index}}">
 											</div>
 	                                    </td>
 	                                </tr>
