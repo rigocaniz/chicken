@@ -75,7 +75,6 @@ class NumeroALetras
         elseif (count($div_decimales) == 1 && $forzarCentimos)
             $decimales = 'CERO ';
 
-
         $numeroStr     = (string)$numero;
         $numeroStrFill = str_pad( $numeroStr, 9, '0', STR_PAD_LEFT );
         $millones      = substr( $numeroStrFill, 0, 3 );
@@ -104,12 +103,14 @@ class NumeroALetras
                 $converted .= sprintf('%s ', self::convertGroup($cientos));
         }
 
-        if(empty($decimales))
-            $valor_convertido = $converted . strtoupper($moneda);
-        else
-            $valor_convertido = $converted . strtoupper($moneda) . ' CON ' . $decimales . ' ' . strtoupper($centimos);
+        $cantidadLetras = $converted . strtoupper( $moneda );
 
-        return $valor_convertido;
+        if( !empty($decimales) AND $decimales != 'CERO ' AND $decimales != 'CERO' )
+            $cantidadLetras .= ' CON ' . $decimales . ' ' . strtoupper($centimos) ;
+        
+        $cantidadLetras .= ' EXACTOS';
+
+        return $cantidadLetras;
     }
 
 
