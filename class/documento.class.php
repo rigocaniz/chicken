@@ -52,7 +52,8 @@ class Documento
 				FROM documentoDetalle AS dd
 					JOIN tipoItem AS ti
 						ON dd.idTipoItem = ti.idTipoItem
-				WHERE dd.idDocumento = {$this->idDocumento} ";
+				WHERE dd.idDocumento = {$this->idDocumento}
+				ORDER BY dd.orden ASC";
 		$rs = $this->con->query( $sql );
 
  		while( $rs AND $row = $rs->fetch_object() ):
@@ -106,6 +107,11 @@ class Documento
 	function render( $valores )
 	{
 		$numeroLetras = new NumeroALetras();
+		
+		$valores[ 'fecha' ] = date("d/m/Y");
+		$valores[ 'totalLetra' ] = $numeroLetras->convertir( $valores[ 'total' ], '', '', TRUE );
+		$valores[ 'total' ] = number_format( $valores[ 'total' ], 2 );
+
 		echo '<style>.campos{position:absolute}</style>';
 		$ultimoY = 0;
 		foreach ( $this->lstCampos as $campo ) {
@@ -129,7 +135,11 @@ class Documento
 				// IMPRIME ENCABEZADO DE TABLA
 				foreach ($campo->encabezado as $enc)
 				{
-					$cols .= "<th width='" . $enc->width . "px'>" . $enc->campo . "</th>";
+					$thTitulo = "";
+					if ( $campo->mostrarTitulo )
+						$thTitulo = $enc->campo;
+
+					$cols .= "<th width='" . $enc->width . "px' style='width:" . $enc->width . "px'>" . $thTitulo . "</th>";
 
 					if ( $enc->_index == 'descripcion' )
 						$resumen .= "<td>" . $valores[ 'descripcion' ] . "</td>";
@@ -159,8 +169,7 @@ class Documento
 					if ( isset( $valor->descuento ) )
 						$valor->descuento  = number_format( $valor->descuento, 2 );
 
-					//echo $valor->subTotal; 
-					//$valor->subTotal   = number_format( $valor->subTotal, 3 );
+					$valor->subTotal = number_format( $valor->subTotal, 2 );
 					
 					$valor = (array)$valor;
 					$body .= "<tr>";
@@ -181,22 +190,11 @@ class Documento
 					$body .= "</tr>";
 				}
 
-				$table = '<table border="1" cellpadding="0" style="text-align:left;font-size:' . $campo->fontSize . 'px;">
+				$table = '<table border="0" cellpadding="0" style="text-align:left;font-size:' . $campo->fontSize . 'px;">
 							<thead>
 								<tr>' . $cols . '</tr>
 							</thead>
 							<tbody>' . $body . '</tbody>
-							<tfooter>
-								<tr>
-									<td colspan="2">'. $numeroLetras->convertir( number_format( $total, 2 ) ) .'</td>
-									<td colspan="2"></td>
-								</tr>
-								<tr>
-									<td></td>
-									<td colspan="2" style="text-align:right;"><b>TOTAL<b></td>
-									<td style="text-align:right;"><b>'. number_format( $total, 2 )  .'</b></td>
-								</tr>
-							</tfooter>
 						</table>';
 
 				echo "<div class='campos' style='left:{$campo->x}px;top:{$campo->y}px;'>$table</div>";
