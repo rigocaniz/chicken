@@ -105,6 +105,7 @@ class Documento
 	// RENDERIZA TODOS LOS CAMPOS
 	function render( $valores )
 	{
+		$numeroLetras = new NumeroALetras();
 		echo '<style>.campos{position:absolute}</style>';
 		$ultimoY = 0;
 		foreach ( $this->lstCampos as $campo ) {
@@ -119,9 +120,11 @@ class Documento
 
 			else if ( $campo->idTipoItem == 2 )
 			{
-				$body      = "";
-				$cols      = "";
-				$resumen   = "";
+				$body        = "";
+				$cols        = "";
+				$resumen     = "";
+				$total       = 0;
+				$totalLetras = 0;
 
 				// IMPRIME ENCABEZADO DE TABLA
 				foreach ($campo->encabezado as $enc)
@@ -131,9 +134,10 @@ class Documento
 					if ( $enc->_index == 'descripcion' )
 						$resumen .= "<td>" . $valores[ 'descripcion' ] . "</td>";
 					
-					else if ( $enc->_index == 'subTotal' )
+					else if ( $enc->_index == 'subTotal' ){
 						$resumen .= "<td>" . $valores[ 'total' ] . "</td>";
-
+						$total   += str_replace(',', '', $valores[ 'total' ] ); 
+					}
 					else
 						$resumen .= "<td>--</td>";
 				}
@@ -177,11 +181,22 @@ class Documento
 					$body .= "</tr>";
 				}
 
-				$table = '<table border="0" cellpadding="0" style="text-align:left;font-size:' . $campo->fontSize . 'px;">
+				$table = '<table border="1" cellpadding="0" style="text-align:left;font-size:' . $campo->fontSize . 'px;">
 							<thead>
 								<tr>' . $cols . '</tr>
 							</thead>
 							<tbody>' . $body . '</tbody>
+							<tfooter>
+								<tr>
+									<td colspan="2">'. $numeroLetras->convertir( number_format( $total, 2 ) ) .'</td>
+									<td colspan="2"></td>
+								</tr>
+								<tr>
+									<td></td>
+									<td colspan="2" style="text-align:right;"><b>TOTAL<b></td>
+									<td style="text-align:right;"><b>'. number_format( $total, 2 )  .'</b></td>
+								</tr>
+							</tfooter>
 						</table>';
 
 				echo "<div class='campos' style='left:{$campo->x}px;top:{$campo->y}px;'>$table</div>";

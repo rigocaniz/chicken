@@ -18,6 +18,7 @@ endif;
 include 'class/conexion.class.php';
 include 'class/facturar.class.php';
 include 'class/documento.class.php';
+include 'class/numeros.class.php';
 
 $factura   = new Factura();
 $idFactura = (int)$_GET[ 'id' ];
