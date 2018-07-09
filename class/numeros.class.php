@@ -70,7 +70,7 @@ class NumeroALetras
                 $decNumberStrFill = str_pad( $decNumberStr, 9, '0', STR_PAD_LEFT );
                 $decCientos       = substr( $decNumberStrFill, 6 );
                 //$decimales        = self::convertGroup( $decCientos );
-                $decimales        = $decNumberStr . "/100";
+                $decimales        = $decNumberStr . " CTVS";
             }
         }
         elseif (count($div_decimales) == 1 && $forzarCentimos)

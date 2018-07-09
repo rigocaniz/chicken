@@ -108,9 +108,9 @@ class Documento
 	{
 		$numeroLetras = new NumeroALetras();
 		
-		$valores[ 'fecha' ] = date("d/m/Y");
+		$valores[ 'fecha' ]      = date("d/m/Y");
 		$valores[ 'totalLetra' ] = $numeroLetras->convertir( $valores[ 'total' ], '', '', TRUE );
-		$valores[ 'total' ] = number_format( $valores[ 'total' ], 2 );
+		$valores[ 'total' ]      = number_format( $valores[ 'total' ], 2 );
 
 		echo '<style>.campos{position:absolute}</style>';
 		$ultimoY = 0;
