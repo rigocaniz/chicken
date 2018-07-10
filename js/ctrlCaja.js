@@ -103,11 +103,11 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout, $filter )
 	$scope.retornarTotal = function(){
 		var total = 0;
 		if( $scope.caja.lstDenominaciones ){
-			for (var i = 0; i < $scope.caja.lstDenominaciones.length; i++) {
+			for (var i = 0; i < $scope.caja.lstDenominaciones.length; i++)
+			{
 				if( $scope.caja.lstDenominaciones[i].cantidad && $scope.caja.lstDenominaciones[i].cantidad > 0 )
-					total += $scope.caja.lstDenominaciones[i].cantidad * $scope.caja.lstDenominaciones[i].denominacion;
+					total += ( $scope.caja.lstDenominaciones[i].cantidad * $scope.caja.lstDenominaciones[i].denominacion );
 			}
-			
 		}
 
 		return total;
@@ -127,10 +127,10 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout, $filter )
 
 		else if( $scope.accion == 'cierre' && !caja.agregarFaltante && ( ( ( caja.totalIngresos + caja.efectivoInicial ) - caja.totalEgresos )  ) - $scope.retornarTotal() > 0 )
 		{
-			var faltante = ( ( ( caja.totalIngresos + caja.efectivoInicial ) - caja.totalEgresos ) - $scope.retornarTotal() );
+			var faltante = parseFloat( ( ( caja.totalIngresos + caja.efectivoInicial ) - caja.totalEgresos ) - $scope.retornarTotal() ).toFixed( 2 );
 			//$scope.caja.agregarFaltante  = true;
-			$scope.caja.efectivoFaltante = faltante;
-			alertify.notify( 'Existe un faltante de ' + faltante, 'warning', 4 );
+			$scope.caja.efectivoFaltante = parseFloat( faltante );
+			alertify.notify( 'Existe un faltante de <h3><b>Q. ' + parseFloat( faltante ).toFixed( 2 ) + '</b></h3>', 'warning', 4 );
 		}
 		
 		else

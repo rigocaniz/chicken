@@ -39,7 +39,6 @@ class Caja
  			$cajas->encontrado = TRUE;
  			while ( $row = $rs->fetch_object() )
  				$cajas->lstCajas[] = $row;
- 				//$row->lstDenominaciones = $this->lstDenominacionesCaja( $row->idCaja );
  		}
 
  		return $cajas;
@@ -59,6 +58,7 @@ class Caja
  			while ( $row = $rs->fetch_object() ){
  				if( $row->idEstadoCaja == 1 )
  					$lstDenominaciones->apertura[] = $row;
+ 				
  				elseif( $row->idEstadoCaja == 2 )
  					$lstDenominaciones->cierre[] = $row;
  			}
