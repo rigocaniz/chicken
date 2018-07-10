@@ -335,9 +335,9 @@
                     <button type="button" class="close" ng-click="$hide();">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="panel-body">
-                        <div class="col-xs-12" style="margin-top:-30px; padding: 0px;">
-                        <div class="row contenedor-tickets">
+                    <div class="panel-body" >
+                        <div class="col-xs-12" style="margin-top:-20px; padding: 0px;">
+                        <div class="row">
                             <div class="btn-orden text-right">
                                 <button type="button" class="bt-info" ng-class="{'active':(idEstadoOrden==1 || idEstadoOrden==2)}" ng-click="$parent.idEstadoOrden=1">
                                     <span class="glyphicon glyphicon-time"></span>
@@ -533,12 +533,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <button type="button" class="btn btn-default" ng-click="$hide();">
-                            <span class="glyphicon glyphicon-chevron-left"></span>
-                            <b>Salir</b>
-                        </button>
-                    </div>
+                </div>
+                <div class="text-right">
+                    <button type="button" class="btn btn-default" ng-click="$hide();">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <b>Salir</b>
+                    </button>
                 </div>
             </div>
         </div>

@@ -28,6 +28,7 @@ include 'class/funciones.php';
 // DEFINIR SESION USUARIO
 $sql = "CALL definirSesion( '{$sesion->getUsuario()}' );";
 $conexion->query( $sql );
+$conexion->siguienteResultado();
 
 $datos = array();
 
