@@ -10,6 +10,77 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	$scope.menu            = {};
 	$scope.combo           = {};
 
+	// RESETEAR VALORES
+	$scope.resetValores = function( accion ){
+		$scope.accion == 'insert';
+		$scope.filter.busqueda = '';
+
+		if( accion == 'menu' )
+		{
+			$scope.menu = {
+				'idEstadoMenu'  : 1,
+				'menu'          : '',
+				'idDestinoMenu' : 1,
+				'idTipoMenu'    : 1,
+				'tiempoAlerta'  : 0,
+				'descripcion'   : '',
+				'imagen'        : '',
+				'subirImagen'   : true,
+				'tabMenu'       : 'precios',
+				'lstPrecios'    : angular.copy( $scope.lstTipoServicio ),
+				'lstRecetaMenu' : []
+			};
+		}
+		else if( accion == 'combo' )
+		{
+			$scope.combo = {
+				'idEstadoMenu'   : 1,
+				'combo'          : '',
+				'descripcion'    : '',
+				'subirImagen'    : true,
+				'imagen'         : '',
+				'tabMenu'        : 'precios',
+				'lstPrecios'     : angular.copy( $scope.lstTipoServicio ),
+				'lstMenusCombo' : []
+			}
+		}
+		else if( accion == 'producto' )
+		{
+			$scope.lstBusqueda = [];
+			$scope.prod = {
+				idMenu         : null,
+				idProducto     : null,
+				nombreProducto : '',
+				medida         : '',
+				cantidad       : null,
+				observacion    : '',
+				seleccionado   : false
+			};
+			$timeout(function(){
+				$( '#producto' ).focus();
+			}, 100);
+		}
+		else if( accion == 'comboDetalle' )
+		{
+			$scope.menuD = {
+				idCombo      : null,
+				idMenu       : null,
+				menu         : '',
+				cantidad     : null,
+				seleccionado : false
+			};
+			$timeout(function(){
+				$( '#menu' ).focus();
+			}, 100);
+		}
+		else if( accion == 'receta' )
+		{
+			$scope.objMenu     = {};
+			$scope.lstBusqueda = [];
+			$scope.resetValores( 'producto' );
+		}
+	};
+
 	if( document.getElementById("dial.adminMenu.html") )
 		$scope.dialAdminMenu = $modal({scope: $scope,template:'dial.adminMenu.html', show: false, backdrop: 'static', keyboard: false});
 	if( document.getElementById("dial.recetaMenu.html") )
@@ -168,7 +239,10 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 	};
 
 	// BUSCAR MENUS
+	//$scope.menuD = {};
+	$scope.resetValores( 'comboDetalle' );
 	$scope.buscarMenu = function( nombreMenu ){
+		//console.log( nombreMenu, $scope.menuD );
 		if( nombreMenu.length && !$scope.menuD.seleccionado ) {
 			$http.post('consultas.php',{opcion: 'buscarMenu', nombreMenu: nombreMenu})
 			.success(function(data){
@@ -696,77 +770,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 		}
 
 		return error;
-	};
-
-	// RESETEAR VALORES
-	$scope.resetValores = function( accion ){
-		$scope.accion == 'insert';
-		$scope.filter.busqueda = '';
-
-		if( accion == 'menu' )
-		{
-			$scope.menu = {
-				'idEstadoMenu'  : 1,
-				'menu'          : '',
-				'idDestinoMenu' : 1,
-				'idTipoMenu'    : 1,
-				'tiempoAlerta'  : 0,
-				'descripcion'   : '',
-				'imagen'        : '',
-				'subirImagen'   : true,
-				'tabMenu'       : 'precios',
-				'lstPrecios'    : angular.copy( $scope.lstTipoServicio ),
-				'lstRecetaMenu' : []
-			};
-		}
-		else if( accion == 'combo' )
-		{
-			$scope.combo = {
-				'idEstadoMenu'   : 1,
-				'combo'          : '',
-				'descripcion'    : '',
-				'subirImagen'    : true,
-				'imagen'         : '',
-				'tabMenu'        : 'precios',
-				'lstPrecios'     : angular.copy( $scope.lstTipoServicio ),
-				'lstMenusCombo' : []
-			}
-		}
-		else if( accion == 'producto' )
-		{
-			$scope.lstBusqueda = [];
-			$scope.prod = {
-				idMenu         : null,
-				idProducto     : null,
-				nombreProducto : '',
-				medida         : '',
-				cantidad       : null,
-				observacion    : '',
-				seleccionado   : false
-			};
-			$timeout(function(){
-				$( '#producto' ).focus();
-			}, 100);
-		}
-		else if( accion == 'comboDetalle' )
-		{
-			$scope.menuD = {
-				idCombo      : null,
-				idMenu       : null,
-				menu         : '',
-				cantidad     : null,
-				seleccionado : false
-			};
-			$timeout(function(){
-				$( '#menu' ).focus();
-			}, 100);
-		}
-		else if( accion == 'receta' )
-		{
-			$scope.objMenu     = {};
-			$scope.lstBusqueda = [];
-			$scope.resetValores( 'producto' );
-		}
 	};
 
 	// RESETEAR PRODUCTO
