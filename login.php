@@ -101,7 +101,6 @@ if( !isset( $_SESSION[ 'idPerfil' ] ) AND !isset( $_SESSION[ 'username' ] )  ) {
         <div class="login-block">
             <div>
                 <img class="img-rounded" src="img/logo_churchil.png">
-                <h3>INGRESAR</h3>
             </div>
             <p>
                 <form action="<?php echo htmlspecialchars( $_SERVER[ 'PHP_SELF' ]); ?>" method="POST" novalidate autocomplete="off">

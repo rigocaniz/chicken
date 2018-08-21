@@ -4850,7 +4850,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 .label {
   display: inline;
   padding: .2em .6em .3em;
-  font-size: 84%;
+  font-size: 86%;
   font-weight: bold;
   line-height: 1;
   color: #ffffff;
@@ -5753,7 +5753,7 @@ button.list-group-item-danger.active:focus {
 .panel-info > .panel-heading {
   color: #ffffff;
   background-color: #03a9f4;
-  border-color: #2196f3;
+  border-color: #03a9f4;
 }
 .panel-info > .panel-heading + .panel-collapse > .panel-body {
   border-top-color: #bce8f1;
@@ -5944,7 +5944,7 @@ button.close {
   filter: alpha(opacity=50);
 }
 .modal-header {
-  padding: 15px;
+  padding: 12px 15px;
   border-bottom: 1px solid #e5e5e5;
 }
 .modal-header .close {
@@ -5959,7 +5959,7 @@ button.close {
   padding: 15px 10px;
 }
 .modal-footer {
-  padding: 15px;
+  padding: 10px 15px;
   text-align: right;
   border-top: 1px solid #e5e5e5;
   background-color: #eceff1;

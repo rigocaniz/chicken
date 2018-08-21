@@ -165,7 +165,7 @@
 										<tr ng-repeat="perfil in lstPerfiles">
 											<td>{{ $index + 1 }}</td>
 											<td>{{ perfil.perfil }}</td>
-											<td class="text-center">
+											<td class="text-right">
 												<div class="menu-contenedor">
 													<button type="button" class="btn btn-warning noBorde">
 														<span class="glyphicon glyphicon-th"></span>
