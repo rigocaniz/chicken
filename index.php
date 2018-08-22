@@ -3,7 +3,6 @@
     if( isset( $_SESSION[ 'usuario' ] ) AND isset( $_SESSION[ 'idPerfil' ] ) ):
         include 'class/sesion.class.php';
         $token = "USR." . $sesion->getUsuario() . "." . $sesion->getIdPerfil();
-    
 /*
     echo "<pre>";
     print_r( $_SESSION );
