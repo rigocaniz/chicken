@@ -167,14 +167,16 @@
 							<div class="form-group">
 								<label class="col-sm-2 control-label">Tipo Movimiento</label>
 								<div class="col-sm-4">
-									<select ng-model="movimiento.idTipoMovimiento" class="form-control" focus-enter>
-										<option value="3">Ingreso</option>
-										<option value="4">Egreso</option>
-									</select>
-								</div>
-								<div class="col-sm-2">
-									<span class="label label-success" ng-show="movimiento.idTipoMovimiento==3">INGRESO</span>
-									<span class="label label-danger" ng-show="movimiento.idTipoMovimiento==4">EGRESO</span>
+									<div class="btn-group" role="group" aria-label="">
+									  	<button type="button" class="btn" ng-click="movimiento.idTipoMovimiento=3" ng-class="{'btn-success': movimiento.idTipoMovimiento==3, 'btn-default': movimiento.idTipoMovimiento!=3}">
+									  		<span class="glyphicon" ng-class="{'glyphicon-check': movimiento.idTipoMovimiento==3, 'glyphicon-unchecked': movimiento.idTipoMovimiento!=3}"></span>
+									  		Ingreso
+									  	</button>
+									  	<button type="button" class="btn" ng-click="movimiento.idTipoMovimiento=4" ng-class="{'btn-danger': movimiento.idTipoMovimiento==4, 'btn-default': movimiento.idTipoMovimiento!=4}">
+									  		<span class="glyphicon" ng-class="{'glyphicon-check': movimiento.idTipoMovimiento==4, 'glyphicon-unchecked': movimiento.idTipoMovimiento!=4}"></span>
+									  		Egreso
+									  	</button>
+									</div>
 								</div>
 							</div>
 							<div class="form-group">
@@ -236,12 +238,14 @@
 												{{mov.tipoMovimiento}}
 											</span>
 										</td>
-										<td>
+										<td class="text-right">
 											<strong>{{mov.monto | number:2}}</strong>
 										</td>
 										<td>{{mov.motivo}}</td>
 										<td>{{mov.usuarioCaja}}</td>
-										<td>{{mov.fechaRegistro}}</td>
+										<td>
+											{{ formatoFecha( mov.fechaRegistro, 'ddd D [de] MMM [de] YYYY HH:mm [horas]' ) }}
+										</td>
 									</tr>
 								</tbody>
 							</table>

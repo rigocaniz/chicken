@@ -108,13 +108,13 @@ if( !isset( $_SESSION[ 'idPerfil' ] ) AND !isset( $_SESSION[ 'username' ] )  ) {
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-user"></i>
                         </span>
-                        <input class="form-control" type="text" name="username" value="<?= $username; ?>" maxlength="12" onkeydown="nextInput(event)" placeholder="Usuario" <?= $disabled; ?> />
+                        <input class="form-control" autocomplete="usuario" type="text" name="username" value="<?= $username; ?>" maxlength="12" onkeydown="nextInput(event)" placeholder="Usuario" <?= $disabled; ?> />
                     </div>
                     <div class="form-group input-group">
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-lock"></i>
                         </span>
-                        <input class="form-control" type="password" id="pass" maxlength="25" name="password" value="<?= $password; ?>" placeholder="Contraseña" <?= $disabled; ?> />
+                        <input class="form-control" autocomplete="clave" type="password" id="pass" maxlength="25" name="password" value="<?= $password; ?>" placeholder="Contraseña" <?= $disabled; ?> />
                     </div>
                     <?php 
                         if( $response == 2 && $error ):
