@@ -244,14 +244,10 @@
 										</td>
 										<td>{{mov.motivo}}</td>
 										<td>{{mov.usuarioCaja}}</td>
-<<<<<<< HEAD
-										<td>{{mov.fechaRegistro}}</td>
-										<td>{{mov.idCaja}}</td>
-=======
 										<td>
-											{{ formatoFecha( mov.fechaRegistro, 'ddd D [de] MMM [de] YYYY HH:mm [horas]' ) }}
+											{{ formatoFecha( mov.fechaRegistro, 'ddd D [de] MMM YYYY HH:mm [horas]' ) }}
 										</td>
->>>>>>> 8bbaf91ef19c8733b357117ea91fd6b174bd9db6
+										<td>{{mov.idCaja}}</td>
 									</tr>
 								</tbody>
 							</table>
