@@ -414,6 +414,7 @@ class Caja
 				    tm.idTipoMovimiento,
 				    tm.tipoMovimiento,
 				    c.usuario AS 'usuarioCaja',
+				    c.idCaja,
 				    em.fechaRegistro
 				FROM movimiento AS m
 					JOIN logEstadoMovimiento AS em

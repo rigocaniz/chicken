@@ -101,7 +101,6 @@ if( !isset( $_SESSION[ 'idPerfil' ] ) AND !isset( $_SESSION[ 'username' ] )  ) {
         <div class="login-block">
             <div>
                 <img class="img-rounded" src="img/logo_churchil.png">
-                <h3>INGRESAR</h3>
             </div>
             <p>
                 <form action="<?php echo htmlspecialchars( $_SERVER[ 'PHP_SELF' ]); ?>" method="POST" novalidate autocomplete="off">
@@ -109,13 +108,13 @@ if( !isset( $_SESSION[ 'idPerfil' ] ) AND !isset( $_SESSION[ 'username' ] )  ) {
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-user"></i>
                         </span>
-                        <input class="form-control" type="text" name="username" value="<?= $username; ?>" maxlength="12" onkeydown="nextInput(event)" placeholder="Usuario" <?= $disabled; ?> />
+                        <input class="form-control" autocomplete="usuario" type="text" name="username" value="<?= $username; ?>" maxlength="12" onkeydown="nextInput(event)" placeholder="Usuario" <?= $disabled; ?> />
                     </div>
                     <div class="form-group input-group">
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-lock"></i>
                         </span>
-                        <input class="form-control" type="password" id="pass" maxlength="25" name="password" value="<?= $password; ?>" placeholder="Contraseña" <?= $disabled; ?> />
+                        <input class="form-control" autocomplete="clave" type="password" id="pass" maxlength="25" name="password" value="<?= $password; ?>" placeholder="Contraseña" <?= $disabled; ?> />
                     </div>
                     <?php 
                         if( $response == 2 && $error ):

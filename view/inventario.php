@@ -22,15 +22,15 @@
 						<span class="glyphicon glyphicon-home"></span>
 					</a>
 				</li>
-				<?php
-				// SOLO PARA PERFIL ADMINISTRADOR
-				if( $sesion->getIdPerfil() == 1 ):
-				?>
 				<li role="presentation" ng-class="{'active' : inventarioMenu=='inventario'}" ng-click="resetValores(); inventarioMenu='inventario'">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-list"></span> INVENTARIO
 					</a>
 				</li>
+				<?php
+				// SOLO PARA PERFIL ADMINISTRADOR
+				if( $sesion->getIdPerfil() == 1 ):
+				?>
 				<li role="presentation" ng-class="{'active' : inventarioMenu=='tipoProducto'}" ng-click="resetValores(); inventarioMenu='tipoProducto'">
 					<a href="" role="tab" data-toggle="tab">
 						<span class="glyphicon glyphicon-share-alt"></span> TIPO PRODUCTO
@@ -53,14 +53,14 @@
 			<div class="tab-content">
 				<div class="text-right">
 					<p>
-						<button type="button" class="btn btn-success" ng-click="editarAccion( 'insert', null )">
+						<button type="button" class="btn btn-success btn-sm" ng-click="editarAccion( 'insert', null )">
 							<span class="glyphicon glyphicon-plus"></span> <strong><u>A</u></strong>gregar Producto
 						</button>
-						<button type="button" class="btn btn-info noBorde" ng-click="cargarLstFacturaCompra()" ng-show="inventarioMenu=='compras'">
+						<button type="button" class="btn btn-info btn-sm noBorde" ng-click="cargarLstFacturaCompra()" ng-show="inventarioMenu=='compras'">
 							<span class="glyphicon glyphicon-th-list"></span> VER INGRESOS
 						</button>
 
-						<button type="button" class="btn btn-info noBorde" ng-click="verCierreDiario()" ng-show="inventarioMenu=='inventario'">
+						<button type="button" class="btn btn-info btn-sm noBorde" ng-click="verCierreDiario()" ng-show="inventarioMenu=='inventario'">
 							<span class="glyphicon glyphicon-th-list"></span> VER CIERRE DIARIO
 						</button>
 					</p>
