@@ -188,6 +188,7 @@ app.controller('ctrlCaja', function( $scope , $http, $modal, $timeout, $filter )
 				if( data.respuesta == 'success' )
 				{
 					$scope.getMovimientos();
+					$scope.inicioCaja();
 					$scope.movimiento = {
 						idTipoMovimiento : '3',
 						motivo           : '',
