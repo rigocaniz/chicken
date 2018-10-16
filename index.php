@@ -18,6 +18,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Restaurante Churchil</title>
     <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="css/style.min.css">
+    <!--
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link href="css/stylish-portfolio.css" rel="stylesheet">
     <link rel="stylesheet" href="css/alertify.css">
@@ -25,8 +27,11 @@
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/estilo.css">
     <link rel="stylesheet" href="css/fileinput.css">
+    -->
     <!-- jQuery -->
     <script src="node-app/node_modules/socket.io-client/dist/socket.io.js"></script>
+    <script src="js/libs/lib.min.js"></script>
+    <!--
     <script src="js/libs/jquery-3.2.1.min.js"></script>
     <script src="js/libs/angular.min.js"></script>
     <script src="js/libs/bootstrap.min.js"></script>
@@ -36,6 +41,7 @@
     <script src="js/libs/fileinput.js"></script>
     <script src="js/libs/moment.min.js"></script>
     <script src="js/libs/highcharts.js"></script>
+    -->
 </head>
 <body ng-controller="inicioCtrl" ng-keydown="pressKey( $event.keyCode, $event.ctrlKey, $event );" style="overflow-x: hidden;">
     <div class="network-bad">
@@ -190,6 +196,7 @@
     </script> 
 
     <!-- CONTROLADORES -->
+    <!--
     <script src="js/app.js"></script>
     <script src="js/rutas.js"></script>
     <script src="js/directivas.js"></script>
@@ -205,6 +212,8 @@
     <script src="js/crtlEvento.js"></script>
     <script src="js/crtlTen.js"></script>
     <script src="js/alertify.js"></script>
+    -->
+    <script src="js/app.min.js"></script>
 
     <script>
         // Closes the sidebar menu
