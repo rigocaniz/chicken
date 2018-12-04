@@ -1,3 +1,4 @@
+/*
 app.directive('tooltip', function(){
     return {
         restrict: 'A',
@@ -9,6 +10,13 @@ app.directive('tooltip', function(){
             });
         }
     };
+});
+*/
+app.config(function($tooltipProvider) {
+  angular.extend($tooltipProvider.defaults, {
+    animation: 'am-flip-x',
+    trigger: 'hover'
+  });
 });
 
 app.directive('numbersOnly', function () {

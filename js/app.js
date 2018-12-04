@@ -1,4 +1,4 @@
-var app = angular.module('restaurante',['ngRoute','mgcrea.ngStrap','angularUtils.directives.dirPagination'],
+var app = angular.module('restaurante',['ngRoute','mgcrea.ngStrap','angularUtils.directives.dirPagination', 'mgcrea.ngStrap.tooltip'],
 	["$provide", function($provide) {//validar que el datepicker sea español
     var PLURAL_CATEGORY = {ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "many", OTHER: "other"};
     $provide.value("$locale", {

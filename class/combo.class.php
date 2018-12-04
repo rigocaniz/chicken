@@ -446,8 +446,11 @@ class Combo
 	// GUARDAR // ACTUALIZAR => CONSULTA COMBO
 	function consultaCombo( $accion, $data )
  	{
- 		if( count( $data->lstPrecios ) ){
- 		
+ 		echo "<pre>";
+ 			print_r( $data );
+ 			
+ 		if( count( $data->lstPrecios ) )
+ 		{
 	 		$validar = new Validar();
 
 			// INICIALIZACIÓN VAR
@@ -473,7 +476,6 @@ class Combo
 			$codigo       = $validar->validarEntero( $data->codigo, NULL, TRUE, 'El código del combo no es válido' );
 			$descripcion  = $this->con->real_escape_string( $validar->validarTexto( $data->descripcion, NULL, strlen( $data->descripcion ), 10, 1500, 'la descripcion' ) );
 			$idEstadoMenu = $validar->validarEntero( $data->idEstadoMenu, NULL, TRUE, 'El ID del estado combo no es válido' );
-
 
 			// OBTENER RESULTADO DE VALIDACIONES
 	 		if( $validar->getIsError() ):

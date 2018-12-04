@@ -406,8 +406,8 @@ class Menu
  	// GUARDAR // ACTUALIZAR => MENU
 	function consultaMenu( $accion, $data )
  	{
- 		if( count( $data->lstPrecios ) ){
-
+ 		if( count( $data->lstPrecios ) )
+ 		{
 	 		$validar = new Validar();
 
 			// INICIALIZACIÓN VAR

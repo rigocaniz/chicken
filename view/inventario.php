@@ -80,8 +80,7 @@
 						  		<span class="glyphicon" ng-class="{'glyphicon-check': groupBy=='medida', 'glyphicon-unchecked': groupBy!='medida'}"></span> <strong><u>M</u></strong>edidas
 						  	</button>
 						</div>
-					</div>
-												
+					</div>												
 					<div class="text-left">
 						<button type="button" class="btn btn-default" ng-click="modalAccionCuadreProducto()" ng-disabled="realizarReajuste">
 							<span class="glyphicon glyphicon-list-alt"></span> <strong><u>C</u></strong>UADRE DE PRODUCTOS
@@ -143,7 +142,7 @@
 								  	</div>
 								</div>
 								<!-- TABLA -->
-								<table class="table table-hover">
+								<table class="table table-condensed table-hover">
 									<thead>
 										<tr>
 											<th class="text-center">No.</th>
@@ -162,7 +161,8 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr ng-repeat="inv in inventario.lstProductos | filter: filtroProducto" ng-class="{'danger border-danger': inv.alertaStock == 1 && !realizarReajuste, 'warning border-warning':  inv.alertaStock == 2 && !realizarReajuste, 'border-success':  inv.alertaStock == 3 && !realizarReajuste}">
+										<tr
+										 dir-paginate="inv in inventario.lstProductos | filter: filtroProducto | itemsPerPage: 25" pagination-id="inventario.id" ng-class="{'danger border-danger': inv.alertaStock == 1 && !realizarReajuste, 'warning border-warning':  inv.alertaStock == 2 && !realizarReajuste, 'border-success':  inv.alertaStock == 3 && !realizarReajuste}">
 											<td class="text-right">
 												{{ $index + 1 }}
 											</td>
@@ -215,6 +215,8 @@
 										</tr>
 									</tbody>
 								</table>
+								<!-- PAGINACIÓN -->
+                                <dir-pagination-controls pagination-id="inventario.id"></dir-pagination-controls>
 							</div>
 						</div>
 					</div>
@@ -763,7 +765,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr dir-paginate="facturaCompra in detalleFacturaCompra.lstFacturaCompra | filter: filtroCancion | itemsPerPage: 25" ng-dblclick="editarFacturaCompra( facturaCompra, 'verDetalle' )">
+							<tr dir-paginate="facturaCompra in detalleFacturaCompra.lstFacturaCompra | filter: filtroCancion | itemsPerPage: 25" ng-dblclick="editarFacturaCompra( facturaCompra, 'verDetalle' )" pagination-id="compras">
 								<td class="text-center">
 									{{ $index + 1 }}
 								</td>
@@ -807,7 +809,7 @@
 							</tr>
 						</tbody>
 					</table>
-					<dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" template-url="dirPagination.tpl.html"></dir-pagination-controls>
+					<dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" template-url="dirPagination.tpl.html" pagination-id="compras"></dir-pagination-controls>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" ng-click="$hide()">

@@ -913,9 +913,11 @@ class Producto
 				    lstProducto
 				ORDER BY idProducto;";
 		
-		if( $rs = $this->con->query( $sql ) ){
-			while( $row = $rs->fetch_object() ){
-
+		if( $rs = $this->con->query( $sql ) )
+		{
+			$id = 0;
+			while( $row = $rs->fetch_object() )
+			{
 				$iMedida       = -1;
 				$iTipoProducto = -1;
 				$indexProducto = -1;
@@ -948,7 +950,6 @@ class Producto
 
 				endif;
 
-
 				// SI NO EXISTE LO AGREGA
 				if( $iTipoProducto == -1 AND $indexProducto == -1 AND $iMedida == -1 ){
 
@@ -963,8 +964,11 @@ class Producto
 
 					endif;
 
+					$id++;
+
 					$lstProductos[] = array(
 						'indexProd'       => 1,
+						'id'              => 'lista' . $id,
 						'listado'         => 'LISTADO DE PRODUCTOS',
 						'idTipoProducto'  => (int) $row->idTipoProducto,
 						'tipoProducto'    => strtoupper( $row->tipoProducto ),
