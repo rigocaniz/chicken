@@ -446,9 +446,8 @@ class Combo
 	// GUARDAR // ACTUALIZAR => CONSULTA COMBO
 	function consultaCombo( $accion, $data )
  	{
- 		echo "<pre>";
- 			print_r( $data );
- 			
+ 		//echo "<pre>";
+ 			//print_r( $data );
  		if( count( $data->lstPrecios ) )
  		{
 	 		$validar = new Validar();
@@ -513,7 +512,7 @@ class Combo
 
 
 		 		// FINALIZAR TRANSACCION
-		 		if( $this->respuesta == 'danger' )
+		 		if( $this->respuesta == 'danger' OR $this->respuesta == 'warning' )
 		 			$this->con->query( 'ROLLBACK' );
 		 		else
 		 			$this->con->query( 'COMMIT' );
