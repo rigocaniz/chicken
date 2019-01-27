@@ -108,13 +108,18 @@ class Documento
 	{
 		$numeroLetras = new NumeroALetras();
 		
-		$valores[ 'fecha' ]      = date("d/m/Y");
+		$valores[ 'fecha' ]      = date("d") . "&nbsp;&nbsp;&nbsp;" . date("m") . "&nbsp;&nbsp;&nbsp;" . date("Y");
 		$valores[ 'totalLetra' ] = $numeroLetras->convertir( $valores[ 'total' ], '', '', TRUE );
 		$valores[ 'total' ]      = number_format( $valores[ 'total' ], 2 );
+		//$valores[ 'nombre' ]     = ucwords( strtolower( $valores[ 'nombre' ] ) );
+		//$valores[ 'direccion' ]  = ucwords( strtolower( $valores[ 'direccion' ] ) );
+		$valores[ 'nombre' ]     = strtoupper( $valores[ 'nombre' ] );
+		$valores[ 'direccion' ]  = strtoupper( $valores[ 'direccion' ] );
 
 		echo '<style>.campos{position:absolute}</style>';
 		$ultimoY = 0;
-		foreach ( $this->lstCampos as $campo ) {
+		foreach ( $this->lstCampos as $campo )
+		{
 			$label = "";
 			$item  = $valores[ $campo->_index ];
 
