@@ -1,24 +1,3 @@
-/*
-app.directive('tooltip', function(){
-    return {
-        restrict: 'A',
-        link: function(scope, element, attrs){
-            $(element).hover(function(){
-                $(element).tooltip('show');
-            }, function(){
-                $(element).tooltip('hide');
-            });
-        }
-    };
-});
-*/
-app.config(function($tooltipProvider) {
-  angular.extend($tooltipProvider.defaults, {
-    animation: 'am-flip-x',
-    trigger: 'hover'
-  });
-});
-
 app.directive('numbersOnly', function () {
     return {
         require: 'ngModel',

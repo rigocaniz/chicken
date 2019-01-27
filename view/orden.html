@@ -4,7 +4,7 @@
         </button>
     </td>
     <td>
-        <div class="label-border btn-sm" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}" title="{{ item.tipoServicio }}" data-toggle="tooltip" data-placement="top" tooltip>
+        <div class="label-border btn-sm" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}" data-title="{{ item.tipoServicio }}" data-placement="top" bs-tooltip>
             <span ng-show="item.idTipoServicio==2">R</span>
             <span ng-show="item.idTipoServicio==3">D</span>
             <span ng-show="item.idTipoServicio==1">L</span>

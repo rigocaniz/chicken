@@ -57,4 +57,17 @@ app.config(function($routeProvider) {
         redirectTo:'/'
     });
 
+})
+.config(function($tooltipProvider) {
+    angular.extend($tooltipProvider.defaults, {
+        trigger : 'hover',
+        html    : true
+    });
+})
+.config(function($popoverProvider) {
+    angular.extend($popoverProvider.defaults, {
+        trigger : 'hover',
+        html    : true
+    });
 });
+

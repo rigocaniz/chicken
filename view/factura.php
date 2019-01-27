@@ -107,7 +107,7 @@
         						<input type="text" class="form-control" ng-model="factura.cliente.nit" disabled id="cliente_nit" style="font-weight:bold">
         					</div>
         					<div class="col-sm-2 col-md-1">
-        						<button type="button" class="btn btn-info" ng-click="editarCliente( factura.cliente, 'mostrar' );" ng-show="factura.cliente.idCliente && factura.cliente.idCliente != 1" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
+        						<button type="button" class="btn btn-info" ng-click="editarCliente( factura.cliente, 'mostrar' );" ng-show="factura.cliente.idCliente && factura.cliente.idCliente != 1" data-title="Editar" data-placement="top" bs-tooltip>
         							<span class="glyphicon glyphicon-pencil"></span> <u>E</u>ditar
         						</button>
         					</div>
@@ -185,7 +185,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <div class="label-border btn-sm" ng-class="{'btn-success':orden.idTipoServicio==2, 'btn-warning':orden.idTipoServicio==3, 'btn-primary':orden.idTipoServicio==1}" title="{{ orden.tipoServicio }}" data-toggle="tooltip" data-placement="top" tooltip>
+                                                    <div class="label-border btn-sm" ng-class="{'btn-success':orden.idTipoServicio==2, 'btn-warning':orden.idTipoServicio==3, 'btn-primary':orden.idTipoServicio==1}" data-title="{{ orden.tipoServicio }}" data-placement="top" bs-tooltip>
                                                         <span ng-show="orden.idTipoServicio==2">R</span>
                                                         <span ng-show="orden.idTipoServicio==3">D</span>
                                                         <span ng-show="orden.idTipoServicio==1">L</span>
@@ -465,7 +465,7 @@
                                                     <tr ng-repeat="item in infoOrden.lstOrden track by $index">
                                                         <!--
                                                         <td>
-                                                            <button type="button" class="btn btn-sm btn-default" ng-click="editarDetalle( item )" title="Editar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
+                                                            <button type="button" class="btn btn-sm btn-default" ng-click="editarDetalle( item )" data-title="Editar" data-placement="top" bs-tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
                                                                 <span class="glyphicon glyphicon-pencil"></span>
                                                             </button>
                                                         </td>
@@ -476,13 +476,13 @@
                                                         <td>{{item.cantidad}}</td>
                                                         <td>
                                                             <button type="button" class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}">
-                                                                <span ng-show="item.idTipoServicio==2" title="Restaurante" data-toggle="tooltip" data-placement="top" tooltip>R</span>
-                                                                <span ng-show="item.idTipoServicio==3" title="A Domicilio" data-toggle="tooltip" data-placement="top" tooltip>D</span>
-                                                                <span ng-show="item.idTipoServicio==1" title="Para Llevar" data-toggle="tooltip" data-placement="top" tooltip>L</span>
+                                                                <span ng-show="item.idTipoServicio==2" data-title="Restaurante" data-placement="top" bs-tooltip>R</span>
+                                                                <span ng-show="item.idTipoServicio==3" data-title="A Domicilio" data-placement="top" bs-tooltip>D</span>
+                                                                <span ng-show="item.idTipoServicio==1" data-title="Para Llevar" data-placement="top" bs-tooltip>L</span>
                                                             </button>
                                                             <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
                                                             <span>{{item.descripcion}}</span>
-                                                            <span class="estado-menu {{est.css}}" ng-repeat="est in item.estados" title="{{est.title}}" data-toggle="tooltip" data-placement="top" tooltip>{{est.abr}} <span class="badge">{{est.total}}</span></span>
+                                                            <span class="estado-menu {{est.css}}" ng-repeat="est in item.estados" data-title="{{est.title}}" data-placement="top" bs-tooltip>{{est.abr}} <span class="badge">{{est.total}}</span></span>
                                                             <p ng-show="item.observacion.length" class="label label-primary">
                                                                 <span class="glyphicon glyphicon-star"></span>
                                                                 {{item.observacion}}
@@ -491,7 +491,7 @@
                                                         <td class="text-right">{{item.subTotal | number:2}}</td>
                                                         <!--
                                                         <td>
-                                                            <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarDetalle( item.lstDetalle )" title="Cancelar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
+                                                            <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarDetalle( item.lstDetalle )" data-title="Cancelar" data-placement="top" bs-tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
                                                                 <span class="glyphicon glyphicon-remove"></span>
                                                             </button>
                                                         </td>
@@ -515,7 +515,7 @@
                                                         <td class="text-right">{{(otro.cantidad*otro.precioUnidad) | number:2}}</td>
                                                         <!--
                                                         <td>
-                                                            <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarOtroMenu( otro )" title="Eliminar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
+                                                            <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarOtroMenu( otro )" data-title="Eliminar" data-placement="top" bs-tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
                                                                 <span class="glyphicon glyphicon-remove"></span>
                                                             </button>
                                                         </td>
@@ -596,13 +596,13 @@
                                                         <span class="glyphicon glyphicon-th"></span>
                                                     </button>
                                                     <div class="menu-horizontal">
-                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 2" ng-click="editarFactura( item, 2 )" title="Cambiar Pendiente" data-toggle="tooltip" data-placement="top" tooltip>
+                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 2" ng-click="editarFactura( item, 2 )" data-title="Cambiar Pendiente" data-placement="top" bs-tooltip>
                                                             <span class="glyphicon glyphicon-flag"></span>
                                                         </button>
-                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 1" ng-click="editarFactura( item, 1 )" title="Cambiar a Pagado" data-toggle="tooltip" data-placement="top" tooltip>
+                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 1" ng-click="editarFactura( item, 1 )" data-title="Cambiar a Pagado" data-placement="top" bs-tooltip>
                                                             <span class="glyphicon glyphicon-ok"></span>
                                                         </button>
-                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 3" ng-click="editarFactura( item, 3 )" title="Cambiar a Pagado Parcialmente" data-toggle="tooltip" data-placement="top" tooltip>
+                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 3" ng-click="editarFactura( item, 3 )" data-title="Cambiar a Pagado Parcialmente" data-placement="top" bs-tooltip>
                                                             <span class="glyphicon glyphicon-bullhorn"></span>
                                                         </button>
                                                         <a class="btn" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ item.idFactura }}" title="IMPRIMIR FACTURA">
@@ -642,13 +642,13 @@
                                                         <span class="glyphicon glyphicon-th"></span>
                                                     </button>
                                                     <div class="menu-horizontal">
-                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 2" ng-click="editarFactura( item, 2 )" title="Cambiar Pendiente" data-toggle="tooltip" data-placement="top" tooltip>
+                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 2" ng-click="editarFactura( item, 2 )" data-title="Cambiar Pendiente" data-placement="top" bs-tooltip>
                                                             <span class="glyphicon glyphicon-flag"></span>
                                                         </button>
-                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 1" ng-click="editarFactura( item, 1 )" title="Cambiar a Pagado" data-toggle="tooltip" data-placement="top" tooltip>
+                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 1" ng-click="editarFactura( item, 1 )" data-title="Cambiar a Pagado" data-placement="top" bs-tooltip>
                                                             <span class="glyphicon glyphicon-ok"></span>
                                                         </button>
-                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 3" ng-click="editarFactura( item, 3 )" title="Cambiar a Pagado Parcialmente" data-toggle="tooltip" data-placement="top" tooltip>
+                                                        <button type="button" class="btn" ng-show="item.idEstadoFactura != 3" ng-click="editarFactura( item, 3 )" data-title="Cambiar a Pagado Parcialmente" data-placement="top" bs-tooltip>
                                                             <span class="glyphicon glyphicon-bullhorn"></span>
                                                         </button>
                                                         <a class="btn" id="btn_print_factura" target="_blank" ng-href="print.php?id={{ item.idFactura }}" title="IMPRIMIR FACTURA">
@@ -983,7 +983,7 @@
                             <button type="button" class="btn btn-success" ng-click="accionCaja='aperturarCaja'" ng-show="!caja.idCaja">
                                 <span class="glyphicon glyphicon-flag"></span> APERTURAR CAJA
                             </button>
-                            <button type="button" class="btn btn-danger" ng-click="accionCaja=''" ng-show="accionCaja!=''" title="CANCELAR ACCIÓN" data-toggle="tooltip" data-placement="top" tooltip>
+                            <button type="button" class="btn btn-danger" ng-click="accionCaja=''" ng-show="accionCaja!=''" data-title="CANCELAR ACCIÓN" data-placement="top" bs-tooltip>
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>
                         </p>

@@ -85,7 +85,7 @@
 								    		ng-class="{'label-danger': m.idDestinoMenu == 1, 'label-warning': m.idDestinoMenu == 2}">
 								    		{{ m.destinoMenu }}
 								    	</span>
-								      	<img ng-src="{{ m.imagen }}" alt="{{ m.menu }}" ng-click="asignarValorImagen( m.idMenu, 'menu' )" style="height:85px; margin-top: 8px;" title="Click en la imagen para cambiarla" data-toggle="tooltip" data-placement="top" tooltip>
+								      	<img ng-src="{{ m.imagen }}" alt="{{ m.menu }}" ng-click="asignarValorImagen( m.idMenu, 'menu' )" style="height:85px; margin-top: 8px;" data-title="Click en la imagen para cambiarla" data-placement="top" bs-tooltip>
 							      		<div class="text-right">
 							      			<label class="label" ng-class="{'label-success': m.idEstadoMenu == 1, 'label-default': m.idEstadoMenu == 2}">
 							      				{{ m.estadoMenu }}
@@ -151,7 +151,7 @@
 							<div class="row">
 								<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" ng-repeat="c in lstCombos">
 							    	<div class="thumbnail">
-								      	<img ng-src="{{ c.imagen }}" alt="{{ c.combo }}" ng-click="asignarValorImagen( c.idCombo, 'combo' )" style="height:85px; margin-top: 8px;" title="Click en la imagen para cambiarla" data-toggle="tooltip" data-placement="top" tooltip>
+								      	<img ng-src="{{ c.imagen }}" alt="{{ c.combo }}" ng-click="asignarValorImagen( c.idCombo, 'combo' )" style="height:85px; margin-top: 8px;" data-title="Click en la imagen para cambiarla" data-placement="top" bs-tooltip>
 							      		<div class="text-right">
 							      			<label class="label" ng-class="{'label-success': c.idEstadoMenu == 1, 'label-default': c.idEstadoMenu == 2}">
 							      				{{ c.estadoMenu }}

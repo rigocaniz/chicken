@@ -520,6 +520,7 @@ class Orden
 		$limit          = "";
 		$limite         = is_null( $limite ) ? 15 : (int)$limite;
 		$idOrdenCliente = (int)$idOrdenCliente;
+		$order = "DESC";
 
 		// SI EL ESTADO ES DIFERENTE A PENDIENTE Y LIMITE ES MAYOR A CERO
  		if ( $limite > 0 AND $idEstadoOrden > 4 )
@@ -529,7 +530,10 @@ class Orden
 			$where = " WHERE idOrdenCliente = " . $idOrdenCliente;
 
 		else if ( $idEstadoOrden == 1 OR $idEstadoOrden == 2 )
+		{
 			$where = " WHERE ( idEstadoOrden = 1 OR idEstadoOrden = 2 ) ";
+			$order = "ASC";
+		}
 
 		else if ( $idEstadoOrden > 2 )
 			$where = " WHERE idEstadoOrden = " . $idEstadoOrden;
@@ -537,7 +541,7 @@ class Orden
 
  		$sql = "SELECT 
 					idOrdenCliente, numeroTicket, usuarioResponsable, idEstadoOrden, estadoOrden, fechaRegistro, numMenu
-				FROM vOrdenCliente $where ORDER BY idOrdenCliente ASC " . $limit;
+				FROM vOrdenCliente $where ORDER BY idOrdenCliente $order " . $limit;
 
 		if( $rs = $this->con->query( $sql ) ) {
  			if ( $idOrdenCliente > 0 AND ( $row = $rs->fetch_object() ) ) {

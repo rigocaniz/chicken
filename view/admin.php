@@ -99,13 +99,13 @@
 														<span class="glyphicon glyphicon-th"></span>
 													</button>
 													<div class="menu-horizontal">
-														<button type="button" class="btn" ng-click="cambiarEstadoUsuario( usuario )" title="Cambiar Estado del Usuario" data-toggle="tooltip" data-placement="top" tooltip>
+														<button type="button" class="btn" ng-click="cambiarEstadoUsuario( usuario )" data-title="Cambiar Estado del Usuario" bs-tooltip>
 															<span class="glyphicon glyphicon-flag"></span>
 														</button>
-														<button type="button" class="btn" ng-click="editarUsuario( usuario )" title="Editar Usuario" data-toggle="tooltip" data-placement="top" tooltip>
+														<button type="button" class="btn" ng-click="editarUsuario( usuario )" data-title="Editar Usuario" bs-tooltip>
 															<span class="glyphicon glyphicon-pencil"></span>
 														</button>
-														<button type="button" class="btn" ng-click="resetearClave( usuario.usuario )" title="Resetear Clave" data-toggle="tooltip" data-placement="top" tooltip>
+														<button type="button" class="btn" ng-click="resetearClave( usuario.usuario )" data-title="Resetear Clave" bs-tooltip>
 															<span class="glyphicon glyphicon-lock"></span>
 														</button>
 													</div>
@@ -171,10 +171,10 @@
 														<span class="glyphicon glyphicon-th"></span>
 													</button>
 													<div class="menu-horizontal">
-														<button type="button" class="btn" ng-click="editarPerfil( perfil )" title="Editar Perfil" data-toggle="tooltip" data-placement="top" tooltip>
+														<button type="button" class="btn" ng-click="editarPerfil( perfil )" data-title="Editar Perfil" bs-tooltip>
 															<span class="glyphicon glyphicon-pencil"></span>
 														</button>
-														<button type="button" class="btn" ng-click="datosPerfil( perfil )" title="Asignar Módulos" data-toggle="tooltip" data-placement="top" tooltip>
+														<button type="button" class="btn" ng-click="datosPerfil( perfil )" data-title="Asignar Módulos" bs-tooltip>
 															<span class="glyphicon glyphicon-th-large"></span>
 														</button>
 													</div>

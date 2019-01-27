@@ -116,7 +116,7 @@
                 </div>
                 <div class="col-xs-3">
                     <span class="etiqueta">Registro: </span>
-                    <span class="valor" title="{{formatoFecha( evento.fechaRegistro, 'HH:mm')}}" data-toggle="tooltip" data-placement="top" tooltip>
+                    <span class="valor" data-title="{{formatoFecha( evento.fechaRegistro, 'HH:mm')}}" data-placement="top" bs-tooltip>
                         {{formatoFecha( evento.fechaRegistro, 'D[/]MM[/]YYYY' )}}
                     </span>
                 </div>
@@ -414,7 +414,7 @@
                                                 <tbody>
                                                     <tr ng-repeat="item in lstMenuEvento">
                                                         <td>
-                                                            <button type="button" class="btn btn-xs btn-danger" ng-click="menuAccion( 'delete', item )" ng-disabled="$parent.idEstadoEvento!=1" title="Eliminar" data-toggle="tooltip" data-placement="top" tooltip>
+                                                            <button type="button" class="btn btn-xs btn-danger" ng-click="menuAccion( 'delete', item )" ng-disabled="$parent.idEstadoEvento!=1" data-title="Eliminar" data-placement="top" bs-tooltip>
                                                                 <span class="glyphicon glyphicon-remove"></span>
                                                             </button>
                                                         </td>
@@ -428,7 +428,7 @@
                                                         </td>
                                                         <td>{{item.comentario}}</td>
                                                         <td>
-                                                            <button type="button" class="btn btn-xs btn-info" ng-click="menuAccion( 'update', item )" ng-disabled="$parent.idEstadoEvento!=1" title="Modificar" data-toggle="tooltip" data-placement="top" tooltip>
+                                                            <button type="button" class="btn btn-xs btn-info" ng-click="menuAccion( 'update', item )" ng-disabled="$parent.idEstadoEvento!=1" data-title="Modificar" data-placement="top" bs-tooltip>
                                                                 <span class="glyphicon glyphicon-pencil"></span>
                                                             </button>
                                                         </td>
@@ -526,7 +526,7 @@
                                                 <tbody>
                                                     <tr ng-repeat="item in evento.lstMovimiento">
                                                         <td>
-                                                            <button type="button" class="btn btn-xs btn-danger" ng-click="menuAccion( 'deleteMove', item )" ng-disabled="$parent.idEstadoEvento!=1" title="Eliminar" data-toggle="tooltip" data-placement="top" tooltip>
+                                                            <button type="button" class="btn btn-xs btn-danger" ng-click="menuAccion( 'deleteMove', item )" ng-disabled="$parent.idEstadoEvento!=1" data-title="Eliminar" data-placement="top" bs-tooltip>
                                                                 <span class="glyphicon glyphicon-remove"></span>
                                                             </button>
                                                         </td>

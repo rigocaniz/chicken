@@ -48,7 +48,7 @@
 							<button type="button" class="btn btn-success" ng-click="accionCaja='aperturarCaja'" ng-show="!caja.idCaja">
 								<span class="glyphicon glyphicon-flag"></span> APERTURAR CAJA
 							</button>
-							<button type="button" class="btn btn-danger" ng-click="accionCaja=''" ng-show="accionCaja!=''" title="CANCELAR ACCIÓN" data-toggle="tooltip" data-placement="top" tooltip>
+							<button type="button" class="btn btn-danger" ng-click="accionCaja=''" ng-show="accionCaja!=''" data-title="<b>CANCELAR ACCIÓN</b>" data-placement="top" bs-tooltip>
 								<span class="glyphicon glyphicon-remove"></span>
 							</button>
 						</p>

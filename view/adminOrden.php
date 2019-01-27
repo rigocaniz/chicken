@@ -231,15 +231,15 @@
 	                                    </td>
 	                                    <td>
 	                                        <button type="button" class="label-border" ng-class="{'btn-success':orden.idTipoServicio==2, 'btn-warning':orden.idTipoServicio==3, 'btn-primary':orden.idTipoServicio==1}">
-	                                            <span ng-show="orden.idTipoServicio==2" title="Restaurante" data-toggle="tooltip" data-placement="top" tooltip>R</span>
-	                                            <span ng-show="orden.idTipoServicio==3" title="A Domicilio" data-toggle="tooltip" data-placement="top" tooltip>D</span>
-	                                            <span ng-show="orden.idTipoServicio==1" title="Para Llevar" data-toggle="tooltip" data-placement="top" tooltip>L</span>
+	                                            <span ng-show="orden.idTipoServicio==2" data-title="Restaurante" data-placement="top" bs-tooltip>R</span>
+	                                            <span ng-show="orden.idTipoServicio==3" data-title="A Domicilio" data-placement="top" bs-tooltip>D</span>
+	                                            <span ng-show="orden.idTipoServicio==1" data-title="Para Llevar" data-placement="top" bs-tooltip>L</span>
 	                                        </button>
 	                                        <span style="font-size:16px">
 		                                        <span class="glyphicon glyphicon-gift" ng-show="orden.esCombo"></span>
 		                                        <span>{{orden.descripcion}}</span>
 	                                        </span>
-	                                        <span class="estado-menu {{est.css}}" ng-repeat="est in orden.estados" title="{{est.title}}" data-toggle="tooltip" data-placement="top" tooltip>{{est.abr}} <span class="badge">{{est.total}}</span></span>
+	                                        <span class="estado-menu {{est.css}}" ng-repeat="est in orden.estados" data-title="{{est.title}}" data-placement="top" bs-tooltip>{{est.abr}} <span class="badge">{{est.total}}</span></span>
 	                                        <h4 ng-show="orden.observacion.length">
 												<span class="label label-warning">
 													<span class="glyphicon glyphicon-star"></span>

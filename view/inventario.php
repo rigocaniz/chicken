@@ -192,7 +192,7 @@
 												<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.cantidad">
 											</td>
 											<td class="text-center" ng-show="realizarReajuste">
-												<button type="button" class="btn btn-xs" ng-class="{'btn-success': inv.esIncremento, 'btn-danger': !inv.esIncremento}" ng-click="inv.esIncremento=!inv.esIncremento" title="Clic para {{ inv.esIncremento ? 'DISMINUIR' : 'INCREMENTAR' }}" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="!inv.cantidad">
+												<button type="button" class="btn btn-xs" ng-class="{'btn-success': inv.esIncremento, 'btn-danger': !inv.esIncremento}" ng-click="inv.esIncremento=!inv.esIncremento" data-title="Clic para {{ inv.esIncremento ? 'DISMINUIR' : 'INCREMENTAR' }}" data-placement="top" bs-tooltip ng-disabled="!inv.cantidad">
 													<span class="glyphicon" ng-class="{'glyphicon-plus-sign': inv.esIncremento, 'glyphicon-minus-sign': !inv.esIncremento}"></span>
 												</button>
 											</td>
@@ -797,10 +797,10 @@
 											<span class="glyphicon glyphicon-th"></span>
 										</button>
 										<div class="menu-horizontal">
-											<button type="button" class="btn" ng-click="editarFacturaCompra( facturaCompra, 'editar' )" title="Editar" data-toggle="tooltip" data-placement="top" tooltip>
+											<button type="button" class="btn" ng-click="editarFacturaCompra( facturaCompra, 'editar' )" data-title="Editar" data-placement="top" bs-tooltip>
 												<span class="glyphicon glyphicon-pencil"></span>
 											</button>
-											<button type="button" class="btn" ng-click="editarFacturaCompra( facturaCompra, 'verDetalle' )" title="Ver Detalle" data-toggle="tooltip" data-placement="top" tooltip>
+											<button type="button" class="btn" ng-click="editarFacturaCompra( facturaCompra, 'verDetalle' )" data-title="Ver Detalle" data-placement="top" bs-tooltip>
 												<span class="glyphicon glyphicon-th-list"></span>
 											</button>
 										</div>
@@ -932,7 +932,7 @@
 															<td class="text-right table-bordered" ng-class="{'danger' : inv.diferenciaApertura < 0, 'success': inv.diferenciaApertura > 0}">		
 																{{ inv.diferenciaApertura }}
 																<br ng-if="inv.diferenciaApertura < 0">
-																<span title="{{inv.comentarioApertura}}" data-toggle="tooltip" data-placement="top" tooltip ng-if="inv.diferenciaApertura < 0">
+																<span data-title="{{inv.comentarioApertura}}" data-placement="top" bs-tooltip ng-if="inv.diferenciaApertura < 0">
 																	<span class="glyphicon glyphicon-comment"></span>
 																</span>
 															</td>
@@ -942,7 +942,7 @@
 															<td class="text-right table-bordered " ng-class="{'danger' : inv.diferenciaCierre < 0, 'success': inv.diferenciaCierre > 0}">
 																{{ inv.diferenciaCierre }}
 																<br ng-if="inv.diferenciaCierre < 0">
-																<span title="{{inv.comentarioCierre}}" data-toggle="tooltip" data-placement="top" tooltip ng-if="inv.diferenciaCierre < 0">
+																<span data-title="{{inv.comentarioCierre}}" data-placement="top" bs-tooltip ng-if="inv.diferenciaCierre < 0">
 																	<span class="glyphicon glyphicon-comment"></span>
 																</span>
 															</td>
@@ -1016,11 +1016,11 @@
 							<div class="col-sm-4">
 								<label class="control-label">SELECCIONAR OPCIÓN</label>
 								<div class="btn-group" role="group" aria-label="">
-								  	<button type="button" class="btn" ng-click="cierreDiario.todos=true" ng-disabled="cierreDiario.botonBloqueado" ng-class="{'btn-info': cierreDiario.todos, 'btn-default': !cierreDiario.todos}" title="Todos los productos" data-toggle="tooltip" data-placement="top" tooltip>
+								  	<button type="button" class="btn" ng-click="cierreDiario.todos=true" ng-disabled="cierreDiario.botonBloqueado" ng-class="{'btn-info': cierreDiario.todos, 'btn-default': !cierreDiario.todos}" data-title="Todos los productos" data-placement="top" bs-tooltip>
 								  		<span class="glyphicon" ng-class="{'glyphicon-check': cierreDiario.todos, 'glyphicon-unchecked': !cierreDiario.todos}"></span>
 								  		Todos
 								  	</button>
-								  	<button type="button" class="btn" ng-click="cierreDiario.todos=false" ng-disabled="cierreDiario.botonBloqueado" ng-class="{'btn-info': !cierreDiario.todos, 'btn-default': cierreDiario.todos}" title="Solo productos importantes" data-toggle="tooltip" data-placement="top" tooltip>
+								  	<button type="button" class="btn" ng-click="cierreDiario.todos=false" ng-disabled="cierreDiario.botonBloqueado" ng-class="{'btn-info': !cierreDiario.todos, 'btn-default': cierreDiario.todos}" data-title="Solo productos importantes" data-placement="top" bs-tooltip>
 								  		<span class="glyphicon" ng-class="{'glyphicon-check': !cierreDiario.todos, 'glyphicon-unchecked': cierreDiario.todos}"></span>
 								  		Importantes
 								  	</button>
@@ -1028,7 +1028,7 @@
 							</div>
 							<div class="col-sm-4 col-md-3">
 								<label class="control-label">AFECTAR DISPONIBILIDAD*</label>
-								<button type="button" class="btn" ng-class="{'btn-success': cierreDiario.actualizarDisp, 'btn-warning': !cierreDiario.actualizarDisp}" ng-click="cierreDiario.actualizarDisp=!cierreDiario.actualizarDisp" title="Afectar Disponibilidad en el INVENTARIO" data-toggle="tooltip" data-placement="top" tooltip>
+								<button type="button" class="btn" ng-class="{'btn-success': cierreDiario.actualizarDisp, 'btn-warning': !cierreDiario.actualizarDisp}" ng-click="cierreDiario.actualizarDisp=!cierreDiario.actualizarDisp" data-title="Afectar Disponibilidad en el INVENTARIO" data-placement="top" bs-tooltip>
 									<span class="glyphicon" ng-class="{'glyphicon-check': cierreDiario.actualizarDisp, 'glyphicon-unchecked': !cierreDiario.actualizarDisp}"></span> {{ cierreDiario.actualizarDisp ? 'SI' : 'NO' }}
 								</button>
 							</div>
@@ -1073,7 +1073,7 @@
 												<span class="glyphicon glyphicon-plus"></span> Comentario
 											</button>
 											<textarea class="form-control" rows="2" ng-model="inv.comentario" ng-show="inv.agregarComentario"></textarea>
-											<span class="glyphicon glyphicon-info-sign" ng-show="!inv.comentario.length && inv.alertaComentario" title="Ingrese Comentario" data-toggle="tooltip" data-placement="top" tooltip></span>
+											<span class="glyphicon glyphicon-info-sign" ng-show="!inv.comentario.length && inv.alertaComentario" data-title="Ingrese Comentario" data-placement="top" bs-tooltip></span>
 											<span ng-show="!inv.comentario.length && inv.alertaComentario">Ingrese Comentario</span>
 										</span>
 									</td>

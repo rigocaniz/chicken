@@ -204,7 +204,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				datos  : objMenu.lstRecetaMenu
 			})
 			.success(function(data){
-				console.log( data );
+				//console.log( data );
 				alertify.set('notifier','position', 'top-right');
 				alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 
@@ -228,7 +228,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			}
 		})
 		.success(function(data){
-			console.log(data);
+			//console.log(data);
 			alertify.set('notifier','position', 'top-right');
 			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 
@@ -274,7 +274,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				datos  : $scope.menuD
 			})
 			.success(function(data){
-				//console.log(data);
+				////console.log(data);
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
 				if( data.respuesta == 'success' ){
@@ -319,7 +319,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			}
 		})
 		.success(function(data){
-			//console.log(data);
+			////console.log(data);
 			alertify.set('notifier','position', 'top-right');
 			alertify.notify( data.mensaje, data.respuesta, data.tiempo );
 
@@ -409,7 +409,7 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 				datos  : $scope.prod
 			})
 			.success(function(data){
-				//console.log(data);
+				////console.log(data);
 				alertify.set('notifier','position', 'top-right');
  				alertify.notify(data.mensaje, data.respuesta, data.tiempo);
 				if( data.respuesta == 'success' ){
@@ -506,12 +506,10 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 	// BUSCAR PRODUCTOS
 	$scope.buscarProducto = function( nombreProducto ){
-		//console.log( $scope.prod );
 		if( nombreProducto.length && !$scope.prod.seleccionado )
 		{
 			$http.post('consultas.php',{opcion: 'buscarProducto', nombreProducto: nombreProducto})
 			.success(function(data){
-				console.log('buscarProducto::: ',data);
 				$scope.lstBusqueda = data;
 			});
 		}
@@ -544,7 +542,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
         $http.post('consultas.php',{
             opcion : 'inicioAdmin'
         }).success(function(data){
-//        	console.log( 'inicioAdmin', data );
             $scope.lstDestinoMenu  = data.lstDestinoMenu || [];
             $scope.lstTipoMenu     = data.lsTipoMenu || [];
             $scope.lstTipoServicio = data.lstTiposServicio || [];
@@ -608,7 +605,6 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 
 	$scope.actualizarMenuCombo = function( tipo, data )
 	{
-		//console.log( 'tipo: ', tipo, ' data: ', data );
 		$scope.accion = 'update';
 		if( tipo == 'menu' ){
 			$scope.menu = angular.copy( data );

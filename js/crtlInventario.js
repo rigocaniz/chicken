@@ -655,7 +655,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		if( nombreProducto.length && !$scope.prod.seleccionado ) {
 			$http.post('consultas.php',{opcion: 'buscarProducto', nombreProducto: nombreProducto})
 			.success(function(data){
-				console.log('buscarProducto::: ',data);
 				$scope.lstProductos = data;
 			});
 		}
@@ -712,7 +711,6 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 
 	$scope.editarAccion = function( accion, producto ){
 		$scope.accion = accion;
-		console.log( 'producto::: ', producto );
 		if ( accion == 'update' ){
 			$scope.producto = angular.copy( producto );
 			$scope.producto.idMedida       = $scope.producto.idMedida.toString();

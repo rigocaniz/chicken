@@ -162,7 +162,7 @@
                             <tbody>
                                 <tr ng-repeat="item in infoOrden.lstOrden track by $index">
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-default" ng-click="editarDetalle( item )" title="Editar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
+                                        <button type="button" class="btn btn-sm btn-default" ng-click="editarDetalle( item )" data-title="<b>Editar Orden</b>" data-placement="top" ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2" bs-tooltip>
                                             <span class="glyphicon glyphicon-pencil"></span>
                                         </button>
                                     </td>
@@ -172,13 +172,13 @@
                                     <td>{{item.cantidad}}</td>
                                     <td>
                                         <button type="button" class="label-border" ng-class="{'btn-success':item.idTipoServicio==2, 'btn-warning':item.idTipoServicio==3, 'btn-primary':item.idTipoServicio==1}">
-                                            <span ng-show="item.idTipoServicio==2" title="Restaurante" data-toggle="tooltip" data-placement="top" tooltip>R</span>
-                                            <span ng-show="item.idTipoServicio==3" title="A Domicilio" data-toggle="tooltip" data-placement="top" tooltip>D</span>
-                                            <span ng-show="item.idTipoServicio==1" title="Para Llevar" data-toggle="tooltip" data-placement="top" tooltip>L</span>
+                                            <span ng-show="item.idTipoServicio==2" data-title="<b>Restaurante</b>" data-placement="top" bs-tooltip>R</span>
+                                            <span ng-show="item.idTipoServicio==3" data-title="<b>A Domicilio</b>" data-placement="top" bs-tooltip>D</span>
+                                            <span ng-show="item.idTipoServicio==1" data-title="<b>Para Llevar</b>" data-placement="top" bs-tooltip>L</span>
                                         </button>
                                         <span class="glyphicon glyphicon-gift" ng-show="item.esCombo"></span>
                                         <span>{{item.descripcion}}</span>
-                                        <span class="estado-menu {{est.css}}" ng-repeat="est in item.estados" title="{{est.title}}" data-toggle="tooltip" data-placement="top" tooltip>{{est.abr}} <span class="badge">{{est.total}}</span></span>
+                                        <span class="estado-menu {{est.css}}" ng-repeat="est in item.estados" data-title="{{est.title}}" data-placement="top" bs-tooltip>{{est.abr}} <span class="badge">{{est.total}}</span></span>
                                         <p ng-show="item.observacion.length" class="label label-primary">
                                             <span class="glyphicon glyphicon-star"></span>
                                             {{item.observacion}}
@@ -186,7 +186,7 @@
                                     </td>
                                     <td>{{item.subTotal | number:2}}</td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarDetalle( item.lstDetalle )" title="Cancelar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
+                                        <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarDetalle( item.lstDetalle )" data-title="Cancelar" data-placement="top" bs-tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
                                     </td>
@@ -206,7 +206,7 @@
                                     </td>
                                     <td>{{(otro.cantidad*otro.precioUnidad) | number:2}}</td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarOtroMenu( otro )" title="Eliminar" data-toggle="tooltip" data-placement="top" tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
+                                        <button type="button" class="btn btn-sm btn-danger" ng-click="cancelarOtroMenu( otro )" data-title="Eliminar" data-placement="top" bs-tooltip ng-disabled="idEstadoOrden!=1 && idEstadoOrden!=2">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
                                     </td>
