@@ -2634,7 +2634,7 @@ input[type="search"] {
   }
 }
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 .radio,
 .checkbox {
@@ -3841,8 +3841,8 @@ tbody.collapse.in {
 .input-group-lg > .form-control,
 .input-group-lg > .input-group-addon,
 .input-group-lg > .input-group-btn > .btn {
-  height: 46px;
-  padding: 10px 16px;
+  height: 44px;
+  padding: 8px 15px;
   font-size: 18px;
   line-height: 1.3333333;
   border-radius: 6px;
@@ -5944,8 +5944,7 @@ button.close {
   filter: alpha(opacity=50);
 }
 .modal-header {
-  padding: 12px 15px;
-  border-bottom: 1px solid #e5e5e5;
+  padding: 11px 15px;
 }
 .modal-header .close {
   margin-top: -2px;

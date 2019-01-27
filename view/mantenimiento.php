@@ -238,7 +238,7 @@
 									<td class="text-center">{{ comboPrecio.codigoCombo }}</td>
 									<td><b>{{ comboPrecio.combo }}</b></td>
 									<td class="text-right" ng-repeat="(ixPrecio, precio) in comboPrecio.lstPrecios">
-										<input type="number" min="0" max="10000" class="form-control" ng-model="precio.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="1" required ng-focus="ixCombo == 0 && ixPrecio==0">
+										<input type="number" min="0" max="10000" class="form-control" ng-model="precio.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="1" required ng-focus="ixCombo == 0 && ixPrecio==0" focus-enter>
 									</td>
 								</tr>
 							</tbody>
@@ -291,7 +291,7 @@
 									<td class="text-center">{{ menuPrecio.codigoMenu }}</td>
 									<td><b>{{ menuPrecio.menu }}</b></td>
 									<td class="text-right" ng-repeat="(ixPrecio, precio) in menuPrecio.lstPrecios">
-										<input type="number" min="0" max="10000" class="form-control" ng-model="precio.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="1" required ng-focus="ixMenuPrecio == 0 && ixPrecio==0">
+										<input type="number" min="0" max="10000" class="form-control" ng-model="precio.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="1" required ng-focus="ixMenuPrecio == 0 && ixPrecio==0" focus-enter>
 									</td>
 								</tr>
 							</tbody>
@@ -345,7 +345,7 @@
 								<span class="badge">Codigo Menú #{{ menu.idMenu }}</span>
 							</div>
 							<div class="form-group" ng-show="accion == 'update'">
-								<label class="col-sm-4">ESTADO DEL MENÚ</label>
+								<label class="col-sm-4 col-md-3 col-lg-2">ESTADO DEL MENÚ</label>
 								<div class="col-sm-6">
 									<div class="btn-group btn-group-sm" role="group">
 									  	<button type="button" class="btn btn-default" ng-class="{'btn-info': estadoMenu.idEstadoMenu == menu.idEstadoMenu}" ng-click="menu.idEstadoMenu = estadoMenu.idEstadoMenu" ng-hide="estadoMenu.idEstadoMenu==3" ng-repeat="estadoMenu in lstEstadosMenu">
@@ -358,7 +358,7 @@
 							<div class="form-group">
 								<div class="col-xs-5 col-sm-6 col-md-5">
 									<label class="control-label">NOMBRE DEL MENU</label>
-									<input type="text" id="nombreMenu" class="form-control" ng-model="menu.menu" maxlength="40" required>
+									<input type="text" id="nombreMenu" class="form-control" ng-model="menu.menu" maxlength="40" required focus-enter>
 								</div>
 								<div class="col-xs-4 col-sm-3 col-md-3">
 									<label class="control-label">DESTINO DEL MENU</label>
@@ -373,7 +373,7 @@
 								</div>
 								<div class="col-xs-3 col-sm-3 col-md-3">
 									<label class="control-label">CÓDIGO DEL MENÚ</label>
-									<input type="text" class="form-control" ng-pattern="/^[0-9]+?$/" ng-model="menu.codigo" maxlength="10" ng-trim="false" required>
+									<input type="text" class="form-control" ng-pattern="/^[0-9]+?$/" ng-model="menu.codigo" maxlength="10" ng-trim="false" required focus-enter>
 								</div>
 							</div>
 							<div class="form-group">
@@ -392,7 +392,7 @@
 								<div class="col-xs-5 col-sm-4 col-md-3">
 									<label class="control-label">TIEMPO LÍMITE (Aprox.)</label>
 									<div class="input-group">
-										<input type="number" min="0" class="form-control" ng-pattern="/^[0-9]+?$/" ng-model="menu.tiempoAlerta" max="60" required>
+										<input type="number" min="0" class="form-control" ng-pattern="/^[0-9]+?$/" ng-model="menu.tiempoAlerta" max="60" required focus-enter>
 									  	<span class="input-group-addon">Minutos</span>
 									</div>
 								</div>						
@@ -417,7 +417,7 @@
 							<div class="form-group">
 								<div class="col-sm-12">
 									<label class="control-label">DESCRIPCIÓN</label>
-									<textarea rows="3" class="form-control" placeholder="Ingrese la descripción del menu" ng-model='menu.descripcion' required></textarea>
+									<textarea rows="3" class="form-control" placeholder="Ingrese la descripción del menu" ng-model='menu.descripcion' required focus-enter></textarea>
 								</div>
 							</div>
 							<!-- Nav tabs -->
@@ -457,7 +457,7 @@
 															{{ lp.tipoServicio }}
 														</td>
 														<td class="text-right">
-															<input type="number" min="0" max="5000" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
+															<input type="number" min="0" max="5000" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required focus-enter>
 														</td>
 														<td class="text-right">
 															<kbd class="numEfectivo">Q. {{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>
@@ -601,7 +601,7 @@
 						<ul class="media-list">
 							<li class="media">
 								<div class="media-left text-center">
-									<img class="media-object" width="125px" height="125px" ng-src="{{ objMenu.imagen }}" alt="MENU">
+									<img class="media-object" width="125px" height="125px" ng-src="{{ objMenu.imagen }}" alt="MENU">nombre
 									<label class="label label-info">
 										<b>CÓDIGO #{{ objMenu.idMenu }}</b>
 									</label>
@@ -942,17 +942,17 @@
 							<div class="form-group">
 								<div class="col-sm-8 col-md-7">
 									<label class="control-label">NOMBRE DEL COMBO</label>
-									<input type="text" id="nombreCombo" class="form-control" ng-model="combo.combo" maxlength="45" required>
+									<input type="text" id="nombreCombo" class="form-control" ng-model="combo.combo" maxlength="45" required focus-enter>
 								</div>
 								<div class="col-sm-4 col-md-5">
 									<label class="control-label">CÓDIGO DEL COMBO</label>
-									<input type="text" class="form-control" ng-model="combo.codigo" ng-pattern="/^[0-9]+?$/" maxlength="10" ng-trim="false" required>
+									<input type="text" class="form-control" ng-model="combo.codigo" ng-pattern="/^[0-9]+?$/" maxlength="10" ng-trim="false" required focus-enter>
 								</div>
 							</div>
 							<div class="form-group">
 								<div class="col-sm-12">
 									<label class="control-label">DESCRIPCION</label>
-									<textarea rows="3" class="form-control" placeholder="Ingrese descripción del Combo" ng-model='combo.descripcion'></textarea>
+									<textarea rows="3" class="form-control" placeholder="Ingrese descripción del Combo" ng-model='combo.descripcion' focus-enter></textarea>
 								</div>
 							</div>
 							<!-- MENU TABS -->
@@ -991,7 +991,7 @@
 														{{ lp.tipoServicio }}
 													</td>
 													<td class="text-right">
-														<input type="number" min="0" max="5000" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required>
+														<input type="number" min="0" max="5000" class="form-control" ng-model="lp.precio" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required focus-enter>
 													</td>
 													<td class="text-right">
 														<kbd class="numEfectivo">Q. {{ ( lp.precio ? lp.precio : 0 ) | number:2 }}</kbd>

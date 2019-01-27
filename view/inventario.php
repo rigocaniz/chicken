@@ -189,7 +189,7 @@
 												{{ inv.disponibilidad }}
 											</td>
 											<td class="text-center" ng-show="realizarReajuste">
-												<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.cantidad">
+												<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.cantidad" focus-enter>
 											</td>
 											<td class="text-center" ng-show="realizarReajuste">
 												<button type="button" class="btn btn-xs" ng-class="{'btn-success': inv.esIncremento, 'btn-danger': !inv.esIncremento}" ng-click="inv.esIncremento=!inv.esIncremento" data-title="Clic para {{ inv.esIncremento ? 'DISMINUIR' : 'INCREMENTAR' }}" data-placement="top" bs-tooltip ng-disabled="!inv.cantidad">
@@ -394,7 +394,7 @@
 								<div class="form-group">
 									<div class="col-sm-3">
 										<label class="control-label">NO. FACTURA</label>
-										<input type="text" maxlength="15" class="form-control" id="numeroFactura" ng-model="compras.noFactura">
+										<input type="text" maxlength="15" class="form-control" id="numeroFactura" ng-model="compras.noFactura" focus-enter>
 									</div>	
 									<div class="col-sm-4 col-md-3">
 										<label class="control-label">FECHA DE COMPRA</label>
@@ -402,16 +402,16 @@
 											<span class="input-group-addon">
 												<i class="glyphicon glyphicon-calendar"></i>
 											</span>
-											<input type="text" class="form-control" ng-model="compras.fechaFactura" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker>
+											<input type="text" class="form-control" ng-model="compras.fechaFactura" data-date-format="dd/MM/yyyy" data-max-date="today" data-autoclose="1" bs-datepicker focus-enter>
 										</div>
 									</div>
 									<div class="col-sm-5">
 										<label class="control-label">PROVEEDOR</label>
-										<input type="text"  maxlength="45" class="form-control" ng-model="compras.proveedor">
+										<input type="text"  maxlength="45" class="form-control" ng-model="compras.proveedor" focus-enter>
 									</div>
 								</div>
 								<div class="form-group" style="margin-bottom: 0;">
-									<div class="col-sm-6 col-md-5">
+									<div class="col-sm-6 col-md-6 col-lg-5">
 										<label class="control-label">ESTADO DE LA FACTURA</label>
 										<div class="btn-group" role="group" aria-label="">
 											<button type="button" class="btn btn-default btn-sm" ng-class="{'btn-success': compras.idEstadoFactura==1 && compras.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-danger': compras.idEstadoFactura==2 && compras.idEstadoFactura == estadoFactura.idEstadoFactura, 'btn-warning': compras.idEstadoFactura==3 && compras.idEstadoFactura == estadoFactura.idEstadoFactura}" ng-repeat="estadoFactura in lstEstadosFactura" ng-click="compras.idEstadoFactura = estadoFactura.idEstadoFactura">
@@ -420,9 +420,9 @@
 											</button>
 										</div>
 									</div>
-									<div class="col-sm-6 col-md-6">
+									<div class="col-sm-6 col-md-6 col-lg-7">
 										<label class="control-label">COMENTARIO</label>
-										<textarea class="form-control" ng-model="compras.comentario" placeholder="Ingresar comentario (Opcional)"></textarea>
+										<textarea class="form-control" ng-model="compras.comentario" placeholder="Ingresar comentario (Opcional)" focus-enter></textarea>
 									</div>
 								</div>
 								<hr>
@@ -1060,7 +1060,7 @@
 										{{ inv.esPerecedero }}
 									</td>
 									<td class="text-center success">
-										<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.disponible" required>
+										<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="inv.disponible" required focus-enter>
 									</td>
 									<td class="text-center">
 										{{ inv.medida }}
@@ -1072,7 +1072,7 @@
 											<button type="button" class="btn btn-xs btn-default" ng-click="inv.agregarComentario=!inv.agregarComentario">
 												<span class="glyphicon glyphicon-plus"></span> Comentario
 											</button>
-											<textarea class="form-control" rows="2" ng-model="inv.comentario" ng-show="inv.agregarComentario"></textarea>
+											<textarea class="form-control" rows="2" ng-model="inv.comentario" ng-if="inv.agregarComentario" focus-enter></textarea>
 											<span class="glyphicon glyphicon-info-sign" ng-show="!inv.comentario.length && inv.alertaComentario" data-title="Ingrese Comentario" data-placement="top" bs-tooltip></span>
 											<span ng-show="!inv.comentario.length && inv.alertaComentario">Ingrese Comentario</span>
 										</span>
@@ -1146,13 +1146,13 @@
 								<div class="form-group">
 									<div class="col-sm-4">
 										<label class="control-label">Ingresar Cantidad</label>
-										<input type="number" min="0" class="form-control" placeholder="Cantidad" ng-model="itemProducto.cantidad">
+										<input type="number" id="cantidadReajuste" min="0" class="form-control" placeholder="Cantidad" ng-model="itemProducto.cantidad" focus-enter>
 									</div>
 									<div class="col-sm-2">
 									</div>
 									<div class="col-sm-5">
 										<label class="control-label">Nueva Disponibilidad</label>
-										<input type="text" class="form-control" placeholder="Cantidad" value="{{ retornarTotalReajuste( itemProducto.disponibilidad, itemProducto.cantidad, itemProducto.esIncremento ) }}" readonly>											  	
+										<input type="text" class="form-control" placeholder="Cantidad" value="{{ retornarTotalReajuste( itemProducto.disponibilidad, itemProducto.cantidad, itemProducto.esIncremento ) }}" readonly focus-enter>										  	
 									</div>
 								</div>
 								<div class="form-group">
@@ -1213,29 +1213,32 @@
 						<legend class="legend">DATOS</legend>
 						<!-- FORMULARIO PRODUCTO -->
 						<form class="form-horizontal" role="form" name="$parent.formProducto">
-							<div class="text-right">
-								<label>Ubicación</label>
-								<div class="btn-group" role="group" aria-label="">
-								  	<button type="button" class="btn btn-default" ng-repeat="ubicacion in lstUbicacion" ng-click="producto.idUbicacion=ubicacion.idUbicacion">
-								  		<span class="glyphicon" ng-class="{'glyphicon-check': producto.idUbicacion==ubicacion.idUbicacion, 'glyphicon-unchecked': producto.idUbicacion!=ubicacion.idUbicacion}"></span>
-								  		{{ ubicacion.ubicacion }}
-								  	</button>
+							<div class="form-group">
+								
+								<label class="control-label col-sm-2" ng-show="accion!='insert'">No. Producto</label>
+								<div class="col-sm-2" ng-show="accion!='insert'">
+									<input type="text" class="form-control" ng-model="producto.idProducto" disabled focus-enter>
+								</div>
+								<div class="text-right">
+									<label>Ubicación del producto</label>
+									<div class="btn-group" role="group" aria-label="">
+									  	<button type="button" class="btn btn-default" ng-repeat="ubicacion in lstUbicacion" ng-click="producto.idUbicacion=ubicacion.idUbicacion">
+									  		<span class="glyphicon" ng-class="{'glyphicon-check': producto.idUbicacion==ubicacion.idUbicacion, 'glyphicon-unchecked': producto.idUbicacion!=ubicacion.idUbicacion}"></span>
+									  		{{ ubicacion.ubicacion }}
+									  	</button>
+									</div>
 								</div>
 							</div>
 							<div class="form-group">
 								<div class="col-sm-8">
 									<label class="control-label">Nombre Producto</label>
-									<input type="text" id="nombreProducto" class="form-control" ng-model="producto.producto" maxlength="45" required>
-								</div>
-								<div class="col-sm-3" ng-show="accion!='insert'">
-									<label class="control-label">No. Producto</label>
-									<input type="text" class="form-control" ng-model="producto.idProducto" disabled>
+									<input type="text" id="nombreProducto" class="form-control" ng-model="producto.producto" maxlength="45" focus-enter required>
 								</div>
 							</div>
 							<div class="form-group">
 								<div class="col-sm-5">
 									<label class="control-label">Tipo Producto</label>
-									<select class="form-control" ng-model="producto.idTipoProducto" required>
+									<select class="form-control" ng-model="producto.idTipoProducto" required focus-enter>
 										<option ng-repeat="tp in lstTipoProducto" value="{{ tp.idTipoProducto }}">
 											{{ tp.tipoProducto }}
 										</option>
@@ -1243,7 +1246,7 @@
 								</div>
 								<div class="col-sm-4">
 									<label class="control-label">Tipo Medida</label>
-									<select class="form-control" ng-model="producto.idMedida" required>
+									<select class="form-control" ng-model="producto.idMedida" required focus-enter>
 										<option ng-repeat="m in lstMedidas" value="{{m.idMedida}}">{{m.medida}}</option>
 									</select>
 								</div>
@@ -1258,17 +1261,17 @@
 							<div class="form-group">
 								<label class="control-label col-sm-2">Cantidad minima</label>
 								<div class="col-sm-3">
-									<input type="number" min="0" class="form-control" ng-model="producto.cantidadMinima" required>
+									<input type="number" min="0" class="form-control" ng-model="producto.cantidadMinima" required focus-enter>
 								</div>
 								<label class="control-label col-sm-2">Cantidad maxima</label>
 								<div class="col-sm-3">
-									<input type="number" min="0" class="form-control" ng-model="producto.cantidadMaxima">
+									<input type="number" min="0" class="form-control" ng-model="producto.cantidadMaxima" focus-enter>
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="control-label col-sm-2">Disponibilidad</label>
 								<div class="col-sm-3">
-									<input type="number" min="0" class="form-control" ng-model="producto.disponibilidad" ng-disabled="accion!='insert'">
+									<input type="number" min="0" class="form-control" ng-model="producto.disponibilidad" ng-disabled="accion!='insert'" focus-enter>
 								</div>
 								<label class="control-label col-sm-2">Producto Importante</label>
 								<div class="col-sm-1">

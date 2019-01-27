@@ -49,23 +49,23 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
     if( document.getElementById("dial.buscarCliente.html") )
         $scope.dialBuscarCliente = $modal({scope: $scope,template:'dial.buscarCliente.html', show: false, backdrop: 'static'});
 
-	$scope.buscarCliente = function( valor, accion ){
-		//console.log( valor, accion );
-		if( valor.length == 0 && accion == 'principal'  ) {
+	$scope.buscarCliente = function( valor, accion )
+    {
+		if( valor.length == 0 && accion == 'principal'  )
+        {
 			$scope.txtCliente = '';
 			$scope.lstClientes = [];
 	        $scope.dialBuscarCliente.show();
 			$timeout(function(){
 				$('#buscador').focus();
-			},150);
+			}, 150);
 		}
-		else if( valor.length >= 1 ){
-
+		else if( valor.length >= 1 )
+        {
 			$http.post('consultas.php',{
 	            opcion : "consultarCliente",
 	            valor  : valor,
 	        }).success(function(data){
-	        	console.log( data );
 	            if( !data.encontrado ) {
 	            	$scope.lstClientes = [];
 	            	alertify.notify( 'No se encontró resultados, agregar <b>CLIENTE</b>', 'info', 5 );
@@ -74,7 +74,9 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
                     $scope.menuCliente = 'ingresar';
                     $scope.accion      = 'insert';
                     $scope.cliente     = data.lstResultados[ 0 ];
-                    $( '#nit' ).focus();
+                    $timeout(function(){
+                        $( '#nit' ).focus();
+                    }, 150);
 	            }
 	        	else if( data.lstResultados.length == 1 && data.encontrado ){
 	        		$scope.accion = 'update';
@@ -82,7 +84,7 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
 	        		$scope.dialBuscarCliente.hide();
 	        		$scope.txtCliente = '';
 	        		$scope.menuCliente = 'ingresar';
-	        		$( '#ticket' ).focus();
+	        		$( '#nit' ).focus();
 	        	}
 	            else if( data.lstResultados.length > 1 ){
                     $scope.lstClientes = data.lstResultados;

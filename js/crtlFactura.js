@@ -1026,11 +1026,8 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	        	console.log( data );
 	            if( accion == 'principal' && data.lstResultados.length == 0 ) {
 	            	$scope.accionCliente = 'ninguna';
-	            	//$scope.facturacion.datosCliente.nombre    = '';
-					//$scope.facturacion.datosCliente.direccion = '';
 	            	$scope.txtCliente = '';
 	            	$scope.dialAccionCliente.show();
-
 	            	$scope.accionCliente = 'agregar';
 	            	$timeout(function(){
 	            		$( '#nit' ).focus();

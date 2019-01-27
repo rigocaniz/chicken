@@ -91,7 +91,7 @@
 									<div class="form-group">
 										<label class="col-sm-4">{{ denominacion.descripcion }} de {{ denominacion.denominacion }}</label>
 										<div class="col-sm-4">
-											<input type="number" min="0"  class="form-control" ng-model="denominacion.cantidad" placeholder="Cantidad" ng-pattern="/^[0-9]+?$/" step="0">
+											<input type="number" min="0"  class="form-control" ng-model="denominacion.cantidad" placeholder="Cantidad" ng-pattern="/^[0-9]+?$/" step="0" focus-enter>
 										</div>
 										<div class="col-sm-4 text-right">
 											<kbd class="numEfectivo">

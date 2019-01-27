@@ -888,6 +888,9 @@ app.controller('inventarioCtrl', function( $scope , $http, $modal, $timeout, $fi
 		$scope.itemProducto.nombreProducto = nombreProducto;
 		$scope.itemProducto.disponibilidad = disponibilidad;
 		$scope.dialIngreso.show();
+		$timeout(function(){
+			$( '#cantidadReajuste' ).focus();
+		}, 100);
 	};
 
 

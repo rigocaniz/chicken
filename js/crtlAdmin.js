@@ -186,6 +186,9 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 			apellidos       : ''
 		};
 		$scope.dialAdminUsuario.show();
+		$timeout(function(){
+			$('#nombreUsuario').focus();
+		},125);
 	};
 
 	$scope.editarUsuario = function( usuario ){
@@ -193,6 +196,9 @@ app.controller('crtlAdmin', function( $scope , $http, $modal, $timeout ){
 		$scope.usuario = angular.copy( usuario );
 		$scope.usuario.codigo = parseInt( $scope.usuario.codigo );
 		$scope.dialAdminUsuario.show();
+		$timeout(function(){
+			$('#nombreUsuario').focus();
+		},125);
 	};
 
 

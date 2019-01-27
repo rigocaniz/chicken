@@ -18,23 +18,25 @@
             <a href="#/">
                 <span class="glyphicon glyphicon-home" style="font-size: 20px; padding: 10px"></span>
             </a>
+            <span class="glyphicon glyphicon-list-alt"></span> <b>FACTURAR</b>
 
-            <div class="text-right" style="margin-top: -25px; margin-right: 90px">
-                <button type="button" class="btn btn-default" ng-click="abrirOrdenesPendientes()">
-                    <span class="glyphicon glyphicon-time"></span>
-                    Ordenes Pendientes
-                </button>
-                <button type="button" class="btn btn-sm btn-primary" ng-click="dialCaja.show()">
-                    <span class="glyphicon glyphicon-inbox"></span> ACCIONES DE CAJA
-                </button>
-                <button type="button" class="btn btn-sm btn-warning" ng-click="cargarlstFacturasDia()">
-                    <span class="glyphicon glyphicon-wrench"></span>
-                    MANTENIMIENTO FACTURAS
-                </button>
+            <div class="text-right" style="margin-top: -25px; margin-right: 85px">
+                <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default" ng-click="abrirOrdenesPendientes()">
+                        <span class="glyphicon glyphicon-time text-success"></span>
+                        Ordenes Pendientes
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="dialCaja.show()">
+                        <span class="glyphicon glyphicon-inbox text-info"></span>
+                        ACCIONES DE CAJA
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="cargarlstFacturasDia()">
+                        <span class="glyphicon glyphicon-wrench text-warning"></span>
+                        MANTENIMIENTO FACTURAS
+                    </button>
+                </div>
             </div>
-            <legend>
-                <span class="glyphicon glyphicon-list-alt"></span> <b>FACTURAR</b>
-            </legend>
+            <br>
 			<form class="form-horizontal" role="form" autocomplete="off" novalidate>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">TICKET</label>
@@ -66,7 +68,7 @@
                         <li role="presentation" ng-class="{'active' : $parent.idTab==factura.idTab}" 
                             ng-repeat="factura in lstFacturas">
                             <a href="" role="tab" ng-click="$parent.idTab=factura.idTab" style="padding-right:32px">
-                                <span class="glyphicon glyphicon-shopping-cart"></span> {{factura.tab}} <span class="label label-primary">{{factura.lstDetalle.length}}</span>
+                                <span class="glyphicon glyphicon-shopping-cart"></span> {{factura.tab}} <span class="label label-danger">{{factura.lstDetalle.length}}</span>
                             </a>
                             <button type="button" ng-class="{'remove-tab': !factura.facturado}" ng-dblclick="quitarFactura( factura.idTab );" 
                                 ng-hide="factura.principal || factura.facturado" data-title="Doble clic para eliminar" data-placement="left" bs-tooltip>
@@ -116,11 +118,11 @@
         				<div class="form-group">
         					<label class="col-sm-1 control-label">NOMBRE</label>
         					<div class="col-sm-4">
-        						<input type="text" class="form-control" ng-model="factura.cliente.nombre" id="nombreCliente_{{factura.idTab}}" ng-disabled="factura.facturado || factura.cliente.idCliente !=1" style="font-weight:bold">
+        						<input type="text" class="form-control" ng-model="factura.cliente.nombre" id="nombreCliente_{{factura.idTab}}" ng-disabled="factura.facturado || factura.cliente.idCliente !=1" style="font-weight:bold" capitalize>
         					</div>
         					<label class="col-sm-2 col-lg-1 control-label">DIRECCION</label>
         					<div class="col-sm-5 col-lg-6">
-        						<input type="text" class="form-control" ng-model="factura.cliente.direccion" ng-disabled="factura.cliente.idCliente!=1 || factura.facturado" focus-enter>
+        						<input type="text" class="form-control" ng-model="factura.cliente.direccion" ng-disabled="factura.cliente.idCliente!=1 || factura.facturado" focus-enter capitalize>
         					</div>
         				</div>
                         <div class="form-group">
@@ -233,7 +235,7 @@
                                                     </strong>
                                                 </td>
                                             </tr>
-                                            <tr class="success">
+                                            <tr>
                                                 <td colspan="5" class="text-right">
                                                     <strong>TOTAL</strong>
                                                 </td>
@@ -916,13 +918,13 @@
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Nombre</label>
 									<div class="col-sm-9 col-md-8">
-										<input type="text" class="form-control" ng-model="$parent.cliente.nombre" maxlength="65" focus-enter>
+										<input type="text" class="form-control" ng-model="$parent.cliente.nombre" maxlength="65" focus-enter capitalize>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Dirección</label>
 									<div class="col-sm-9 col-md-8">
-										<input type="text" class="form-control" maxlength="95" ng-model="$parent.cliente.direccion" focus-enter>
+										<input type="text" class="form-control" maxlength="95" ng-model="$parent.cliente.direccion" focus-enter capitalize>
 									</div>
 								</div>
                                 <div class="form-group">

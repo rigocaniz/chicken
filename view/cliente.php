@@ -77,35 +77,35 @@
 								<div class="form-group">
 									<label class="col-sm-2 control-label">NIT</label>
 									<div class="col-sm-3">
-										<input type="text" ng-model="cliente.nit" class="form-control" id="nit" ng-pattern="/^[0-9-\s]+?$/" maxlength="12" autofocus>
+										<input type="text" ng-model="cliente.nit" class="form-control" id="nit" ng-pattern="/^[0-9-\s]+?$/" maxlength="12" focus-enter autofocus>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Nombre</label>
 									<div class="col-sm-9 col-md-8">
-										<input type="text" class="form-control" ng-model="cliente.nombre" maxlength="65">
+										<input type="text" class="form-control" ng-model="cliente.nombre" maxlength="65" focus-enter capitalize>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Dirección</label>
 									<div class="col-sm-9 col-md-8">
-										<input type="text" class="form-control"  maxlength="95" ng-model="cliente.direccion">
+										<input type="text" class="form-control" maxlength="95" ng-model="cliente.direccion" focus-enter capitalize>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Cui (DPI)</label>
 									<div class="col-sm-4 col-md-3">
-										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="cliente.cui" ng-disabled="cliente.idTipoCliente==2">
+										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="13" ng-model="cliente.cui" focus-enter ng-disabled="cliente.idTipoCliente==2">
 									</div>
 									<label class="col-sm-2 control-label">Correo</label>
 									<div class="col-sm-4 col-md-3">
-										<input type="email" class="form-control" maxlength="65" ng-model="cliente.correo">
+										<input type="email" class="form-control" maxlength="65" focus-enter ng-model="cliente.correo">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Telefono</label>
 									<div class="col-sm-4 col-md-3">
-										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="8" ng-model="cliente.telefono">
+										<input type="text" ng-pattern="/^[0-9]+?$/" ng-trim="false" class="form-control" maxlength="8" ng-model="cliente.telefono" focus-enter>
 									</div>
 								</div>
 								<div class="col-sm-12 text-center">

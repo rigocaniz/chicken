@@ -582,13 +582,11 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			opcion : 'getListaMenus',
 			filtro : $scope.filter
 		}).success(function(data){
-//			console.log( 'listaMenu: ', data );
 			$scope.lstMenu = data.lstMenus || [];
 			$scope.generarPaginacion( data.totalPaginas );
 		})
 	};
 	
-
 	$scope.verListaMenu();
 	// VER LISTA DE COMBOS
 	$scope.verListaCombos = function(){
@@ -596,31 +594,37 @@ app.controller('crtlMantenimiento', function( $scope , $http, $modal, $timeout )
 			opcion : 'getListaCombos',
 			filtro : $scope.filter
 		}).success(function(data){
-			//console.log('lstCombos: ', data);
 			$scope.lstCombos = data.lstCombos || [];
 			$scope.generarPaginacion( data.totalPaginas );
 		})
 	};
 
-
 	$scope.actualizarMenuCombo = function( tipo, data )
 	{
 		$scope.accion = 'update';
-		if( tipo == 'menu' ){
+		if( tipo == 'menu' )
+		{
 			$scope.menu = angular.copy( data );
 			$scope.menu.tabMenu = 'precios';
 			$scope.cargarLstPreciosMenu( $scope.menu.idMenu );
 			$timeout(function(){
 				$scope.dialAdminMenu.show();
 			});
+			$timeout(function(){
+				$('#nombreMenu').focus();
+			}, 125);
 		}
-		else if( tipo == 'combo' ){
+		else if( tipo == 'combo' )
+		{
 			$scope.combo = angular.copy( data );
 			$scope.combo.tabMenu = 'precios';
 			$scope.cargarLstPreciosCombo( $scope.combo.idCombo );
 			$timeout(function(){
 				$scope.dialAdminCombo.show();
 			});
+			$timeout(function(){
+				$('#nombreCombo').focus();
+			}, 125);
 		}
 	};
 

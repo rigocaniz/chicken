@@ -479,24 +479,24 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label">USUARIO</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control" ng-model="usuario.usuario" maxlength="15" placeholder="Usuario" ng-pattern="/^[a-zA-Z0-9]*$/" ng-trim="false">	
+								<input type="text" id="nombreUsuario" class="form-control" ng-model="usuario.usuario" maxlength="15" placeholder="Usuario" ng-pattern="/^[a-zA-Z0-9]*$/" ng-trim="false" focus-enter>
 							</div>
 							<label class="col-sm-2 control-label">CÓDIGO</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control" ng-model="usuario.codigo" placeholder="Código" ng-pattern="/^[0-9]+?$/" minlength="1" maxlength="4" ng-trim="false" required>
+								<input type="text" class="form-control" ng-model="usuario.codigo" placeholder="Código" ng-pattern="/^[0-9]+?$/" minlength="1" maxlength="4" ng-trim="false" required focus-enter>
 							</div>
 						</div>
 						<div class="form-group">
 							<div class="col-sm-6">
 								<label>NOMBRES</label>
 								<div>
-									<input type="text" class="form-control" maxlength="65" ng-model="usuario.nombres" placeholder="Ingrese nombres">	
+									<input type="text" class="form-control" maxlength="65" ng-model="usuario.nombres" placeholder="Ingrese nombres" capitalize focus-enter>
 								</div>
 							</div>
 							<div class="col-sm-6">
 								<label>APELLIDOS</label>
 								<div>
-									<input type="text" class="form-control" maxlength="65" ng-model="usuario.apellidos" placeholder="Ingrese apellidos">
+									<input type="text" class="form-control" maxlength="65" ng-model="usuario.apellidos" placeholder="Ingrese apellidos" capitalize focus-enter>
 								</div>
 							</div>
 						</div>
