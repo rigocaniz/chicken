@@ -31,7 +31,6 @@ $datos = (array)$factura->lstFacturas( $idFactura )[ 0 ];
 // SI ES FACTURA DE EVENTO
 if ( $isEvent ):
 	$datos[ 'lstDetalle' ] = $factura->detalleFacturaEvento( $idFactura );
-	$documento = new Documento( 2 );
 
 // SI ES FACTURA DE ORDEN
 else:

@@ -583,7 +583,13 @@
                 </div>
                 <div class="modal-body">
                 	<div class="row" ng-show="tipoMenu=='menu'">
-                		<div class="col-xs-12" style="margin-bottom:4px">
+                        <div class="col-sm-4 col-md-6 col-lg-7">
+                        </div>
+                        <div class="col-sm-8 col-md-6 col-lg-5">
+                            <input type="text" id="menu" ng-model="$parent.nombreMenu" class="form-control" placeholder="Buscar menú">
+                        </div>
+                        <div class="clearfix"></div>
+                		<div class="col-xs-12" style="margin-bottom:4px; margin-top:5px;">
                 			<button type="button" class="btn" ng-class="{'btn-default':idTipoMenu!=item.idTipoMenu, 'btn-info':idTipoMenu==item.idTipoMenu}" 
                 				ng-repeat="item in lstTipoMenu track by $index" ng-click="$parent.$parent.idTipoMenu=item.idTipoMenu" style="margin-right:5px">
                 				<span class="glyphicon glyphicon-ok" ng-show="idTipoMenu==item.idTipoMenu"></span>
@@ -591,9 +597,9 @@
                 			</button>
                 		</div>
                 		<hr>
-                   </div>
+                    </div>
                 	<div class="row" ng-show="tipoMenu=='menu'">
-                		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstMenu track by $index">
+                		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstMenu | filter: nombreMenu track by $index">
                 			<button type="button" class="menu-btn" ng-click="seleccionarMenu( item )">
 	                			<span class="codigo">COD: <b>{{item.codigoMenu}}</b></span>
 	                			<img ng-src="{{item.imagen}}">
@@ -602,7 +608,14 @@
                 		</div>
                    </div>
                    <div class="row" ng-show="tipoMenu=='combo'">
-                		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstCombo track by $index">
+                        <div class="col-sm-4 col-md-6 col-lg-7">
+                        </div>
+                        <div class="col-sm-8 col-md-6 col-lg-5">
+                            <input type="text" id="combo" ng-model="$parent.nombreCombo" class="form-control" placeholder="Buscar combo">
+                        </div>
+                        <div class="clearfix"></div>
+                        <br>
+                		<div class="col-md-3 col-sm-4 col-xs-6 text-center" ng-repeat="item in lstCombo | filter: nombreCombo track by $index">
                 			<button type="button" class="menu-btn" ng-click="seleccionarMenu( item )">
 	                			<span class="codigo">COD: <b>{{item.codigoCombo}}</b></span>
 	                			<img ng-src="{{item.imagen}}">

@@ -30,6 +30,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	$scope.menuPer = {};
 
 	alertify.set('notifier','position', 'top-right');
+	$scope.nombreMenu = $scope.nombreCombo = "";
 
 	// DIALOGOS
 	if( document.getElementById("ayuda.html") )
@@ -291,14 +292,23 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	$scope.mostrarMenus = function ( tipoMenu ) {
 
 		if ( tipoMenu == 'menu' )
+		{
+			$scope.nombreMenu = "";
 			$scope.tipoMenu = "menu";
-		
+		}
 		else
+		{
+			$scope.nombreCombo = "";
 			$scope.tipoMenu = "combo";
+		}
 		
 		$scope.consultaMenus();
 		$scope.dialOrdenMenu.show();
 		$scope.dialCantidad.hide()
+
+		$timeout(function(){
+			$( '#' + tipoMenu ).focus();
+		}, 175);
 	};
 
 	// CONSULTA MENUS
