@@ -1021,7 +1021,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	// SI CAMBIA EL Tipo de Servicio
 	$scope.$watch('idTipoServicio', function ( _new, _old ) {
 		// $scope.watchPrecio();
-
 		if ( _new )
 			$scope.filtroServicio = _new;
 	});
@@ -1155,6 +1154,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	// ATAJOS DIALOGO ORDEN CLIENTE
 	$scope._keyDialOrden = function ( key, altDerecho ) {
 		// ABRE MODAL DE CANTIDAD Y CONSULTA DE MENU
+		console.log( key );
 		if ( altDerecho && key == 65 ) // {A}
 			$scope.openCantidad();
 
@@ -1214,6 +1214,13 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 		if ( altDerecho && !$("#observacionMenu").is(":focus") && key == 68 && !( $scope.ordenActual.noTicket > 0 ) ) // {D}
 			$scope.idTipoServicio = 3;
+
+		if( key == 76 || key == 82 || key == 68 )
+		{
+			$timeout(function(){
+				$("#cantidadInicial").focus();
+			}, 100);
+		}
 
 		// SELECCION DE MENU
 		if ( altDerecho && !$("#observacionMenu").is(":focus") && key == 77 ) // {M}
