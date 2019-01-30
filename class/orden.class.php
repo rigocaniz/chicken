@@ -960,34 +960,50 @@ class Orden
 
  	public function menuPorCodigo( $codigoRapido, $cantidad, $idTipoServicio )
  	{
-		$datos        = (object)array( "menu" => NULL, "tipoMenu" => NULL );
-		$codigoRapido = (int)$codigoRapido;
+		//$datos        = (object)array( "menu" => NULL, "tipoMenu" => NULL );
+ 		$lstResultado = array();
+		$codigoRapido = $this->con->real_escape_string( $codigoRapido );
 
- 		$sql = "SELECT m.idMenu, m.codigo, 'menu' AS 'tipoMenu', mp.precio
+		$whereM = " m.codigo = $codigoRapido ";
+		$whereC = " c.codigo = $codigoRapido ";
+
+		if ( !is_numeric( $codigoRapido ) )
+		{
+			$codigoRapido = str_replace( " ", "%", $codigoRapido );
+			$whereM = " m.menu like '%{$codigoRapido}%' ";
+			$whereC = " c.combo like '%{$codigoRapido}%' ";
+		}
+
+ 		$sql = "(SELECT m.idMenu, m.codigo, 'menu' AS 'tipoMenu', mp.precio
 					FROM menu AS m
 						JOIN menuPrecio AS mp
 							ON m.idMenu = mp.idMenu AND mp.idTipoServicio = {$idTipoServicio}
-				    WHERE m.codigo = {$codigoRapido}
+				    WHERE $whereM
+				    LIMIT 10)
 				UNION 
-				SELECT c.idCombo AS 'idMenu', c.codigo, 'combo' AS 'tipoMenu', cp.precio
+				(SELECT c.idCombo AS 'idMenu', c.codigo, 'combo' AS 'tipoMenu', cp.precio
 					FROM combo AS c
 						JOIN comboPrecio AS cp
 							ON c.idCombo = cp.idCombo AND cp.idTipoServicio = {$idTipoServicio}
-				    WHERE c.codigo = {$codigoRapido} ";
-		if ( $rs = $this->con->query( $sql ) ) {
-			if ( $row = $rs->fetch_object() ) {
+				    WHERE $whereC
+				    LIMIT 10)";
 
+		if ( $rs = $this->con->query( $sql ) ) {
+			while ( $row = $rs->fetch_object() ):
+
+				$menuActual = new stdClass();
+				$menuActual->tipoMenu = $row->tipoMenu;
 				// SI ES MENU
 				if ( $row->tipoMenu == 'menu' ) {
 					$menu = new Menu();
 					$info = $menu->lstMenu( 0, NULL, $row->idMenu );
 
-					$datos->tipoMenu = 'menu';
-					$datos->menu     = (object)array(
+					$menuActual->menu = (object)array(
 						'idMenu'               => $info->idMenu,
 						'menu'                 => $info->menu,
 						'imagen'               => $info->imagen,
 						'cantidad'             => 1,
+						'codigo'               => $row->codigo,
 						'precio'               => (double)$row->precio,
 						'lstPrecio'            => $menu->cargarMenuPrecio( $row->idMenu ),
 						'lstSinDisponibilidad' => $this->obtenerDisponiblidad( $cantidad, $row->idMenu, NULL ),
@@ -999,22 +1015,23 @@ class Orden
 					$combo = new Combo();
 					$info  = $combo->lstCombo( 0, $row->idMenu );
 
-					$datos->tipoMenu = 'combo';
-					$datos->menu     = (object)array(
+					$menuActual->menu = (object)array(
 						'idMenu'               => $info->idCombo,
 						'menu'                 => $info->combo,
 						'imagen'               => $info->imagen,
 						'cantidad'             => 1,
+						'codigo'               => $row->codigo,
 						'precio'               => (double)$row->precio,
 						'lstPrecio'            => $combo->cargarComboPrecio( $row->idMenu ),
 						'lstSinDisponibilidad' => $this->obtenerDisponiblidad( $cantidad, NULL, $row->idMenu ),
 					);
 				}
 
-			}
+ 				$lstResultado[] = $menuActual;
+			endwhile;
 		}
 
- 		return $datos;
+ 		return $lstResultado;
  	}
 
  	public function precioDisponibilidad( $idMenu, $idCombo, $idTipoServicio, $cantidad )

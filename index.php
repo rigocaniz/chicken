@@ -196,7 +196,6 @@
     </script> 
 
     <!-- CONTROLADORES -->
-    <!--
     <script src="js/app.js"></script>
     <script src="js/rutas.js"></script>
     <script src="js/directivas.js"></script>
@@ -212,8 +211,9 @@
     <script src="js/crtlEvento.js"></script>
     <script src="js/crtlTen.js"></script>
     <script src="js/alertify.js"></script>
-    -->
+    <!--
     <script src="js/app.min.js"></script>
+    -->
 
     <script>
         // Closes the sidebar menu

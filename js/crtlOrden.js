@@ -14,6 +14,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	$scope.filtroServicio  = 1;
 	$scope.miIndex  	   = -1;
 	$scope.myId 		   = "";
+	$scope.codigoRapido    = "";
 
 	$scope.ordenActual = {
 		idOrdenCliente : 0,
@@ -80,8 +81,11 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 	/* ===== MOSTRAR DIALOGOS ===== */
 	$scope.openCantidad = function () {
-		$scope.cantidadInicial = 1;
-		$scope.menuActual      = {};
+		$scope.cantidadInicial  = 1;
+		$scope.menuActual       = {};
+		$scope.codigoRapido     = '';
+		$scope.tipoMenu         = '';
+		$scope.lstCoincidencias = [];
 
 
 		if ( !( $scope.ordenActual.noTicket > 0 ) )
@@ -527,45 +531,47 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	};
 
 	// CONSULTA MENU POR CODIGO
-	$scope.lstSinDisponibilidad  = [];
+	$scope.lstSinDisponibilidad = [];
+	$scope.lstCoincidencias     = [];
 	$scope.consultaMenuPorCodigo = function () {
 		if ( $scope.$parent.loading )
 			return false;
+		
+		$scope.lstCoincidencias     = [];
+		$scope.lstSinDisponibilidad = [];
+		$scope.menuActual 			= {};
 
-		if ( $scope.codigoRapido > 0 ) {
+		if ( $scope.codigoRapido.length > 0 ) {
 			$scope.$parent.loading = true; // cargando...
-			$scope.lstSinDisponibilidad = [];
+
+			var codigoRapido = angular.copy( $scope.codigoRapido );
 
 			$http.post('consultas.php', { 
 				opcion         : 'menuPorCodigo',
-				codigoRapido   : $scope.codigoRapido,
+				codigoRapido   : codigoRapido,
 				cantidad       : $scope.cantidadInicial,
 				idTipoServicio : $scope.idTipoServicio
 			})
 			.success(function (data) {
 
 				$scope.$parent.loading = false; // cargando...
-				$scope.codigoRapido    = "";
 
-				if ( data.tipoMenu != null ) {
-					$scope.menuActual           = data.menu;
-					$scope.tipoMenu             = data.tipoMenu;
-					$scope.observacion          = "";
-
-					// SI EXISTE DISPONIBILIDAD Y SE ENCUENTRA EL MENU, SE AGREGA
-					if ( !data.menu.lstSinDisponibilidad.length )
-						$scope.agregarOrdenLista();
-
-					$scope.lstSinDisponibilidad = data.menu.lstSinDisponibilidad;
+				console.log(data);
+				// SI CAMBIO CODIGO RAPITO, VUELVE A CONSULTAR
+				if ( codigoRapido != $scope.codigoRapido )
+				{
+					$scope.consultaMenuPorCodigo();
 				}
-				
-				else{
-					alertify.notify('Código no válido', 'danger', 2);
+				else if ( Array.isArray( data ) && data.length )
+				{
+					$scope.lstCoincidencias  = data;
+					$scope.menuActual.ixMenu = 0;
 				}
 			});
 		}
 	};
 
+	// PRES_KEY
 
 	// => CANCELAR ORDEN PRINCIPAL
 	$scope.cancelarOrdenPrincipal = function ( idOrdenCliente ) {
@@ -1179,7 +1185,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	};
 
 	// ATAJOS DIALOGO CANTIDAD
-	$scope._keyCantidad = function ( key, altDerecho ) {
+	$scope._keyCantidad = function ( key, altDerecho, _force ) {
 		if ( ( key == 109 || key == 189 ) && $scope.cantidadInicial > 1 ) // {-}
 			$scope.cantidadInicial = $scope.changeInt( $scope.cantidadInicial, false, 1, 500 );
 
@@ -1198,10 +1204,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		if ( $("#cantidadInicial").is( ":focus" ) && key == 13 ) 
 			document.getElementById("codigoRapido").focus();
 
-		// {ENTER & FOCUS codigo menu}
-		if ( $("#codigoRapido").is( ":focus" ) && key == 13 )
-			$scope.consultaMenuPorCodigo();
-
 		if ( altDerecho && !$("#observacionMenu").is(":focus") && key == 79 ) // {SHIFT} + {O}
 			document.getElementById("observacionMenu").focus();
 
@@ -1215,7 +1217,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		if ( altDerecho && !$("#observacionMenu").is(":focus") && key == 68 && !( $scope.ordenActual.noTicket > 0 ) ) // {D}
 			$scope.idTipoServicio = 3;
 
-		if( key == 76 || key == 82 || key == 68 )
+		if( altDerecho && ( key == 76 || key == 82 || key == 68 ) )
 		{
 			$timeout(function(){
 				$("#cantidadInicial").focus();
@@ -1233,6 +1235,35 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 			$scope.dialCantidad.hide();
 			$scope.dialOrdenCliente.show();
 		} 
+
+		/*
+			FOCUS A CODIGO RAPIDO
+		*/
+		if ( $("#codigoRapido").is(":focus") || _force )
+		{
+			// SELECCIONA EL MENU DE LAS COINCIDENCIAS
+			if ( key == 13 && $scope.menuActual.ixMenu >= 0 ) // {ENTER}
+			{
+				var menuActual = angular.copy( $scope.lstCoincidencias[ $scope.menuActual.ixMenu ] );
+				$scope.menuActual        = menuActual.menu;
+				$scope.tipoMenu          = menuActual.tipoMenu;
+				$scope.observacion       = "";
+
+				// SI EXISTE DISPONIBILIDAD Y SE ENCUENTRA EL MENU, SE AGREGA
+				if ( !menuActual.menu.lstSinDisponibilidad.length )
+					$scope.agregarOrdenLista();
+
+				$scope.lstSinDisponibilidad = menuActual.menu.lstSinDisponibilidad;
+			}
+
+			// SELECCIONA ITEM ABAJO
+			else if ( key == 40 && ( $scope.menuActual.ixMenu + 1 ) < $scope.lstCoincidencias.length ) // {ABAJO}
+				$scope.menuActual.ixMenu++;
+
+			// SELECCIONA ITEM ARRIBA
+			else if ( key == 38 && $scope.menuActual.ixMenu > 0 ) // {ARRIBA}
+				$scope.menuActual.ixMenu--;
+		}
 	};
 
 	$scope._keyDialMenuCantidad = function ( key, altDerecho ) {

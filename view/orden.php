@@ -522,25 +522,34 @@
                     <!-- CODIGO O MODAL ( MENU | COMBO ) -->
             		<div class="row" style="margin-top: 6px" ng-hide="menuActual.idMenu>0">
                         <div class="col-xs-12">
-							<div class="input-group">
-								<span class="input-group-btn">
-		                			<button class="btn btn-lg btn-default" ng-click="mostrarMenus( 'menu' )">
-		                				<span class="glyphicon glyphicon-apple"></span>
-		                				<b class="hidden-xs"><u>M</u>enú</b>
-		                			</button>
-		                			<button class="btn btn-lg btn-default" ng-click="mostrarMenus( 'combo' )">
-		                				<span class="glyphicon glyphicon-gift"></span>
-		                				<b class="hidden-xs"><u>C</u>ombo</b>
-		                			</button>
-		                		</span>
-                        		<input type="text" class="form-control input-lg" ng-model="$parent.codigoRapido" id="codigoRapido"
-                                    placeholder="Código Rápido" numbers-only autocomplete="off">
-								<span class="input-group-btn">
-		                            <button type="button" class="btn btn-lg btn-primary" ng-click="consultaMenuPorCodigo()">
-		                                <span class="glyphicon glyphicon-search"></span>
-		                            </button>
-								</span>
-							</div>
+                    		<input type="text" class="form-control input-lg" ng-model="$parent.codigoRapido" id="codigoRapido"
+                                ng-change="consultaMenuPorCodigo()" placeholder="Código Rápido | Menú" autocomplete="off">
+                            <ul class="list-group ul-list" style="cursor:pointer">
+                                <li class="list-group-item" ng-class="{'active': $parent.menuActual.ixMenu == ixMenu}" 
+                                    ng-repeat="(ixMenu, coin) in lstCoincidencias"
+                                    ng-click="$parent.menuActual.ixMenu = ixMenu; _keyCantidad( 13, false, true )">
+                                    <label class="label label-danger">{{coin.menu.codigo}}</label> » <strong>{{coin.menu.menu}}</strong> 
+                                    <kbd>{{coin.tipoMenu}}</kbd>
+                                    <span> => Q. {{coin.menu.precio | number:2}}</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-12">
+                            <h4>{{lstCoincidencias.length>0?'--':'Sin resultados...'}}</h4>
+                        </div>
+                        <div class="col-xs-12 text-right" style="margin-top: 13px">
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-lg btn-default" ng-click="mostrarMenus( 'menu' )">
+                                        <span class="glyphicon glyphicon-apple"></span>
+                                        <b class="hidden-xs"><u>M</u>enú</b>
+                                    </button>
+                                    <button class="btn btn-lg btn-default" ng-click="mostrarMenus( 'combo' )">
+                                        <span class="glyphicon glyphicon-gift"></span>
+                                        <b class="hidden-xs"><u>C</u>ombo</b>
+                                    </button>
+                                </span>
+                            </div>
                         </div>
                     </div>
             		<div class="row" style="margin-top: 6px" ng-show="menuActual.idMenu>0">
