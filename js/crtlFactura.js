@@ -6,16 +6,18 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
 	$scope.idEstadoOrden = 1;
 	$scope.lstFacturas  = [];
 
-	$scope.resetValores = function( accion ){
+	$scope.resetValores = function( accion )
+	{
         $scope.accion = 'insert';
-        if( accion == 'cliente' ) {
+        if( accion == 'cliente' )
+        {
             $scope.cliente  = {
                 'nit'           : null,
                 'nombre'        : '',
                 'cui'           : null,
                 'correo'        : '',
                 'telefono'      : null,
-                'direccion'     : '',
+                'direccion'     : 'CIUDAD',
                 'idTipoCliente' : 1,
             };
         }
@@ -938,15 +940,14 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
             alertify.notify('El nombre debe tener más de 2 caracteres', 'warning', 4);
 		
 		else if( cliente.cui != undefined && cliente.cui.length >= 1 && !(cliente.cui.length == 13) )
-			alertify.notify('El No. de CUI debe tener 13 dígitos', 'warning', 3);	
+			alertify.notify('El No. de CUI debe tener 13 dígitos', 'warning', 3);
         
         else {
             $http.post('consultas.php',{
                 opcion  : "consultaCliente",
                 accion  : $scope.accion,
                 cliente : $scope.cliente
-            }).success(function(data){
-                //console.log(data);
+            }).success(function(data) {
                 alertify.set('notifier','position', 'top-right');
                 alertify.notify( data.mensaje,data.respuesta, data.tiempo );
                 if ( data.respuesta == "success" )
@@ -956,7 +957,6 @@ app.controller('facturaCtrl', function( $scope, $http, $modal, $timeout, $routeP
                 		$scope.cliente.idCliente = data.data;
 
                 	var cliente = angular.copy( $scope.cliente );
-
                 	//ASIGNA INFORMACION DE CLIENTE
 	        		var ixFacturaActual  = $scope.indexArray( 'lstFacturas', 'idTab', $scope.idTab );
 					$scope.lstFacturas[ ixFacturaActual ].cliente.idCliente     = cliente.idCliente;

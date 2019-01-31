@@ -18,7 +18,7 @@
             <a href="#/">
                 <span class="glyphicon glyphicon-home" style="font-size: 20px; padding: 10px"></span>
             </a>
-            <span class="glyphicon glyphicon-list-alt"></span> <b>FACTURAR</b>
+            <b>FACTURAR</b>
 
             <div class="text-right" style="margin-top: -25px; margin-right: 85px">
                 <div class="btn-group btn-group-sm" role="group" aria-label="...">
@@ -262,20 +262,16 @@
                                     </div>
                                     <div class="form-group group-factura">
                                         <div class="input-group input-group-lg">
-                                            <span class="input-group-btn">
-                                                <span class="btn btn-success">
-                                                    <b>Q.</b>
-                                                </span>
+                                            <span class="input-group-addon">
+                                                <b>Q.</b>
                                             </span>
                                             <input type="number" class="form-control monto" id="efectivo_{{factura.idTab}}" ng-model="factura.detallePago.efectivo" placeholder="Efectivo" min="0" focus-enter ng-change="calculoFactura( 'totalPago' )" ng-disabled="factura.facturado">
                                         </div>
                                     </div>
                                     <div class="form-group group-factura">
                                         <div class="input-group input-group-lg">
-                                            <span class="input-group-btn">
-                                                <span class="btn btn-primary">
-                                                    <span class="glyphicon glyphicon-credit-card"></span>
-                                                </span>
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-credit-card"></span>
                                             </span>
                                             <input type="number" class="form-control monto" ng-model="factura.detallePago.tarjeta" placeholder="Tarjeta Débito / Crédito" min="0" focus-enter ng-change="calculoFactura( 'totalPago' )" ng-disabled="factura.facturado">
                                         </div>

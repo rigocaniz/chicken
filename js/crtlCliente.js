@@ -35,7 +35,7 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
                 'cui'           : null,
                 'correo'        : '',
                 'telefono'      : null,
-                'direccion'     : '',
+                'direccion'     : 'CIUDAD',
                 'idTipoCliente' : 1,
             };
         }
@@ -108,19 +108,20 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
         if( !(cliente.nombre && cliente.nombre.length >= 3) )
             alertify.notify('El nombre debe tener más de 2 caracteres', 'warning', 4);
 
-        else if( !(cliente.direccion && cliente.direccion.length >= 8) )
+        else if( !(cliente.direccion && cliente.direccion.length >= 8 ) && cliente.direccion != 'CIUDAD' )
             alertify.notify('La dirección debe tener más de 7 caracteres', 'warning', 5);
 
         else if( cliente.cui != undefined && cliente.cui.length >= 1 && !(cliente.cui.length == 13) )
             alertify.notify('El No. de CUI debe tener 13 dígitos', 'warning', 3);
 
-        else {
+        else
+        {
             $http.post('consultas.php',{
                 opcion  : "consultaCliente",
                 accion  : $scope.accion,
                 cliente : $scope.cliente
             }).success(function(data){
-                console.log(data);
+                //console.log(data);
                 alertify.set('notifier','position', 'top-right');
                 alertify.notify( data.mensaje,data.respuesta, data.tiempo );
                 if ( data.respuesta == "success" )
@@ -131,7 +132,7 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
                 }
             }).error(function (error, status){
                 $scope.data.error = { message: error, status: status};
-                console.log( $scope.data.error.status ); 
+                //console.log( $scope.data.error.status ); 
             });
         }
     };

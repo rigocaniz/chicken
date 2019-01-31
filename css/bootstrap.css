@@ -2309,7 +2309,7 @@ th {
 .table-condensed > thead > tr > td,
 .table-condensed > tbody > tr > td,
 .table-condensed > tfoot > tr > td {
-  padding: 5px;
+  padding: 4px 5px;
 }
 .table-bordered {
   border: 1px solid #dddddd;
@@ -3841,16 +3841,15 @@ tbody.collapse.in {
 .input-group-lg > .form-control,
 .input-group-lg > .input-group-addon,
 .input-group-lg > .input-group-btn > .btn {
-  height: 44px;
+  height: 41px;
   padding: 8px 15px;
   font-size: 18px;
-  line-height: 1.3333333;
   border-radius: 6px;
 }
 select.input-group-lg > .form-control,
 select.input-group-lg > .input-group-addon,
 select.input-group-lg > .input-group-btn > .btn {
-  height: 46px;
+  height: 44px;
   line-height: 46px;
 }
 textarea.input-group-lg > .form-control,
@@ -4032,6 +4031,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   line-height: 1.42857143;
   border: 1px solid transparent;
   border-radius: 4px 4px 0 0;
+  padding: 9px 14px;
 }
 .nav-tabs > li > a:hover {
   border-color: #eeeeee #eeeeee #dddddd;
@@ -4045,7 +4045,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   border-bottom-color: transparent;
   cursor: default;
   font-family: 'OpenSans-Bold';
-  border-top: 4px solid #ea0016;
+  border-top: 3px solid #ea0016;
 }
 .nav-tabs.nav-justified {
   width: 100%;

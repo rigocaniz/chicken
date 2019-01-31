@@ -41,10 +41,9 @@ class Validar
 
 		$warning = FALSE;
 
-		if( !(strlen( $valor ) >= 8) AND ( $valor != 'CIUDAD' ) ):
+		if( !(strlen( $valor ) >= 8) AND ( strtoupper( $valor ) <> 'CIUDAD' ) ):
 			$warning = TRUE;
 		endif;
-
 
 		if( $warning AND $required ):
 			$this->error   = TRUE;
