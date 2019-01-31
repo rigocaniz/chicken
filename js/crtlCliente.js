@@ -121,7 +121,6 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
                 accion  : $scope.accion,
                 cliente : $scope.cliente
             }).success(function(data){
-                //console.log(data);
                 alertify.set('notifier','position', 'top-right');
                 alertify.notify( data.mensaje,data.respuesta, data.tiempo );
                 if ( data.respuesta == "success" )
@@ -132,7 +131,6 @@ app.controller('clienteCtrl', function( $scope, $http, $modal, $timeout ){
                 }
             }).error(function (error, status){
                 $scope.data.error = { message: error, status: status};
-                //console.log( $scope.data.error.status ); 
             });
         }
     };

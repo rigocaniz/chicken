@@ -520,7 +520,7 @@ class Orden
 		$limit          = "";
 		$limite         = is_null( $limite ) ? 15 : (int)$limite;
 		$idOrdenCliente = (int)$idOrdenCliente;
-		$order = "DESC";
+		$order          = "DESC";
 
 		// SI EL ESTADO ES DIFERENTE A PENDIENTE Y LIMITE ES MAYOR A CERO
  		if ( $limite > 0 AND $idEstadoOrden > 4 )

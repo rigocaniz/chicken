@@ -1653,8 +1653,8 @@ img {
   border-radius: 50%;
 }
 hr {
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 18px;
+  margin-bottom: 18px;
   border: 0;
   border-top: 1px solid #eeeeee;
 }
@@ -5526,7 +5526,7 @@ a.thumbnail.active {
   border-color: #337ab7;
 }
 .thumbnail .caption {
-  padding: 9px;
+  padding: 4px 8px;
   color: #333333;
 }
 .alert {
@@ -5813,8 +5813,8 @@ button.list-group-item {
 .list-group-item.active:focus {
   z-index: 2;
   color: #ffffff;
-  background-color: #de3500;
-  border-color: #b72c00;
+  background-color: #be1919;
+  border-color: #be1919;
   cursor: pointer;
   font-weight: 700;
 }
@@ -8687,8 +8687,8 @@ button,a{
 .badge-ticket{
     background-color: #098293;
     border: solid 1px #007688;
-    color: #ebebeb;
-    padding: 1px 9px 1px 9px;
+    color: #ffffff;
+    padding: 1px 10px;
     border-radius: 6px;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
@@ -8958,7 +8958,7 @@ position: absolute;
     right: -20px;
     border-top: solid 10px transparent;
     border-bottom: solid 10px transparent;
-    border-left: solid 10px #be4119;
+    border-left: solid 10px #be1919;
 }
 
 .ticket-hover-triangulo{

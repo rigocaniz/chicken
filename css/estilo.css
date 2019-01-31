@@ -409,8 +409,8 @@ button,a{
 .badge-ticket{
     background-color: #098293;
     border: solid 1px #007688;
-    color: #ebebeb;
-    padding: 1px 9px 1px 9px;
+    color: #ffffff;
+    padding: 1px 10px;
     border-radius: 6px;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
@@ -680,7 +680,7 @@ position: absolute;
     right: -20px;
     border-top: solid 10px transparent;
     border-bottom: solid 10px transparent;
-    border-left: solid 10px #be4119;
+    border-left: solid 10px #be1919;
 }
 
 .ticket-hover-triangulo{
