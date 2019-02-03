@@ -14,6 +14,7 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 	$scope.codigoPersonal = '';
 	$scope.clave 		  = '';
 	$scope.keyPanel 	  = '';
+	$scope.soundAlerta 	  = new Audio('sonidos/nuevaOrden.mp3');
 
 	$scope.lstGrupos = [
 		{ 'numeroGrupo' : '99','grupo' : 'Todos' },
@@ -873,6 +874,9 @@ app.controller('crtlAdminOrden', function( $scope, $http, $timeout, $modal ){
 			case 'ordenNueva':
 			case 'ordenAgregar':
 				var lstMO = angular.copy( datos.data.info.paraCocina );
+
+				// REPRODUCIR ALERTA
+				$scope.soundAlerta.play();
 
 				/*
 					// AGREGA ORDEN A MENU >>>>>>COCINA<<<<<<<
