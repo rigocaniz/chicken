@@ -219,9 +219,35 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	};
 
 	// #1 => MUESTRA DIALOGO INGRESO DE TICKET
-	$scope.nuevaOrden = function () {
+	$scope.crearOrden = {};
+	$scope.openNuevaOrden = function () {
 		$scope.noTicket = 0;
+		$scope.crearOrden = {};
 		$scope.dialOrden.show();
+	};
+
+	// CREAR ORDEN EN BLANCO
+	$scope.nuevaOrden = function ( _domicilio ) {
+		var domicilio = ( _domicilio || false );
+
+		if( !domicilio && !( $scope.noTicket > 0 ) )
+		{
+			alertify.notify( 'Ingrese # de Ticket por favor', 'danger', 4);
+			return false;
+		}
+
+		$scope.dialOrden.hide();
+		$scope.openCantidad();
+		
+		$scope.accionOrden = 'nuevo';
+		$scope.ordenActual = {
+			domicilio      : domicilio,
+			idOrdenCliente : null,
+			noTicket       : parseInt( $scope.noTicket ),
+			totalAgregar   : 0,
+			lstAgregar     : [],
+			lstPedidos     : [],
+		};
 	};
 
 	// 2. CONSULTA ORDEN YA CREADA
@@ -240,17 +266,21 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	};
 
 	// #2 => CREA UNA NUEVA ORDEN
-	$scope.agregarOrden = function ( domicilio ) {
+	$scope.agregarOrden = function () {
 		if ( $scope.$parent.loading )
 			return false;
 
 		$scope.codigoRapido = "";
 		
-		if ( !( parseInt( $scope.noTicket ) > 0 ) && domicilio != 'domicilio' )
-		{
-			alertify.set('notifier','position', 'top-right');
+		// SI YA ESTA CREADA LA ORDEN PRINCIPAL
+		if ( $scope.ordenActual.idOrdenCliente > 0 )
+			$scope.guardarOrden();
+		
+		// SI NO ESTA DEFINIDO EL TICKET
+		else if ( !( $scope.ordenActual.noTicket > 0 ) && !$scope.ordenActual.domicilio )
 			alertify.notify('Número de Ticket NO Válido', 'danger', 4);
-		}
+
+		// SI ES CREAR ORDEN, DESPUES DETALLE
 		else
 		{
 			$scope.$parent.loading = true; // cargando...
@@ -269,23 +299,13 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 				$scope.$parent.loading = false; // cargando...
 
 				if ( data.respuesta == 'success' ) {
-					$scope.accionOrden = 'nuevo';
-					
-					// MUESTRA DIALOGO DE ORDEN GENERADA
-					$scope.dialOrden.hide();
+					$scope.ordenActual.idOrdenCliente = data.data;
 
-					$scope.ordenActual = {
-						idOrdenCliente : data.data,
-						noTicket     : parseInt( $scope.noTicket ),
-						totalAgregar : 0,
-						lstAgregar   : [],
-						lstPedidos   : []
-					};
-					$scope.openCantidad();
+					// GUARDAR DETALLE DE ORDEN
+					$scope.guardarOrden();
 				}
 				else{
-					alertify.set('notifier','position', 'top-right');
-					alertify.notify( data.mensaje, data.respuesta, data.tiempo );
+					alertify.notify( ( data.mensaje || data ), ( data.respuesta || 'danger' ), 7 );
 				}
 			});
 		}
@@ -1078,7 +1098,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	// ATAJOS PANTALLA PRINCIPAL
 	$scope._keyInicioOrden = function ( key, altDerecho ) {
 		if ( altDerecho && key == 86 ) // {V}
-			$scope.nuevaOrden();
+			$scope.openNuevaOrden();
 
 		if ( key == 38 ) // {UP} // ORDEN SIGUIENTE
 			$scope.downUpOrdenes( true );
@@ -1151,10 +1171,10 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 		// SI ES ADOMICILIO
 		if ( key == 68 && !( $scope.noTicket > 0 ) ) // {D}
-			$scope.agregarOrden( 'domicilio' );
+			$scope.nuevaOrden( true );
 
 		if ( key == 13 || key == 117 ) // {ENTER} || {F6}
-			$scope.agregarOrden();
+			$scope.nuevaOrden();
 	};
 
 	// ATAJOS DIALOGO ORDEN CLIENTE
@@ -1166,7 +1186,7 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 
 		// CONFIRMA LA ORDEN DEL CLIENTE
 		if ( key == 117 ) // {F6}
-			$scope.guardarOrden();
+			$scope.agregarOrden();
 
 		if ( key == 27 && $scope.accionOrden == 'modificar' ) // {ESC}
 			$scope.dialOrdenCliente.hide();

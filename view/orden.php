@@ -10,7 +10,7 @@
 <div class="col-xs-12" style="margin-top:5px">
 	<div class="row">
         <div class="col-sm-5 col-xs-6" style="margin-bottom:9px">
-            <button type="button" class="btn btn-success" ng-click="nuevaOrden()">
+            <button type="button" class="btn btn-success" ng-click="openNuevaOrden()">
                 <span class="glyphicon glyphicon-plus"></span>
                 Nue<u>v</u>a Orden
             </button>
@@ -295,11 +295,11 @@
                    </div>
                 </div>
                 <div class="modal-footer">
-                	<button type="button" class="btn btn-primary" ng-click="agregarOrden( 'domicilio' )" ng-disabled="noTicket>0">
+                	<button type="button" class="btn btn-primary" ng-click="nuevaOrden( true )" ng-disabled="noTicket>0">
                         <span class="glyphicon glyphicon-plus-sign"></span>
                         <b>A <u>D</u>omicilio</b>
                     </button>
-                	<button type="button" class="btn btn-success" ng-click="agregarOrden()">
+                	<button type="button" class="btn btn-success" ng-click="nuevaOrden()">
                         <span class="glyphicon glyphicon-plus-sign"></span>
                         <b>Agregar Ticket</b>
                     </button>
@@ -456,7 +456,7 @@
                    </div>
                 </div>
                 <div class="modal-footer">
-        			<button type="button" class="btn btn-success" ng-click="guardarOrden()">
+        			<button type="button" class="btn btn-success" ng-click="agregarOrden()">
         				<span class="glyphicon glyphicon-ok"></span>
         				<b>Confirmar Orden (F6)</b>
         			</button>
@@ -528,7 +528,7 @@
                                 <li class="list-group-item" ng-class="{'active': $parent.menuActual.ixMenu == ixMenu}" 
                                     ng-repeat="(ixMenu, coin) in lstCoincidencias"
                                     ng-click="$parent.menuActual.ixMenu = ixMenu; _keyCantidad( 13, false, true )">
-                                    <label class="label label-danger">{{coin.menu.codigo}}</label> » <strong>{{coin.menu.menu}}</strong> 
+                                    <label class="label label-danger">#{{coin.menu.codigo}}</label> » <strong>{{coin.menu.menu}}</strong> 
                                     <kbd>{{coin.tipoMenu}}</kbd>
                                     <span> => Q. {{coin.menu.precio | number:2}}</span>
                                 </li>
