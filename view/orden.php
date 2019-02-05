@@ -116,6 +116,16 @@
                     </button>
                 </div>
             </div>
+            <div class="row" ng-show="infoOrden.nit.length>0">
+                <div class="col-sm-4 col-xs-4">
+                    <span class="etiqueta">NIT: </span>
+                    <span class="valor">{{infoOrden.nit}}</span>
+                </div>
+                <div class="col-sm-8 col-xs-8">
+                    <span class="etiqueta">Cliente: </span>
+                    <span class="valor">{{infoOrden.nombre}}</span>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-sm-6 col-xs-12">
                     <span class="etiqueta">Estado: </span>

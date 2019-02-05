@@ -521,27 +521,53 @@ class Orden
 		$limite         = is_null( $limite ) ? 15 : (int)$limite;
 		$idOrdenCliente = (int)$idOrdenCliente;
 		$order          = "DESC";
+		$join 			= "";
+		$select 		= "";
 
 		// SI EL ESTADO ES DIFERENTE A PENDIENTE Y LIMITE ES MAYOR A CERO
  		if ( $limite > 0 AND $idEstadoOrden > 4 )
  			$limit = " LIMIT " . $limite;
 
  		if ( $idOrdenCliente > 0 )
-			$where = " WHERE idOrdenCliente = " . $idOrdenCliente;
+			$where = " WHERE oc.idOrdenCliente = " . $idOrdenCliente;
 
 		else if ( $idEstadoOrden == 1 OR $idEstadoOrden == 2 )
 		{
-			$where = " WHERE ( idEstadoOrden = 1 OR idEstadoOrden = 2 ) ";
+			$where = " WHERE ( oc.idEstadoOrden = 1 OR oc.idEstadoOrden = 2 ) ";
 			$order = "ASC";
 		}
 
 		else if ( $idEstadoOrden > 2 )
-			$where = " WHERE idEstadoOrden = " . $idEstadoOrden;
+			$where = " WHERE oc.idEstadoOrden = " . $idEstadoOrden;
 
+		// SI ESTA CANCELADO
+		if ( $idEstadoOrden == 10 )
+			$where .= " AND DATE( oc.fechaRegistro ) = CURDATE() ";
+
+		// SI ESTADO ES FACTURADO
+		if ( $idEstadoOrden == 6 )
+		{
+			$select = ", f.nombre, cl.nit";
+			$join   = " JOIN factura AS f
+							ON f.idOrdenCliente = oc.idOrdenCliente
+						
+						JOIN cliente AS cl
+							ON cl.idCliente= f.idCliente
+
+						JOIN caja AS caj
+							ON caj.idCaja = f.idCaja
+								AND caj.idEstadoCaja = 1
+								AND caj.usuario = '{$this->sess->getUsuario()}'
+						";
+		}
 
  		$sql = "SELECT 
-					idOrdenCliente, numeroTicket, usuarioResponsable, idEstadoOrden, estadoOrden, fechaRegistro, numMenu
-				FROM vOrdenCliente $where ORDER BY idOrdenCliente $order " . $limit;
+					oc.idOrdenCliente, oc.numeroTicket, oc.usuarioResponsable,
+					oc.idEstadoOrden, oc.estadoOrden, oc.fechaRegistro, oc.numMenu
+					$select
+				FROM vOrdenCliente AS oc
+					$join
+				$where ORDER BY oc.idOrdenCliente $order " . $limit;
 
 		if( $rs = $this->con->query( $sql ) ) {
  			if ( $idOrdenCliente > 0 AND ( $row = $rs->fetch_object() ) ) {
