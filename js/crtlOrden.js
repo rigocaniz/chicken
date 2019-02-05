@@ -87,15 +87,6 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 		$scope.tipoMenu         = '';
 		$scope.lstCoincidencias = [];
 
-
-		if ( !( $scope.ordenActual.noTicket > 0 ) )
-			$scope.idTipoServicio = 3;
-		else if ( $scope.ordenActual.noTicket > 0 )
-		{
-			if ( $scope.idTipoServicio == 3 )
-				$scope.idTipoServicio = 1;
-		}
-
 		$scope.dialOrdenCliente.hide();
 		$scope.dialCantidad.show();
 		$timeout(function () {
@@ -229,6 +220,11 @@ app.controller('crtlOrden', function( $scope, $http, $timeout, $modal, $location
 	// CREAR ORDEN EN BLANCO
 	$scope.nuevaOrden = function ( _domicilio ) {
 		var domicilio = ( _domicilio || false );
+		$scope.idTipoServicio = 1;
+
+		// SI ES A DOMICILIO
+		if ( domicilio )
+			$scope.idTipoServicio = 3;
 
 		if( !domicilio && !( $scope.noTicket > 0 ) )
 		{

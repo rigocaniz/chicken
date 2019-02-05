@@ -496,7 +496,7 @@
                                     <span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==2"></span>
                                 </button>
                                 <button type="button" class="btn" ng-class="{'btn-default':idTipoServicio!=3,'btn-info':idTipoServicio==3}" 
-                                    ng-click="$parent.idTipoServicio=3" style="margin-right:4px;margin-top:5px">
+                                    ng-click="$parent.idTipoServicio=3" style="margin-right:4px;margin-top:5px" ng-disabled="!ordenActual.domicilio">
                                     <b>A <u>D</u>omicilio</b>
                                     <span class="glyphicon glyphicon-ok" ng-show="idTipoServicio==3"></span>
                                 </button>
